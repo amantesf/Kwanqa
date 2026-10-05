@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import StoriesPage from '@/components/StoriesPage';
+import { sharePreview } from '@/lib/seo';
 import { STORIES } from '@/lib/stories';
 
 export function generateStaticParams() {
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const story = STORIES.find(s => s.id === id);
   if (!story) return { title: 'Stories' };
   const description = `${story.amharicTitle} (${story.title}): ${story.blurb} A short Amharic story with the meaning and transliteration of every word.`;
-  return { title: `${story.title} · Stories`, description, openGraph: { title: `${story.amharicTitle} · ${story.title}`, description } };
+  return { title: `${story.title} · Stories`, description, openGraph: sharePreview(`${story.amharicTitle} · ${story.title}`, description) };
 }
 
 export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {

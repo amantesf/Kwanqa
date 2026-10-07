@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { PageHero } from '@/components/sections';
 
-export const metadata: Metadata = { title: 'Privacy policy' };
+export const metadata: Metadata = {
+  title: 'Privacy policy',
+  description: 'What kwanqa collects, why, who helps us run the app, and how to see, download or delete your data.',
+};
 
 const CONTACT = 'kwanqa.team@gmail.com';
 const UPDATED = 'October 30, 2026';

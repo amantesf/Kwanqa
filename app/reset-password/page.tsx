@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import ResetPassword from '@/components/ResetPassword';
 
-export const metadata: Metadata = { title: 'Choose a new password' };
+export const metadata: Metadata = { title: 'Choose a new password', robots: { index: false } };
 
 export default function ResetPasswordPage() {
   return (

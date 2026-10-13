@@ -5,11 +5,15 @@ import FidelTabs from '@/components/FidelTabs';
 import { PageHero } from '@/components/sections';
 import './fidel.css';
 import './fidel.dark.css';
+import { sharePreview } from '@/lib/seo';
+
+const description =
+  'Learn to read and write the Amharic alphabet (ፊደል): every letter family with audio and transliteration, stroke-by-stroke writing practice and the Ge’ez numerals.';
 
 export const metadata: Metadata = {
   title: 'The ፊደል alphabet',
-  description:
-    'Learn to read and write the Amharic alphabet (ፊደል): every letter family with audio and transliteration, stroke-by-stroke writing practice and the Ge’ez numerals.',
+  description,
+  openGraph: sharePreview('Learn the ፊደል · kwanqa', description),
 };
 
 export default function FidelPage() {

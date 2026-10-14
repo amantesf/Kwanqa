@@ -1,0 +1,17 @@
+.glass-card {
+    background: rgba(38, 38, 38, 0.4);
+    backdrop-filter: blur(40px);
+    border: 1px solid rgba(185, 159, 255, 0.15);
+  }
+  
+  .hero-glow {
+    background: radial-gradient(circle at 50% 50%, rgba(185, 159, 255, 0.08) 0%, transparent 70%);
+  }
+  
+  .nebula-shadow {
+    box-shadow: 0 20px 60px rgba(185, 159, 255, 0.06);
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 20px rgba(185, 159, 255, 0.3);
+  }

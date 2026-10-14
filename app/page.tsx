@@ -1,189 +1,192 @@
 import Link from 'next/link';
 import { FadeInOnScroll } from '@/components/FadeInOnScroll';
+import Flag from '@/components/Flag';
+import Mascot from '@/components/Mascot';
+import MountainScene from '@/components/MountainScene';
+import { CTA, SectionHead, Testimonials } from '@/components/sections';
+import { testimonials } from '@/lib/content';
+import { courseContent } from '@/lib/courses';
+
+const greeting = courseContent['amharic-beginner-1'].sections[0];
+const dialogue = (greeting.dialogue ?? []).slice(0, 3);
 
 export default function Home() {
   return (
-    <main className="app-main">
-      {/* HERO ONLY */}
-      <section className="band-none">
-        <div className="section-shell">
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 40,
-              alignItems: 'center',
-            }}
-          >
-            {/* Left copy */}
-            <FadeInOnScroll>
-              <div style={{ flex: '1 1 320px', maxWidth: 540 }}>
-                <div className="chip">
-                  <span
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: '999px',
-                      backgroundColor: 'var(--primary-color)',
-                    }}
-                  />
-                  <span>
-                    Ethiopian language tutor · Local, private, no cloud
-                  </span>
-                </div>
-
-                <h1
-                  style={{
-                    marginTop: 16,
-                    marginBottom: 12,
-                    fontSize: 'clamp(32px, 4vw, 42px)',
-                    lineHeight: 1.2,
-                    fontWeight: 600,
-                  }}
-                >
-                  Learn{' '}
-                  <span
-                    style={{
-                      backgroundImage:
-                        'linear-gradient(to right, var(--primary-color), var(--accent-color))',
-                      WebkitBackgroundClip: 'text',
-                      color: 'transparent',
-                    }}
-                  >
-                    Amharic and English
-                  </span>{' '}
-                  with your own private AI tutor that runs entirely on your laptop.
-                </h1>
-
-                <p
-                  className="text-secondary"
-                  style={{ fontSize: 14, marginBottom: 20 }}
-                >
-                  Kwanqa helps you practice both Amharic and English. Whether
-                  you&apos;re an Ethiopian wanting to improve your English, or
-                  learning Amharic as a second language, Kwanqa guides you
-                  through short, focused sessions—with examples, corrections, and
-                  explanations, all locally on your device.
-                </p>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: 12,
-                    flexWrap: 'wrap',
-                    marginBottom: 8,
-                  }}
-                >
-                  <Link href="/tutor">
-                    <button className="btn btn-accent">Open the Tutor</button>
-                  </Link>
-                  <Link href="/courses">
-                    <button className="btn-ghost">Explore Courses</button>
-                  </Link>
-                  <Link href="/about">
-                    <button className="btn-ghost">Learn more about Kwanqa</button>
-                  </Link>
-                </div>
-
-                <p style={{ fontSize: 11 }} className="text-secondary">
-                  Powered by a local model. No accounts, no tracking—just practice
-                  in Amharic and English.
-                </p>
+    <main>
+      {/* Hero */}
+      <section className="hero">
+        <div className="container hero-grid">
+          <FadeInOnScroll>
+            <div className="hero-copy">
+              <span className="kicker">Amharic ⇄ English</span>
+              <h1 className="display">
+                Climb to fluency in Amharic and English—one small step at a time.
+              </h1>
+              <p className="lead">
+                Bite‑sized lessons, real phrases, and everyday dialogues, built for
+                Ethiopian families and the diaspora. Free, with no account needed.
+              </p>
+              <div className="row">
+                <Link href="/courses?track=amharic" className="btn">
+                  Learn Amharic
+                </Link>
+                <Link href="/courses?track=english" className="btn btn-secondary">
+                  Learn English
+                </Link>
               </div>
-            </FadeInOnScroll>
+            </div>
+          </FadeInOnScroll>
 
-            {/* Right preview card */}
-            <FadeInOnScroll delay={0.1}>
-              <div style={{ flex: '1 1 280px', maxWidth: 420 }}>
-                <div className="card">
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: 8,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    <span className="text-secondary">Live tutor preview</span>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        padding: '2px 8px',
-                        borderRadius: 999,
-                        backgroundColor: 'var(--base-color)',
-                        border: '1px solid var(--border-soft)',
-                      }}
-                    >
-                      Local · Private
-                    </span>
-                  </div>
-                  <div className="card-soft" style={{ fontSize: 11 }}>
-                    <div style={{ textAlign: 'right', marginBottom: 6 }}>
-                      <span className="chat-bubble-user">
-                        I&apos;m new to Amharic. Can we start with greetings and
-                        simple replies?
-                      </span>
-                    </div>
-                    <div style={{ marginBottom: 6 }}>
-                      <span className="chat-bubble-assistant">
-                        ሰላም! እንኳን ደህና መጣህ።
-                      </span>
-                    </div>
-                    <p
-                      className="text-secondary"
-                      style={{ fontSize: 11, marginBottom: 4 }}
-                    >
-                      <strong>Transliteration:</strong> selam! enkwan dehna metah.
-                    </p>
-                    <p className="text-secondary" style={{ fontSize: 11 }}>
-                      <strong>English:</strong> “Hello! Welcome.” We can practice
-                      both Amharic and English, depending on your goal.
-                    </p>
-                  </div>
-                </div>
+          <div className="hero-scene">
+            <MountainScene className="hero-mountains" />
+            <div className="hero-walia">
+              <div className="speech floaty">
+                ሰላም!
+                <small>selam — hello!</small>
               </div>
-            </FadeInOnScroll>
+              <Mascot pose="wave" size={190} title="Walia the ibex waving hello" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="site-footer">
-        <div className="site-footer-inner">
-          <span className="text-secondary">
-            © {new Date().getFullYear()} Kwanqa AI. All rights reserved.
+      {/* Language strip */}
+      <div className="lang-strip">
+        <div className="container">
+          <Link href="/courses?track=amharic" className="lang-item">
+            <Flag name="ethiopia" className="lang-flag" />
+            Amharic
+          </Link>
+          <Link href="/courses?track=english" className="lang-item">
+            <Flag name="usa" className="lang-flag" />
+            English
+          </Link>
+          <span className="lang-item">
+            Afaan Oromo <span className="lang-soon">Soon</span>
           </span>
-          <nav className="site-footer-nav">
-            <Link
-              href="/"
-              style={{ color: 'var(--secondary-text)', textDecoration: 'none' }}
-            >
-              Home
-            </Link>
-            <Link
-              href="/tutor"
-              style={{ color: 'var(--secondary-text)', textDecoration: 'none' }}
-            >
-              Tutor
-            </Link>
-            <Link
-              href="/courses"
-              style={{ color: 'var(--secondary-text)', textDecoration: 'none' }}
-            >
-              Courses
-            </Link>
-            <Link
-              href="/about"
-              style={{ color: 'var(--secondary-text)', textDecoration: 'none' }}
-            >
-              About
-            </Link>
-          </nav>
+          <span className="lang-item">
+            Tigrinya <span className="lang-soon">Soon</span>
+          </span>
         </div>
-      </footer>
+      </div>
+
+      {/* Feature rows */}
+      <section>
+        <div className="container">
+          <FadeInOnScroll>
+            <div className="feature-row">
+              <div className="feature-copy">
+                <h2 className="h2">bite‑sized. fun. effective.</h2>
+                <p className="lead">
+                  Every lesson takes just a few minutes. Learn the phrases that matter
+                  first—greetings, introductions, family—and build real confidence one
+                  small step at a time.
+                </p>
+              </div>
+              <div className="feature-art">
+                <span className="art-bg" style={{ background: 'var(--gold-soft)' }} aria-hidden />
+                <div className="art-stack">
+                  <div className="mini-card">
+                    <div className="mini-progress">
+                      <span style={{ width: '60%' }} />
+                    </div>
+                    <strong style={{ color: 'var(--text-strong)' }}>What does ሰላም mean?</strong>
+                    <div className="mini-option">Thank you</div>
+                    <div className="mini-option correct">Hello / Peace</div>
+                    <div className="mini-option">Goodbye</div>
+                  </div>
+                  <Mascot pose="cheer" size={110} />
+                </div>
+              </div>
+            </div>
+          </FadeInOnScroll>
+
+          <FadeInOnScroll>
+            <div className="feature-row flip">
+              <div className="feature-copy">
+                <h2 className="h2">rooted in culture</h2>
+                <p className="lead">
+                  Learn the Ge’ez script with transliteration as your bridge. Our lessons
+                  honor Amharic as identity, history, and connection—not just vocabulary.
+                </p>
+              </div>
+              <div className="feature-art">
+                <span className="art-bg" style={{ background: 'var(--blue-soft)' }} aria-hidden />
+                <div className="letter-tiles">
+                  {['ሀ', 'ለ', 'ሐ', 'መ', 'ሰ', 'ቀ'].map((letter, idx) => (
+                    <span key={letter} className={`letter-tile${idx === 4 ? ' on' : ''}`}>
+                      {letter}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeInOnScroll>
+
+          <FadeInOnScroll>
+            <div className="feature-row">
+              <div className="feature-copy">
+                <h2 className="h2">real conversations</h2>
+                <p className="lead">
+                  Practice short, everyday dialogues with script, transliteration, and
+                  translation side by side—so you can talk with family and friends from
+                  day one.
+                </p>
+              </div>
+              <div className="feature-art">
+                <span className="art-bg" style={{ background: 'var(--gold-soft)' }} aria-hidden />
+                <div className="chat">
+                  {dialogue.map((line, idx) => (
+                    <div key={idx} className={`chat-line${line.speaker === 'B' ? ' me' : ''}`}>
+                      {line.speaker === 'A' ? (
+                        <Mascot pose="happy" size={44} title="Walia" />
+                      ) : (
+                        <span className="person-dot">You</span>
+                      )}
+                      <div className="bubble">
+                        {line.amharic}
+                        <small>{line.english}</small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeInOnScroll>
+
+          <FadeInOnScroll>
+            <div className="feature-row flip">
+              <div className="feature-copy">
+                <h2 className="h2">made for our community</h2>
+                <p className="lead">
+                  For years, major language apps ignored Amharic. kwanqa is built by
+                  Ethiopians for families at home and across the diaspora—free, with no
+                  account needed.
+                </p>
+                <div>
+                  <Link href="/about" className="link">
+                    Read our story →
+                  </Link>
+                </div>
+              </div>
+              <div className="feature-art">
+                <span className="art-bg" style={{ background: 'var(--primary-soft)' }} aria-hidden />
+                <Mascot pose="happy" size={220} className="floaty" />
+              </div>
+            </div>
+          </FadeInOnScroll>
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <section className="section">
+        <div className="container">
+          <SectionHead kicker="Reviews" title="loved by learners" center />
+          <Testimonials items={testimonials} />
+        </div>
+      </section>
+
+      <CTA />
     </main>
   );
 }

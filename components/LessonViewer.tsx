@@ -1,0 +1,187 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Mascot from '@/components/Mascot';
+import Practice from '@/components/Practice';
+import Trail from '@/components/Trail';
+import { hornLevel, isDone, useClimb } from '@/lib/climb';
+import type { LessonSection, Track } from '@/lib/courses';
+
+type Props = {
+  slug: string;
+  track: Track;
+  lessons: LessonSection[];
+};
+
+type Phrase = NonNullable<LessonSection['phrases']>[number];
+
+function PhraseCards({ phrases, quiz }: { phrases: Phrase[]; quiz: boolean }) {
+  const [revealed, setRevealed] = useState<Set<number>>(new Set());
+
+  function reveal(idx: number) {
+    setRevealed(prev => new Set(prev).add(idx));
+  }
+
+  return (
+    <div className="phrase-grid">
+      {phrases.map((phrase, idx) => {
+        const hidden = quiz && !revealed.has(idx);
+        const body = (
+          <>
+            <span className="phrase-am">{phrase.amharic}</span>
+            <span className="phrase-tr">{phrase.transliteration}</span>
+            <span className={`phrase-en${hidden ? ' hidden' : ''}`}>
+              {hidden ? 'Tap to reveal' : phrase.english}
+            </span>
+          </>
+        );
+        return quiz ? (
+          <button key={idx} type="button" className="phrase-card" onClick={() => reveal(idx)}>
+            {body}
+          </button>
+        ) : (
+          <div key={idx} className="phrase-card">
+            {body}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function LessonViewer({ slug, track, lessons }: Props) {
+  const router = useRouter();
+  const params = useSearchParams();
+  const requested = Number(params.get('lesson'));
+  const initial =
+    Number.isInteger(requested) && requested >= 0 && requested < lessons.length ? requested : 0;
+
+  const [active, setActive] = useState(initial);
+  const [mode, setMode] = useState<'learn' | 'practice'>('learn');
+  const [quiz, setQuiz] = useState(false);
+  const [session, setSession] = useState(0);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const climb = useClimb();
+  const horns = hornLevel(climb.grass);
+  const lesson = lessons[active];
+  const isLast = active === lessons.length - 1;
+
+  function goTo(index: number) {
+    setActive(index);
+    setMode('learn');
+    router.replace(`/courses/${slug}?lesson=${index}`, { scroll: false });
+    panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function startPractice() {
+    setSession(s => s + 1);
+    setMode('practice');
+    panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function finishLesson() {
+    if (isLast) {
+      router.push(`/courses?track=${track}`);
+    } else {
+      goTo(active + 1);
+    }
+  }
+
+  return (
+    <div className="learn-layout">
+      <nav aria-label="Lessons" className="learn-trail">
+        <Trail
+          hornScale={horns.scale}
+          stops={lessons.map((item, i) => ({
+            title: item.title,
+            state: i === active ? 'current' : isDone(climb, slug, i) ? 'done' : 'todo',
+            onSelect: () => goTo(i),
+          }))}
+        />
+      </nav>
+
+      <div ref={panelRef} className="lesson-panel">
+        {mode === 'practice' ? (
+          <Practice
+            key={`${active}-${session}`}
+            slug={slug}
+            lessonIndex={active}
+            lesson={lesson}
+            courseLessons={lessons}
+            onExit={() => setMode('learn')}
+            onFinish={finishLesson}
+            finishLabel={isLast ? 'Back to the trail' : 'Next lesson'}
+          />
+        ) : (
+          <>
+            <div className="lesson-head">
+              <span className="kicker">
+                Lesson {active + 1} of {lessons.length}
+                {isDone(climb, slug, active) ? ' · Completed' : ''}
+              </span>
+              <h2 className="h2">{lesson.title.replace(/^Lesson \d+ – /, '')}</h2>
+              <p className="lead">{lesson.description}</p>
+            </div>
+
+            {lesson.phrases && (
+              <div className="stack">
+                <div className="panel-title">
+                  <h3 className="h3">Core phrases</h3>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={quiz}
+                      onChange={e => setQuiz(e.target.checked)}
+                    />
+                    Quiz me
+                  </label>
+                </div>
+                <PhraseCards key={`${active}-${quiz}`} phrases={lesson.phrases} quiz={quiz} />
+              </div>
+            )}
+
+            {lesson.dialogue && (
+              <div className="stack">
+                <h3 className="h3">Mini‑dialogue</h3>
+                <div className="dialogue">
+                  {lesson.dialogue.map((line, idx) => (
+                    <div key={idx} className={`dialogue-line${line.speaker === 'B' ? ' b' : ''}`}>
+                      {line.speaker === 'A' ? (
+                        <Mascot pose="happy" size={48} title="Walia" hornScale={horns.scale} />
+                      ) : (
+                        <span className="person-dot">B</span>
+                      )}
+                      <div className="bubble">
+                        <span className="am">{line.amharic}</span>
+                        <span className="tr">{line.transliteration}</span>
+                        <span className="en">{line.english}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="lesson-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => goTo(active - 1)}
+                disabled={active === 0}
+              >
+                Back
+              </button>
+              <div className="row">
+                <span className="faint small">Pass the practice to climb this stone</span>
+                <button type="button" className="btn" onClick={startPractice}>
+                  {isDone(climb, slug, active) ? 'Practice again' : 'Start practice'}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

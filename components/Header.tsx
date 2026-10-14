@@ -1,184 +1,98 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Logo from '@/components/Logo';
 
-type DarkModeState = 'active' | 'inactive';
+const NAV_LINKS = [
+  { href: '/courses', label: 'Courses' },
+  { href: '/approach', label: 'Approach' },
+  { href: '/about', label: 'About' },
+];
 
-function NavLink({
-  href,
-  label,
-  currentPath,
-}: {
-  href: string;
-  label: string;
-  currentPath: string;
-}) {
-  const isActive =
-    href === '/'
-      ? currentPath === '/'
-      : currentPath === href || currentPath.startsWith(href + '/');
+function isActive(href: string, pathname: string) {
+  return pathname === href || pathname.startsWith(href + '/');
+}
 
+function MenuIcon({ open }: { open: boolean }) {
   return (
-    <Link
-      href={href}
-      style={{
-        position: 'relative',
-        textDecoration: 'none',
-        padding: '6px 10px',
-        borderRadius: 999,
-        fontWeight: isActive ? 700 : 500,
-        fontSize: 11,
-        color: isActive ? 'var(--base-color)' : 'var(--secondary-text)',
-        backgroundColor: isActive ? 'var(--text-color)' : 'transparent',
-        transition: 'background-color 0.15s ease, color 0.15s ease',
-      }}
-    >
-      {label}
-      {isActive && (
-        <span
-          style={{
-            position: 'absolute',
-            left: 8,
-            right: 8,
-            bottom: 4,
-            height: 2,
-            borderRadius: 999,
-            background:
-              'linear-gradient(to right, var(--primary-color), var(--accent-color))',
-          }}
-        />
-      )}
-    </Link>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+      {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+    </svg>
   );
 }
 
 export default function Header() {
-  const [darkmode, setDarkmode] = useState<DarkModeState>('inactive');
   const pathname = usePathname() || '/';
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const stored = window.localStorage.getItem('darkmode') as DarkModeState | null;
-    if (stored === 'active') {
-      document.body.classList.add('darkmode');
-      setDarkmode('active');
-    }
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  function enableDarkmode() {
-    document.body.classList.add('darkmode');
-    window.localStorage.setItem('darkmode', 'active');
-    setDarkmode('active');
-  }
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
 
-  function disableDarkmode() {
-    document.body.classList.remove('darkmode');
-    window.localStorage.setItem('darkmode', 'inactive');
-    setDarkmode('inactive');
-  }
-
-  function toggleTheme() {
-    if (darkmode === 'active') disableDarkmode();
-    else enableDarkmode();
-  }
-
-  const isDark = darkmode === 'active';
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      style={{
-        padding: '16px min(48px, 7%)',
-        borderBottom: '1px solid var(--border-soft)',
-        backgroundColor: 'var(--base-color)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 20,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1120,
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
-        }}
-      >
-        {/* Logo */}
-        <Link
-          href="/"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            textDecoration: 'none',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              width: 32,
-              height: 32,
-              overflow: 'hidden',
-              borderRadius: 8,
-              backgroundColor: '#151515',
-            }}
-          >
-            <Image
-              src={isDark ? '/dark_mode.png' : '/light_mode.png'}
-              alt="Kwanqa AI logo"
-              fill
-              sizes="32px"
-              style={{ objectFit: 'cover' }}
-              priority
-            />
-          </div>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: '0.18em',
-              color: 'var(--text-color)',
-            }}
-          >
-            KWANQA&nbsp;AI
-          </span>
-        </Link>
+    <header className={`site-header${scrolled || menuOpen ? ' scrolled' : ''}`}>
+      <div className="container">
+        <Logo onClick={closeMenu} />
 
-        {/* Nav + theme switch */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            fontSize: 11,
-          }}
-        >
-          {/* main product links */}
-          <NavLink href="/tutor" label="Tutor" currentPath={pathname} />
-          <NavLink href="/courses" label="Courses" currentPath={pathname} />
+        <nav className="nav" aria-label="Main">
+          {NAV_LINKS.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`nav-link${isActive(link.href, pathname) ? ' active' : ''}`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
 
-          {/* single company/info link */}
-          <NavLink href="/about" label="About" currentPath={pathname} />
-
-          {/* theme switch */}
+        <div className="header-actions">
+          <Link href="/courses" className="btn btn-sm">
+            Get started
+          </Link>
           <button
-            id="theme-switch"
             type="button"
-            onClick={toggleTheme}
-            className="theme-switch"
+            className="icon-button"
+            onClick={() => setMenuOpen(open => !open)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
-            <span className="theme-switch-icon">{isDark ? '🌙' : '☀️'}</span>
-            <span className="theme-switch-label">
-              {isDark ? 'Dark' : 'Light'}
-            </span>
+            <MenuIcon open={menuOpen} />
           </button>
         </div>
+      </div>
+
+      <div id="mobile-menu" className={`mobile-menu${menuOpen ? ' open' : ''}`}>
+        <nav aria-label="Mobile">
+          {NAV_LINKS.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`nav-link${isActive(link.href, pathname) ? ' active' : ''}`}
+              onClick={closeMenu}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <Link href="/courses" className="btn" onClick={closeMenu}>
+          Get started
+        </Link>
       </div>
     </header>
   );

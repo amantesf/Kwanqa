@@ -1,9 +1,9 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { FadeInOnScroll } from '@/components/FadeInOnScroll';
 import Flag from '@/components/Flag';
 import HeroActions from '@/components/HeroActions';
 import Mascot from '@/components/Mascot';
-import MountainScene from '@/components/MountainScene';
 import { CTA, SectionHead, Testimonials } from '@/components/sections';
 import { testimonials } from '@/lib/content';
 import { courseContent } from '@/lib/courses';
@@ -33,13 +33,17 @@ export default function Home() {
           </FadeInOnScroll>
 
           <div className="hero-scene">
-            <MountainScene className="hero-mountains" />
-            <div className="hero-walia">
-              <div className="speech floaty">
-                ሰላም!
-                <small>selam — hello!</small>
-              </div>
-              <Mascot pose="wave" size={190} title="Walia the ibex waving hello" />
+            <Image
+              src="/brand/walia-scene.jpg"
+              alt="Walia the ibex standing on a mountain peak"
+              fill
+              priority
+              sizes="(max-width: 960px) 100vw, 520px"
+              className="hero-art"
+            />
+            <div className="speech floaty">
+              ሰላም!
+              <small>selam — hello!</small>
             </div>
           </div>
         </div>
@@ -166,7 +170,13 @@ export default function Home() {
               </div>
               <div className="feature-art">
                 <span className="art-bg" style={{ background: 'var(--primary-soft)' }} aria-hidden />
-                <Mascot pose="happy" size={220} className="floaty" />
+                <Image
+                  src="/brand/walia.png"
+                  alt="Walia the ibex"
+                  width={200}
+                  height={267}
+                  className="floaty feature-walia"
+                />
               </div>
             </div>
           </FadeInOnScroll>

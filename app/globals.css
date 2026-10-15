@@ -582,23 +582,19 @@ svg {
   border: 2px solid var(--primary-border);
 }
 
-.hero-mountains {
-  position: absolute;
-  inset: auto 0 0 0;
-  width: 100%;
-  height: 100%;
+.hero-art {
+  object-fit: cover;
+  object-position: 46% 40%;
 }
 
-.hero-walia {
-  position: absolute;
-  left: 50%;
-  top: 30px;
-  transform: translateX(-62%);
+.hero-scene .speech {
+  top: 24px;
+  left: 20px;
 }
 
-.hero-walia .speech {
-  top: -6px;
-  left: -96px;
+.feature-walia {
+  position: relative;
+  height: auto;
 }
 
 .blob {
@@ -2408,12 +2404,9 @@ button.phrase-card:hover {
     height: 340px;
   }
 
-  .hero-walia {
-    transform: translateX(-42%);
-  }
-
-  .hero-walia .speech {
-    left: -62px;
+  .hero-scene .speech {
+    top: 16px;
+    left: 12px;
     font-size: 18px;
   }
 

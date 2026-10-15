@@ -1984,6 +1984,178 @@ button.phrase-card:hover {
 }
 
 /* --------------------------------------------------------------------------
+   Accounts: header chip, hero buttons, sign-up / log-in forms
+   -------------------------------------------------------------------------- */
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-actions .btn {
+  margin-bottom: 0;
+}
+
+.mobile-auth {
+  display: none;
+}
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-strong);
+  max-width: 200px;
+}
+
+.user-chip:hover {
+  background-color: var(--bg-soft);
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background-color: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.text-link {
+  font-weight: 800;
+  color: var(--blue);
+}
+
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px 80px;
+  background: linear-gradient(180deg, #fff 0%, var(--primary-soft) 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 28px;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  background: #fff;
+  text-align: center;
+}
+
+.field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.field small {
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background-color: var(--bg-soft);
+  font: inherit;
+  font-size: 16px;
+  color: var(--text-strong);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--blue);
+  background-color: #fff;
+}
+
+.social-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.social-btn {
+  --btn-fg: var(--text-strong);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 16px;
+  gap: 12px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 2px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background-color: var(--border);
+}
+
+.form-error {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background-color: var(--red-soft);
+  color: var(--red-shadow);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+}
+
+/* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
 
@@ -2180,9 +2352,22 @@ button.phrase-card:hover {
     font-size: 16px;
   }
 
-  .mobile-menu .btn {
-    width: 100%;
+  .auth-actions {
+    display: none;
+  }
+
+  .mobile-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     margin-top: 24px;
+  }
+
+  .mobile-auth .btn,
+  .mobile-auth .user-chip {
+    width: 100%;
+    max-width: none;
+    margin-bottom: 0;
   }
 }
 

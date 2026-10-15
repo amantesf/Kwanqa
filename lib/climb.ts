@@ -192,5 +192,11 @@ export function hornLevel(grass: number) {
     if (grass >= threshold) level = i;
   });
   const next = HORN_THRESHOLDS[level + 1] ?? null;
-  return { level: level + 1, scale: HORN_SCALES[level], next, max: HORN_THRESHOLDS.length };
+  return {
+    level: level + 1,
+    scale: HORN_SCALES[level],
+    from: HORN_THRESHOLDS[level],
+    next,
+    max: HORN_THRESHOLDS.length,
+  };
 }

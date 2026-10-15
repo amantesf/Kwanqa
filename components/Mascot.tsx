@@ -12,22 +12,25 @@ type Props = {
   hornScale?: number;
 };
 
+// Colors sampled from the Walia brand illustration (public/brand/walia-scene.jpg).
 const C = {
-  horn: '#8c6a48',
-  hornRidge: '#a9875f',
-  fur: '#c4843f',
-  furShade: '#a96c2f',
-  cream: '#f6e3c0',
-  dark: '#4a3020',
-  hoof: '#33231a',
-  blush: '#f0a07a',
+  horn: '#4a1f0e',
+  hornRidge: '#874421',
+  fur: '#8c3d17',
+  furShade: '#612b17',
+  cream: '#f6dfb9',
+  earInner: '#fddeb7',
+  beard: '#5c2610',
+  dark: '#3d1a0a',
+  hoof: '#2e2119',
+  blush: '#d9825f',
   white: '#ffffff',
 };
 
 // A tapered, ridged horn: a filled crescent with ridges clipped inside it.
 function Horn({ id, flip, scale = 1 }: { id: string; flip?: boolean; scale?: number }) {
-  const shape = 'M84 80 C 72 40, 60 16, 40 20 C 28 22, 22 34, 26 48 C 34 40, 44 37, 54 40 C 74 48, 92 62, 112 76 Z';
-  const spine = 'M98 78 C 80 44, 64 28, 44 30 C 34 31, 28 40, 26 48';
+  const shape = 'M86 80 C 82 34, 62 4, 36 10 C 16 15, 8 40, 18 74 C 22 52, 30 34, 46 30 C 66 26, 92 48, 114 76 Z';
+  const spine = 'M100 78 C 84 38, 62 16, 42 20 C 24 24, 16 46, 18 74';
   return (
     <g transform={flip ? 'translate(240 0) scale(-1 1)' : undefined}>
       <g transform={`translate(98 78) scale(${scale}) translate(-98 -78)`}>
@@ -60,9 +63,9 @@ export default function Mascot({
 
   return (
     <svg
-      viewBox="0 0 240 280"
+      viewBox="0 -24 240 304"
       width={size}
-      height={(size * 280) / 240}
+      height={(size * 304) / 240}
       className={className}
       role="img"
       aria-label={title}
@@ -100,9 +103,9 @@ export default function Mascot({
 
       {/* ears */}
       <ellipse cx="62" cy="104" rx="22" ry="11" transform="rotate(-20 62 104)" fill={C.furShade} />
-      <ellipse cx="64" cy="104" rx="13" ry="6" transform="rotate(-20 64 104)" fill={C.blush} />
+      <ellipse cx="64" cy="104" rx="13" ry="6" transform="rotate(-20 64 104)" fill={C.earInner} />
       <ellipse cx="178" cy="104" rx="22" ry="11" transform="rotate(20 178 104)" fill={C.furShade} />
-      <ellipse cx="176" cy="104" rx="13" ry="6" transform="rotate(20 176 104)" fill={C.blush} />
+      <ellipse cx="176" cy="104" rx="13" ry="6" transform="rotate(20 176 104)" fill={C.earInner} />
 
       {/* head */}
       <ellipse cx="120" cy="116" rx="58" ry="54" fill={C.fur} />
@@ -116,7 +119,7 @@ export default function Mascot({
       <path d="M108 152 Q 120 163 132 152" stroke={C.dark} strokeWidth="4" strokeLinecap="round" fill="none" />
 
       {/* beard */}
-      <path d="M112 168 Q 120 190 128 168 Z" fill={C.dark} />
+      <path d="M100 160 Q 104 180 112 186 Q 120 206 128 186 Q 136 180 140 160 Q 120 174 100 160 Z" fill={C.beard} />
 
       {/* eyes */}
       <circle cx="96" cy="110" r="17" fill={C.white} />

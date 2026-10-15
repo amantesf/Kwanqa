@@ -184,7 +184,7 @@ export function zoneForCamp(campIdx: number, campCount: number): Zone {
 
 // Walia's horns grow a new ridge as grass is collected, like a real ibex's.
 const HORN_THRESHOLDS = [0, 30, 80, 150, 250];
-const HORN_SCALES = [0.72, 0.86, 1, 1.12, 1.24];
+const HORN_SCALES = [0.86, 0.96, 1.06, 1.15, 1.24];
 
 export function hornLevel(grass: number) {
   let level = 0;

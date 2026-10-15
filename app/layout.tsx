@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Noto_Sans_Ethiopic, Nunito } from 'next/font/google';
 import Header from '@/components/Header';
@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   description:
     'Learn Amharic and English with bite-sized lessons, real phrases, and everyday dialogues—built for Ethiopian families and the diaspora.',
   icons: { icon: '/favicon.ico' },
+};
+
+export const viewport: Viewport = {
+  colorScheme: 'only light',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

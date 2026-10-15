@@ -4,6 +4,9 @@
    ========================================================================== */
 
 :root {
+  /* Light only: stops browsers (Chrome auto-dark, Samsung Internet) from forcing a dark version. */
+  color-scheme: only light;
+
   /* Main brand color: Lalibela terracotta. Change these four to re-theme the site. */
   --primary: #d2582e;
   --primary-shadow: #a8431f;

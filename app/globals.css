@@ -1356,12 +1356,12 @@ a.camp-banner:active {
   --stone-edge: #c4bbae;
   --stone-fg: #a39887;
   position: relative;
-  width: 82px;
-  height: 70px;
+  width: 76px;
+  height: 68px;
   flex-shrink: 0;
   margin-top: 9px;
-  /* irregular rounded rock */
-  border-radius: 54% 46% 50% 50% / 58% 52% 48% 42%;
+  /* round, chunky, pressable */
+  border-radius: 50%;
   border: none;
   background-color: var(--stone);
   box-shadow: 0 9px 0 var(--stone-edge), inset 0 -6px 0 rgba(0, 0, 0, 0.06),

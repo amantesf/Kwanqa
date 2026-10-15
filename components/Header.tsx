@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { displayName, useAuth } from '@/components/AuthProvider';
 import Logo from '@/components/Logo';
 
 const NAV_LINKS = [
@@ -42,6 +43,39 @@ export default function Header() {
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+  const { user, loading, enabled, signOut } = useAuth();
+  const name = displayName(user);
+
+  // Signed out: log in / get started. Signed in: who you are, and log out.
+  const authActions = loading ? null : user ? (
+    <>
+      <Link href="/courses" className="user-chip" onClick={closeMenu} title={user.email ?? ''}>
+        <span className="user-avatar">{name.charAt(0).toUpperCase()}</span>
+        <span className="user-name">{name}</span>
+      </Link>
+      <button
+        type="button"
+        className="btn btn-secondary btn-sm"
+        onClick={() => {
+          closeMenu();
+          signOut();
+        }}
+      >
+        Log out
+      </button>
+    </>
+  ) : (
+    <>
+      {enabled && (
+        <Link href="/login" className="btn btn-secondary btn-sm" onClick={closeMenu}>
+          Log in
+        </Link>
+      )}
+      <Link href={enabled ? '/signup' : '/courses'} className="btn btn-sm" onClick={closeMenu}>
+        Get started
+      </Link>
+    </>
+  );
 
   return (
     <header className={`site-header${scrolled || menuOpen ? ' scrolled' : ''}`}>
@@ -61,9 +95,7 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
-          <Link href="/courses" className="btn btn-sm">
-            Get started
-          </Link>
+          <div className="auth-actions">{authActions}</div>
           <button
             type="button"
             className="icon-button"
@@ -90,9 +122,7 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-        <Link href="/courses" className="btn" onClick={closeMenu}>
-          Get started
-        </Link>
+        <div className="mobile-auth">{authActions}</div>
       </div>
     </header>
   );

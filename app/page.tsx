@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FadeInOnScroll } from '@/components/FadeInOnScroll';
 import Flag from '@/components/Flag';
+import HeroActions from '@/components/HeroActions';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import { CTA, SectionHead, Testimonials } from '@/components/sections';
@@ -24,16 +25,10 @@ export default function Home() {
               </h1>
               <p className="lead">
                 Bite‑sized lessons, real phrases, and everyday dialogues, built for
-                Ethiopian families and the diaspora. Free, with no account needed.
+                Ethiopian families and the diaspora. Free to use—sign up to save your
+                climb on any device.
               </p>
-              <div className="row">
-                <Link href="/courses?track=amharic" className="btn">
-                  Learn Amharic
-                </Link>
-                <Link href="/courses?track=english" className="btn btn-secondary">
-                  Learn English
-                </Link>
-              </div>
+              <HeroActions />
             </div>
           </FadeInOnScroll>
 

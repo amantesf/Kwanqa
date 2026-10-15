@@ -2459,3 +2459,692 @@ button.phrase-card:hover {
     width: min(280px, 100%);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Learn dashboard (/courses): a full-screen app in kwanqa white and terracotta.
+   sidebar · trail · climb rail — the site header and footer step aside here.
+   -------------------------------------------------------------------------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body:has(.learn-app) {
+  background-color: #fff;
+}
+
+body:has(.learn-app) .site-header,
+body:has(.learn-app) .site-footer {
+  display: none;
+}
+
+.learn-app {
+  --page: #fff; /* page colour behind the pinned banner */
+  --raised: #fff;
+  --header-h: 0px;
+
+  display: grid;
+  grid-template-columns: 256px minmax(0, 1fr) 368px;
+  gap: 40px;
+  align-items: start;
+  min-height: 100vh;
+  padding-right: 28px;
+  background-color: var(--page);
+  color: var(--text);
+}
+
+/* ---------- sidebar ---------- */
+
+.learn-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 28px 16px;
+  border-right: 2px solid var(--border);
+}
+
+.learn-logo {
+  padding: 0 12px 8px;
+}
+
+.learn-logo .brand-mark {
+  background-color: #faf9f6;
+}
+
+.learn-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.learn-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 56px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.learn-nav-link svg {
+  flex-shrink: 0;
+}
+
+.learn-nav-link:hover {
+  background-color: var(--bg-soft);
+}
+
+.learn-nav-link[aria-current='page'] {
+  color: var(--primary);
+  background-color: var(--primary-soft);
+  border-color: var(--primary-border);
+}
+
+/* ---------- centre column ---------- */
+
+.learn-main {
+  min-width: 0;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  padding-block: 24px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.camp-header {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 18px 18px 24px;
+  border-radius: 18px;
+  background-color: var(--primary);
+  /* the second shadow paints the page colour above the banner so the trail
+     vanishes cleanly as it scrolls up behind it */
+  box-shadow: 0 5px 0 var(--primary-shadow), 0 -14px 0 0 var(--page);
+  color: #fff;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.camp-header.alt {
+  background-color: var(--blue);
+  box-shadow: 0 5px 0 var(--blue-shadow), 0 -14px 0 0 var(--page);
+}
+
+.camp-header-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.camp-header-kicker {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.camp-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.camp-header-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.16);
+  border-bottom-width: 5px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+}
+
+.camp-header-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.camp-header-btn:active {
+  border-bottom-width: 2px;
+  transform: translateY(3px);
+}
+
+/* the trail sits straight on the page — no panels */
+.learn-app .zone {
+  background: none;
+  padding: 8px 0 12px;
+  gap: 18px;
+}
+
+.learn-app .zone-locked {
+  filter: none;
+  opacity: 1;
+}
+
+.learn-app .zone-locked::after {
+  display: none;
+}
+
+.camp-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.camp-divider::before,
+.camp-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background-color: var(--border);
+}
+
+.learn-app .trail-line path {
+  stroke: transparent;
+}
+
+.learn-app .stone-label,
+.learn-app .trail-grass {
+  display: none;
+}
+
+.learn-app .stone {
+  --stone: #e5e5e5;
+  --stone-edge: #cecece;
+  --stone-fg: #afafaf;
+  width: 78px;
+  height: 70px;
+}
+
+.learn-app .stone.done {
+  --stone: var(--gold);
+  --stone-edge: var(--gold-shadow);
+  --stone-fg: #fff;
+}
+
+.learn-app .stone.current {
+  --stone: var(--primary);
+  --stone-edge: var(--primary-shadow);
+  --stone-fg: #fff;
+  outline: 9px solid #ececec;
+  outline-offset: 7px;
+}
+
+.learn-app .stone.trophy {
+  --stone-fg: #afafaf;
+}
+
+.learn-app .stone.trophy.done {
+  --stone: #fff2cc;
+  --stone-edge: var(--gold-shadow);
+}
+
+.learn-app .stone.locked {
+  color: var(--stone-fg);
+}
+
+.learn-app .trail-walia {
+  top: -34px;
+}
+
+.learn-app .trail-walia.left {
+  right: 92px;
+}
+
+.learn-app .trail-walia.right {
+  left: 92px;
+}
+
+/* the START bubble belongs to the main trail only */
+.start-bubble {
+  display: none;
+}
+
+.learn-app .start-bubble {
+  display: block;
+  position: absolute;
+  top: -52px;
+  z-index: 3;
+  padding: 7px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background-color: var(--raised, #fff);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+  white-space: nowrap;
+  animation: start-bob 1.6s ease-in-out infinite;
+}
+
+.start-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 12px;
+  height: 12px;
+  background-color: inherit;
+  border-right: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes start-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.mesob {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.mesob svg {
+  max-width: none;
+}
+
+.mesob.open {
+  animation: start-bob 2.4s ease-in-out infinite;
+}
+
+.learn-app .summit.zone-locked {
+  filter: grayscale(0.6);
+  opacity: 0.7;
+}
+
+.learn-app .trailhead p {
+  color: var(--text-muted);
+}
+
+/* ---------- right rail ---------- */
+
+.learn-rail {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-block: 24px;
+}
+
+.rail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 6px;
+}
+
+.track-flags {
+  display: flex;
+  gap: 6px;
+}
+
+.track-flag {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  opacity: 0.45;
+}
+
+.track-flag:hover {
+  opacity: 0.8;
+  background-color: var(--bg-soft);
+}
+
+.track-flag[aria-pressed='true'] {
+  opacity: 1;
+  border-color: var(--border);
+}
+
+.track-flag-img {
+  width: 36px;
+  height: 27px;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.top-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.top-stat svg {
+  flex-shrink: 0;
+}
+
+.top-stat.altitude {
+  color: var(--primary);
+}
+
+.top-stat.grass {
+  color: var(--green-dark);
+}
+
+.top-stat.horns {
+  color: var(--gold-shadow);
+}
+
+.rail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background-color: var(--page);
+}
+
+.rail-card p {
+  margin: 0;
+  color: var(--text);
+}
+
+.rail-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rail-title {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--text-strong);
+}
+
+.rail-link {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.rail-link:hover {
+  filter: brightness(1.15);
+}
+
+.rail-promo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+}
+
+.rail-promo .btn {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+}
+
+.rail-promo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rail-promo-art {
+  margin-top: -6px;
+}
+
+.rail-badge {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--primary), var(--gold));
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  transform: skewX(-8deg);
+}
+
+.quest {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.quest-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quest-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.quest-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quest-meter {
+  position: relative;
+  flex: 1;
+  height: 20px;
+  border-radius: 999px;
+  background-color: var(--border);
+  overflow: hidden;
+}
+
+.quest-meter span {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background-color: var(--gold);
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.3);
+  transition: width 0.4s ease;
+}
+
+.quest-meter em {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- smaller screens ---------- */
+
+@media (max-width: 1240px) {
+  .learn-app {
+    grid-template-columns: 96px minmax(0, 1fr) 330px;
+    gap: 28px;
+  }
+
+  .learn-logo .brand {
+    font-size: 0;
+    gap: 0;
+  }
+
+  .learn-logo {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .learn-nav-link {
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .learn-nav-link span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .learn-app {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 0 16px;
+  }
+
+  .learn-sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-right: none;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .learn-nav {
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .learn-nav-link {
+    min-height: 44px;
+    padding: 6px;
+  }
+
+  .learn-nav-link svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .learn-rail {
+    position: static;
+    order: -1;
+    padding-block: 10px 0;
+  }
+
+  .learn-sidebar {
+    order: -2;
+  }
+
+  .rail-extra {
+    display: none;
+  }
+
+  .learn-main {
+    padding-top: 12px;
+  }
+
+  .camp-header {
+    padding: 12px 12px 12px 16px;
+  }
+
+  .camp-header h2 {
+    font-size: 16px;
+  }
+
+  .camp-header-kicker {
+    font-size: 12px;
+  }
+
+  .camp-header-btn {
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .camp-header-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .top-stat {
+    font-size: 15px;
+    gap: 5px;
+  }
+
+  .track-flag-img {
+    width: 30px;
+    height: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-bubble,
+  .mesob.open {
+    animation: none;
+  }
+}

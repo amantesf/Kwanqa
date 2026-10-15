@@ -65,6 +65,43 @@ function subscribe(callback: () => void) {
   };
 }
 
+/** Notifies on every local progress change (used to sync to the account). */
+export function subscribeClimb(callback: () => void) {
+  listeners.add(callback);
+  return () => {
+    listeners.delete(callback);
+  };
+}
+
+export function readClimb(): Climb {
+  return parse(readRaw());
+}
+
+export function replaceClimb(climb: Climb) {
+  write(climb);
+}
+
+export function clearClimb() {
+  try {
+    window.localStorage.removeItem(KEY);
+    window.localStorage.removeItem(LEGACY_KEY);
+  } catch {
+    // nothing to clear
+  }
+  listeners.forEach(listener => listener());
+}
+
+/** Combines two climbs: every completed lesson from both, and the larger grass total. */
+export function mergeClimbs(a: Climb, b: Climb): Climb {
+  const completed: Climb['completed'] = {};
+  for (const slug of new Set([...Object.keys(a.completed), ...Object.keys(b.completed)])) {
+    completed[slug] = [...new Set([...(a.completed[slug] ?? []), ...(b.completed[slug] ?? [])])].sort(
+      (x, y) => x - y,
+    );
+  }
+  return { completed, grass: Math.max(a.grass, b.grass) };
+}
+
 export function useClimb(): Climb {
   const raw = useSyncExternalStore(subscribe, readRaw, () => EMPTY);
   return useMemo(() => parse(raw), [raw]);

@@ -264,7 +264,7 @@ export default function ProfileView() {
               </div>
               <div>
                 <dt>Why</dt>
-                <dd>{REASON[profile.reason] ?? profile.reason}</dd>
+                <dd>{profile.reasons.map(r => REASON[r] ?? r).join(', ') || '—'}</dd>
               </div>
               <div>
                 <dt>Daily goal</dt>

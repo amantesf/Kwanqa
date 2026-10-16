@@ -7,8 +7,8 @@ export type Profile = {
   track: Track;
   speaks: string[];
   level: 'new' | 'some-words' | 'basic' | 'conversational';
-  reason: string;
-  heardFrom: string;
+  reasons: string[];
+  heardFrom: string[];
   dailyMinutes: number;
   completedAt: string;
 };
@@ -28,10 +28,24 @@ function parse(raw: string): Profile | null {
   if (!raw) return null;
   try {
     const value = JSON.parse(raw);
-    return value && (value.track === 'amharic' || value.track === 'english') ? (value as Profile) : null;
+    if (!value || (value.track !== 'amharic' && value.track !== 'english')) return null;
+    return normalizeProfile(value);
   } catch {
     return null;
   }
+}
+
+// Early versions stored one reason and one source; turn them into lists.
+const asList = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : typeof v === 'string' ? [v] : [];
+
+export function normalizeProfile(value: Record<string, unknown>): Profile {
+  return {
+    ...(value as Profile),
+    speaks: asList(value.speaks),
+    reasons: asList(value.reasons ?? value.reason),
+    heardFrom: asList(value.heardFrom),
+  };
 }
 
 function subscribe(callback: () => void) {

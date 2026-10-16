@@ -13,8 +13,8 @@ type Answers = {
   track?: Track;
   speaks: string[];
   level?: Profile['level'];
-  reason?: string;
-  heardFrom?: string;
+  reasons: string[];
+  heardFrom: string[];
   dailyMinutes?: number;
 };
 
@@ -50,6 +50,8 @@ export default function Onboarding() {
   const [answers, setAnswers] = useState<Answers>({
     track: preset === 'amharic' || preset === 'english' ? preset : undefined,
     speaks: [],
+    reasons: [],
+    heardFrom: [],
   });
   const [step, setStep] = useState(0);
 
@@ -94,8 +96,9 @@ export default function Onboarding() {
       ],
     },
     {
-      key: 'reason',
+      key: 'reasons',
       question: `Why are you learning ${lang}?`,
+      multi: true,
       options: [
         { value: 'family', label: 'Talk with family', icon: emoji('👨‍👩‍👧') },
         { value: 'heritage', label: 'Connect with my heritage', icon: emoji('☕') },
@@ -108,6 +111,7 @@ export default function Onboarding() {
     {
       key: 'heardFrom',
       question: 'How did you hear about kwanqa?',
+      multi: true,
       options: [
         { value: 'friends', label: 'Friends or family', icon: emoji('🤝') },
         { value: 'community', label: 'Church or community', icon: emoji('⛪') },
@@ -141,25 +145,27 @@ export default function Onboarding() {
   function choose(value: string) {
     setAnswers(prev => {
       if (current.multi) {
-        const list = prev.speaks.includes(value)
-          ? prev.speaks.filter(v => v !== value)
-          : [...prev.speaks, value];
-        return { ...prev, speaks: list };
+        const key = current.key as 'speaks' | 'reasons' | 'heardFrom';
+        const list = prev[key].includes(value)
+          ? prev[key].filter(v => v !== value)
+          : [...prev[key], value];
+        return { ...prev, [key]: list };
       }
       const parsed = current.key === 'dailyMinutes' ? Number(value) : value;
       return { ...prev, [current.key]: parsed };
     });
   }
 
-  const answered = current.multi ? answers.speaks.length > 0 : answers[current.key] !== undefined;
+  const answer = answers[current.key];
+  const answered = Array.isArray(answer) ? answer.length > 0 : answer !== undefined;
 
   function finish() {
     const profile: Profile = {
       track: answers.track ?? 'amharic',
       speaks: answers.speaks,
       level: answers.level ?? 'new',
-      reason: answers.reason ?? 'other',
-      heardFrom: answers.heardFrom ?? 'other',
+      reasons: answers.reasons,
+      heardFrom: answers.heardFrom,
       dailyMinutes: answers.dailyMinutes ?? 10,
       completedAt: new Date().toISOString(),
     };

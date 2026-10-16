@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import { completeLesson, hornLevel, REST_COST, spendGrass, useClimb } from '@/lib/climb';
@@ -18,6 +18,68 @@ function Hoof({ filled }: { filled: boolean }) {
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden className={`hoof${filled ? ' on' : ''}`}>
       <path d="M11 4 C 6 4, 4 9, 4.5 15 C 5 19, 7.5 21, 10 20 C 11.2 19.5, 11.2 17, 11 14 Z" />
       <path d="M13 4 C 18 4, 20 9, 19.5 15 C 19 19, 16.5 21, 14 20 C 12.8 19.5, 12.8 17, 13 14 Z" />
+    </svg>
+  );
+}
+
+// Answer sounds. Learners can mute them; the choice is remembered in this browser.
+const SOUND_FILES = { correct: '/sounds/correct.mp3', wrong: '/sounds/wrong.mp3' } as const;
+const MUTE_KEY = 'kwanqa-sound-off';
+
+function useAnswerSounds() {
+  const audio = useRef<Partial<Record<keyof typeof SOUND_FILES, HTMLAudioElement>>>({});
+  const [muted, setMuted] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && window.localStorage.getItem(MUTE_KEY) === '1';
+    } catch {
+      return false; // storage unavailable; sounds stay on
+    }
+  });
+
+  useEffect(() => {
+    // Load both sounds up front so the first answer plays instantly.
+    for (const [kind, src] of Object.entries(SOUND_FILES)) {
+      const el = new Audio(src);
+      el.preload = 'auto';
+      audio.current[kind as keyof typeof SOUND_FILES] = el;
+    }
+  }, []);
+
+  function play(kind: keyof typeof SOUND_FILES) {
+    if (muted) return;
+    const el = audio.current[kind];
+    if (!el) return;
+    el.currentTime = 0;
+    el.volume = 0.6;
+    el.play().catch(() => {});
+  }
+
+  function toggle() {
+    setMuted(m => {
+      try {
+        window.localStorage.setItem(MUTE_KEY, m ? '0' : '1');
+      } catch {
+        // storage unavailable; the setting lasts for this session only
+      }
+      return !m;
+    });
+  }
+
+  return { play, muted, toggle };
+}
+
+function SoundIcon({ muted }: { muted: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+      {muted ? (
+        <path d="M16 9.5l5 5M21 9.5l-5 5" />
+      ) : (
+        <>
+          <path d="M15.5 9a4 4 0 0 1 0 6" />
+          <path d="M18 6.5a7.5 7.5 0 0 1 0 11" />
+        </>
+      )}
     </svg>
   );
 }
@@ -128,6 +190,7 @@ export default function Practice({
   const [reaction, setReaction] = useState<Reaction>(null);
   const [earned, setEarned] = useState(0);
   const [hornsBefore] = useState(() => hornLevel(climb.grass).level);
+  const sounds = useAnswerSounds();
 
   const current = queue[0];
   const progress = initial.length ? solved.size / initial.length : 1;
@@ -159,6 +222,7 @@ export default function Practice({
     if (!current || current.kind !== 'choice' || !choice) return;
     const correct = choice === current.answer;
     setLastCorrect(correct);
+    sounds.play(correct ? 'correct' : 'wrong');
     if (correct) {
       gainStreak();
     } else {
@@ -169,6 +233,7 @@ export default function Practice({
 
   function solveMatch() {
     setLastCorrect(true);
+    sounds.play('correct');
     gainStreak();
     setPhase('feedback');
   }
@@ -312,6 +377,16 @@ export default function Practice({
         <div className="meter practice-meter" aria-label={`${Math.round(progress * 100)}% complete`}>
           <span style={{ width: `${progress * 100}%` }} />
         </div>
+        <button
+          type="button"
+          className="practice-sound"
+          onClick={sounds.toggle}
+          aria-pressed={!sounds.muted}
+          aria-label={sounds.muted ? 'Turn sounds on' : 'Turn sounds off'}
+          title={sounds.muted ? 'Sounds off' : 'Sounds on'}
+        >
+          <SoundIcon muted={sounds.muted} />
+        </button>
         <div className="stamina" aria-label={`Stamina ${stamina} of ${MAX_STAMINA}`} title="Stamina (ጉልበት)">
           {Array.from({ length: MAX_STAMINA }, (_, i) => (
             <Hoof key={i} filled={i < stamina} />
@@ -373,6 +448,7 @@ export default function Practice({
               key={current.id + solved.size + queue.length}
               exercise={current}
               onMistake={() => {
+                sounds.play('wrong');
                 loseStamina();
                 if (stamina <= 1) setPhase('rest');
               }}

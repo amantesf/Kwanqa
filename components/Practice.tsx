@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import { completeLesson, hornLevel, REST_COST, spendGrass, useClimb } from '@/lib/climb';
@@ -19,6 +19,16 @@ function Hoof({ filled }: { filled: boolean }) {
       <path d="M11 4 C 6 4, 4 9, 4.5 15 C 5 19, 7.5 21, 10 20 C 11.2 19.5, 11.2 17, 11 14 Z" />
       <path d="M13 4 C 18 4, 20 9, 19.5 15 C 19 19, 16.5 21, 14 20 C 12.8 19.5, 12.8 17, 13 14 Z" />
     </svg>
+  );
+}
+
+function FeedbackIcon({ good }: { good: boolean }) {
+  return (
+    <span className={`feedback-icon${good ? ' good' : ' bad'}`} aria-hidden>
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round">
+        {good ? <path d="M5 12.5l4.5 4.5L19 7.5" /> : <path d="M7 7l10 10M17 7L7 17" />}
+      </svg>
+    </span>
   );
 }
 
@@ -193,10 +203,34 @@ export default function Practice({
     }
   }
 
+  // Keyboard, like Duolingo: number keys pick an answer, Enter checks or continues.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (!current) return;
+      if (phase === 'question' && current.kind === 'choice') {
+        const n = Number(e.key);
+        if (n >= 1 && n <= current.options.length) {
+          setChoice(current.options[n - 1]);
+          return;
+        }
+        if (e.key === 'Enter' && choice) {
+          e.preventDefault();
+          check();
+        }
+      } else if (phase === 'feedback' && e.key === 'Enter') {
+        e.preventDefault();
+        advance();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   // A lesson without phrases has nothing to quiz; finish it straight away.
   if (initial.length === 0 && phase !== 'done') {
     return (
-      <div className="practice">
+      <div className="practice practice-screen practice-done">
         <p className="muted">This lesson has no practice yet.</p>
         <button
           type="button"
@@ -215,7 +249,7 @@ export default function Practice({
   if (phase === 'done') {
     const grew = horns.level > hornsBefore;
     return (
-      <div className="practice practice-done">
+      <div className="practice practice-screen practice-done">
         <Mascot pose="cheer" size={150} hornScale={horns.scale} className="floaty" />
         <h2 className="h2">Lesson complete!</h2>
         <div className="reward-row">
@@ -247,7 +281,7 @@ export default function Practice({
   if (phase === 'rest') {
     const canRest = climb.grass >= REST_COST;
     return (
-      <div className="practice practice-done">
+      <div className="practice practice-screen practice-done">
         <Mascot pose="happy" size={140} hornScale={horns.scale} />
         <h2 className="h2">Walia needs a rest</h2>
         <p className="lead" style={{ maxWidth: 460 }}>
@@ -270,7 +304,7 @@ export default function Practice({
   }
 
   return (
-    <div className="practice">
+    <div className="practice practice-screen">
       <div className="practice-top">
         <button type="button" className="practice-close" onClick={onExit} aria-label="Leave practice">
           ✕
@@ -286,25 +320,27 @@ export default function Practice({
       </div>
 
       <div className="practice-body">
-        <div
-          key={reaction?.n ?? 0}
-          className={`practice-walia${reaction ? ` ${reaction.kind}` : ''}`}
-          aria-hidden
-        >
-          <Mascot pose={reaction?.kind === 'hop' ? 'cheer' : 'happy'} size={96} hornScale={horns.scale} />
-        </div>
-
         <div className="practice-question">
-          <h2 className="h3" style={{ fontSize: 24 }}>
-            {current.instruction}
-          </h2>
+          <h2 className="practice-instruction">{current.instruction}</h2>
 
-          {current.kind === 'choice' ? (
-            <>
+          <div className="practice-ask">
+            <div
+              key={reaction?.n ?? 0}
+              className={`practice-walia${reaction ? ` ${reaction.kind}` : ''}`}
+              aria-hidden
+            >
+              <Mascot pose={reaction?.kind === 'hop' ? 'cheer' : 'happy'} size={110} hornScale={horns.scale} />
+            </div>
+            {current.kind === 'choice' && (
               <div className="prompt-bubble">
                 <span className="prompt-main">{current.prompt}</span>
                 {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
               </div>
+            )}
+          </div>
+
+          {current.kind === 'choice' ? (
+            <>
               <div className="options">
                 {current.options.map((option, i) => {
                   const reveal = phase === 'feedback';
@@ -347,8 +383,10 @@ export default function Practice({
       </div>
 
       <div className={`practice-footer${phase === 'feedback' ? (lastCorrect ? ' good' : ' bad') : ''}`}>
-        {phase === 'feedback' ? (
+        <div className="practice-footer-inner">
+          {phase === 'feedback' ? (
           <>
+            <FeedbackIcon good={lastCorrect} />
             <div className="feedback-text">
               <strong>{lastCorrect ? 'Nice footing!' : 'Walia slipped!'}</strong>
               {current.kind === 'choice' && (
@@ -373,7 +411,8 @@ export default function Practice({
               </button>
             )}
           </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

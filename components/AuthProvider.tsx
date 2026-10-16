@@ -39,19 +39,28 @@ export function safeNext(next: string | null | undefined, fallback = '/courses')
 }
 
 async function pushClimb(userId: string, climb: Climb) {
-  await supabase
-    ?.from('climbs')
-    .upsert({ user_id: userId, completed: climb.completed, grass: climb.grass, updated_at: new Date().toISOString() });
+  if (!supabase) return;
+  const base = { user_id: userId, completed: climb.completed, grass: climb.grass, updated_at: new Date().toISOString() };
+  const { error } = await supabase.from('climbs').upsert({ ...base, days: climb.days, log: climb.log });
+  // If the database doesn't have the streak columns yet, still save the rest of the progress.
+  if (error) await supabase.from('climbs').upsert(base);
 }
 
 /** Combine this browser's progress with the account's, then save both. */
 async function pullAndMerge(userId: string) {
   if (!supabase) return;
-  const { data, error } = await supabase.from('climbs').select('completed, grass').eq('user_id', userId).maybeSingle();
+  let result = await supabase.from('climbs').select('completed, grass, days, log').eq('user_id', userId).maybeSingle();
+  // Older databases have no streak columns yet; read the rest of the progress without it.
+  if (result.error) result = await supabase.from('climbs').select('completed, grass').eq('user_id', userId).maybeSingle();
+  const { data, error } = result;
   if (error) return;
-  const remote: Climb = data
-    ? { completed: (data.completed as Climb['completed']) ?? {}, grass: data.grass ?? 0 }
-    : { completed: {}, grass: 0 };
+  const row = data as { completed?: Climb['completed']; grass?: number; days?: string[]; log?: Climb['log'] } | null;
+  const remote: Climb = {
+    completed: row?.completed ?? {},
+    grass: row?.grass ?? 0,
+    days: Array.isArray(row?.days) ? row.days : [],
+    log: row?.log && typeof row.log === 'object' ? row.log : {},
+  };
   const merged = mergeClimbs(readClimb(), remote);
   replaceClimb(merged);
   await pushClimb(userId, merged);

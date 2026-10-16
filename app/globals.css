@@ -3989,6 +3989,247 @@ body:has(.learn-app) .site-footer {
   color: var(--green-dark);
 }
 
+/* Climb streak: mountain button and weekly popover */
+.climb-streak {
+  position: relative;
+}
+
+.streak-btn {
+  min-height: 44px;
+  padding: 0 8px;
+  margin: 0 -8px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: #a39a92;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.streak-btn.lit {
+  color: var(--primary);
+}
+
+.streak-btn:hover,
+.streak-btn[aria-expanded='true'] {
+  background: var(--bg-soft);
+}
+
+.streak-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.25);
+  cursor: default;
+}
+
+.streak-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.streak-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.streak-sub {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.streak-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin: 18px 0 0;
+  padding: 14px 10px;
+  list-style: none;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+}
+
+.streak-day button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 0 6px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.streak-day button:disabled {
+  cursor: default;
+}
+
+.streak-day.picked button {
+  background: var(--primary-soft);
+}
+
+.streak-day-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #a39a92;
+}
+
+.streak-day.today .streak-day-label {
+  color: var(--primary);
+}
+
+.streak-dot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ece7e2;
+}
+
+.streak-day.future .streak-dot {
+  background: #f5f2ef;
+}
+
+.streak-day.today:not(.active) .streak-dot {
+  box-shadow: inset 0 0 0 2px var(--primary);
+  background: #fff;
+}
+
+.streak-day.active .streak-dot {
+  background: var(--primary);
+}
+
+.streak-log {
+  margin-top: 14px;
+  padding: 14px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+}
+
+.streak-log-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.streak-log-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 10px 0 0;
+}
+
+.streak-log-stats div {
+  text-align: center;
+}
+
+.streak-log-stats dt {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+.streak-log-stats dd {
+  margin: 2px 0 0;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.streak-log-empty {
+  margin: 6px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.streak-goal {
+  margin-top: 14px;
+  padding: 14px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+}
+
+.streak-goal-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.streak-bar {
+  height: 12px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: #ece7e2;
+  overflow: hidden;
+}
+
+.streak-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.streak-alt {
+  margin: 14px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.streak-alt strong {
+  color: var(--primary);
+}
+
+/* On narrow screens, span the popover across the whole stats bar. */
+@media (max-width: 900px) {
+  .rail-top {
+    position: relative;
+  }
+
+  .climb-streak {
+    position: static;
+  }
+
+  .streak-pop {
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: 420px;
+    margin-inline: auto;
+    transform: none;
+  }
+}
+
 .top-stat.horns {
   color: var(--gold-shadow);
 }

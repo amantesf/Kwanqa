@@ -19,3 +19,9 @@ create policy "Insert own climb" on public.climbs
 
 create policy "Update own climb" on public.climbs
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Climb streak: the days a learner finished at least one lesson (YYYY-MM-DD),
+-- and a daily log of lessons, answers and minutes for each of those days.
+-- Safe to run more than once.
+alter table public.climbs add column if not exists days jsonb not null default '[]'::jsonb;
+alter table public.climbs add column if not exists log jsonb not null default '{}'::jsonb;

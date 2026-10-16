@@ -190,6 +190,7 @@ export default function Practice({
   const [reaction, setReaction] = useState<Reaction>(null);
   const [earned, setEarned] = useState(0);
   const [hornsBefore] = useState(() => hornLevel(climb.grass).level);
+  const [startedAt] = useState(() => Date.now()); // for the daily log's time spent
   const sounds = useAnswerSounds();
 
   const current = queue[0];
@@ -252,7 +253,9 @@ export default function Practice({
     setChoice(null);
 
     if (nextQueue.length === 0) {
-      setEarned(completeLesson(slug, lessonIndex, mistakes));
+      // Every question was answered correctly once, plus each wrong try along the way.
+      const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
+      setEarned(completeLesson(slug, lessonIndex, mistakes, work));
       setPhase('done');
     } else if (stamina === 0) {
       setPhase('rest');

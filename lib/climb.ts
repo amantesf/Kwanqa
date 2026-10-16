@@ -5,11 +5,16 @@ import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 export type Climb = {
   completed: Record<string, number[]>; // course slug -> completed lesson indexes
   grass: number; // ሳር — earned by finishing lessons, spent to recover stamina
+  days: string[]; // local dates (YYYY-MM-DD) with at least one finished lesson, for the climb streak
+  log: Record<string, DayWork>; // what the learner did on each of those dates
 };
+
+/** One day's work: lessons finished, questions answered (right and wrong), and time spent. */
+export type DayWork = { lessons: number; answers: number; correct: number; seconds: number };
 
 const KEY = 'kwanqa-climb-v1';
 const LEGACY_KEY = 'kwanqa-progress-v1';
-const EMPTY = '{"completed":{},"grass":0}';
+const EMPTY = '{"completed":{},"grass":0,"days":[],"log":{}}';
 
 // Grass economy
 export const LESSON_GRASS = 10;
@@ -29,7 +34,7 @@ function readRaw(): string {
     if (raw) return raw;
     // Carry over lesson progress saved before grass existed.
     const legacy = window.localStorage.getItem(LEGACY_KEY);
-    return legacy ? JSON.stringify({ completed: JSON.parse(legacy), grass: 0 }) : EMPTY;
+    return legacy ? JSON.stringify({ completed: JSON.parse(legacy), grass: 0, days: [], log: {} }) : EMPTY;
   } catch {
     return EMPTY;
   }
@@ -41,9 +46,11 @@ function parse(raw: string): Climb {
     return {
       completed: value?.completed && typeof value.completed === 'object' ? value.completed : {},
       grass: Number.isFinite(value?.grass) ? Math.max(0, value.grass) : 0,
+      days: Array.isArray(value?.days) ? value.days.filter(isDateKey) : [],
+      log: parseLog(value?.log),
     };
   } catch {
-    return { completed: {}, grass: 0 };
+    return { completed: {}, grass: 0, days: [], log: {} };
   }
 }
 
@@ -91,7 +98,7 @@ export function clearClimb() {
   listeners.forEach(listener => listener());
 }
 
-/** Combines two climbs: every completed lesson from both, and the larger grass total. */
+/** Combines two climbs: every completed lesson and practice day from both, and the larger grass total. */
 export function mergeClimbs(a: Climb, b: Climb): Climb {
   const completed: Climb['completed'] = {};
   for (const slug of new Set([...Object.keys(a.completed), ...Object.keys(b.completed)])) {
@@ -99,7 +106,21 @@ export function mergeClimbs(a: Climb, b: Climb): Climb {
       (x, y) => x - y,
     );
   }
-  return { completed, grass: Math.max(a.grass, b.grass) };
+  const days = [...new Set([...a.days, ...b.days])].sort();
+  // Each device saves the full day, so keep the larger count rather than adding them twice.
+  const log: Record<string, DayWork> = { ...a.log };
+  for (const [day, work] of Object.entries(b.log)) {
+    const mine = log[day];
+    log[day] = mine
+      ? {
+          lessons: Math.max(mine.lessons, work.lessons),
+          answers: Math.max(mine.answers, work.answers),
+          correct: Math.max(mine.correct, work.correct),
+          seconds: Math.max(mine.seconds, work.seconds),
+        }
+      : work;
+  }
+  return { completed, grass: Math.max(a.grass, b.grass), days, log };
 }
 
 export function useClimb(): Climb {
@@ -112,7 +133,17 @@ export function isDone(climb: Climb, slug: string, lesson: number) {
 }
 
 /** Marks a lesson complete and awards grass. Returns the grass earned. */
-export function completeLesson(slug: string, lesson: number, mistakes: number) {
+/** What happened during one lesson, for the daily log. */
+export type LessonWork = { answers: number; correct: number; seconds: number };
+
+// Time spent per lesson is capped, so a tab left open overnight doesn't count as hours of study.
+const MAX_LESSON_SECONDS = 30 * 60;
+
+/**
+ * Marks a lesson finished and returns the grass earned. Only lessons with real
+ * answered questions (`work`) count toward the daily log and the climb streak.
+ */
+export function completeLesson(slug: string, lesson: number, mistakes: number, work?: LessonWork) {
   const climb = parse(readRaw());
   const firstTime = !isDone(climb, slug, lesson);
   const earned = firstTime ? LESSON_GRASS + (mistakes === 0 ? PERFECT_BONUS : 0) : REPLAY_GRASS;
@@ -120,6 +151,20 @@ export function completeLesson(slug: string, lesson: number, mistakes: number) {
   done.add(lesson);
   climb.completed[slug] = [...done].sort((a, b) => a - b);
   climb.grass += earned;
+  if (work && work.answers > 0) {
+    const today = dateKey();
+    if (!climb.days.includes(today)) climb.days = [...climb.days, today].sort();
+    const day = climb.log[today] ?? { lessons: 0, answers: 0, correct: 0, seconds: 0 };
+    climb.log = {
+      ...climb.log,
+      [today]: {
+        lessons: day.lessons + 1,
+        answers: day.answers + work.answers,
+        correct: day.correct + work.correct,
+        seconds: day.seconds + Math.min(Math.max(0, Math.round(work.seconds)), MAX_LESSON_SECONDS),
+      },
+    };
+  }
   write(climb);
   return earned;
 }
@@ -199,4 +244,70 @@ export function hornLevel(grass: number) {
     next,
     max: HORN_THRESHOLDS.length,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Climb streak: consecutive days with at least one finished lesson.
+// ---------------------------------------------------------------------------
+
+const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;
+
+function isDateKey(value: unknown): value is string {
+  return typeof value === 'string' && DATE_KEY.test(value);
+}
+
+function count(value: unknown) {
+  return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
+}
+
+function parseLog(value: unknown): Record<string, DayWork> {
+  const log: Record<string, DayWork> = {};
+  if (!value || typeof value !== 'object') return log;
+  for (const [day, raw] of Object.entries(value as Record<string, Record<string, unknown>>)) {
+    if (!isDateKey(day) || !raw || typeof raw !== 'object') continue;
+    log[day] = { lessons: count(raw.lessons), answers: count(raw.answers), correct: count(raw.correct), seconds: count(raw.seconds) };
+  }
+  return log;
+}
+
+/** The learner's local calendar date as YYYY-MM-DD. */
+export function dateKey(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function addDays(date: Date, n: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + n);
+  return next;
+}
+
+export type StreakDay = { label: string; key: string; active: boolean; today: boolean; future: boolean };
+
+/**
+ * The current streak and this week's practice days (Sunday to Saturday).
+ * A streak stays alive until the end of the day after the last lesson,
+ * so learners who haven't practiced yet today don't see it drop to zero.
+ */
+export function climbStreak(days: string[], now = new Date()) {
+  const practiced = new Set(days);
+  const today = dateKey(now);
+  const doneToday = practiced.has(today);
+
+  let count = 0;
+  let cursor = doneToday ? now : addDays(now, -1);
+  while (practiced.has(dateKey(cursor))) {
+    count += 1;
+    cursor = addDays(cursor, -1);
+  }
+
+  const sunday = addDays(now, -now.getDay());
+  const week: StreakDay[] = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((label, i) => {
+    const key = dateKey(addDays(sunday, i));
+    return { label, key, active: practiced.has(key), today: key === today, future: key > today };
+  });
+
+  return { count, doneToday, week };
 }

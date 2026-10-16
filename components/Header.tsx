@@ -77,6 +77,24 @@ export default function Header() {
     </>
   );
 
+  // The landing page keeps the header to just the logo: its links and buttons
+  // are already in the hero and the footer. Logged-in learners keep their avatar.
+  if (pathname === '/') {
+    return (
+      <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
+        <div className="container">
+          <Logo />
+          {!loading && user && (
+            <Link href="/profile" className="user-chip landing-chip" title="Your profile">
+              <span className="user-avatar">{name.charAt(0).toUpperCase()}</span>
+              <span className="user-name">{name}</span>
+            </Link>
+          )}
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className={`site-header${scrolled || menuOpen ? ' scrolled' : ''}`}>
       <div className="container">

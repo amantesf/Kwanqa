@@ -2014,6 +2014,11 @@ button.phrase-card:hover {
   background-color: var(--bg-soft);
 }
 
+/* On the landing page the avatar is the header's only control, on every screen size. */
+.landing-chip {
+  display: inline-flex;
+}
+
 .user-avatar {
   width: 32px;
   height: 32px;

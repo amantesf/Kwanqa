@@ -30,7 +30,7 @@ export default function HeroActions() {
         )}
       </div>
       <Link href="/courses" className="faint small text-link">
-        or try a lesson first, no account needed →
+        or explore the trail first →
       </Link>
     </div>
   );

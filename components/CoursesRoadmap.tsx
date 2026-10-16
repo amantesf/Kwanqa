@@ -89,7 +89,6 @@ export default function CoursesRoadmap() {
   const nextKey = next ? `${next.slug}:${next.lesson}` : 'summit';
   // Camps above the one you're on stay locked under the clouds.
   const currentCamp = next ? courses.findIndex(c => c.slug === next.slug) : courses.length;
-  const [viewCamp, setViewCamp] = useState(Math.min(currentCamp, courses.length - 1));
 
   // Open the trail where Walia is standing, not at the summit. Fonts and images
   // can still change the page height after the first scroll, so keep Walia in
@@ -125,43 +124,9 @@ export default function CoursesRoadmap() {
     return () => observer.disconnect();
   }, [track, nextKey]);
 
-  // The banner at the top always names the camp you're scrolling through.
-  useEffect(() => {
-    let frame = 0;
-    function update() {
-      frame = 0;
-      const banner = document.querySelector('.camp-header');
-      const line = banner ? banner.getBoundingClientRect().bottom + 24 : 200;
-      const zones = Array.from(document.querySelectorAll<HTMLElement>('[data-camp]'));
-      const hit = zones.find(z => {
-        const r = z.getBoundingClientRect();
-        return r.top <= line && r.bottom > line;
-      });
-      if (hit) setViewCamp(Number(hit.dataset.camp));
-    }
-    function onScroll() {
-      if (!frame) frame = requestAnimationFrame(update);
-    }
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [track, nextKey]);
-
-  function selectTrack(id: Track) {
-    router.replace(`${pathname}?track=${id}`, { scroll: false });
-  }
-
-  const shownCamp = courses[viewCamp] ?? courses[0];
-  // The banner's Phrasebook button follows the camp on screen; the sidebar and
-  // the rail card always open the learner's own camp (where Walia is).
-  const shownPhrasebookHref = shownCamp
-    ? `/phrasebook?track=${track}&camp=${shownCamp.slug}`
-    : `/phrasebook?track=${track}`;
+  // The floating banner follows progress, not scrolling: it always shows the
+  // camp being climbed (or the last camp once the summit is reached), and its
+  // Phrasebook button opens that camp's phrases.
   const myCampIdx = Math.min(currentCamp, courses.length - 1);
   const myCamp = courses[myCampIdx];
   const phrasebookHref = `/phrasebook?track=${track}`;
@@ -209,15 +174,15 @@ export default function CoursesRoadmap() {
 
       {/* Middle: the trail */}
       <div className="learn-main">
-        {shownCamp && (
-          <div className={`camp-header${viewCamp % 2 === 1 ? ' alt' : ''}`}>
+        {myCamp && (
+          <div className={`camp-header${myCampIdx % 2 === 1 ? ' alt' : ''}`}>
             <div className="camp-header-text">
               <span className="camp-header-kicker">
-                Camp {viewCamp + 1} · Part {shownCamp.part}
+                Camp {myCampIdx + 1} · Part {myCamp.part}
               </span>
-              <h2>{shownCamp.description}</h2>
+              <h2>{myCamp.description}</h2>
             </div>
-            <Link href={shownPhrasebookHref} className="camp-header-btn">
+            <Link href={phrasebookHref} className="camp-header-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="2.4" />
                 <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />

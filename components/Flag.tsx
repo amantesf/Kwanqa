@@ -1,6 +1,6 @@
 // Simplified flags used as language icons (like a course picker).
 
-export type FlagName = 'ethiopia' | 'usa';
+export type FlagName = 'ethiopia' | 'usa' | 'oromia' | 'tigray';
 
 function star(cx: number, cy: number, r: number) {
   const pts: string[] = [];
@@ -24,6 +24,36 @@ export default function Flag({ name, className }: { name: FlagName; className?: 
       </svg>
     );
   }
+  if (name === 'oromia') {
+    // Oromia region: red, white, black, with the Odaa (sycamore) tree.
+    return (
+      <svg viewBox="0 0 60 40" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden>
+        <rect width="60" height="13.4" fill="#e01212" />
+        <rect y="13.3" width="60" height="13.4" fill="#fff" />
+        <rect y="26.6" width="60" height="13.4" fill="#000" />
+        <path d="M27.8 26.7 L29.2 21 L31 21 L32.6 26.7 Z" fill="#9c9c6c" />
+        <path
+          transform="translate(30 18) scale(1.35) translate(-30 -17.6)"
+          d="M22.6 18.6 C 22 16.4, 24.2 15, 25.8 15.4 C 26.6 13.6, 29.4 13.1, 30.8 14.2 C 32.6 13.4, 35.4 14.4, 35.6 16.2 C 37.6 16.6, 38.2 18.8, 36.8 20 C 35.6 21.4, 33 21, 31.6 20.6 C 30.2 21.4, 27.8 21.4, 26.4 20.8 C 24.6 21.4, 22.8 20.4, 22.6 18.6 Z"
+          fill="#066b32"
+          stroke="#000"
+          strokeWidth="0.5"
+        />
+      </svg>
+    );
+  }
+
+  if (name === 'tigray') {
+    // Tigray region: red field, yellow triangle at the hoist, yellow star.
+    return (
+      <svg viewBox="0 0 60 40" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden>
+        <rect width="60" height="40" fill="#da121a" />
+        <polygon points="0,0 25,20 0,40" fill="#fcdd09" />
+        <polygon points={star(39, 20.6, 8)} fill="#fcdd09" />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 60 40" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden>
       <rect width="60" height="40" fill="#fff" />

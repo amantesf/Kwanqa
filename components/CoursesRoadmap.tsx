@@ -78,6 +78,8 @@ export default function CoursesRoadmap() {
   const { enabled, user, signOut } = useAuth();
   const guest = enabled && !user; // took the survey but hasn't made an account yet
   const [waliaVisible, setWaliaVisible] = useState(true);
+  // The camp the learner is scrolled to; null until the page scrolls.
+  const [viewCamp, setViewCamp] = useState<number | null>(null);
 
   const next = nextLesson(climb, track);
   const totals = trackTotals(climb, track);
@@ -122,11 +124,48 @@ export default function CoursesRoadmap() {
     return () => observer.disconnect();
   }, [track, nextKey]);
 
-  // The floating banner follows progress, not scrolling: it always shows the
-  // camp being climbed (or the last camp once the summit is reached), and its
-  // Phrasebook button opens that camp's phrases.
+  // Like Duolingo's unit header, the floating banner names (and takes the
+  // colour of) the camp you're scrolling through. Until the page scrolls it
+  // shows the camp being climbed.
+  useEffect(() => {
+    let frame = 0;
+    function update() {
+      frame = 0;
+      const banner = document.querySelector('.camp-header');
+      // The camp that fills the upper-middle of the screen is the one you're looking at.
+      const below = banner ? banner.getBoundingClientRect().bottom + 24 : 200;
+      const line = Math.max(below, window.innerHeight * 0.45);
+      const zones = Array.from(document.querySelectorAll<HTMLElement>('[data-camp]'));
+      // At the very bottom of the page you're at the trailhead: that's Camp 1.
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      const hit = atBottom
+        ? zones[zones.length - 1]
+        : zones.find(zone => {
+            const r = zone.getBoundingClientRect();
+            return r.top <= line && r.bottom > line;
+          });
+      if (hit) setViewCamp(Number(hit.dataset.camp));
+    }
+    function onScroll() {
+      if (!frame) frame = requestAnimationFrame(update);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [track, nextKey]);
+
   const myCampIdx = Math.min(currentCamp, courses.length - 1);
   const myCamp = courses[myCampIdx];
+  const shownIdx = viewCamp !== null && courses[viewCamp] ? viewCamp : myCampIdx;
+  const shownCamp = courses[shownIdx];
+  const shownLocked = shownIdx > currentCamp;
+  const shownPhrasebookHref = shownCamp
+    ? `/phrasebook?track=${track}&camp=${shownCamp.slug}`
+    : `/phrasebook?track=${track}`;
   const phrasebookHref = `/phrasebook?track=${track}`;
   const nextTitle = next ? courseContent[next.slug]?.sections[next.lesson]?.title : null;
   const nextHref = next ? `/courses/${next.slug}?lesson=${next.lesson}&practice=1` : null;
@@ -172,15 +211,16 @@ export default function CoursesRoadmap() {
 
       {/* Middle: the trail */}
       <div className="learn-main">
-        {myCamp && (
-          <div className={`camp-header${myCampIdx % 2 === 1 ? ' alt' : ''}`}>
-            <div className="camp-header-text">
+        {shownCamp && (
+          <div className={`camp-header camp-color-${shownIdx % 6}`}>
+            <div className="camp-header-text" key={shownIdx}>
               <span className="camp-header-kicker">
-                Camp {myCampIdx + 1} · Part {myCamp.part}
+                Camp {shownIdx + 1} ·{' '}
+                {shownLocked ? 'Locked' : zoneForCamp(shownIdx, courses.length).name}
               </span>
-              <h2>{myCamp.description}</h2>
+              <h2>{shownCamp.description}</h2>
             </div>
-            <Link href={phrasebookHref} className="camp-header-btn">
+            <Link href={shownPhrasebookHref} className="camp-header-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="2.4" />
                 <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />

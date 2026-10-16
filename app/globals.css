@@ -3621,6 +3621,41 @@ body:has(.learn-app) .site-footer {
   box-shadow: 0 5px 0 var(--blue-shadow), 0 -14px 0 0 var(--page);
 }
 
+/* Each camp has its own banner colour, which changes as you scroll between camps. */
+.camp-header[class*='camp-color-'] {
+  background-color: var(--camp);
+  box-shadow: 0 5px 0 var(--camp-shadow), 0 -14px 0 0 var(--page);
+}
+
+.camp-color-0 { --camp: var(--primary); --camp-shadow: var(--primary-shadow); } /* Camp 1: terracotta */
+.camp-color-1 { --camp: var(--blue); --camp-shadow: var(--blue-shadow); } /* Camp 2: blue */
+.camp-color-2 { --camp: #3d8b40; --camp-shadow: #2b6a2e; } /* Camp 3: forest green */
+.camp-color-3 { --camp: #8f4fd0; --camp-shadow: #6c35a8; } /* Camp 4: heather purple */
+.camp-color-4 { --camp: #1d8aa0; --camp-shadow: #136677; } /* Camp 5: alpine teal */
+.camp-color-5 { --camp: #a8650c; --camp-shadow: #7d4a07; } /* Camp 6: summit gold */
+
+/* the camp name slides in when the banner switches camps */
+.camp-header-text {
+  animation: camp-swap 0.3s ease;
+}
+
+@keyframes camp-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camp-header-text {
+    animation: none;
+  }
+}
+
 .camp-header-text {
   min-width: 0;
   display: flex;

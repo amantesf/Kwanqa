@@ -49,7 +49,7 @@ export default function Header() {
   // Signed out: log in / get started. Signed in: who you are, and log out.
   const authActions = loading ? null : user ? (
     <>
-      <Link href="/courses" className="user-chip" onClick={closeMenu} title={user.email ?? ''}>
+      <Link href="/profile" className="user-chip" onClick={closeMenu} title="Your profile">
         <span className="user-avatar">{name.charAt(0).toUpperCase()}</span>
         <span className="user-name">{name}</span>
       </Link>

@@ -2019,6 +2019,22 @@ button.phrase-card:hover {
   display: inline-flex;
 }
 
+/* Landing page: Get started slides into the header once the hero button is out of view. */
+.site-header .header-cta {
+  display: inline-flex;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.site-header .header-cta.shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
 .user-avatar {
   width: 32px;
   height: 32px;

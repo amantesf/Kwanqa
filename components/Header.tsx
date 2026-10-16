@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { displayName, useAuth } from '@/components/AuthProvider';
 import Logo from '@/components/Logo';
+import { useProfile } from '@/lib/profile';
 
 const NAV_LINKS = [
   { href: '/courses', label: 'Courses' },
@@ -35,6 +36,20 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Landing page: once the hero's Get started button scrolls out of view,
+  // show one in the header so it's always within reach.
+  const [pastHero, setPastHero] = useState(false);
+  useEffect(() => {
+    if (pathname !== '/') return;
+    const target = document.querySelector('[data-hero-cta]');
+    if (!target) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setPastHero(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+    });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [pathname]);
+
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => {
@@ -44,6 +59,7 @@ export default function Header() {
 
   const closeMenu = () => setMenuOpen(false);
   const { user, loading, enabled, signOut } = useAuth();
+  const profile = useProfile();
   const name = displayName(user);
 
   // Signed out: log in / get started. Signed in: who you are, and log out.
@@ -84,10 +100,19 @@ export default function Header() {
       <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
         <div className="container">
           <Logo />
-          {!loading && user && (
+          {!loading && user ? (
             <Link href="/profile" className="user-chip landing-chip" title="Your profile">
               <span className="user-avatar">{name.charAt(0).toUpperCase()}</span>
               <span className="user-name">{name}</span>
+            </Link>
+          ) : (
+            <Link
+              href={profile ? `/courses?track=${profile.track}` : '/welcome'}
+              className={`btn btn-sm header-cta${pastHero && !loading ? ' shown' : ''}`}
+              tabIndex={pastHero ? undefined : -1}
+              aria-hidden={!pastHero}
+            >
+              {profile ? 'Continue climbing' : 'Get started'}
             </Link>
           )}
         </div>

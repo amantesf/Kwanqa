@@ -6,7 +6,7 @@ import { useAuth } from '@/components/AuthProvider';
 import Flag from '@/components/Flag';
 import Mascot from '@/components/Mascot';
 import type { Track } from '@/lib/courses';
-import { saveProfile, type Profile } from '@/lib/profile';
+import { readProfile, saveProfile, type Profile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
 
 type Answers = {
@@ -160,8 +160,11 @@ export default function Onboarding() {
   const answered = Array.isArray(answer) ? answer.length > 0 : answer !== undefined;
 
   function finish() {
+    const track = answers.track ?? 'amharic';
+    const earlier = readProfile()?.tracks ?? [];
     const profile: Profile = {
-      track: answers.track ?? 'amharic',
+      track,
+      tracks: earlier.includes(track) ? earlier : [...earlier, track],
       speaks: answers.speaks,
       level: answers.level ?? 'new',
       reasons: answers.reasons,

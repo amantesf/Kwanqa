@@ -4,7 +4,8 @@ import type { Track } from '@/lib/courses';
 // Answers from the "Get started" survey. Kept in this browser for guests and
 // copied to the account (user metadata) once they sign up or log in.
 export type Profile = {
-  track: Track;
+  track: Track; // the course being climbed right now
+  tracks: Track[]; // every course the learner has chosen (like Duolingo's "My courses")
   speaks: string[];
   level: 'new' | 'some-words' | 'basic' | 'conversational';
   reasons: string[];
@@ -39,9 +40,15 @@ function parse(raw: string): Profile | null {
 const asList = (v: unknown): string[] =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : typeof v === 'string' ? [v] : [];
 
+const isTrack = (t: unknown): t is Track => t === 'amharic' || t === 'english';
+
 export function normalizeProfile(value: Record<string, unknown>): Profile {
+  const track = value.track as Track;
+  const tracks = asList(value.tracks).filter(isTrack);
   return {
     ...(value as Profile),
+    track,
+    tracks: tracks.includes(track) ? tracks : [...tracks, track],
     speaks: asList(value.speaks),
     reasons: asList(value.reasons ?? value.reason),
     heardFrom: asList(value.heardFrom),
@@ -81,6 +88,22 @@ export function clearProfile() {
     // nothing to clear
   }
   notify();
+}
+
+/** Make another course the active one (adding it to "My courses" if new). */
+export function switchTrack(track: Track) {
+  const profile = readProfile();
+  if (!profile) return;
+  const tracks = profile.tracks.includes(track) ? profile.tracks : [...profile.tracks, track];
+  saveProfile({ ...profile, track, tracks });
+}
+
+/** Notifies on every change to the survey answers (used to sync to the account). */
+export function subscribeProfile(callback: () => void) {
+  listeners.add(callback);
+  return () => {
+    listeners.delete(callback);
+  };
 }
 
 /** The survey answers on this device, or null if the visitor hasn't taken it. */

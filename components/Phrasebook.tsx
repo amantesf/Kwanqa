@@ -20,7 +20,7 @@ export default function Phrasebook() {
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   const param = params.get('track');
-  const track: Track = param === 'english' || param === 'amharic' ? param : (profile?.track ?? 'amharic');
+  const track: Track = profile?.track ?? (param === 'english' || param === 'amharic' ? param : 'amharic');
   const courses = trackCourses(track);
   const next = nextLesson(climb, track);
   const asked = params.get('camp');

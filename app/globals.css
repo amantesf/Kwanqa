@@ -4385,7 +4385,7 @@ body:has(.practice-screen) {
 
 .practice-instruction {
   margin: 0;
-  font-size: clamp(26px, 3vw, 38px);
+  font-size: clamp(24px, 2.6vw, 32px);
   font-weight: 800;
   line-height: 1.25;
   color: var(--text-strong);
@@ -4409,11 +4409,11 @@ body:has(.practice-screen) {
 }
 
 .practice-screen .prompt-main {
-  font-size: clamp(26px, 3.4vw, 40px);
+  font-size: clamp(22px, 2.4vw, 30px);
 }
 
 .practice-screen .prompt-hint {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .practice-screen .options {
@@ -4422,9 +4422,9 @@ body:has(.practice-screen) {
 }
 
 .practice-screen .option {
-  min-height: 92px;
-  padding: 18px 22px;
-  font-size: 22px;
+  min-height: 84px;
+  padding: 16px 20px;
+  font-size: 19px;
   line-height: 1.35;
   border-radius: 18px;
 }
@@ -4475,13 +4475,13 @@ body:has(.practice-screen) {
   flex: 1;
   min-width: 0;
   max-width: 680px;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.45;
   gap: 6px;
 }
 
 .practice-screen .feedback-text strong {
-  font-size: 30px;
+  font-size: 26px;
 }
 
 .feedback-icon {

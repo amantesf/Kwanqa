@@ -179,7 +179,14 @@ export default function CoursesRoadmap() {
   }
 
   const shownCamp = courses[viewCamp] ?? courses[0];
-  const phrasebookHref = shownCamp ? `/courses/${shownCamp.slug}` : '/courses';
+  // The banner's Phrasebook button follows the camp on screen; the sidebar and
+  // the rail card always open the learner's own camp (where Walia is).
+  const shownPhrasebookHref = shownCamp
+    ? `/phrasebook?track=${track}&camp=${shownCamp.slug}`
+    : `/phrasebook?track=${track}`;
+  const myCampIdx = Math.min(currentCamp, courses.length - 1);
+  const myCamp = courses[myCampIdx];
+  const phrasebookHref = `/phrasebook?track=${track}`;
   const nextTitle = next ? courseContent[next.slug]?.sections[next.lesson]?.title : null;
   const nextHref = next ? `/courses/${next.slug}?lesson=${next.lesson}` : null;
   const hornProgress =
@@ -240,7 +247,7 @@ export default function CoursesRoadmap() {
               </span>
               <h2>{shownCamp.description}</h2>
             </div>
-            <Link href={phrasebookHref} className="camp-header-btn">
+            <Link href={shownPhrasebookHref} className="camp-header-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="2.4" />
                 <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
@@ -450,7 +457,7 @@ export default function CoursesRoadmap() {
             </Link>
           </div>
           <p className="small">
-            Every phrase from {shownCamp ? `Camp ${viewCamp + 1}` : 'this camp'} in Ge’ez script,
+            Every phrase from {myCamp ? `Camp ${myCampIdx + 1}` : 'this camp'} in Ge’ez script,
             transliteration, and English, ready to review.
           </p>
         </div>

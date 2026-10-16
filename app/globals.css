@@ -2019,6 +2019,27 @@ button.phrase-card:hover {
   display: inline-flex;
 }
 
+/* Phrasebook pages: profile + log out, visible on every screen size. */
+.header-account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-account .btn {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .header-account .user-name {
+    display: none;
+  }
+
+  .header-account .user-chip {
+    padding: 2px;
+  }
+}
+
 /* Landing page: Get started slides into the header once the hero button is out of view. */
 .site-header .header-cta {
   display: inline-flex;

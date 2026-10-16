@@ -94,6 +94,38 @@ export default function Header() {
     </>
   );
 
+  // Lesson and phrasebook pages: just the logo and the learner's account controls.
+  if (pathname.startsWith('/courses/') || pathname === '/phrasebook') {
+    return (
+      <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
+        <div className="container">
+          <Logo />
+          {!loading && (
+            <div className="header-account">
+              {user ? (
+                <>
+                  <Link href="/profile" className="user-chip landing-chip" title="Your profile">
+                    <span className="user-avatar">{name.charAt(0).toUpperCase()}</span>
+                    <span className="user-name">{name}</span>
+                  </Link>
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={signOut}>
+                    Log out
+                  </button>
+                </>
+              ) : (
+                enabled && (
+                  <Link href={`/login?next=${encodeURIComponent(pathname)}`} className="btn btn-secondary btn-sm">
+                    Log in
+                  </Link>
+                )
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+    );
+  }
+
   // The landing page keeps the header to just the logo: its links and buttons
   // are already in the hero and the footer. Logged-in learners keep their avatar.
   if (pathname === '/') {

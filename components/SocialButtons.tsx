@@ -53,7 +53,13 @@ async function enabledProviders(): Promise<Set<string>> {
   }
 }
 
-export default function SocialButtons({ onError }: { onError: (message: string) => void }) {
+export default function SocialButtons({
+  next,
+  onError,
+}: {
+  next: string;
+  onError: (message: string) => void;
+}) {
   const [enabled, setEnabled] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -66,7 +72,7 @@ export default function SocialButtons({ onError }: { onError: (message: string) 
   async function signIn(provider: Provider) {
     const { error } = await supabase!.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
     if (error) onError('Couldn’t reach that sign-in service. Please try again.');
   }

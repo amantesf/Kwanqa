@@ -2,10 +2,10 @@
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
 import SocialButtons from '@/components/SocialButtons';
-import { useAuth } from '@/components/AuthProvider';
+import { safeNext, useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 
 type Mode = 'signup' | 'login';
@@ -23,6 +23,8 @@ function friendly(message: string) {
 
 export default function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
+  const params = useSearchParams();
+  const next = safeNext(params.get('next'));
   const { enabled, user } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -45,18 +47,18 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         password,
         options: {
           data: { name: name.trim() },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
       setBusy(false);
       if (error) return setError(friendly(error.message));
-      if (data.session) return router.push('/courses');
+      if (data.session) return router.push(next);
       setSentTo(email); // email confirmation is on: wait for the link
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setBusy(false);
       if (error) return setError(friendly(error.message));
-      router.push('/courses');
+      router.push(next);
     }
   }
 
@@ -85,7 +87,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           You’re logged in
         </h1>
         <p className="muted">{user.email}</p>
-        <Link href="/courses" className="btn btn-block">
+        <Link href={next} className="btn btn-block">
           Continue climbing
         </Link>
       </div>
@@ -120,7 +122,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           : 'Log in to keep climbing where you left off.'}
       </p>
 
-      <SocialButtons onError={setError} />
+      <SocialButtons next={next} onError={setError} />
 
       {isSignup && (
         <label className="field">
@@ -173,16 +175,22 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       <p className="small muted">
         {isSignup ? (
           <>
-            Already have an account? <Link href="/login" className="text-link">Log in</Link>
+            Already have an account?{' '}
+            <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-link">
+              Log in
+            </Link>
           </>
         ) : (
           <>
-            New to kwanqa? <Link href="/signup" className="text-link">Create an account</Link>
+            New to kwanqa?{' '}
+            <Link href={`/signup?next=${encodeURIComponent(next)}`} className="text-link">
+              Create an account
+            </Link>
           </>
         )}
       </p>
-      <Link href="/courses" className="faint small text-link">
-        or try a lesson without an account
+      <Link href="/" className="faint small text-link">
+        ← Back to home
       </Link>
     </form>
   );

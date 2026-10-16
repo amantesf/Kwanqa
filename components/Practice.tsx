@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import { completeLesson, hornLevel, REST_COST, spendGrass, useClimb } from '@/lib/climb';
@@ -26,15 +26,32 @@ function Hoof({ filled }: { filled: boolean }) {
 const SOUND_FILES = { correct: '/sounds/correct.mp3', wrong: '/sounds/wrong.mp3' } as const;
 const MUTE_KEY = 'kwanqa-sound-off';
 
+// The mute setting lives in localStorage; reading it through a store keeps the
+// server render (always "on") and the browser in sync without a hydration mismatch.
+const muteListeners = new Set<() => void>();
+
+function readMuted() {
+  try {
+    return window.localStorage.getItem(MUTE_KEY) === '1';
+  } catch {
+    return false; // storage unavailable; sounds stay on
+  }
+}
+
+let mutedFallback = false; // used when storage is unavailable
+
+function subscribeMuted(listener: () => void) {
+  muteListeners.add(listener);
+  return () => muteListeners.delete(listener);
+}
+
 function useAnswerSounds() {
   const audio = useRef<Partial<Record<keyof typeof SOUND_FILES, HTMLAudioElement>>>({});
-  const [muted, setMuted] = useState(() => {
-    try {
-      return typeof window !== 'undefined' && window.localStorage.getItem(MUTE_KEY) === '1';
-    } catch {
-      return false; // storage unavailable; sounds stay on
-    }
-  });
+  const muted = useSyncExternalStore(
+    subscribeMuted,
+    () => readMuted() || mutedFallback,
+    () => false,
+  );
 
   useEffect(() => {
     // Load both sounds up front so the first answer plays instantly.
@@ -55,14 +72,14 @@ function useAnswerSounds() {
   }
 
   function toggle() {
-    setMuted(m => {
-      try {
-        window.localStorage.setItem(MUTE_KEY, m ? '0' : '1');
-      } catch {
-        // storage unavailable; the setting lasts for this session only
-      }
-      return !m;
-    });
+    const next = !muted;
+    mutedFallback = next;
+    try {
+      window.localStorage.setItem(MUTE_KEY, next ? '1' : '0');
+    } catch {
+      // storage unavailable; the setting lasts for this session only
+    }
+    muteListeners.forEach(l => l());
   }
 
   return { play, muted, toggle };
@@ -339,6 +356,12 @@ export default function Practice({
           </div>
         </div>
         {grew && <p className="grew">Walia’s horns grew a new ridge!</p>}
+        {lesson.note && (
+          <div className="lesson-note">
+            <span className="lesson-note-label">Did you know?</span>
+            <p>{lesson.note}</p>
+          </div>
+        )}
         <button type="button" className="btn" style={{ minWidth: 260 }} onClick={onFinish}>
           {finishLabel}
         </button>

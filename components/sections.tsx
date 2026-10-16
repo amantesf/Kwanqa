@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import CtaButton from '@/components/CtaButton';
 import { FadeInOnScroll } from '@/components/FadeInOnScroll';
 import Flag from '@/components/Flag';
 import Mascot from '@/components/Mascot';
@@ -191,9 +192,7 @@ export function CTA({ title = 'ready to start the climb?' }: { title?: string })
           <div className="cta">
             <h2 className="h2">{title}</h2>
             <Mascot pose="cheer" size={170} className="floaty" />
-            <Link href="/courses" className="btn" style={{ minWidth: 260 }}>
-              Start the trail
-            </Link>
+            <CtaButton />
           </div>
         </FadeInOnScroll>
       </div>

@@ -58,7 +58,10 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
     Number.isInteger(requested) && requested >= 0 && requested < lessons.length ? requested : 0;
 
   const [active, setActive] = useState(initial);
-  const [mode, setMode] = useState<'learn' | 'practice'>('learn');
+  // Opened from a trail stone (?practice=1): go straight into practice, and
+  // return to the trail when the learner exits or finishes, like Duolingo.
+  const [fromTrail, setFromTrail] = useState(params.get('practice') === '1');
+  const [mode, setMode] = useState<'learn' | 'practice'>(fromTrail ? 'practice' : 'learn');
   const [quiz, setQuiz] = useState(false);
   const [session, setSession] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -67,7 +70,10 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
   const lesson = lessons[active];
   const isLast = active === lessons.length - 1;
 
+  const trailHref = `/courses?track=${track}`;
+
   function goTo(index: number) {
+    setFromTrail(false);
     setActive(index);
     setMode('learn');
     router.replace(`/courses/${slug}?lesson=${index}`, { scroll: false });
@@ -81,8 +87,8 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
   }
 
   function finishLesson() {
-    if (isLast) {
-      router.push(`/courses?track=${track}`);
+    if (isLast || fromTrail) {
+      router.push(trailHref);
     } else {
       goTo(active + 1);
     }
@@ -109,9 +115,9 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
             lessonIndex={active}
             lesson={lesson}
             courseLessons={lessons}
-            onExit={() => setMode('learn')}
+            onExit={() => (fromTrail ? router.push(trailHref) : setMode('learn'))}
             onFinish={finishLesson}
-            finishLabel={isLast ? 'Back to the trail' : 'Next lesson'}
+            finishLabel={isLast || fromTrail ? 'Back to the trail' : 'Next lesson'}
           />
         ) : (
           <>

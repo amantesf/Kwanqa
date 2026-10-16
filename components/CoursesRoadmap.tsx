@@ -129,7 +129,7 @@ export default function CoursesRoadmap() {
   const myCamp = courses[myCampIdx];
   const phrasebookHref = `/phrasebook?track=${track}`;
   const nextTitle = next ? courseContent[next.slug]?.sections[next.lesson]?.title : null;
-  const nextHref = next ? `/courses/${next.slug}?lesson=${next.lesson}` : null;
+  const nextHref = next ? `/courses/${next.slug}?lesson=${next.lesson}&practice=1` : null;
   const hornProgress =
     horns.next === null ? 1 : (climb.grass - horns.from) / (horns.next - horns.from);
 
@@ -226,7 +226,7 @@ export default function CoursesRoadmap() {
               : next?.slug === course.slug && next.lesson === i
                 ? 'current'
                 : 'locked',
-            href: `/courses/${course.slug}?lesson=${i}`,
+            href: `/courses/${course.slug}?lesson=${i}&practice=1`,
           }));
 
           const campDone = lessons.every((_, i) => isDone(climb, course.slug, i));
@@ -263,7 +263,12 @@ export default function CoursesRoadmap() {
                 </span>
               </div>
               <div className="trail-wrap">
-                <Trail stops={stops} hornScale={horns.scale} waliaSize={116} />
+                <Trail
+                  stops={stops}
+                  hornScale={horns.scale}
+                  waliaSize={116}
+                  scenery={locked ? 'locked' : zone.tone}
+                />
               </div>
             </section>
           );

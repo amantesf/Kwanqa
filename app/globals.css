@@ -2140,6 +2140,47 @@ button.phrase-card:hover {
   background-color: var(--border);
 }
 
+.toaster {
+  position: fixed;
+  top: calc(var(--header-h) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(440px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.toast {
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 2px solid;
+  border-bottom-width: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  animation: toast-in 0.25s ease;
+}
+
+.toast.good {
+  background-color: var(--green-soft);
+  border-color: #a5ed6e;
+  color: var(--green-dark);
+}
+
+.toast.bad {
+  background-color: var(--red-soft);
+  border-color: #ffb3ad;
+  color: var(--red-shadow);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
 .form-error {
   width: 100%;
   padding: 10px 14px;

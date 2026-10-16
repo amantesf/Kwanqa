@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Noto_Sans_Ethiopic, Nunito } from 'next/font/google';
 import AuthProvider from '@/components/AuthProvider';
 import Header from '@/components/Header';
+import Toaster from '@/components/Toaster';
 import Footer from '@/components/Footer';
 
 const nunito = Nunito({
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Header />
           {children}
           <Footer />
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

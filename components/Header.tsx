@@ -9,6 +9,7 @@ import { useProfile } from '@/lib/profile';
 
 const NAV_LINKS = [
   { href: '/courses', label: 'Courses' },
+  { href: '/fidel', label: 'Alphabet' },
   { href: '/approach', label: 'Approach' },
   { href: '/about', label: 'About' },
 ];

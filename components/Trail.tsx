@@ -426,7 +426,7 @@ export default function Trail({
 
             {stop.state === 'current' && (
               <div className={`trail-walia ${side}`} style={{ width: waliaSize }} aria-hidden>
-                <Mascot pose="wave" size={waliaSize} hornScale={hornScale} />
+                <Mascot pose="wave" size={waliaSize} hornScale={hornScale} animated />
               </div>
             )}
           </div>

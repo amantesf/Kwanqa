@@ -10,6 +10,12 @@ type Props = {
   title?: string;
   /** Horn length; grows as the learner collects grass. */
   hornScale?: number;
+  /**
+   * Brings Walia to life while the learner is on the page: breathing, blinking,
+   * and a loop of little emotes (wave, look around, ear twitch, hop, head tilt).
+   * The drawing itself never changes; only its parts move.
+   */
+  animated?: boolean;
 };
 
 // Colors sampled from the Walia brand illustration (public/brand/walia-scene.jpg).
@@ -57,6 +63,7 @@ export default function Mascot({
   className,
   title = 'Walia the ibex',
   hornScale = 1,
+  animated = false,
 }: Props) {
   const leftArmUp = pose === 'cheer';
   const rightArmUp = pose === 'wave' || pose === 'cheer';
@@ -66,16 +73,20 @@ export default function Mascot({
       viewBox="0 -24 240 304"
       width={size}
       height={(size * 304) / 240}
-      className={className}
+      className={[className, animated ? 'walia-live' : ''].filter(Boolean).join(' ') || undefined}
       role="img"
       aria-label={title}
     >
       {/* ground shadow */}
-      <ellipse cx="120" cy="268" rx="70" ry="9" fill="#000" opacity="0.08" />
+      <ellipse className="w-shadow" cx="120" cy="268" rx="70" ry="9" fill="#000" opacity="0.08" />
 
+      <g className="w-hop">
+      <g className="w-breathe">
+      <g className="w-head">
       {/* horns sweep back over the head */}
       <Horn id="walia-horn-l" scale={hornScale} />
       <Horn id="walia-horn-r" flip scale={hornScale} />
+      </g>
 
       {/* legs */}
       <rect x="86" y="222" width="22" height="40" rx="10" fill={C.furShade} />
@@ -89,23 +100,32 @@ export default function Mascot({
 
       {/* arms */}
       {leftArmUp ? (
-        <path d="M70 196 C 52 180, 44 160, 46 144" stroke={C.furShade} strokeWidth="18" strokeLinecap="round" fill="none" />
+        <g className="w-arm-l">
+          <path d="M70 196 C 52 180, 44 160, 46 144" stroke={C.furShade} strokeWidth="18" strokeLinecap="round" fill="none" />
+          <circle cx="46" cy="140" r="10" fill={C.hoof} />
+        </g>
       ) : (
         <path d="M68 196 C 60 210, 60 222, 66 232" stroke={C.furShade} strokeWidth="18" strokeLinecap="round" fill="none" />
       )}
       {rightArmUp ? (
-        <path d="M170 196 C 188 180, 196 160, 194 144" stroke={C.furShade} strokeWidth="18" strokeLinecap="round" fill="none" />
+        <g className="w-arm-r">
+          <path d="M170 196 C 188 180, 196 160, 194 144" stroke={C.furShade} strokeWidth="18" strokeLinecap="round" fill="none" />
+          <circle cx="194" cy="140" r="10" fill={C.hoof} />
+        </g>
       ) : (
         <path d="M172 196 C 180 210, 180 222, 174 232" stroke={C.furShade} strokeWidth="18" strokeLinecap="round" fill="none" />
       )}
-      {leftArmUp && <circle cx="46" cy="140" r="10" fill={C.hoof} />}
-      {rightArmUp && <circle cx="194" cy="140" r="10" fill={C.hoof} />}
 
+      <g className="w-head">
       {/* ears */}
-      <ellipse cx="62" cy="104" rx="22" ry="11" transform="rotate(-20 62 104)" fill={C.furShade} />
-      <ellipse cx="64" cy="104" rx="13" ry="6" transform="rotate(-20 64 104)" fill={C.earInner} />
-      <ellipse cx="178" cy="104" rx="22" ry="11" transform="rotate(20 178 104)" fill={C.furShade} />
-      <ellipse cx="176" cy="104" rx="13" ry="6" transform="rotate(20 176 104)" fill={C.earInner} />
+      <g className="w-ear-l">
+        <ellipse cx="62" cy="104" rx="22" ry="11" transform="rotate(-20 62 104)" fill={C.furShade} />
+        <ellipse cx="64" cy="104" rx="13" ry="6" transform="rotate(-20 64 104)" fill={C.earInner} />
+      </g>
+      <g className="w-ear-r">
+        <ellipse cx="178" cy="104" rx="22" ry="11" transform="rotate(20 178 104)" fill={C.furShade} />
+        <ellipse cx="176" cy="104" rx="13" ry="6" transform="rotate(20 176 104)" fill={C.earInner} />
+      </g>
 
       {/* head */}
       <ellipse cx="120" cy="116" rx="58" ry="54" fill={C.fur} />
@@ -122,12 +142,16 @@ export default function Mascot({
       <path d="M100 160 Q 104 180 112 186 Q 120 206 128 186 Q 136 180 140 160 Q 120 174 100 160 Z" fill={C.beard} />
 
       {/* eyes */}
-      <circle cx="96" cy="110" r="17" fill={C.white} />
-      <circle cx="144" cy="110" r="17" fill={C.white} />
-      <circle cx="99" cy="112" r="9" fill={C.dark} />
-      <circle cx="141" cy="112" r="9" fill={C.dark} />
-      <circle cx="102" cy="108" r="3.2" fill={C.white} />
-      <circle cx="144" cy="108" r="3.2" fill={C.white} />
+      <g className="w-eyes">
+        <circle cx="96" cy="110" r="17" fill={C.white} />
+        <circle cx="144" cy="110" r="17" fill={C.white} />
+        <g className="w-pupils">
+          <circle cx="99" cy="112" r="9" fill={C.dark} />
+          <circle cx="141" cy="112" r="9" fill={C.dark} />
+          <circle cx="102" cy="108" r="3.2" fill={C.white} />
+          <circle cx="144" cy="108" r="3.2" fill={C.white} />
+        </g>
+      </g>
 
       {/* brows */}
       <path d="M82 88 Q 94 82 106 88" stroke={C.dark} strokeWidth="4" strokeLinecap="round" fill="none" />
@@ -136,6 +160,9 @@ export default function Mascot({
       {/* cheeks */}
       <ellipse cx="78" cy="134" rx="9" ry="5.5" fill={C.blush} opacity="0.7" />
       <ellipse cx="162" cy="134" rx="9" ry="5.5" fill={C.blush} opacity="0.7" />
+      </g>
+      </g>
+      </g>
     </svg>
   );
 }

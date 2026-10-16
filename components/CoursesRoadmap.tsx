@@ -326,7 +326,7 @@ export default function CoursesRoadmap() {
               </p>
             </div>
             <div className="rail-promo-art" aria-hidden>
-              <Mascot pose="wave" size={92} hornScale={horns.scale} />
+              <Mascot pose="wave" size={92} hornScale={horns.scale} animated />
             </div>
             <Link href={nextHref} className="btn btn-block">
               Continue climbing

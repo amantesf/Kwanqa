@@ -4325,3 +4325,266 @@ a.rail-link:hover {
     height: 57px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Practice takes over the whole screen, like Duolingo: progress across the
+   top, the question big in the middle, a full-width feedback bar at the bottom.
+   -------------------------------------------------------------------------- */
+
+body:has(.practice-screen) {
+  overflow: hidden;
+}
+
+.practice-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  min-height: 0;
+  gap: 0;
+  overflow-y: auto;
+  background-color: #fff;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.practice-screen .practice-top {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 32px 24px 8px;
+  gap: 22px;
+}
+
+.practice-screen .practice-close {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.practice-screen .practice-meter {
+  height: 18px;
+}
+
+.practice-screen .hoof {
+  width: 28px;
+  height: 28px;
+}
+
+.practice-screen .practice-body {
+  flex: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.practice-screen .practice-question {
+  gap: 28px;
+}
+
+.practice-instruction {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--text-strong);
+}
+
+.practice-ask {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.practice-screen .practice-walia {
+  padding-top: 0;
+  flex-shrink: 0;
+}
+
+.practice-screen .prompt-bubble {
+  position: relative;
+  align-self: center;
+  padding: 18px 24px;
+}
+
+.practice-screen .prompt-main {
+  font-size: clamp(26px, 3.4vw, 40px);
+}
+
+.practice-screen .prompt-hint {
+  font-size: 20px;
+}
+
+.practice-screen .options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.practice-screen .option {
+  min-height: 92px;
+  padding: 18px 22px;
+  font-size: 22px;
+  line-height: 1.35;
+  border-radius: 18px;
+}
+
+.practice-screen .option-key {
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+}
+
+.practice-screen .match-col .option {
+  min-height: 72px;
+}
+
+/* full-width bar pinned to the bottom of the screen */
+.practice-screen .practice-footer {
+  margin-top: auto;
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  border-top: 2px solid var(--border);
+  background-color: #fff;
+}
+
+.practice-screen .practice-footer.good {
+  border-top-color: transparent;
+  background-color: var(--green-soft);
+}
+
+.practice-screen .practice-footer.bad {
+  border-top-color: transparent;
+  background-color: var(--red-soft);
+}
+
+.practice-footer-inner {
+  width: 100%;
+  max-width: 1040px;
+  min-height: 136px;
+  margin: 0 auto;
+  padding: 28px 24px calc(28px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.practice-screen .feedback-text {
+  flex: 1;
+  min-width: 0;
+  max-width: 680px;
+  font-size: 20px;
+  line-height: 1.45;
+  gap: 6px;
+}
+
+.practice-screen .feedback-text strong {
+  font-size: 30px;
+}
+
+.feedback-icon {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background-color: #fff;
+}
+
+.feedback-icon.good {
+  color: var(--green);
+}
+
+.feedback-icon.bad {
+  color: var(--red);
+}
+
+.practice-screen .practice-footer .btn {
+  min-width: 190px;
+  min-height: 56px;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+/* finish and rest screens fill the page too */
+.practice-screen.practice-done {
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+@media (max-width: 700px) {
+  .practice-screen .practice-top {
+    padding: 18px 16px 4px;
+    gap: 12px;
+  }
+
+  .practice-screen .hoof {
+    width: 20px;
+    height: 20px;
+  }
+
+  .practice-screen .practice-body {
+    justify-content: flex-start;
+    padding: 24px 16px 32px;
+  }
+
+  .practice-screen .options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .practice-screen .option {
+    min-height: 64px;
+    font-size: 17px;
+  }
+
+  .practice-screen .option-key {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .practice-screen .prompt-hint {
+    font-size: 16px;
+  }
+
+  .practice-screen .feedback-text {
+    font-size: 16px;
+  }
+
+  .practice-screen .practice-footer .btn {
+    font-size: 15px;
+  }
+
+  .practice-ask .practice-walia svg {
+    width: 80px;
+    height: auto;
+  }
+
+  .practice-footer-inner {
+    flex-wrap: wrap;
+    min-height: 0;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+    gap: 14px;
+  }
+
+  .feedback-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .feedback-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .practice-screen .feedback-text strong {
+    font-size: 21px;
+  }
+
+  .practice-screen .practice-footer .btn {
+    width: 100%;
+  }
+}

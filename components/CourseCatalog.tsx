@@ -21,7 +21,7 @@ const TRACKS: { id: Track; title: string; blurb: string }[] = [
   },
 ];
 
-const signupFor = (track: Track) => `/signup?next=${encodeURIComponent(`/courses?track=${track}`)}`;
+const startTrack = (track: Track) => `/welcome?track=${track}`;
 
 function StoneIcon() {
   return (
@@ -55,12 +55,12 @@ export default function CourseCatalog() {
       <PageHero
         kicker="Courses"
         title="Choose your climb up the Simien Mountains."
-        lead="Short lessons, real phrases, and everyday dialogues. Create a free account to start climbing and save your progress."
+        lead="Short lessons, real phrases, and everyday dialogues. Answer a few quick questions and start climbing—no account needed to try it."
         pose="wave"
       >
         <div className="row">
-          <Link href="/signup?next=%2Fcourses" className="btn">
-            Create free account
+          <Link href="/welcome" className="btn">
+            Get started
           </Link>
           <Link href="/login?next=%2Fcourses" className="btn btn-secondary">
             Log in
@@ -115,7 +115,7 @@ export default function CourseCatalog() {
                         ))}
                       </ol>
 
-                      <Link href={signupFor(track.id)} className="btn btn-block">
+                      <Link href={startTrack(track.id)} className="btn btn-block">
                         Start this course
                       </Link>
                     </article>
@@ -154,8 +154,8 @@ export default function CourseCatalog() {
           </div>
           <h2 className="h2">Ready to start the climb?</h2>
           <div className="row" style={{ justifyContent: 'center' }}>
-            <Link href="/signup?next=%2Fcourses" className="btn">
-              Create free account
+            <Link href="/welcome" className="btn">
+              Get started
             </Link>
             <Link href="/login?next=%2Fcourses" className="btn btn-secondary">
               I already have an account

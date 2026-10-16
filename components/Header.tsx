@@ -71,7 +71,7 @@ export default function Header() {
           Log in
         </Link>
       )}
-      <Link href={enabled ? '/signup' : '/courses'} className="btn btn-sm" onClick={closeMenu}>
+      <Link href="/welcome" className="btn btn-sm" onClick={closeMenu}>
         Get started
       </Link>
     </>

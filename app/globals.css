@@ -2208,6 +2208,93 @@ button.phrase-card:hover {
 }
 
 /* --------------------------------------------------------------------------
+   Course catalog (what logged-out visitors see at /courses)
+   -------------------------------------------------------------------------- */
+
+.catalog-track + .catalog-track {
+  padding-top: 0;
+}
+
+.catalog-track-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.catalog-card {
+  gap: 14px;
+}
+
+.catalog-card .btn {
+  margin-top: auto;
+}
+
+.catalog-sample {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background-color: var(--bg-soft);
+  border: 2px dashed var(--border);
+}
+
+.catalog-sample-am {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.catalog-sample-tr {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue-shadow);
+}
+
+.catalog-sample-en {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.catalog-lessons {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.catalog-lessons li::marker {
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.catalog-how {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.catalog-how-card {
+  align-items: flex-start;
+}
+
+.catalog-how-icon {
+  height: 52px;
+  display: flex;
+  align-items: center;
+}
+
+.catalog-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
 

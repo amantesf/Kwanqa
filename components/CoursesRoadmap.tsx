@@ -88,8 +88,7 @@ export default function CoursesRoadmap() {
   const params = useSearchParams();
   const track: Track = params.get('track') === 'english' ? 'english' : 'amharic';
   const climb = useClimb();
-  const { enabled, loading, user, signOut } = useAuth();
-  const preview = enabled && !loading && !user; // logged out: trail is view-only
+  const { user, signOut } = useAuth();
   const [waliaVisible, setWaliaVisible] = useState(true);
 
   const next = nextLesson(climb, track);
@@ -338,22 +337,6 @@ export default function CoursesRoadmap() {
             {horns.level}
           </span>
         </div>
-
-        {preview && (
-          <div className="rail-card">
-            <h3 className="rail-title">Create a profile to save your progress!</h3>
-            <p className="small">
-              You’re previewing the trail. Sign up free to start lessons, earn grass, and keep
-              your climb on any device.
-            </p>
-            <Link href={`/signup?next=${encodeURIComponent(`/courses?track=${track}`)}`} className="btn btn-block">
-              Create a profile
-            </Link>
-            <Link href={`/login?next=${encodeURIComponent(`/courses?track=${track}`)}`} className="btn btn-secondary btn-block">
-              Log in
-            </Link>
-          </div>
-        )}
 
         {next && nextTitle && nextHref && (
           <div className="rail-card rail-extra rail-promo">

@@ -78,6 +78,7 @@ export default function Phrasebook() {
             <div>
               <h3 className="h3">{lesson.title.replace(/^Lesson \d+ – /, '')}</h3>
               <p className="muted small">{lesson.description}</p>
+              {lesson.note && <p className="lesson-note-inline small">💡 {lesson.note}</p>}
             </div>
           </div>
 

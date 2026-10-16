@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
 import Practice from '@/components/Practice';
@@ -50,6 +50,13 @@ function PhraseCards({ phrases, quiz }: { phrases: Phrase[]; quiz: boolean }) {
   );
 }
 
+// True only in the browser. Practice shuffles its questions randomly, so it
+// must not render on the server (the two shuffles would never match).
+const noopSubscribe = () => () => {};
+function useHydrated() {
+  return useSyncExternalStore(noopSubscribe, () => true, () => false);
+}
+
 export default function LessonViewer({ slug, track, lessons }: Props) {
   const router = useRouter();
   const params = useSearchParams();
@@ -65,6 +72,7 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
   const [quiz, setQuiz] = useState(false);
   const [session, setSession] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
+  const hydrated = useHydrated();
   const climb = useClimb();
   const horns = hornLevel(climb.grass);
   const lesson = lessons[active];
@@ -109,6 +117,9 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
 
       <div ref={panelRef} className="lesson-panel">
         {mode === 'practice' ? (
+          !hydrated ? (
+            <div className="practice practice-screen" aria-busy="true" />
+          ) : (
           <Practice
             key={`${active}-${session}`}
             slug={slug}
@@ -119,6 +130,7 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
             onFinish={finishLesson}
             finishLabel={isLast || fromTrail ? 'Back to the trail' : 'Next lesson'}
           />
+          )
         ) : (
           <>
             <div className="lesson-head">

@@ -127,6 +127,30 @@ export default function CourseCatalog() {
         );
       })}
 
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <Link href="/fidel" className="card card-link fidel-promo">
+            <div className="fidel-promo-letters" aria-hidden>
+              <span>ሀ</span>
+              <span>ለ</span>
+              <span>መ</span>
+              <span>ሰ</span>
+            </div>
+            <div>
+              <span className="kicker">Free resource</span>
+              <h2 className="h3" style={{ fontSize: 24 }}>
+                Learn to read ፊደል, the Ge’ez alphabet
+              </h2>
+              <p className="muted small">
+                An interactive chart of every Amharic letter and its seven vowel forms—tap any
+                letter to see how it’s built.
+              </p>
+            </div>
+            <span className="link">Open the alphabet →</span>
+          </Link>
+        </div>
+      </section>
+
       <section className="section section-soft">
         <div className="container">
           <div className="section-head center">

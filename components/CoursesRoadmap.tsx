@@ -60,6 +60,17 @@ function BookIcon() {
   );
 }
 
+function AlphabetIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
+      <rect x="3" y="3" width="26" height="26" rx="7" fill="var(--gold)" />
+      <text x="16" y="23" textAnchor="middle" fontSize="18" fontWeight="700" fill="#fff">
+        ፊ
+      </text>
+    </svg>
+  );
+}
+
 function CompassIcon() {
   return (
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
@@ -169,6 +180,10 @@ export default function CoursesRoadmap() {
           <Link href={phrasebookHref} className="learn-nav-link">
             <BookIcon />
             <span>Phrasebook</span>
+          </Link>
+          <Link href="/fidel" className="learn-nav-link">
+            <AlphabetIcon />
+            <span>Alphabet</span>
           </Link>
           <Link href="/approach" className="learn-nav-link">
             <CompassIcon />

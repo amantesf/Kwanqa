@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import LessonViewer from '@/components/LessonViewer';
 import MountainScene from '@/components/MountainScene';
+import RequireAccount from '@/components/RequireAccount';
 import { courseCatalog, courseContent } from '@/lib/courses';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -42,7 +43,9 @@ export default async function CourseDetailPage({ params }: Props) {
             </div>
           </div>
           <Suspense fallback={null}>
-            <LessonViewer slug={slug} track={summary.track} lessons={course.sections} />
+            <RequireAccount>
+              <LessonViewer slug={slug} track={summary.track} lessons={course.sections} />
+            </RequireAccount>
           </Suspense>
         </div>
       </section>

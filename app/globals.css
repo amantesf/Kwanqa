@@ -4787,3 +4787,27 @@ body:has(.practice-screen) {
     width: 100%;
   }
 }
+
+/* sound on/off toggle in the practice top bar */
+.practice-sound {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+
+.practice-sound:hover {
+  background-color: var(--bg-soft);
+  color: var(--text-muted);
+}
+
+.practice-sound:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}

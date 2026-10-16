@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { displayName, useAuth } from '@/components/AuthProvider';
+import ClimbStreak from '@/components/ClimbStreak';
 import CourseSwitcher from '@/components/CourseSwitcher';
 import Logo from '@/components/Logo';
 import GrassIcon from '@/components/GrassIcon';
@@ -282,13 +283,7 @@ export default function CoursesRoadmap() {
       <aside className="learn-rail" aria-label="Your climb">
         <div className="rail-top">
           <CourseSwitcher track={track} />
-          <span className="top-stat altitude" title="Your altitude on this track">
-            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
-              <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill="var(--primary)" />
-              <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="#fff" />
-            </svg>
-            {altitude.toLocaleString()} m
-          </span>
+          <ClimbStreak days={climb.days} log={climb.log} altitude={altitude} />
           <span className="top-stat grass" title="Grass collected">
             <GrassIcon size={26} />
             {climb.grass}

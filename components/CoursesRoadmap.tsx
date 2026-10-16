@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/components/AuthProvider';
+import { displayName, useAuth } from '@/components/AuthProvider';
 import Flag from '@/components/Flag';
 import Logo from '@/components/Logo';
 import GrassIcon from '@/components/GrassIcon';
@@ -88,7 +88,7 @@ export default function CoursesRoadmap() {
   const params = useSearchParams();
   const track: Track = params.get('track') === 'english' ? 'english' : 'amharic';
   const climb = useClimb();
-  const { enabled, loading, user } = useAuth();
+  const { enabled, loading, user, signOut } = useAuth();
   const preview = enabled && !loading && !user; // logged out: trail is view-only
   const [waliaVisible, setWaliaVisible] = useState(true);
 
@@ -179,6 +179,20 @@ export default function CoursesRoadmap() {
             <span>About us</span>
           </Link>
         </nav>
+        {user && (
+          <div className="learn-account">
+            <span className="user-avatar" title={`${displayName(user)} · ${user.email ?? ''}`}>
+              {displayName(user).charAt(0).toUpperCase()}
+            </span>
+            <button type="button" className="learn-logout" onClick={signOut} aria-label="Log out" title="Log out">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+                <path d="M10 17l-5-5 5-5" />
+                <path d="M5 12h11" />
+              </svg>
+            </button>
+          </div>
+        )}
       </aside>
 
       {/* Middle: the trail */}

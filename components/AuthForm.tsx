@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
 import SocialButtons from '@/components/SocialButtons';
 import { safeNext, useAuth } from '@/components/AuthProvider';
+import { readProfile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
 
 type Mode = 'signup' | 'login';
@@ -46,7 +47,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         email,
         password,
         options: {
-          data: { name: name.trim() },
+          data: { name: name.trim(), onboarding: readProfile() ?? undefined },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });

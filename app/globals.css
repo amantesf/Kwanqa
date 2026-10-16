@@ -2584,6 +2584,38 @@ body:has(.learn-app) .site-footer {
   gap: 8px;
 }
 
+.learn-account {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.learn-account .user-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.learn-logout {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  background: #fff;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.learn-logout:hover {
+  color: var(--red-shadow);
+  background-color: var(--red-soft);
+}
+
 .learn-nav-link {
   display: flex;
   align-items: center;
@@ -3131,6 +3163,17 @@ a.rail-link:hover {
   .learn-nav {
     flex-direction: row;
     gap: 4px;
+  }
+
+  .learn-account {
+    margin-top: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .learn-account .user-avatar {
+    display: none;
   }
 
   .learn-nav-link {

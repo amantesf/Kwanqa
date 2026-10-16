@@ -6,6 +6,7 @@ import type { User } from '@supabase/supabase-js';
 import { showToast } from '@/components/Toaster';
 import { accountsEnabled, supabase } from '@/lib/supabase';
 import { clearClimb, mergeClimbs, readClimb, replaceClimb, subscribeClimb, type Climb } from '@/lib/climb';
+import { clearProfile, readProfile, saveProfile, type Profile } from '@/lib/profile';
 
 type AuthState = {
   user: User | null;
@@ -56,6 +57,17 @@ async function pullAndMerge(userId: string) {
   await pushClimb(userId, merged);
 }
 
+/** Keep the survey answers in step between this browser and the account. */
+async function syncProfile(user: User) {
+  const saved = user.user_metadata?.onboarding as Profile | undefined;
+  const local = readProfile();
+  if (saved && !local) {
+    saveProfile(saved); // logging in on a new device
+  } else if (local && !saved) {
+    await supabase?.auth.updateUser({ data: { onboarding: local } }); // guest just signed up
+  }
+}
+
 // Supabase reports bad email links in the URL, e.g. #error_code=otp_expired.
 function authErrorFromUrl() {
   const params = new URLSearchParams(window.location.hash.slice(1) || window.location.search.slice(1));
@@ -91,10 +103,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       if (event === 'SIGNED_OUT') {
         // Covers expired sessions too: never leave one person's progress for the next.
         clearClimb();
+        clearProfile();
       }
       if (next && (event === 'INITIAL_SESSION' || (event === 'SIGNED_IN' && wasSignedOut))) {
         // Supabase recommends doing follow-up requests outside this callback.
-        window.setTimeout(() => pullAndMerge(next.id), 0);
+        window.setTimeout(() => {
+          pullAndMerge(next.id);
+          syncProfile(next);
+        }, 0);
       }
       if (event === 'SIGNED_IN' && wasSignedOut && next && !window.location.pathname.startsWith('/auth')) {
         showToast(`Welcome, ${displayName(next)}! You’re logged in.`);
@@ -115,6 +131,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     signingOut.current = true;
     await supabase?.auth.signOut();
     clearClimb(); // the account keeps the progress; this device forgets it
+    clearProfile();
     signingOut.current = false;
     router.push('/');
     showToast('You’re logged out. See you on the trail!');

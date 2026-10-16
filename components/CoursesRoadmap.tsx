@@ -71,28 +71,6 @@ function AlphabetIcon() {
   );
 }
 
-function CompassIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
-      <circle cx="16" cy="16" r="13" fill="var(--purple)" />
-      <circle cx="16" cy="16" r="9.5" fill="#cfa3f7" />
-      <path d="M19.8 12.2 L17.6 17.6 L12.2 19.8 L14.4 14.4 Z" fill="#fff" />
-    </svg>
-  );
-}
-
-function HeartIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
-      <path
-        d="M16 28 C 6 21, 3 15, 3 10.5 C 3 6.5, 6 4, 9.5 4 C 12.5 4, 14.6 5.8, 16 8 C 17.4 5.8, 19.5 4, 22.5 4 C 26 4, 29 6.5, 29 10.5 C 29 15, 26 21, 16 28 Z"
-        fill="var(--red)"
-      />
-      <path d="M8 9.5 C 8 8, 9 7, 10.5 7" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" fill="none" />
-    </svg>
-  );
-}
-
 export default function CoursesRoadmap() {
   const router = useRouter();
   const pathname = usePathname();
@@ -211,14 +189,6 @@ export default function CoursesRoadmap() {
           <Link href="/fidel" className="learn-nav-link">
             <AlphabetIcon />
             <span>Alphabet</span>
-          </Link>
-          <Link href="/approach" className="learn-nav-link">
-            <CompassIcon />
-            <span>Our approach</span>
-          </Link>
-          <Link href="/about" className="learn-nav-link">
-            <HeartIcon />
-            <span>About us</span>
           </Link>
         </nav>
         {user && (

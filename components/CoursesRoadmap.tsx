@@ -113,9 +113,29 @@ export default function CoursesRoadmap() {
   const currentCamp = next ? courses.findIndex(c => c.slug === next.slug) : courses.length;
   const [viewCamp, setViewCamp] = useState(Math.min(currentCamp, courses.length - 1));
 
-  // Open the trail where Walia is standing, not at the summit.
+  // Open the trail where Walia is standing, not at the summit. Fonts and images
+  // can still change the page height after the first scroll, so keep Walia in
+  // view while the page settles—until the learner scrolls or taps themselves.
   useEffect(() => {
     scrollToWalia('auto');
+    let userMoved = false;
+    const stop = () => {
+      userMoved = true;
+    };
+    const recenter = () => {
+      if (!userMoved) scrollToWalia('auto');
+    };
+    const events = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+    events.forEach(e => window.addEventListener(e, stop, { passive: true }));
+    const resize = new ResizeObserver(recenter);
+    resize.observe(document.body);
+    document.fonts?.ready.then(recenter);
+    const done = window.setTimeout(() => resize.disconnect(), 4000);
+    return () => {
+      events.forEach(e => window.removeEventListener(e, stop));
+      resize.disconnect();
+      window.clearTimeout(done);
+    };
   }, [track, nextKey]);
 
   // Offer a shortcut back to Walia once the current stone scrolls out of view.

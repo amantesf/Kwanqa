@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FadeInOnScroll } from '@/components/FadeInOnScroll';
 import Flag from '@/components/Flag';
+import GrassIcon from '@/components/GrassIcon';
 import HeroActions from '@/components/HeroActions';
 import Mascot from '@/components/Mascot';
 import { CTA, SectionHead, Testimonials } from '@/components/sections';
@@ -14,38 +15,54 @@ const dialogue = (greeting.dialogue ?? []).slice(0, 3);
 export default function Home() {
   return (
     <main>
-      {/* Hero */}
-      <section className="hero">
-        <div className="container hero-grid">
-          <FadeInOnScroll>
-            <div className="hero-copy">
-              <span className="kicker">Amharic ⇄ English</span>
-              <h1 className="display">
-                Climb to fluency in Amharic and English—one small step at a time.
-              </h1>
-              <p className="lead">
-                Bite‑sized lessons, real phrases, and everyday dialogues, built for
-                Ethiopian families and the diaspora. Free to use—sign up to save your
-                climb on any device.
-              </p>
-              <HeroActions />
-            </div>
-          </FadeInOnScroll>
+      {/* Hero: Walia and friends on the left, the pitch and buttons on the right */}
+      <section className="welcome-hero">
+        <div className="welcome-art" aria-hidden>
+          <div className="welcome-blob" />
 
-          <div className="hero-scene">
+          <span className="wf wf-bubble wf-selam">
+            ሰላም!
+            <small>selam</small>
+          </span>
+          <span className="wf wf-bubble wf-hello">Hello!</span>
+          <span className="wf wf-bubble wf-endet">
+            እንዴት ነህ?
+            <small>how are you?</small>
+          </span>
+
+          <span className="wf wf-letter wf-ha">ሀ</span>
+          <span className="wf wf-letter wf-le">ለ</span>
+          <span className="wf wf-letter wf-me">መ</span>
+
+          <span className="wf wf-buna">
+            <svg viewBox="0 0 48 48" width="56" height="56">
+              <path d="M17 6c-2 3 2 5 0 8M24 4c-2 3 2 5 0 8M31 6c-2 3 2 5 0 8" stroke="#c9a27a" strokeWidth="2.6" strokeLinecap="round" fill="none" />
+              <path d="M9 19h30v6a15 15 0 0 1-30 0z" fill="#d2582e" />
+              <path d="M39 22h3a5 5 0 0 1 0 10h-4" stroke="#d2582e" strokeWidth="3.4" fill="none" />
+              <rect x="10" y="19" width="28" height="4" rx="2" fill="#6b3216" />
+              <ellipse cx="24" cy="44" rx="17" ry="3" fill="#e5d3c2" />
+            </svg>
+          </span>
+          <span className="wf wf-grass">
+            <GrassIcon size={54} />
+          </span>
+          <span className="wf wf-star">★</span>
+
+          <div className="welcome-walia">
             <Image
-              src="/brand/walia-scene.jpg"
-              alt="Walia the ibex standing on a mountain peak"
-              fill
+              src="/brand/walia.png"
+              alt=""
+              width={435}
+              height={581}
               priority
-              sizes="(max-width: 960px) 100vw, 520px"
-              className="hero-art"
+              sizes="(max-width: 860px) 60vw, 300px"
             />
-            <div className="speech floaty">
-              ሰላም!
-              <small>selam — hello!</small>
-            </div>
           </div>
+        </div>
+
+        <div className="welcome-copy">
+          <h1>The fun, free way to learn Amharic and English!</h1>
+          <HeroActions />
         </div>
       </section>
 
@@ -61,10 +78,12 @@ export default function Home() {
             English
           </Link>
           <span className="lang-item">
-            Afaan Oromo <span className="lang-soon">Soon</span>
+            <Flag name="oromia" className="lang-flag" />
+            Afaan Oromoo <span className="lang-soon">Coming soon</span>
           </span>
           <span className="lang-item">
-            Tigrinya <span className="lang-soon">Soon</span>
+            <Flag name="tigray" className="lang-flag" />
+            Tigrinya <span className="lang-soon">Coming soon</span>
           </span>
         </div>
       </div>

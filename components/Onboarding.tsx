@@ -18,7 +18,7 @@ type Answers = {
   dailyMinutes?: number;
 };
 
-type Option = { value: string; label: string; sub?: string; icon?: ReactNode };
+type Option = { value: string; label: string; sub?: string; icon?: ReactNode; soon?: boolean };
 
 const LANGUAGE_NAME: Record<Track, string> = { amharic: 'Amharic', english: 'English' };
 
@@ -67,6 +67,8 @@ export default function Onboarding() {
       options: [
         { value: 'amharic', label: 'Amharic', sub: 'አማርኛ', icon: <Flag name="ethiopia" className="onb-flag" /> },
         { value: 'english', label: 'English', sub: 'እንግሊዝኛ', icon: <Flag name="usa" className="onb-flag" /> },
+        { value: 'oromo', label: 'Afaan Oromoo', sub: 'Oromo', icon: <Flag name="oromia" className="onb-flag" />, soon: true },
+        { value: 'tigrinya', label: 'Tigrinya', sub: 'ትግርኛ', icon: <Flag name="tigray" className="onb-flag" />, soon: true },
       ],
     },
     {
@@ -200,20 +202,24 @@ export default function Onboarding() {
             <div className="onb-bubble">{current.question}</div>
           </div>
           {current.multi && <p className="faint small onb-hint">Choose all that apply</p>}
-          <div className={`onb-options${current.options.length > 4 ? ' many' : ''}`}>
+          <div
+            className={`onb-options${current.key === 'track' ? ' onb-cards' : current.options.length > 4 ? ' many' : ''}`}
+          >
             {current.options.map(option => (
               <button
                 key={option.value}
                 type="button"
-                className={`onb-option${isSelected(option.value) ? ' selected' : ''}`}
+                className={`onb-option${isSelected(option.value) ? ' selected' : ''}${option.soon ? ' soon' : ''}`}
                 onClick={() => choose(option.value)}
                 aria-pressed={isSelected(option.value)}
+                disabled={option.soon}
               >
                 {option.icon && <span className="onb-icon">{option.icon}</span>}
                 <span className="onb-label">
                   {option.label}
                   {option.sub && <small>{option.sub}</small>}
                 </span>
+                {option.soon && <span className="onb-soon">Coming soon</span>}
               </button>
             ))}
           </div>

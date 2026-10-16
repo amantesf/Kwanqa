@@ -6,7 +6,7 @@ import type { User } from '@supabase/supabase-js';
 import { showToast } from '@/components/Toaster';
 import { accountsEnabled, supabase } from '@/lib/supabase';
 import { clearClimb, mergeClimbs, readClimb, replaceClimb, subscribeClimb, type Climb } from '@/lib/climb';
-import { clearProfile, normalizeProfile, readProfile, saveProfile } from '@/lib/profile';
+import { clearProfile, normalizeProfile, readProfile, saveProfile, subscribeProfile } from '@/lib/profile';
 
 type AuthState = {
   user: User | null;
@@ -125,6 +125,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     return subscribeClimb(() => {
       if (!signingOut.current) pushClimb(user.id, readClimb());
+    });
+  }, [user]);
+
+  // Save survey answers and course choices to the account whenever they change.
+  useEffect(() => {
+    if (!user) return;
+    return subscribeProfile(() => {
+      const profile = readProfile();
+      if (profile && !signingOut.current) supabase?.auth.updateUser({ data: { onboarding: profile } });
     });
   }, [user]);
 

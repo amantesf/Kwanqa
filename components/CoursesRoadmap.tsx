@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { displayName, useAuth } from '@/components/AuthProvider';
-import Flag from '@/components/Flag';
+import CourseSwitcher from '@/components/CourseSwitcher';
 import Logo from '@/components/Logo';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import Trail, { type TrailStop } from '@/components/Trail';
 import { courseContent, type Track } from '@/lib/courses';
+import { useProfile } from '@/lib/profile';
 import {
   altitudeFor,
   BASE_ALTITUDE,
@@ -23,11 +24,6 @@ import {
   useClimb,
   zoneForCamp,
 } from '@/lib/climb';
-
-const TRACKS: { id: Track; label: string }[] = [
-  { id: 'amharic', label: 'Amharic' },
-  { id: 'english', label: 'English' },
-];
 
 function scrollToWalia(behavior: ScrollBehavior) {
   document
@@ -72,10 +68,11 @@ function AlphabetIcon() {
 }
 
 export default function CoursesRoadmap() {
-  const router = useRouter();
-  const pathname = usePathname();
   const params = useSearchParams();
-  const track: Track = params.get('track') === 'english' ? 'english' : 'amharic';
+  const profile = useProfile();
+  // The course being learned comes from the learner's own choice; the URL is
+  // only a fallback (e.g. before the survey, or with accounts turned off).
+  const track: Track = profile?.track ?? (params.get('track') === 'english' ? 'english' : 'amharic');
   const climb = useClimb();
   const { enabled, user, signOut } = useAuth();
   const guest = enabled && !user; // took the survey but hasn't made an account yet
@@ -284,21 +281,7 @@ export default function CoursesRoadmap() {
       {/* Right: the learner's climb */}
       <aside className="learn-rail" aria-label="Your climb">
         <div className="rail-top">
-          <div className="track-flags" role="group" aria-label="Choose a track">
-            {TRACKS.map(t => (
-              <button
-                key={t.id}
-                type="button"
-                className="track-flag"
-                aria-pressed={track === t.id}
-                title={`Learn ${t.label}`}
-                onClick={() => selectTrack(t.id)}
-              >
-                <Flag name={t.id === 'amharic' ? 'ethiopia' : 'usa'} className="track-flag-img" />
-                <span className="sr-only">{t.label}</span>
-              </button>
-            ))}
-          </div>
+          <CourseSwitcher track={track} />
           <span className="top-stat altitude" title="Your altitude on this track">
             <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
               <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill="var(--primary)" />

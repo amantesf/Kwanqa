@@ -1,0 +1,6 @@
+# Only needed to (re)make the Alphabet recordings with scripts/fidel_audio.py.
+torch
+transformers
+numpy
+lameenc
+uroman

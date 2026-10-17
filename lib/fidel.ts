@@ -61,7 +61,15 @@ const CONSONANTS: Consonant[] = [
   { code: 0x1350, roman: 'p', name: 'p' },
 ];
 
-export type FidelCell = { char: string; roman: string; vowel: FidelVowel };
+/** `audio` is the recording of this sound (shared by letters that sound the same). */
+export type FidelCell = { char: string; roman: string; vowel: FidelVowel; audio: string };
+
+// Recordings live in public/sounds/fidel/, named by code point (e.g. 1200.mp3 for ሀ).
+// They were made with Microsoft's Amharic voice "Ameha" (via crikk.com) and cut
+// into one file per letter. scripts/fidel_audio.py can make a free fallback set
+// with Meta's MMS voice. Any file can be swapped for a native speaker's recording.
+// Letters that sound the same as another (sameAs) reuse that letter's recordings.
+const audioFor = (code: number) => `/sounds/fidel/${code.toString(16)}.mp3`;
 export type FidelRow = { base: string; roman: string; name: string; sameAs?: string; cells: FidelCell[] };
 
 export const FIDEL: FidelRow[] = CONSONANTS.map(c => ({
@@ -73,5 +81,6 @@ export const FIDEL: FidelRow[] = CONSONANTS.map(c => ({
     char: String.fromCodePoint(c.code + i),
     roman: c.roman + vowel.roman,
     vowel,
+    audio: audioFor((c.sameAs ? c.sameAs.codePointAt(0)! : c.code) + i),
   })),
 }));

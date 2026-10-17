@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Python tools for scripts/fidel_audio.py
+    ".venv-audio/**",
   ]),
 ]);
 

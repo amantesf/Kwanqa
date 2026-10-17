@@ -162,6 +162,11 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         />
         {isSignup && <small className="faint">At least 8 characters</small>}
       </label>
+      {!isSignup && (
+        <Link href="/forgot-password" className="text-link small forgot-link">
+          Forgot password?
+        </Link>
+      )}
 
       {error && (
         <p className="form-error" role="alert">

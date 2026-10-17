@@ -15,6 +15,7 @@ const FOOTER_COLUMNS = [
     links: [
       { href: '/about', label: 'Our story' },
       { href: '/values', label: 'Values' },
+      { href: '/privacy', label: 'Privacy policy' },
     ],
   },
   {

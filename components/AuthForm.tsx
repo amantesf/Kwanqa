@@ -174,6 +174,16 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         </p>
       )}
 
+      {isSignup && (
+        <p className="faint small">
+          By creating an account, you agree to our{' '}
+          <Link href="/privacy" className="text-link">
+            Privacy policy
+          </Link>
+          .
+        </p>
+      )}
+
       <button type="submit" className="btn btn-block" disabled={busy}>
         {busy ? 'One moment…' : isSignup ? 'Create account' : 'Log in'}
       </button>

@@ -6067,3 +6067,26 @@ body:has(.practice-screen) {
     display: none;
   }
 }
+
+/* Delete account */
+.delete-link {
+  align-self: flex-start;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--red-shadow);
+}
+
+.delete-list {
+  align-self: stretch;
+  margin: 0;
+  padding-left: 20px;
+  text-align: left;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.delete-warning {
+  font-weight: 800;
+  color: var(--red-shadow);
+}

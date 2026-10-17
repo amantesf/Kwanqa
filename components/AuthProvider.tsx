@@ -13,6 +13,8 @@ type AuthState = {
   loading: boolean;
   enabled: boolean;
   signOut: () => Promise<void>;
+  /** Deletes the account and everything saved in it. Returns an error message, or null. */
+  deleteAccount: () => Promise<string | null>;
 };
 
 const AuthContext = createContext<AuthState>({
@@ -20,6 +22,7 @@ const AuthContext = createContext<AuthState>({
   loading: false,
   enabled: false,
   signOut: async () => {},
+  deleteAccount: async () => null,
 });
 
 export function useAuth() {
@@ -157,8 +160,24 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/');
   }
 
+  async function deleteAccount() {
+    if (!supabase) return 'Accounts aren’t available right now.';
+    signingOut.current = true; // stop saving to an account that's about to go
+    const { error } = await supabase.rpc('delete_account');
+    if (error) {
+      signingOut.current = false;
+      return 'Couldn’t delete your account. Please try again, or email us.';
+    }
+    await supabase.auth.signOut({ scope: 'local' }); // the account is gone, so just forget it here
+    clearClimb();
+    clearProfile();
+    signingOut.current = false;
+    router.push('/');
+    return null;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, enabled: accountsEnabled, signOut }}>
+    <AuthContext.Provider value={{ user, loading, enabled: accountsEnabled, signOut, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

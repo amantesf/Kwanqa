@@ -2096,6 +2096,13 @@ button.phrase-card:hover {
   gap: 10px;
 }
 
+.google-button {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  justify-content: center;
+}
+
 .social-btn {
   --btn-fg: var(--text-strong);
   text-transform: none;

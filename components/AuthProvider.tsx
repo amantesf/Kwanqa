@@ -122,9 +122,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           syncProfile(next);
         }, 0);
       }
-      if (event === 'SIGNED_IN' && wasSignedOut && next && !window.location.pathname.startsWith('/auth')) {
-        showToast(`Welcome, ${displayName(next)}! You’re logged in.`);
-      }
     });
     return () => data.subscription.unsubscribe();
   }, []);
@@ -147,13 +144,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   async function signOut() {
+    if (signingOut.current) return; // ignore extra clicks while logging out
     signingOut.current = true;
     await supabase?.auth.signOut();
     clearClimb(); // the account keeps the progress; this device forgets it
     clearProfile();
     signingOut.current = false;
     router.push('/');
-    showToast('You’re logged out. See you on the trail!');
   }
 
   return (

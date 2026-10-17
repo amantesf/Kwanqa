@@ -110,6 +110,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       setUser(next);
       setLoading(false);
 
+      if (event === 'PASSWORD_RECOVERY' && window.location.pathname !== '/reset-password') {
+        // A reset link that landed anywhere else still goes to the new-password form.
+        router.replace('/reset-password');
+      }
       if (event === 'SIGNED_OUT') {
         // Covers expired sessions too: never leave one person's progress for the next.
         clearClimb();
@@ -124,7 +128,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [router]);
 
   // Save progress to the account whenever it changes on this device.
   useEffect(() => {

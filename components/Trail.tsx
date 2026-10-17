@@ -15,6 +15,8 @@ export type TrailStop = {
   number?: number;
   href?: string;
   onSelect?: () => void;
+  /** Stable name for the stop (e.g. "amharic-beginner-1:0"), used to animate progress. */
+  id?: string;
 };
 
 export type Scenery = 'foothills' | 'forest' | 'heather' | 'alpine' | 'locked';
@@ -388,6 +390,7 @@ export default function Trail({
             className="trail-stop"
             style={{ top: rowOf(i) * ROW, left: WIDTH / 2 + offset }}
             data-current-stone={stop.state === 'current' ? '' : undefined}
+            data-stop={stop.id}
           >
             {stop.state === 'current' && (
               <span className="start-bubble" aria-hidden>

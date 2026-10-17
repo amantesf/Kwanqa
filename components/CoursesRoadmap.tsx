@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
@@ -16,12 +16,57 @@ import {
   BASE_ALTITUDE,
   hornLevel,
   isDone,
+  readClimb,
   nextLesson,
   SUMMIT_ALTITUDE,
   trackCourses,
   useClimb,
   zoneForCamp,
 } from '@/lib/climb';
+
+const WALIA_AT_KEY = 'kwanqa-walia-at';
+
+const noopSubscribe = () => () => {};
+/** False during the server render and hydration, true in the browser after. */
+function useHydrated() {
+  return useSyncExternalStore(noopSubscribe, () => true, () => false);
+}
+
+/** Gold flip on the stone just finished, then Walia hops from it to the current stone. */
+function celebrateArrival(fromStop: string) {
+  const done = document.querySelector<HTMLElement>(`[data-stop="${CSS.escape(fromStop)}"] .stone`);
+  const current = document.querySelector<HTMLElement>('[data-current-stone] .stone');
+  const walia = document.querySelector<HTMLElement>('[data-current-stone] .trail-walia');
+  if (!done) return;
+
+  done.animate(
+    [
+      { backgroundColor: '#d2582e', boxShadow: '0 9px 0 #a8431f', transform: 'scale(1)' },
+      { backgroundColor: '#d2582e', boxShadow: '0 9px 0 #a8431f', transform: 'scale(1.14)', offset: 0.4 },
+      { backgroundColor: '#ffc233', boxShadow: '0 9px 0 #e0a000', transform: 'scale(1.2)', offset: 0.6 },
+      { backgroundColor: '#ffc233', boxShadow: '0 9px 0 #e0a000', transform: 'scale(1)' },
+    ],
+    { duration: 700, easing: 'ease-out' },
+  );
+
+  if (!current || !walia) return;
+  const a = done.getBoundingClientRect();
+  const b = current.getBoundingClientRect();
+  const dx = a.left + a.width / 2 - (b.left + b.width / 2);
+  const dy = a.top + a.height / 2 - (b.top + b.height / 2);
+  const base = getComputedStyle(walia).transform; // keeps the smaller phone size
+  const at = (x: number, y: number) => `translate(${x}px, ${y}px)${base === 'none' ? '' : ` ${base}`}`;
+  walia.animate(
+    [
+      { transform: at(dx, dy) },
+      { transform: at(dx * 0.75, dy * 0.75 - 46), offset: 0.25 },
+      { transform: at(dx * 0.5, dy * 0.5), offset: 0.5 },
+      { transform: at(dx * 0.25, dy * 0.25 - 46), offset: 0.75 },
+      { transform: at(0, 0) },
+    ],
+    { duration: 1100, delay: 600, easing: 'ease-in-out', fill: 'backwards' },
+  );
+}
 
 function scrollToWalia(behavior: ScrollBehavior) {
   document
@@ -39,6 +84,7 @@ export default function CoursesRoadmap() {
   // only a fallback (e.g. before the survey, or with accounts turned off).
   const track: Track = profile?.track ?? (params.get('track') === 'english' ? 'english' : 'amharic');
   const climb = useClimb();
+  const hydrated = useHydrated();
   const { enabled, user } = useAuth();
   const guest = enabled && !user; // took the survey but hasn't made an account yet
   const [waliaVisible, setWaliaVisible] = useState(true);
@@ -76,6 +122,55 @@ export default function CoursesRoadmap() {
       window.clearTimeout(done);
     };
   }, [track, nextKey]);
+
+  // Back on the trail after finishing a lesson: the stone you just climbed
+  // flips from orange to gold, then Walia hops up the path to the next one.
+  // The trail remembers where Walia stood last time to know when to celebrate.
+  useEffect(() => {
+    if (!hydrated) return; // wait for the real progress, not the server placeholder
+    let before: string | null = null;
+    const remember = () => {
+      try {
+        window.localStorage.setItem(WALIA_AT_KEY, nextKey);
+      } catch {
+        // storage unavailable; the celebration just won't repeat-guard
+      }
+    };
+    try {
+      before = window.localStorage.getItem(WALIA_AT_KEY);
+    } catch {
+      return; // storage unavailable; skip the celebration
+    }
+    const [slug, lesson] = (before ?? '').split(':');
+    const justClimbed =
+      !!before && before !== nextKey && isDone(readClimb(), slug, Number(lesson));
+    if (!justClimbed || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      remember();
+      return;
+    }
+    const from = before as string;
+    // Wait until the page has scrolled to Walia and stopped moving, so the
+    // celebration happens where the learner can see it.
+    let lastTop: number | null = null;
+    let steady = 0;
+    const started = Date.now();
+    const poll = window.setInterval(() => {
+      const stone = document.querySelector('[data-current-stone]');
+      const r = stone?.getBoundingClientRect();
+      const inView = !!r && r.top > 0 && r.bottom < window.innerHeight;
+      steady = inView && lastTop !== null && Math.abs(r.top - lastTop) < 1 ? steady + 1 : 0;
+      lastTop = r ? r.top : null;
+      if (steady >= 3) {
+        window.clearInterval(poll);
+        remember(); // only now, so a cancelled visit still celebrates next time
+        celebrateArrival(from);
+      } else if (Date.now() - started > 6000) {
+        window.clearInterval(poll); // never settled; skip rather than play off-screen
+        remember();
+      }
+    }, 120);
+    return () => window.clearInterval(poll);
+  }, [hydrated, nextKey]);
 
   // Offer a shortcut back to Walia once the current stone scrolls out of view.
   useEffect(() => {
@@ -197,6 +292,7 @@ export default function CoursesRoadmap() {
                 ? 'current'
                 : 'locked',
             href: `/courses/${course.slug}?lesson=${i}&practice=1`,
+            id: `${course.slug}:${i}`,
           }));
 
           const campDone = lessons.every((_, i) => isDone(climb, course.slug, i));

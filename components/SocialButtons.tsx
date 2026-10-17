@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Provider } from '@supabase/supabase-js';
+import GoogleButton, { googleButtonEnabled } from '@/components/GoogleButton';
 import { supabase } from '@/lib/supabase';
 
 // Providers we offer, in display order. A button only shows once that
@@ -79,17 +80,22 @@ export default function SocialButtons({
 
   return (
     <div className="social-block">
-      {available.map(p => (
-        <button
-          key={p.id}
-          type="button"
-          className="btn btn-secondary btn-block social-btn"
-          onClick={() => signIn(p.id)}
-        >
-          {p.icon}
-          Continue with {p.label}
-        </button>
-      ))}
+      {available.map(p =>
+        // Google's own button keeps the sign-in on kwanqa.com (falls back to a redirect without a client ID).
+        p.id === 'google' && googleButtonEnabled ? (
+          <GoogleButton key={p.id} next={next} onError={onError} />
+        ) : (
+          <button
+            key={p.id}
+            type="button"
+            className="btn btn-secondary btn-block social-btn"
+            onClick={() => signIn(p.id)}
+          >
+            {p.icon}
+            Continue with {p.label}
+          </button>
+        ),
+      )}
       <div className="divider">
         <span>or use email</span>
       </div>

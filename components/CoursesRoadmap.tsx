@@ -3,25 +3,22 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { displayName, useAuth } from '@/components/AuthProvider';
-import ClimbStreak from '@/components/ClimbStreak';
-import CourseSwitcher from '@/components/CourseSwitcher';
-import Logo from '@/components/Logo';
+import { useAuth } from '@/components/AuthProvider';
+import LearnSidebar from '@/components/LearnSidebar';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
+import TopStats from '@/components/TopStats';
 import Trail, { type TrailStop } from '@/components/Trail';
 import { courseContent, type Track } from '@/lib/courses';
 import { useProfile } from '@/lib/profile';
 import {
-  altitudeFor,
   BASE_ALTITUDE,
   hornLevel,
   isDone,
   nextLesson,
   SUMMIT_ALTITUDE,
   trackCourses,
-  trackTotals,
   useClimb,
   zoneForCamp,
 } from '@/lib/climb';
@@ -34,39 +31,6 @@ function scrollToWalia(behavior: ScrollBehavior) {
 
 const lessonName = (title: string) => title.replace(/^Lesson \d+ – /, '');
 
-/* ---------- small icons for the side navigation ---------- */
-
-function TrailIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
-      <path d="M2 28 L12 10 L18 19 L22 13 L30 28 Z" fill="var(--primary)" />
-      <path d="M12 10 L15 15.5 L13 14.6 L10.6 16.4 Z" fill="#fff" />
-      <circle cx="25" cy="7" r="3.4" fill="var(--gold)" />
-    </svg>
-  );
-}
-
-function BookIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
-      <rect x="5" y="4" width="22" height="25" rx="4" fill="var(--blue)" />
-      <rect x="9" y="4" width="18" height="21" rx="3" fill="#5b8ce6" />
-      <rect x="13" y="10" width="10" height="3" rx="1.5" fill="#fff" />
-      <rect x="13" y="16" width="7" height="3" rx="1.5" fill="#fff" />
-    </svg>
-  );
-}
-
-function AlphabetIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
-      <rect x="3" y="3" width="26" height="26" rx="7" fill="var(--gold)" />
-      <text x="16" y="23" textAnchor="middle" fontSize="18" fontWeight="700" fill="#fff">
-        ፊ
-      </text>
-    </svg>
-  );
-}
 
 export default function CoursesRoadmap() {
   const params = useSearchParams();
@@ -75,16 +39,14 @@ export default function CoursesRoadmap() {
   // only a fallback (e.g. before the survey, or with accounts turned off).
   const track: Track = profile?.track ?? (params.get('track') === 'english' ? 'english' : 'amharic');
   const climb = useClimb();
-  const { enabled, user, signOut } = useAuth();
+  const { enabled, user } = useAuth();
   const guest = enabled && !user; // took the survey but hasn't made an account yet
   const [waliaVisible, setWaliaVisible] = useState(true);
   // The camp the learner is scrolled to; null until the page scrolls.
   const [viewCamp, setViewCamp] = useState<number | null>(null);
 
   const next = nextLesson(climb, track);
-  const totals = trackTotals(climb, track);
   const courses = trackCourses(track);
-  const altitude = altitudeFor(totals.done, totals.total);
   const horns = hornLevel(climb.grass);
   const nextKey = next ? `${next.slug}:${next.lesson}` : 'summit';
   // Camps above the one you're on stay locked under the clouds.
@@ -175,39 +137,7 @@ export default function CoursesRoadmap() {
   return (
     <div className="learn-app">
       {/* Left: navigation */}
-      <aside className="learn-sidebar">
-        <div className="learn-logo">
-          <Logo />
-        </div>
-        <nav className="learn-nav" aria-label="Learn">
-          <Link href={`/courses?track=${track}`} className="learn-nav-link" aria-current="page">
-            <TrailIcon />
-            <span>Learn</span>
-          </Link>
-          <Link href={phrasebookHref} className="learn-nav-link">
-            <BookIcon />
-            <span>Phrasebook</span>
-          </Link>
-          <Link href="/fidel" className="learn-nav-link">
-            <AlphabetIcon />
-            <span>Alphabet</span>
-          </Link>
-        </nav>
-        {user && (
-          <div className="learn-account">
-            <Link href="/profile" className="user-avatar" title="Your profile" aria-label="Your profile">
-              {displayName(user).charAt(0).toUpperCase()}
-            </Link>
-            <button type="button" className="learn-logout" onClick={signOut} aria-label="Log out" title="Log out">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
-                <path d="M10 17l-5-5 5-5" />
-                <path d="M5 12h11" />
-              </svg>
-            </button>
-          </div>
-        )}
-      </aside>
+      <LearnSidebar active="learn" track={track} />
 
       {/* Middle: the trail */}
       <div className="learn-main">
@@ -326,18 +256,7 @@ export default function CoursesRoadmap() {
 
       {/* Right: the learner's climb */}
       <aside className="learn-rail" aria-label="Your climb">
-        <div className="rail-top">
-          <CourseSwitcher track={track} />
-          <ClimbStreak days={climb.days} log={climb.log} altitude={altitude} />
-          <span className="top-stat grass" title="Grass collected">
-            <GrassIcon size={26} />
-            {climb.grass}
-          </span>
-          <span className="top-stat horns" title="Walia’s horn level">
-            <Mascot pose="happy" size={28} hornScale={horns.scale} title="Walia" />
-            {horns.level}
-          </span>
-        </div>
+        <TopStats track={track} />
 
         {guest && (
           <div className="rail-card">

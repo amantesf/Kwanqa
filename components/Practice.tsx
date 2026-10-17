@@ -10,7 +10,16 @@ import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/li
 const MAX_STAMINA = 5;
 const STREAK_TO_RECOVER = 3;
 
-type Phase = 'question' | 'feedback' | 'rest' | 'done';
+type Phase = 'question' | 'feedback' | 'cheer' | 'rest' | 'done';
+
+// Mid-lesson encouragement, like Duolingo's "Super impressive!": after this many
+// correct answers in a row, Walia pops up with a few words of praise.
+const CHEERS: Record<number, { amharic: string; transliteration: string; english: string }> = {
+  3: { amharic: 'ጎበዝ!', transliteration: 'gobez!', english: 'Well done. 3 in a row!' },
+  5: { amharic: 'በጣም ጥሩ!', transliteration: 'betam tiru!', english: 'Very good. 5 in a row!' },
+  8: { amharic: 'ዋው!', transliteration: 'wow!', english: 'Super impressive. 8 in a row!' },
+  12: { amharic: 'ጎበዝ ጎበዝ!', transliteration: 'gobez gobez!', english: 'Walia can’t keep up with you. 12 in a row!' },
+};
 type Reaction = { kind: 'slip' | 'hop'; n: number } | null;
 
 function Hoof({ filled }: { filled: boolean }) {
@@ -200,6 +209,7 @@ export default function Practice({
   const [solved, setSolved] = useState<Set<string>>(new Set());
   const [stamina, setStamina] = useState(MAX_STAMINA);
   const [streak, setStreak] = useState(0);
+  const [combo, setCombo] = useState(0); // correct answers in a row; resets on any mistake
   const [mistakes, setMistakes] = useState(0);
   const [phase, setPhase] = useState<Phase>('question');
   const [choice, setChoice] = useState<string | null>(null);
@@ -219,6 +229,7 @@ export default function Practice({
   }
 
   function loseStamina() {
+    setCombo(0);
     setMistakes(m => m + 1);
     setStreak(0);
     react('slip');
@@ -227,6 +238,7 @@ export default function Practice({
 
   function gainStreak() {
     react('hop');
+    setCombo(c => c + 1);
     const nextStreak = streak + 1;
     if (nextStreak >= STREAK_TO_RECOVER) {
       setStamina(s => Math.min(MAX_STAMINA, s + 1));
@@ -276,6 +288,8 @@ export default function Practice({
       setPhase('done');
     } else if (stamina === 0) {
       setPhase('rest');
+    } else if (lastCorrect && CHEERS[combo]) {
+      setPhase('cheer');
     } else {
       setPhase('question');
     }
@@ -306,6 +320,9 @@ export default function Practice({
       } else if (phase === 'feedback' && e.key === 'Enter') {
         e.preventDefault();
         advance();
+      } else if (phase === 'cheer' && e.key === 'Enter') {
+        e.preventDefault();
+        setPhase('question');
       }
     }
     window.addEventListener('keydown', onKey);
@@ -421,6 +438,18 @@ export default function Practice({
       </div>
 
       <div className="practice-body">
+        {phase === 'cheer' && CHEERS[combo] ? (
+          <div className="practice-cheer" role="status">
+            <div className="cheer-walia" aria-hidden>
+              <Mascot pose="cheer" size={150} hornScale={horns.scale} animated />
+            </div>
+            <div className="cheer-bubble">
+              <strong lang="am">{CHEERS[combo].amharic}</strong>
+              <span className="cheer-tr">{CHEERS[combo].transliteration}</span>
+              <span>{CHEERS[combo].english}</span>
+            </div>
+          </div>
+        ) : (
         <div className="practice-question">
           <h2 className="practice-instruction">{current.instruction}</h2>
 
@@ -482,11 +511,19 @@ export default function Practice({
             />
           )}
         </div>
+        )}
       </div>
 
       <div className={`practice-footer${phase === 'feedback' ? (lastCorrect ? ' good' : ' bad') : ''}`}>
         <div className="practice-footer-inner">
-          {phase === 'feedback' ? (
+          {phase === 'cheer' ? (
+            <>
+              <span />
+              <button type="button" className="btn" onClick={() => setPhase('question')} autoFocus>
+                Continue
+              </button>
+            </>
+          ) : phase === 'feedback' ? (
           <>
             <FeedbackIcon good={lastCorrect} />
             <div className="feedback-text">

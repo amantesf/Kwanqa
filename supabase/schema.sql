@@ -25,3 +25,17 @@ create policy "Update own climb" on public.climbs
 -- Safe to run more than once.
 alter table public.climbs add column if not exists days jsonb not null default '[]'::jsonb;
 alter table public.climbs add column if not exists log jsonb not null default '{}'::jsonb;
+
+-- Lets a logged-in learner delete their own account from the profile page.
+-- Their climbs row goes with it (on delete cascade). Safe to run more than once.
+create or replace function public.delete_account()
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  delete from auth.users where id = auth.uid();
+$$;
+
+revoke execute on function public.delete_account() from public, anon;
+grant execute on function public.delete_account() to authenticated;

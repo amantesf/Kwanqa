@@ -94,7 +94,8 @@ export default function PrivacyPage() {
             <ul>
               <li><strong>See or correct your information:</strong> your name, answers, and progress are on your profile page, and you can change your name there.</li>
               <li><strong>Retake the survey</strong> at any time from your profile.</li>
-              <li><strong>Delete your account</strong> or get a copy of your information by emailing us.</li>
+              <li><strong>Delete your account</strong> at any time from your profile page (Account → Delete account). It deletes your account and progress right away.</li>
+              <li><strong>Get a copy of your information</strong> by emailing us.</li>
             </ul>
 
             <h2>Children</h2>

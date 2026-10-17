@@ -2,8 +2,18 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import GrassIcon from '@/components/GrassIcon';
+import LessonComplete from '@/components/LessonComplete';
 import Mascot from '@/components/Mascot';
-import { completeLesson, hornLevel, REST_COST, spendGrass, useClimb } from '@/lib/climb';
+import {
+  altitudeFor,
+  completeLesson,
+  hornLevel,
+  REST_COST,
+  spendGrass,
+  trackTotals,
+  useClimb,
+} from '@/lib/climb';
+import { courseCatalog } from '@/lib/courses';
 import type { LessonSection } from '@/lib/courses';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 
@@ -32,7 +42,11 @@ function Hoof({ filled }: { filled: boolean }) {
 }
 
 // Answer sounds. Learners can mute them; the choice is remembered in this browser.
-const SOUND_FILES = { correct: '/sounds/correct.mp3', wrong: '/sounds/wrong.mp3' } as const;
+const SOUND_FILES = {
+  correct: '/sounds/correct.mp3',
+  wrong: '/sounds/wrong.mp3',
+  complete: '/sounds/complete.mp3', // ta-da on the lesson-complete screen
+} as const;
 const MUTE_KEY = 'kwanqa-sound-off';
 
 // The mute setting lives in localStorage; reading it through a store keeps the
@@ -218,6 +232,14 @@ export default function Practice({
   const [earned, setEarned] = useState(0);
   const [hornsBefore] = useState(() => hornLevel(climb.grass).level);
   const [startedAt] = useState(() => Date.now()); // for the daily log's time spent
+  // Altitude on this lesson's track, before and after, for the lesson-complete screen.
+  const track = courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
+  const altitudeOf = (c: typeof climb) => {
+    const t = trackTotals(c, track);
+    return altitudeFor(t.done, t.total);
+  };
+  const [altitudeBefore] = useState(() => altitudeOf(climb));
+  const altitudeNow = altitudeOf(climb);
   const sounds = useAnswerSounds();
 
   const current = queue[0];
@@ -285,6 +307,7 @@ export default function Practice({
       // Every question was answered correctly once, plus each wrong try along the way.
       const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
       setEarned(completeLesson(slug, lessonIndex, mistakes, work));
+      sounds.play('complete');
       setPhase('done');
     } else if (stamina === 0) {
       setPhase('rest');
@@ -306,6 +329,11 @@ export default function Practice({
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (phase === 'done' && e.key === 'Enter') {
+        e.preventDefault();
+        onFinish();
+        return;
+      }
       if (!current) return;
       if (phase === 'question' && current.kind === 'choice') {
         const n = Number(e.key);
@@ -349,40 +377,18 @@ export default function Practice({
   }
 
   if (phase === 'done') {
-    const grew = horns.level > hornsBefore;
+    const answers = initial.length + mistakes;
     return (
-      <div className="practice practice-screen practice-done">
-        <Mascot pose="cheer" size={150} hornScale={horns.scale} className="floaty" />
-        <h2 className="h2">Lesson complete!</h2>
-        <div className="reward-row">
-          <div className="reward">
-            <span className="reward-label">Grass earned</span>
-            <span className="reward-value">
-              <GrassIcon size={26} /> +{earned}
-            </span>
-          </div>
-          <div className="reward">
-            <span className="reward-label">Mistakes</span>
-            <span className="reward-value">{mistakes === 0 ? 'None!' : mistakes}</span>
-          </div>
-          <div className="reward">
-            <span className="reward-label">Walia’s horns</span>
-            <span className="reward-value">
-              {horns.level}/{horns.max}
-            </span>
-          </div>
-        </div>
-        {grew && <p className="grew">Walia’s horns grew a new ridge!</p>}
-        {lesson.note && (
-          <div className="lesson-note">
-            <span className="lesson-note-label">Did you know?</span>
-            <p>{lesson.note}</p>
-          </div>
-        )}
-        <button type="button" className="btn" style={{ minWidth: 260 }} onClick={onFinish}>
-          {finishLabel}
-        </button>
-      </div>
+      <LessonComplete
+        earned={earned}
+        accuracy={answers ? Math.round((initial.length / answers) * 100) : 100}
+        altitude={altitudeNow}
+        altitudeGain={Math.max(0, altitudeNow - altitudeBefore)}
+        hornsGrew={horns.level > hornsBefore}
+        note={lesson.note}
+        finishLabel={finishLabel}
+        onFinish={onFinish}
+      />
     );
   }
 

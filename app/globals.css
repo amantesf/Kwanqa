@@ -6090,3 +6090,33 @@ body:has(.practice-screen) {
   font-weight: 800;
   color: var(--red-shadow);
 }
+
+/* Alphabet: hear the selected letter */
+.fidel-roman-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.fidel-speak {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  background: #fff;
+  color: var(--blue);
+  cursor: pointer;
+}
+
+.fidel-speak:hover {
+  background: var(--blue-soft);
+}
+
+.fidel-speak:active {
+  border-bottom-width: 2px;
+  transform: translateY(2px);
+}

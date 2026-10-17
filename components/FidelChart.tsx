@@ -1,12 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FIDEL, VOWELS, type FidelCell, type FidelRow } from '@/lib/fidel';
 
 type Selected = { row: FidelRow; cell: FidelCell };
 
 function sound(cell: FidelCell) {
   return cell.roman || '—';
+}
+
+/** Plays a letter's recording. Each sound is loaded once and reused. */
+function useLetterSounds() {
+  const cache = useRef(new Map<string, HTMLAudioElement>());
+  return (cell: FidelCell) => {
+    let el = cache.current.get(cell.audio);
+    if (!el) {
+      el = new Audio(cell.audio);
+      cache.current.set(cell.audio, el);
+    }
+    el.currentTime = 0;
+    el.play().catch(() => {}); // recording not made yet, or the browser blocked it
+  };
+}
+
+function SpeakerIcon() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+      <path d="M15.5 9a4 4 0 0 1 0 6" />
+      <path d="M18 6.5a7.5 7.5 0 0 1 0 11" />
+    </svg>
+  );
 }
 
 export default function FidelChart() {
@@ -16,9 +40,12 @@ export default function FidelChart() {
   const [selected, setSelected] = useState<Selected>({ row: FIDEL[0], cell: FIDEL[0].cells[0] });
 
   const rows = hideDuplicates ? FIDEL.filter(r => !r.sameAs) : FIDEL;
+  const play = useLetterSounds();
 
+  // Tapping a letter shows it and says it out loud.
   function pick(row: FidelRow, cell: FidelCell) {
     setSelected({ row, cell });
+    play(cell);
     if (quiz) setRevealed(prev => new Set(prev).add(cell.char));
   }
 
@@ -46,7 +73,18 @@ export default function FidelChart() {
       <div className="fidel-layout">
         <aside className="fidel-detail" aria-live="polite">
           <div className="fidel-big">{cell.char}</div>
-          <div className="fidel-roman">{sound(cell)}</div>
+          <div className="fidel-roman-row">
+            <div className="fidel-roman">{sound(cell)}</div>
+            <button
+              type="button"
+              className="fidel-speak"
+              onClick={() => play(cell)}
+              aria-label={`Hear ${cell.char}`}
+              title="Hear it"
+            >
+              <SpeakerIcon />
+            </button>
+          </div>
           <p className="small">
             {carrier ? (
               <>

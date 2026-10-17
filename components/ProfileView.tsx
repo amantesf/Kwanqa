@@ -480,6 +480,9 @@ export default function ProfileView() {
               Log out
             </button>
           </div>
+          <Link href="/delete-account" className="delete-link">
+            Delete account
+          </Link>
         </section>
       </div>
 

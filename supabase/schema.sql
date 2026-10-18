@@ -39,3 +39,23 @@ $$;
 
 revoke execute on function public.delete_account() from public, anon;
 grant execute on function public.delete_account() to authenticated;
+
+-- Limits on what the browser can save, so nobody can stuff the table with junk.
+-- Generous on purpose: ten years of daily practice is about 260 KB of log.
+-- Safe to run more than once.
+alter table public.climbs drop constraint if exists climbs_shape;
+alter table public.climbs add constraint climbs_shape check (
+  jsonb_typeof(completed) = 'object'
+  and jsonb_typeof(days) = 'array'
+  and jsonb_typeof(log) = 'object'
+);
+
+alter table public.climbs drop constraint if exists climbs_size;
+alter table public.climbs add constraint climbs_size check (
+  length(completed::text) <= 50000
+  and length(days::text) <= 100000
+  and length(log::text) <= 500000
+);
+
+alter table public.climbs drop constraint if exists climbs_grass_max;
+alter table public.climbs add constraint climbs_grass_max check (grass <= 1000000);

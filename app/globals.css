@@ -6359,3 +6359,9 @@ body:has(.practice-screen) {
   border-bottom-width: 2px;
   transform: translateY(2px);
 }
+
+/* Turnstile "are you human?" check on the account forms */
+.captcha {
+  width: 100%;
+  min-height: 65px;
+}

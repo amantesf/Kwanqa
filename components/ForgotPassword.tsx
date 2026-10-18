@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
+import Captcha, { captchaEnabled } from '@/components/Captcha';
 import Mascot from '@/components/Mascot';
 import { supabase } from '@/lib/supabase';
 
@@ -13,18 +14,27 @@ export default function ForgotPassword() {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (!supabase || busy) return;
     setBusy(true);
     setError('');
+    const token = captchaToken || undefined;
+    setCaptchaToken(''); // each token works once
+    setCaptchaKey(k => k + 1);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
+      captchaToken: token,
     });
     setBusy(false);
     if (error && error.message.toLowerCase().includes('rate limit')) {
       return setError('Too many tries for now. Please wait a few minutes and try again.');
+    }
+    if (error && error.message.toLowerCase().includes('captcha')) {
+      return setError('The “are you human?” check didn’t go through. Please try again.');
     }
     setSent(true); // same message whether or not the email has an account
   }
@@ -71,7 +81,8 @@ export default function ForgotPassword() {
           {error}
         </p>
       )}
-      <button type="submit" className="btn btn-block" disabled={busy}>
+      <Captcha key={captchaKey} onToken={setCaptchaToken} />
+      <button type="submit" className="btn btn-block" disabled={busy || (captchaEnabled && !captchaToken)}>
         {busy ? 'One moment…' : 'Send reset link'}
       </button>
       <Link href="/login" className="text-link small">

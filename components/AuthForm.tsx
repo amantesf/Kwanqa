@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Captcha, { captchaEnabled } from '@/components/Captcha';
 import Mascot from '@/components/Mascot';
 import SocialButtons from '@/components/SocialButtons';
 import { safeNext, useAuth } from '@/components/AuthProvider';
@@ -17,6 +18,7 @@ function friendly(message: string) {
   if (m.includes('invalid login credentials')) return 'That email and password don’t match. Try again?';
   if (m.includes('email not confirmed')) return 'Please confirm your email first—check your inbox for the link.';
   if (m.includes('already registered')) return 'There’s already an account with that email. Try logging in.';
+  if (m.includes('captcha')) return 'The “are you human?” check didn’t go through. Please try again.';
   if (m.includes('rate limit')) return 'Too many tries for now. Please wait a few minutes and try again.';
   if (m.includes('password')) return message;
   return 'Something went wrong. Please try again.';
@@ -33,6 +35,8 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sentTo, setSentTo] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const isSignup = mode === 'signup';
 
@@ -41,6 +45,10 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     if (!supabase || busy) return;
     setError('');
     setBusy(true);
+    // Each token works once, so get a fresh check ready for the next try.
+    const token = captchaToken || undefined;
+    setCaptchaToken('');
+    setCaptchaKey(k => k + 1);
 
     if (isSignup) {
       const { data, error } = await supabase.auth.signUp({
@@ -49,6 +57,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         options: {
           data: { name: name.trim(), onboarding: readProfile() ?? undefined },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+          captchaToken: token,
         },
       });
       setBusy(false);
@@ -56,7 +65,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       if (data.session) return router.push(next);
       setSentTo(email); // email confirmation is on: wait for the link
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password, options: { captchaToken: token } });
       setBusy(false);
       if (error) return setError(friendly(error.message));
       router.push(next);
@@ -184,7 +193,9 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         </p>
       )}
 
-      <button type="submit" className="btn btn-block" disabled={busy}>
+      <Captcha key={captchaKey} onToken={setCaptchaToken} />
+
+      <button type="submit" className="btn btn-block" disabled={busy || (captchaEnabled && !captchaToken)}>
         {busy ? 'One moment…' : isSignup ? 'Create account' : 'Log in'}
       </button>
 

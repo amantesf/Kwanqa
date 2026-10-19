@@ -81,6 +81,13 @@ async function syncProfile(user: User) {
   }
 }
 
+/** Remembers the learner's time zone, so streak reminders arrive at 7 pm their time. */
+async function saveTimeZone(userId: string) {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (!timeZone) return;
+  await supabase?.from('reminders').upsert({ user_id: userId, time_zone: timeZone, updated_at: new Date().toISOString() });
+}
+
 // Supabase reports bad email links in the URL, e.g. #error_code=otp_expired.
 function authErrorFromUrl() {
   const params = new URLSearchParams(window.location.hash.slice(1) || window.location.search.slice(1));
@@ -127,6 +134,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         window.setTimeout(() => {
           pullAndMerge(next.id);
           syncProfile(next);
+          saveTimeZone(next.id);
         }, 0);
       }
     });

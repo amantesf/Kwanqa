@@ -6365,3 +6365,25 @@ body:has(.practice-screen) {
   width: 100%;
   min-height: 65px;
 }
+
+/* Streak reminder switch on the profile */
+.reminder-toggle {
+  flex-basis: 100%;
+  padding-top: 14px;
+  border-top: 2px solid var(--border);
+  color: var(--text);
+}
+
+.reminder-toggle input {
+  flex-shrink: 0;
+}
+
+.reminder-toggle > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reminder-toggle .small {
+  font-weight: 600;
+}

@@ -5,8 +5,10 @@ import { useId } from 'react';
 // Drawn here from scratch so it scales crisply and costs no image download.
 
 const PALETTES = {
-  classic: { ground: '#f5c21b', a: ['#1f8a4c', '#ffffff', '#d23c2a'], b: ['#d23c2a', '#ffffff', '#2457c5'], tri: '#1d1d1b' },
-  dusk: { ground: '#f5c21b', a: ['#7b3fa0', '#fbe7a1', '#1f8a4c'], b: ['#2457c5', '#ffffff', '#e0457b'], tri: '#1d1d1b' },
+  classic: { ground: '#f5c21b', edge: '#1d1d1b', a: ['#1f8a4c', '#ffffff', '#d23c2a'], b: ['#d23c2a', '#ffffff', '#2457c5'], tri: '#1d1d1b' },
+  dusk: { ground: '#f5c21b', edge: '#1d1d1b', a: ['#7b3fa0', '#fbe7a1', '#1f8a4c'], b: ['#2457c5', '#ffffff', '#e0457b'], tri: '#1d1d1b' },
+  // Quiet version for modern layouts: ink, gold and terracotta only.
+  ink: { ground: '#241a14', edge: '#c9a24a', a: ['#c9a24a', '#241a14', '#d2582e'], b: ['#d2582e', '#241a14', '#c9a24a'], tri: '#c9a24a' },
 } as const;
 
 /** A diamond centered on (cx, cy) with half-width r. */
@@ -36,8 +38,8 @@ export default function Tilet({
             {/* checkered edges */}
             {Array.from({ length: 16 }, (_, i) => (
               <g key={i}>
-                <rect x={i * 3} y={i % 2 ? 0 : 1.5} width="3" height="1.5" fill="#1d1d1b" />
-                <rect x={i * 3} y={i % 2 ? 26.5 : 25} width="3" height="1.5" fill="#1d1d1b" />
+                <rect x={i * 3} y={i % 2 ? 0 : 1.5} width="3" height="1.5" fill={c.edge} />
+                <rect x={i * 3} y={i % 2 ? 26.5 : 25} width="3" height="1.5" fill={c.edge} />
               </g>
             ))}
             {/* little triangles pointing in between the diamonds */}

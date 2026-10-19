@@ -6527,57 +6527,65 @@ body:has(.practice-screen) {
   max-width: none;
 }
 
-/* Today's date, framed like a netela: cream cotton between two tilet bands. */
+/* Today's date: a clean card with a thin tilet accent along the top. */
 .et-hero {
   overflow: hidden;
-  border-radius: 24px;
-  border: 2px solid #ead9bd;
-  border-bottom-width: 5px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.9), transparent 70%),
-    #fbf3e4;
+  border-radius: 28px;
+  border: 1px solid #ece4d8;
+  background: #fff;
+  box-shadow: 0 24px 60px -36px rgba(60, 35, 15, 0.35);
 }
 
 .et-hero-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 36px 24px 34px;
+  gap: 14px;
+  padding: 52px 24px 48px;
   text-align: center;
 }
 
 .et-hero-kicker {
   margin: 0;
-  padding: 4px 14px;
-  border-radius: 999px;
-  background-color: #1d1d1b;
-  color: #f5c21b;
+  color: var(--primary);
   font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 .et-hero-kicker span {
-  color: #fbf3e4;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  color: #b5a38f;
+  font-size: 12px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .et-date-big {
   margin: 0;
-  font-size: clamp(38px, 8vw, 64px);
-  font-weight: 900;
-  line-height: 1.15;
-  color: #3a2416;
-  text-shadow: 0 3px 0 rgba(210, 88, 46, 0.18);
+  font-size: clamp(40px, 8vw, 68px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #241a14;
+}
+
+/* A small gold diamond under the date, echoing the tilet. */
+.et-date-big::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 22px auto 0;
+  background: #c9a24a;
+  transform: rotate(45deg);
+  box-shadow: -22px 22px 0 -3px #ece4d8, 22px -22px 0 -3px #ece4d8;
 }
 
 .holidays-today {
   margin: 0;
-  color: #7a6450;
-  font-weight: 700;
+  color: #8a7a6a;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 /* The month: a real calendar page, Ge'ez numerals first. */
@@ -6589,17 +6597,17 @@ body:has(.practice-screen) {
 
 .month {
   margin: 0;
-  padding: 0 24px 24px;
+  padding: 0 28px 28px;
   overflow: hidden;
-  border-radius: 24px;
-  border: 2px solid #ead9bd;
-  border-bottom-width: 5px;
-  background-color: #fffaf2;
+  border-radius: 28px;
+  border: 1px solid #ece4d8;
+  background: #fff;
+  box-shadow: 0 24px 60px -40px rgba(60, 35, 15, 0.3);
 }
 
 .month-tilet {
-  width: calc(100% + 48px);
-  margin: 0 -24px 22px;
+  width: calc(100% + 56px);
+  margin: 0 -28px 26px;
 }
 
 .month-caption {
@@ -6608,19 +6616,21 @@ body:has(.practice-screen) {
   align-items: baseline;
   justify-content: space-between;
   gap: 4px 16px;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .month-name {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
-  color: var(--text-strong);
+  color: #241a14;
 }
 
 .month-sub {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b5a38f;
 }
 
 .month-grid {
@@ -6630,27 +6640,14 @@ body:has(.practice-screen) {
 }
 
 .month-weekday {
-  padding: 7px 0;
+  padding-bottom: 12px;
   margin-bottom: 4px;
+  margin-inline: -3px; /* close the grid gap so the line runs unbroken */
+  border-bottom: 1px solid #f1ebe2;
   text-align: center;
   font-size: 13px;
-  font-weight: 800;
-  color: #f5c21b;
-  background-color: #1d1d1b;
-}
-
-.month-weekday {
-  margin-inline: -3px; /* close the grid gap so the labels read as one band */
-}
-
-.month-weekday:first-child {
-  margin-left: 0;
-  border-radius: 10px 0 0 10px;
-}
-
-.month-weekday:nth-child(7) {
-  margin-right: 0;
-  border-radius: 0 10px 10px 0;
+  font-weight: 700;
+  color: #b5a38f;
 }
 
 .day {
@@ -6659,76 +6656,73 @@ body:has(.practice-screen) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  height: 58px;
-  border-radius: 14px;
-  color: var(--text-strong);
+  gap: 3px;
+  height: 60px;
+  border-radius: 16px;
+  color: #241a14;
+  transition: background-color 0.15s ease;
 }
 
 .day-geez {
   font-size: 19px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
 }
 
 .day-greg {
   font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: #b5a38f;
   font-variant-numeric: tabular-nums;
 }
 
 .day:not(.today):not(.feast):hover {
-  background-color: #f6ead4;
+  background-color: #faf6f0;
 }
 
-/* Today: an embroidered patch with a little tilet stitch along the bottom. */
 .day.today {
-  background-color: var(--primary);
+  background-color: #241a14;
   color: #fff;
-  box-shadow: 0 3px 0 var(--primary-dark);
-  overflow: hidden;
-}
-
-.day.today::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 6px;
-  background:
-    linear-gradient(45deg, transparent 33%, #f5c21b 33% 66%, transparent 66%) 0 0 / 8px 6px,
-    linear-gradient(-45deg, transparent 33%, #1f8a4c 33% 66%, transparent 66%) 4px 0 / 8px 6px,
-    #1d1d1b;
+  box-shadow: 0 10px 24px -12px rgba(36, 26, 20, 0.7);
 }
 
 .day.today .day-greg {
-  color: rgba(255, 255, 255, 0.85);
+  color: #c9a24a;
+}
+
+/* a tiny gold diamond marks today */
+.day.today::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  background: #c9a24a;
+  transform: rotate(45deg);
 }
 
 .day.feast {
-  background-color: color-mix(in srgb, var(--holiday) 16%, var(--page));
+  background-color: color-mix(in srgb, var(--holiday) 10%, #fff);
   color: var(--holiday);
-  transition: background-color 0.15s ease;
 }
 
 .day.feast .day-greg {
-  color: color-mix(in srgb, var(--holiday) 70%, var(--text));
+  color: color-mix(in srgb, var(--holiday) 60%, #b5a38f);
 }
 
 .day.feast:hover {
-  background-color: color-mix(in srgb, var(--holiday) 26%, var(--page));
+  background-color: color-mix(in srgb, var(--holiday) 18%, #fff);
 }
 
 .day.feast::after {
   content: '';
   position: absolute;
-  bottom: 6px;
+  bottom: 7px;
   width: 5px;
   height: 5px;
-  border-radius: 50%;
   background-color: var(--holiday);
+  transform: rotate(45deg);
 }
 
 .month-feasts {
@@ -6738,7 +6732,7 @@ body:has(.practice-screen) {
   margin: 18px 0 0;
   padding: 16px 0 0;
   list-style: none;
-  border-top: 2px dashed #ead9bd;
+  border-top: 1px solid #f1ebe2;
   font-weight: 700;
   color: var(--text);
 }

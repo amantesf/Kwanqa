@@ -54,7 +54,7 @@ function MonthGrid({ month, today }: { month: EthiopianDate; today: EthiopianDat
 
   return (
     <figure className="month">
-      <Tilet className="month-tilet" height={22} />
+      <Tilet className="month-tilet" height={12} palette="ink" />
       <figcaption className="month-caption">
         <span className="month-name" lang="am">
           {MONTHS[month.month - 1].amharic} {geezNumber(month.year)}
@@ -120,7 +120,7 @@ export default function HolidayCalendar() {
     <main className="section holidays-page">
       <div className="container holidays-container">
         <header className="et-hero">
-          <Tilet height={36} />
+          <Tilet height={14} palette="ink" />
           <div className="et-hero-body">
             <p className="et-hero-kicker" lang="am">
               {now ? `ዛሬ ${WEEKDAY_FULL[now.getDay()]}` : 'ዛሬ'}
@@ -135,7 +135,6 @@ export default function HolidayCalendar() {
               </p>
             )}
           </div>
-          <Tilet height={36} palette="dusk" />
         </header>
 
         {today && shown && (

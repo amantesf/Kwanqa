@@ -1,21 +1,79 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import {
+  holidayEmail,
+  holidayFor,
   oneClickUnsubscribeUrl,
   reminderEmail,
   reminderFor,
   unsubscribeUrl,
   type Candidate,
+  type HolidayCandidate,
+  type ReminderKind,
 } from '@/lib/reminders';
 
 // Called every hour by the Supabase scheduler (see supabase/schema.sql).
-// Sends a streak reminder to learners for whom it's now 7 pm.
+// Sends streak reminders to learners for whom it's now 7 pm, and holiday
+// emails to learners for whom it's 9 am on an Ethiopian holiday.
 
 const FROM = process.env.REMINDER_FROM ?? 'Walia from kwanqa <reminders@kwanqa.com>';
 const REPLY_TO = 'kwanqa.team@gmail.com';
 const BATCH = 100; // Resend's batch limit
 
 export const dynamic = 'force-dynamic';
+
+type Outgoing = {
+  userId: string;
+  to: string;
+  kind: ReminderKind;
+  email: { subject: string; html: string; text: string };
+  /** The row update that records this send, so nobody gets it twice. */
+  record: Record<string, string>;
+};
+
+/** Sends emails in batches and records each batch that Resend accepted. */
+async function send(
+  outgoing: Outgoing[],
+  label: string,
+  ctx: { resendKey: string; secret: string; hour: string; admin: NonNullable<ReturnType<typeof supabaseAdmin>> },
+) {
+  let sent = 0;
+  const failures: string[] = [];
+  for (let i = 0; i < outgoing.length; i += BATCH) {
+    const chunk = outgoing.slice(i, i + BATCH);
+    const response = await fetch('https://api.resend.com/emails/batch', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.resendKey}`,
+        'Content-Type': 'application/json',
+        // If the scheduler retries this hour, Resend won't send the same batch twice.
+        'Idempotency-Key': `${label}-${ctx.hour}-${i / BATCH}`,
+      },
+      body: JSON.stringify(
+        chunk.map(o => ({
+          from: FROM,
+          to: [o.to],
+          reply_to: REPLY_TO,
+          subject: o.email.subject,
+          html: o.email.html,
+          text: o.email.text,
+          headers: {
+            'List-Unsubscribe': `<${oneClickUnsubscribeUrl(o.userId, ctx.secret, o.kind)}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+        })),
+      ),
+    });
+    if (!response.ok) {
+      failures.push(`${label} batch ${i / BATCH}: ${response.status} ${(await response.text()).slice(0, 200)}`);
+      continue;
+    }
+    const { error } = await ctx.admin.from('reminders').upsert(chunk.map(o => ({ user_id: o.userId, ...o.record })));
+    if (error) failures.push(`saving ${label} sends: ${error.message}`);
+    sent += chunk.length;
+  }
+  return { sent, failures };
+}
 
 export async function POST(request: Request) {
   const secret = process.env.CRON_SECRET;
@@ -28,64 +86,56 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'reminders are not configured' }, { status: 503 });
   }
 
-  const { data, error } = await admin.rpc('reminder_candidates');
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
   const now = new Date();
-  const due = (data as Candidate[]).flatMap(candidate => {
-    const reminder = reminderFor(candidate, now);
-    return reminder ? [{ candidate, ...reminder }] : [];
-  });
-
-  let sent = 0;
+  const ctx = { resendKey, secret, admin, hour: now.toISOString().slice(0, 13) };
   const failures: string[] = [];
-  for (let i = 0; i < due.length; i += BATCH) {
-    const chunk = due.slice(i, i + BATCH);
-    const emails = chunk.map(({ candidate, streak }) => {
-      const { subject, html, text } = reminderEmail(
-        candidate.name,
-        streak,
-        unsubscribeUrl(candidate.user_id, secret),
-      );
-      return {
-        from: FROM,
-        to: [candidate.email],
-        reply_to: REPLY_TO,
-        subject,
-        html,
-        text,
-        headers: {
-          'List-Unsubscribe': `<${oneClickUnsubscribeUrl(candidate.user_id, secret)}>`,
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-        },
-      };
-    });
 
-    const response = await fetch('https://api.resend.com/emails/batch', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-        // If the scheduler retries this hour, Resend won't send the same batch twice.
-        'Idempotency-Key': `reminders-${now.toISOString().slice(0, 13)}-${i / BATCH}`,
-      },
-      body: JSON.stringify(emails),
+  // Streak reminders
+  const streak = await admin.rpc('reminder_candidates');
+  let streakDue: Outgoing[] = [];
+  if (streak.error) failures.push(`streak candidates: ${streak.error.message}`);
+  else {
+    streakDue = (streak.data as Candidate[]).flatMap(c => {
+      const due = reminderFor(c, now);
+      if (!due) return [];
+      return [{
+        userId: c.user_id,
+        to: c.email,
+        kind: 'streak' as const,
+        email: reminderEmail(c.name, due.streak, unsubscribeUrl(c.user_id, secret)),
+        record: { time_zone: c.time_zone, last_sent: due.today },
+      }];
     });
-    if (!response.ok) {
-      failures.push(`batch ${i / BATCH}: ${response.status} ${(await response.text()).slice(0, 200)}`);
-      continue;
-    }
-
-    // Remember today's send so nobody gets two reminders in one day.
-    const { error: saveError } = await admin
-      .from('reminders')
-      .upsert(chunk.map(({ candidate, today }) => ({ user_id: candidate.user_id, time_zone: candidate.time_zone, last_sent: today })));
-    if (saveError) failures.push(`saving sends: ${saveError.message}`);
-    sent += chunk.length;
   }
+  const streakResult = await send(streakDue, 'reminders', ctx);
 
+  // Holiday emails
+  const festive = await admin.rpc('holiday_candidates');
+  let holidayDue: Outgoing[] = [];
+  // PGRST202: the holiday SQL hasn't been run yet, so holiday emails are simply off.
+  if (festive.error && festive.error.code !== 'PGRST202') failures.push(`holiday candidates: ${festive.error.message}`);
+  else if (festive.data) {
+    holidayDue = (festive.data as HolidayCandidate[]).flatMap(c => {
+      const due = holidayFor(c, now);
+      if (!due) return [];
+      return [{
+        userId: c.user_id,
+        to: c.email,
+        kind: 'holidays' as const,
+        email: holidayEmail(c.name, due.holiday, c.track, unsubscribeUrl(c.user_id, secret, 'holidays')),
+        record: { time_zone: c.time_zone, last_holiday: due.key },
+      }];
+    });
+  }
+  const holidayResult = await send(holidayDue, 'holidays', ctx);
+
+  failures.push(...streakResult.failures, ...holidayResult.failures);
   return NextResponse.json(
-    { checked: data.length, due: due.length, sent, failures },
+    {
+      streak: { checked: streak.data?.length ?? 0, due: streakDue.length, sent: streakResult.sent },
+      holidays: { checked: festive.data?.length ?? 0, due: holidayDue.length, sent: holidayResult.sent },
+      failures,
+    },
     { status: failures.length ? 500 : 200 },
   );
 }

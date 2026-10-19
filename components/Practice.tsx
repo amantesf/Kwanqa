@@ -231,6 +231,7 @@ export default function Practice({
   const [mistakes, setMistakes] = useState(0);
   const [phase, setPhase] = useState<Phase>('question');
   const [choice, setChoice] = useState<string | null>(null);
+  const [picked, setPicked] = useState<number[]>([]); // tiles tapped so far, in order
   const [lastCorrect, setLastCorrect] = useState(true);
   const [reaction, setReaction] = useState<Reaction>(null);
   const [earned, setEarned] = useState(0);
@@ -273,9 +274,15 @@ export default function Practice({
     }
   }
 
+  const builtAnswer = current?.kind === 'build' ? picked.map(i => current.tiles[i]) : [];
+  const canCheck = current?.kind === 'choice' ? choice !== null : current?.kind === 'build' ? picked.length > 0 : false;
+
   function check() {
-    if (!current || current.kind !== 'choice' || !choice) return;
-    const correct = choice === current.answer;
+    if (!current || !canCheck) return;
+    let correct: boolean;
+    if (current.kind === 'choice') correct = choice === current.answer;
+    else if (current.kind === 'build') correct = builtAnswer.join(' ') === current.answer.join(' ');
+    else return;
     setLastCorrect(correct);
     sounds.play(correct ? 'correct' : 'wrong');
     if (correct) {
@@ -305,6 +312,7 @@ export default function Practice({
     setSolved(nextSolved);
     setQueue(nextQueue);
     setChoice(null);
+    setPicked([]);
 
     if (nextQueue.length === 0) {
       // Every question was answered correctly once, plus each wrong try along the way.
@@ -345,6 +353,13 @@ export default function Practice({
           return;
         }
         if (e.key === 'Enter' && choice) {
+          e.preventDefault();
+          check();
+        }
+      } else if (phase === 'question' && current.kind === 'build') {
+        if (e.key === 'Backspace') {
+          setPicked(p => p.slice(0, -1)); // take back the last tile
+        } else if (e.key === 'Enter' && picked.length) {
           e.preventDefault();
           check();
         }
@@ -470,7 +485,7 @@ export default function Practice({
             >
               <Mascot pose={reaction?.kind === 'hop' ? 'cheer' : 'happy'} size={110} hornScale={horns.scale} />
             </div>
-            {current.kind === 'choice' && (
+            {current.kind !== 'match' && (
               <div className="prompt-bubble">
                 <span className="prompt-main">{current.prompt}</span>
                 {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
@@ -507,6 +522,41 @@ export default function Practice({
                 })}
               </div>
             </>
+          ) : current.kind === 'build' ? (
+            <div className={`build${phase === 'feedback' ? (lastCorrect ? ' good' : ' bad') : ''}`}>
+              <div className="build-answer" aria-label="Your answer">
+                {picked.map(i => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="tile"
+                    lang={track === 'english' ? 'en' : 'am'}
+                    disabled={phase === 'feedback'}
+                    onClick={() => setPicked(p => p.filter(x => x !== i))}
+                  >
+                    {current.tiles[i]}
+                  </button>
+                ))}
+              </div>
+              <div className="build-bank">
+                {current.tiles.map((tile, i) => {
+                  const used = picked.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`tile${used ? ' used' : ''}`}
+                      lang={track === 'english' ? 'en' : 'am'}
+                      aria-hidden={used}
+                      disabled={used || phase === 'feedback'}
+                      onClick={() => setPicked(p => [...p, i])}
+                    >
+                      {tile}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           ) : (
             <MatchRound
               key={current.id + solved.size + queue.length}
@@ -537,9 +587,11 @@ export default function Practice({
             <FeedbackIcon good={lastCorrect} />
             <div className="feedback-text">
               <strong>{lastCorrect ? 'Nice footing!' : 'Walia slipped!'}</strong>
-              {current.kind === 'choice' && (
+              {current.kind !== 'match' && (
                 <span>
-                  {lastCorrect ? current.explain : `Correct answer: ${current.answer}. ${current.explain}`}
+                  {lastCorrect
+                    ? current.explain
+                    : `Correct answer: ${current.kind === 'build' ? current.answer.join(' ') : current.answer}. ${current.explain}`}
                 </span>
               )}
               {!lastCorrect && <span className="faint small">This one will come back later.</span>}
@@ -553,8 +605,8 @@ export default function Practice({
             <span className="faint small">
               {streak > 0 ? `${streak} in a row — ${STREAK_TO_RECOVER - streak} more to regain stamina` : ' '}
             </span>
-            {current.kind === 'choice' && (
-              <button type="button" className="btn" onClick={check} disabled={!choice}>
+            {current.kind !== 'match' && (
+              <button type="button" className="btn" onClick={check} disabled={!canCheck}>
                 Check
               </button>
             )}

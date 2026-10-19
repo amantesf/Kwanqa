@@ -25,7 +25,20 @@ export type MatchExercise = {
   pairs: { left: string; right: string }[];
 };
 
-export type Exercise = ChoiceExercise | MatchExercise;
+/** Tap word tiles in order to answer: one tile for a single word, several to build a sentence. */
+export type BuildExercise = {
+  kind: 'build';
+  id: string;
+  instruction: string;
+  prompt: string;
+  promptHint?: string;
+  /** Every tile on offer: the answer's words plus a few wrong ones, shuffled. */
+  tiles: string[];
+  answer: string[];
+  explain: string;
+};
+
+export type Exercise = ChoiceExercise | MatchExercise | BuildExercise;
 
 function shuffle<T>(items: T[]): T[] {
   const copy = [...items];
@@ -69,6 +82,28 @@ function choice(
   };
 }
 
+function build(
+  id: string,
+  instruction: string,
+  prompt: string,
+  answer: string[],
+  wrong: string[],
+  explain: string,
+  promptHint?: string,
+): BuildExercise | null {
+  if (!answer.length) return null;
+  const extra = unique(wrong).filter(w => !answer.includes(w));
+  return { kind: 'build', id, instruction, prompt, promptHint, tiles: shuffle([...answer, ...extra]), answer, explain };
+}
+
+/** Puts the tile questions in the middle of the lesson, spread out. */
+function spreadIn(exercises: Exercise[], extra: Exercise[]) {
+  extra.forEach((ex, i) => {
+    const at = Math.round(((i + 1) * exercises.length) / (extra.length + 1));
+    exercises.splice(at, 0, ex);
+  });
+}
+
 // Strip Ethiopic and Latin punctuation so words can be compared and blanked.
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -104,7 +139,7 @@ export function buildExercises(
   };
 
   const exercises: Exercise[] = [];
-  const picked = shuffle(uniqueCards).slice(0, 6);
+  const picked = shuffle(uniqueCards).slice(0, 5);
 
   picked.forEach((card, i) => {
     const explain = `${card.amharic} (${card.transliteration}) means “${card.english}”.`;
@@ -148,6 +183,57 @@ export function buildExercises(
     }
     if (ex) exercises.push(ex);
   });
+
+  // Word tiles in the middle of the lesson: tap the Amharic word, then build sentences.
+  const amWords = (text: string) =>
+    text
+      .split(/\s+/)
+      .map(w => w.replace(PUNCT, ''))
+      .filter(Boolean);
+  const tilePool = unique(poolCards.flatMap(c => amWords(c.amharic))).filter(w => !w.includes('...'));
+  const localWords = unique(uniqueCards.flatMap(c => amWords(c.amharic))).filter(w => !w.includes('...'));
+  const pickWrong = (answer: string[], count: number) =>
+    [
+      ...shuffle(localWords.filter(w => !answer.includes(w))),
+      ...shuffle(tilePool.filter(w => !answer.includes(w) && !localWords.includes(w))),
+    ].slice(0, count);
+  const tiles: Exercise[] = [];
+  const single = shuffle(uniqueCards).find(c => amWords(c.amharic).length === 1 && !c.amharic.includes('...'));
+  if (single) {
+    const ex = build(
+      'tap-word',
+      'Tap the Amharic word',
+      single.english,
+      amWords(single.amharic),
+      pickWrong(amWords(single.amharic), 4),
+      `${single.amharic} (${single.transliteration}) means “${single.english}”.`,
+    );
+    if (ex) tiles.push(ex);
+  }
+  shuffle(
+    uniqueCards.filter(c => {
+      const n = amWords(c.amharic).length;
+      return n >= 2 && n <= 7 && !c.amharic.includes('...');
+    }),
+  )
+    .slice(0, 2)
+    .forEach((card, i) => {
+      const answer = amWords(card.amharic);
+      const ex = build(
+        `build-${i}`,
+        'Build the sentence',
+        card.english,
+        answer,
+        pickWrong(answer, 3),
+        `${card.amharic} (${card.transliteration}) means “${card.english}”.`,
+      );
+      if (ex) tiles.push(ex);
+    });
+  spreadIn(exercises, tiles);
+
+  // "Who are you talking to?": pick the right form for a friend, a girl or an elder.
+  const respect = respectExercises(lesson);
+  respect.forEach((ex, i) => exercises.splice(Math.min(1 + i * 3, exercises.length), 0, ex));
 
   // Fill in the missing word of a dialogue line.
   const lines = shuffle(lesson.dialogue ?? []).filter(l => l.amharic.split(/\s+/).length >= 2);
@@ -193,6 +279,41 @@ export function buildExercises(
 }
 
 // ---------------------------------------------------------------------------
+// Respect: Amharic changes with who you're talking to.
+
+const LISTENERS = {
+  man: { who: ['your friend Dawit', 'your boy cousin', 'a boy your age'], label: 'a guy your age' },
+  woman: { who: ['your friend Hana', 'your girl cousin', 'a girl your age'], label: 'a girl your age' },
+  elder: { who: ['your grandma', 'your grandpa', 'an elder at church', 'your teacher'], label: 'an elder' },
+} as const;
+
+type Listener = keyof typeof LISTENERS;
+
+function respectExercises(lesson: LessonSection): ChoiceExercise[] {
+  const sets = shuffle(lesson.respect ?? []).slice(0, 3);
+  return sets.map((set, i) => {
+    // The first one is always an elder: that's the point of the lesson.
+    const to: Listener = i === 0 ? 'elder' : shuffle<Listener>(['man', 'woman', 'elder'])[0];
+    const who = shuffle([...LISTENERS[to].who])[0];
+    const answer = set[to];
+    const others = (['man', 'woman', 'elder'] as Listener[]).filter(l => l !== to);
+    const explain =
+      to === 'elder'
+        ? `For an elder, say ${set.elder} to show respect. ${set.man} is for a guy and ${set.woman} is for a girl.`
+        : `For ${LISTENERS[to].label}, say ${answer}. ${others.map(o => `${set[o]} is for ${LISTENERS[o].label}`).join(', and ')}.`;
+    return {
+      kind: 'choice',
+      id: `respect-${i}`,
+      instruction: 'Who are you talking to?',
+      prompt: `To ${who}: “${set.english}”`,
+      options: shuffle([set.man, set.woman, set.elder]),
+      answer,
+      explain,
+    };
+  });
+}
+
+// ---------------------------------------------------------------------------
 // English course: the learner already speaks Amharic and is learning English.
 
 const words = (text: string) => text.split(/\s+/).filter(Boolean);
@@ -219,7 +340,7 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
 
   const exercises: Exercise[] = [];
   shuffle(uniqueCards)
-    .slice(0, 6)
+    .slice(0, 5)
     .forEach((card, i) => {
       const explain = `“${card.english}” = ${card.amharic}`;
       const others = (list: Card[]) => list.filter(c => c.english !== card.english && c.amharic !== card.amharic);
@@ -274,6 +395,45 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
     );
     if (ex) exercises.splice(Math.min(3, exercises.length), 0, ex);
   }
+
+  // Word tiles in the middle of the lesson: tap the English word, then build sentences.
+  const enWords = (text: string) => words(text).map(w => w.replace(/[.,!?;:“”"…]/g, '')).filter(Boolean);
+  const usable = (c: Card) => !/[/()…]|\.\.\./.test(c.english);
+  const enPool = unique(poolCards.filter(usable).flatMap(c => enWords(c.english)));
+  const enLocal = unique(uniqueCards.filter(usable).flatMap(c => enWords(c.english)));
+  const wrongEn = (answer: string[], count: number) => {
+    const lower = answer.map(a => a.toLowerCase());
+    const ok = (w: string) => !lower.includes(w.toLowerCase());
+    return [...shuffle(enLocal.filter(ok)), ...shuffle(enPool.filter(w => ok(w) && !enLocal.includes(w)))].slice(0, count);
+  };
+  const enTiles: Exercise[] = [];
+  const oneWord = shuffle(uniqueCards).find(c => usable(c) && enWords(c.english).length === 1);
+  if (oneWord) {
+    const ex = build(
+      'tap-word',
+      'ቃሉን ይንኩ · Tap the English word',
+      oneWord.amharic,
+      enWords(oneWord.english),
+      wrongEn(enWords(oneWord.english), 4),
+      `“${oneWord.english}” = ${oneWord.amharic}`,
+    );
+    if (ex) enTiles.push(ex);
+  }
+  shuffle(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= 8))
+    .slice(0, 2)
+    .forEach((card, i) => {
+      const answer = enWords(card.english);
+      const ex = build(
+        `build-${i}`,
+        'ዓረፍተ ነገሩን ይገንቡ · Build the sentence',
+        card.amharic,
+        answer,
+        wrongEn(answer, 3),
+        `“${card.english}” = ${card.amharic}`,
+      );
+      if (ex) enTiles.push(ex);
+    });
+  spreadIn(exercises, enTiles);
 
   const matchCards = shuffle(uniqueCards)
     .filter(c => c.english.length <= 40)

@@ -4879,7 +4879,7 @@ a.rail-link:hover {
   text-wrap: balance;
 }
 
-/* Amanuel's hero buttons, stacked full-width like Duolingo's */
+/* Hero buttons, stacked full-width on phones */
 .welcome-copy .hero-actions {
   width: 100%;
   max-width: 340px;

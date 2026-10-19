@@ -59,3 +59,63 @@ alter table public.climbs add constraint climbs_size check (
 
 alter table public.climbs drop constraint if exists climbs_grass_max;
 alter table public.climbs add constraint climbs_grass_max check (grass <= 1000000);
+
+-- Streak reminder emails: one row per learner with their choice and time zone.
+-- Reminders are on by default; learners turn them off on their profile or with
+-- the unsubscribe link in each email. Safe to run more than once.
+create table if not exists public.reminders (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  enabled boolean not null default true,
+  time_zone text not null default 'UTC' check (length(time_zone) <= 64),
+  last_sent date,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.reminders enable row level security;
+
+drop policy if exists "Read own reminders" on public.reminders;
+create policy "Read own reminders" on public.reminders
+  for select using (auth.uid() = user_id);
+
+drop policy if exists "Insert own reminders" on public.reminders;
+create policy "Insert own reminders" on public.reminders
+  for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Update own reminders" on public.reminders;
+create policy "Update own reminders" on public.reminders
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Learners may change their choice and time zone, but only the server records sends.
+revoke insert, update on public.reminders from anon, authenticated;
+grant insert (user_id, enabled, time_zone, updated_at) on public.reminders to authenticated;
+grant update (user_id, enabled, time_zone, updated_at) on public.reminders to authenticated;
+
+-- Learners who might need a reminder: confirmed email, reminders on, and practice
+-- in the last few days. The server picks who is at 7 pm and at risk of losing
+-- their streak. Only the server (service role) can call this.
+create or replace function public.reminder_candidates()
+returns table (user_id uuid, email text, name text, time_zone text, days jsonb, last_sent date)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    u.id,
+    u.email::text,
+    coalesce(u.raw_user_meta_data ->> 'name', u.raw_user_meta_data ->> 'full_name'),
+    coalesce(r.time_zone, 'UTC'),
+    c.days,
+    r.last_sent
+  from auth.users u
+  join public.climbs c on c.user_id = u.id
+  left join public.reminders r on r.user_id = u.id
+  where coalesce(r.enabled, true)
+    and u.email is not null
+    and u.email_confirmed_at is not null
+    and jsonb_array_length(c.days) > 0
+    and c.days ->> -1 >= to_char(now() - interval '3 days', 'YYYY-MM-DD');
+$$;
+
+revoke execute on function public.reminder_candidates() from public, anon, authenticated;
+grant execute on function public.reminder_candidates() to service_role;

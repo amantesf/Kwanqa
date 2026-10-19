@@ -103,9 +103,9 @@ export default function CourseCatalog() {
 
                       {sample && (
                         <div className="catalog-sample">
-                          <span className="catalog-sample-am">{sample.amharic}</span>
-                          <span className="catalog-sample-tr">{sample.transliteration}</span>
-                          <span className="catalog-sample-en">{sample.english}</span>
+                          <span className="catalog-sample-am">{track.id === 'english' ? sample.english : sample.amharic}</span>
+                          {track.id !== 'english' && <span className="catalog-sample-tr">{sample.transliteration}</span>}
+                          <span className="catalog-sample-en">{track.id === 'english' ? sample.amharic : sample.english}</span>
                         </div>
                       )}
 

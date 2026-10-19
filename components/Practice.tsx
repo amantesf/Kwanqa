@@ -218,7 +218,8 @@ export default function Practice({
   finishLabel: string;
 }) {
   const climb = useClimb();
-  const [initial] = useState(() => buildExercises(lesson, courseLessons));
+  const track = courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
+  const [initial] = useState(() => buildExercises(lesson, courseLessons, track));
   const [queue, setQueue] = useState<Exercise[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());
   const [stamina, setStamina] = useState(MAX_STAMINA);
@@ -233,7 +234,6 @@ export default function Practice({
   const [hornsBefore] = useState(() => hornLevel(climb.grass).level);
   const [startedAt] = useState(() => Date.now()); // for the daily log's time spent
   // Altitude on this lesson's track, before and after, for the lesson-complete screen.
-  const track = courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
   const altitudeOf = (c: typeof climb) => {
     const t = trackTotals(c, track);
     return altitudeFor(t.done, t.total);

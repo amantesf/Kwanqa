@@ -62,8 +62,9 @@ export default function Phrasebook() {
         <div className="phrasebook-intro">
           <Mascot pose="happy" size={56} />
           <p className="small">
-            Every phrase from this camp in one place. Say each one out loud—use the
-            transliteration as a bridge, not a crutch.
+            {english
+              ? 'Every phrase from this camp in one place. Say each one out loud in English, then check the Amharic meaning.'
+              : 'Every phrase from this camp in one place. Say each one out loud—use the transliteration as a bridge, not a crutch.'}
           </p>
         </div>
         <label className="toggle">
@@ -96,10 +97,10 @@ export default function Phrasebook() {
                     onClick={() => reveal(key)}
                     disabled={!quiz}
                   >
-                    <span className="phrasebook-am">{phrase.amharic}</span>
-                    <span className="phrasebook-tr">{phrase.transliteration}</span>
+                    <span className="phrasebook-am">{english ? phrase.english : phrase.amharic}</span>
+                    {!english && <span className="phrasebook-tr">{phrase.transliteration}</span>}
                     <span className={`phrasebook-en${hidden ? ' hidden' : ''}`}>
-                      {hidden ? 'Tap to reveal' : phrase.english}
+                      {hidden ? 'Tap to reveal' : english ? phrase.amharic : phrase.english}
                     </span>
                   </button>
                 );
@@ -114,9 +115,9 @@ export default function Phrasebook() {
                 <div key={di} className={`phrasebook-line${line.speaker === 'B' ? ' b' : ''}`}>
                   <span className="phrasebook-speaker">{line.speaker}</span>
                   <div>
-                    <div className="phrasebook-am small-am">{line.amharic}</div>
-                    <div className="phrasebook-tr">{line.transliteration}</div>
-                    <div className="phrasebook-en">{line.english}</div>
+                    <div className="phrasebook-am small-am">{english ? line.english : line.amharic}</div>
+                    {!english && <div className="phrasebook-tr">{line.transliteration}</div>}
+                    <div className="phrasebook-en">{english ? line.amharic : line.english}</div>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,8 @@
-import type { LessonSection } from '@/lib/courses';
+import type { LessonSection, Track } from '@/lib/courses';
 
-// Practice questions generated from a lesson's phrases and dialogue.
+// Practice questions generated from a lesson's phrases and dialogue. The Amharic
+// course quizzes Amharic; the English course quizzes English, with Amharic as
+// the learner's own language (instructions are in both).
 
 type Card = { amharic: string; transliteration: string; english: string };
 
@@ -70,7 +72,12 @@ function choice(
 // Strip Ethiopic and Latin punctuation so words can be compared and blanked.
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
-export function buildExercises(lesson: LessonSection, courseLessons: LessonSection[]): Exercise[] {
+export function buildExercises(
+  lesson: LessonSection,
+  courseLessons: LessonSection[],
+  track: Track = 'amharic',
+): Exercise[] {
+  if (track === 'english') return buildEnglishExercises(lesson, courseLessons);
   const cards: Card[] = [
     ...(lesson.phrases ?? []),
     ...(lesson.dialogue ?? []).map(({ amharic, transliteration, english }) => ({
@@ -179,6 +186,104 @@ export function buildExercises(lesson: LessonSection, courseLessons: LessonSecti
       id: 'match',
       instruction: 'Match the pairs',
       pairs: matchCards.map(c => ({ left: c.amharic, right: c.english })),
+    });
+  }
+
+  return exercises;
+}
+
+// ---------------------------------------------------------------------------
+// English course: the learner already speaks Amharic and is learning English.
+
+const words = (text: string) => text.split(/\s+/).filter(Boolean);
+const bare = (word: string) => word.replace(/[.,!?;:“”"…()]/g, '');
+
+/** The sentence with one meaningful word blanked out, or null if it's too short. */
+function blankWord(text: string) {
+  const parts = words(text);
+  const candidates = parts
+    .map((w, i) => ({ w: bare(w), i }))
+    .filter(({ w }) => w.length >= 3 && !w.includes('...'));
+  if (parts.length < 3 || !candidates.length) return null;
+  const { w, i } = candidates[Math.floor(Math.random() * candidates.length)];
+  const sentence = parts.map((p, j) => (j === i ? p.replace(w, '____') : p)).join(' ');
+  return { sentence, answer: w };
+}
+
+function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSection[]): Exercise[] {
+  const cards: Card[] = [...(lesson.phrases ?? []), ...(lesson.dialogue ?? [])];
+  const seen = new Set<string>();
+  const uniqueCards = cards.filter(card => !seen.has(card.english) && seen.add(card.english));
+  const poolCards = courseLessons.flatMap(l => [...(l.phrases ?? []), ...(l.dialogue ?? [])]);
+  const wordPool = unique(poolCards.flatMap(c => words(c.english).map(bare)).filter(w => w.length >= 3));
+
+  const exercises: Exercise[] = [];
+  shuffle(uniqueCards)
+    .slice(0, 6)
+    .forEach((card, i) => {
+      const explain = `“${card.english}” = ${card.amharic}`;
+      const others = (list: Card[]) => list.filter(c => c.english !== card.english && c.amharic !== card.amharic);
+      let ex: ChoiceExercise | null = null;
+      if (i % 3 === 0) {
+        ex = choice(
+          `meaning-${i}`,
+          'ይህ ምን ማለት ነው? · What does this mean?',
+          card.english,
+          card.amharic,
+          distractors(card.amharic, others(uniqueCards).map(c => c.amharic), others(poolCards).map(c => c.amharic)),
+          explain,
+        );
+      } else if (i % 3 === 1) {
+        ex = choice(
+          `say-${i}`,
+          'በእንግሊዝኛ እንዴት ይባላል? · How do you say this in English?',
+          card.amharic,
+          card.english,
+          distractors(card.english, others(uniqueCards).map(c => c.english), others(poolCards).map(c => c.english)),
+          explain,
+        );
+      } else {
+        const blank = blankWord(card.english);
+        if (blank) {
+          ex = choice(
+            `word-${i}`,
+            'የጎደለውን ቃል ይምረጡ · Choose the missing word',
+            blank.sentence,
+            blank.answer,
+            distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
+            explain,
+            card.amharic,
+          );
+        }
+      }
+      if (ex) exercises.push(ex);
+    });
+
+  // Complete a line from the dialogue.
+  const line = shuffle(lesson.dialogue ?? []).find(l => blankWord(l.english));
+  const blank = line && blankWord(line.english);
+  if (line && blank) {
+    const ex = choice(
+      'fill',
+      'ውይይቱን ያጠናቅቁ · Complete the conversation',
+      blank.sentence,
+      blank.answer,
+      distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
+      `The full line is “${line.english}” — ${line.amharic}`,
+      line.amharic,
+    );
+    if (ex) exercises.splice(Math.min(3, exercises.length), 0, ex);
+  }
+
+  const matchCards = shuffle(uniqueCards)
+    .filter(c => c.english.length <= 40)
+    .slice(0, 4);
+  if (matchCards.length >= 3) {
+    exercises.push({
+      kind: 'match',
+      id: 'match',
+      instruction: 'ጥንዶቹን ያዛምዱ · Match the pairs',
+      pairs: matchCards.map(c => ({ left: c.english, right: c.amharic })),
     });
   }
 

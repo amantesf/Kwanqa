@@ -128,9 +128,9 @@ export const courseContent: Record<string, Course> = {
         dialogue: [
           {
             speaker: 'A',
-            amharic: 'ሰላም፣ ስሜ አማኑኤል ነው።',
-            transliteration: 'selam, səme Amanuel new.',
-            english: 'Hello, my name is Amanuel.',
+            amharic: 'ሰላም፣ ስሜ ዳዊት ነው።',
+            transliteration: 'selam, səme Dawit new.',
+            english: 'Hello, my name is Dawit.',
           },
           {
             speaker: 'B',

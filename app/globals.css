@@ -6393,63 +6393,97 @@ body:has(.practice-screen) {
 /* A small calendar page: Ethiopian month, Ge'ez day, Gregorian date. */
 .date-tile {
   --holiday: var(--primary);
+  position: relative;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1px;
   width: 64px;
+  padding: 8px 0 7px;
   overflow: hidden;
-  border-radius: 12px;
-  border: 2px solid var(--border);
-  border-bottom-width: 4px;
-  background-color: var(--page);
+  border-radius: 14px;
+  border: 1px solid #ece4d8;
+  background-color: #fff;
+  box-shadow: 0 8px 18px -12px rgba(60, 35, 15, 0.35);
   text-align: center;
 }
 
-.date-tile-month {
-  width: 100%;
-  padding: 3px 0;
+/* a thin strip of the holiday's colour across the top, like a ribbon */
+.date-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
   background-color: var(--holiday);
-  color: #fff;
+}
+
+.date-tile-month {
   font-size: 12px;
   font-weight: 800;
+  color: var(--holiday);
 }
 
 .date-tile-day {
-  padding-top: 4px;
   font-size: 22px;
   font-weight: 800;
   line-height: 1.1;
-  color: var(--text-strong);
+  color: #241a14;
 }
 
 .date-tile-greg {
-  padding-bottom: 5px;
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: #b5a38f;
+}
+
+/* Rail card: a thin tilet strip along the top, today's date in ink. */
+.et-date-card {
+  overflow: hidden;
+}
+
+.et-date-card-tilet {
+  width: calc(100% + 48px);
+  margin: -24px -24px 0;
+}
+
+.et-date-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.et-date-kicker {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--primary);
 }
 
 .et-date {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
-  color: var(--text-strong);
+  line-height: 1.25;
+  color: #241a14;
 }
 
 .et-next {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding-top: 14px;
-  border-top: 2px solid var(--border);
+  padding-top: 16px;
+  border-top: 1px solid #f1ebe2;
   color: var(--text);
 }
 
 .et-next > span {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .et-next:hover strong {
@@ -6779,7 +6813,7 @@ body:has(.practice-screen) {
   align-items: center;
   gap: 18px;
   padding: 18px 0;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid #f1ebe2;
 }
 
 .holiday-item:last-child {

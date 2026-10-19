@@ -441,8 +441,10 @@ export default function CoursesRoadmap() {
             </Link>
           </div>
           <p className="small">
-            Every phrase from {myCamp ? `Camp ${myCampIdx + 1}` : 'this camp'} in Ge’ez script,
-            transliteration, and English, ready to review.
+            Every phrase from {myCamp ? `Camp ${myCampIdx + 1}` : 'this camp'}
+            {track === 'english'
+              ? ' in English, with the Amharic meaning, ready to review.'
+              : ' in Ge’ez script, transliteration, and English, ready to review.'}
           </p>
         </div>
       </aside>

@@ -16,7 +16,15 @@ type Props = {
 
 type Phrase = NonNullable<LessonSection['phrases']>[number];
 
-function PhraseCards({ phrases, quiz }: { phrases: Phrase[]; quiz: boolean }) {
+// The English course shows the English big (it's what's being learned) with the
+// Amharic meaning underneath; the Amharic course does the opposite.
+function sides(phrase: Phrase, track: Track) {
+  return track === 'english'
+    ? { learn: phrase.english, say: '', meaning: phrase.amharic }
+    : { learn: phrase.amharic, say: phrase.transliteration, meaning: phrase.english };
+}
+
+function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolean; track: Track }) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
   function reveal(idx: number) {
@@ -27,12 +35,13 @@ function PhraseCards({ phrases, quiz }: { phrases: Phrase[]; quiz: boolean }) {
     <div className="phrase-grid">
       {phrases.map((phrase, idx) => {
         const hidden = quiz && !revealed.has(idx);
+        const side = sides(phrase, track);
         const body = (
           <>
-            <span className="phrase-am">{phrase.amharic}</span>
-            <span className="phrase-tr">{phrase.transliteration}</span>
+            <span className="phrase-am">{side.learn}</span>
+            {side.say && <span className="phrase-tr">{side.say}</span>}
             <span className={`phrase-en${hidden ? ' hidden' : ''}`}>
-              {hidden ? 'Tap to reveal' : phrase.english}
+              {hidden ? 'Tap to reveal' : side.meaning}
             </span>
           </>
         );
@@ -155,7 +164,7 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
                     Quiz me
                   </label>
                 </div>
-                <PhraseCards key={`${active}-${quiz}`} phrases={lesson.phrases} quiz={quiz} />
+                <PhraseCards key={`${active}-${quiz}`} phrases={lesson.phrases} quiz={quiz} track={track} />
               </div>
             )}
 
@@ -171,9 +180,9 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
                         <span className="person-dot">B</span>
                       )}
                       <div className="bubble">
-                        <span className="am">{line.amharic}</span>
-                        <span className="tr">{line.transliteration}</span>
-                        <span className="en">{line.english}</span>
+                        <span className="am">{sides(line, track).learn}</span>
+                        {sides(line, track).say && <span className="tr">{sides(line, track).say}</span>}
+                        <span className="en">{sides(line, track).meaning}</span>
                       </div>
                     </div>
                   ))}

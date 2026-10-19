@@ -67,6 +67,11 @@ export default function PrivacyPage() {
                 To send a streak reminder email at 7 pm your time when your streak is about to end.
                 You can turn these off on your profile or with the link in any reminder.
               </li>
+              <li>
+                To send a greeting email on Ethiopian holidays, such as Enkutatash, Meskel, Genna,
+                Timket, and Fasika. These have their own switch on your profile and their own
+                unsubscribe link.
+              </li>
               <li>To understand, in general terms, who is learning and why, so we can improve our courses.</li>
               <li>To keep kwanqa secure and prevent misuse.</li>
             </ul>
@@ -99,7 +104,7 @@ export default function PrivacyPage() {
             <ul>
               <li><strong>See or correct your information:</strong> your name, answers, and progress are on your profile page, and you can change your name there.</li>
               <li><strong>Retake the survey</strong> at any time from your profile.</li>
-              <li><strong>Turn off reminder emails</strong> on your profile, or with the link in any reminder.</li>
+              <li><strong>Turn off reminder or holiday emails</strong> on your profile, or with the link in any of those emails.</li>
               <li><strong>Delete your account</strong> at any time from your profile page (Account → Delete account). It deletes your account and progress right away.</li>
               <li><strong>Get a copy of your information</strong> by emailing us.</li>
             </ul>

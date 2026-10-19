@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
-import { nextLesson, trackCourses, useClimb } from '@/lib/climb';
+import { nextLesson, startCamp, trackCourses, useClimb } from '@/lib/climb';
 import { courseContent, type Track } from '@/lib/courses';
 import { useProfile } from '@/lib/profile';
 
@@ -21,8 +21,9 @@ export default function Phrasebook() {
 
   const param = params.get('track');
   const track: Track = profile?.track ?? (param === 'english' || param === 'amharic' ? param : 'amharic');
+  const english = track === 'english'; // English first, with the Amharic meaning underneath
   const courses = trackCourses(track);
-  const next = nextLesson(climb, track);
+  const next = nextLesson(climb, track, startCamp(track, profile?.levels[track]));
   const asked = params.get('camp');
   const camp =
     courses.find(c => c.slug === asked) ??

@@ -3,11 +3,15 @@ import type { Track } from '@/lib/courses';
 
 // Answers from the "Get started" survey. Kept in this browser for guests and
 // copied to the account (user metadata) once they sign up or log in.
+export type Level = 'new' | 'some-words' | 'basic' | 'conversational';
+
 export type Profile = {
   track: Track; // the course being climbed right now
   tracks: Track[]; // every course the learner has chosen (like Duolingo's "My courses")
   speaks: string[];
-  level: 'new' | 'some-words' | 'basic' | 'conversational';
+  level: Level; // the answer for `track` when the survey was taken
+  /** How much of each language the learner already knew; decides where their trail starts. */
+  levels: Partial<Record<Track, Level>>;
   reasons: string[];
   heardFrom: string[];
   dailyMinutes: number;
@@ -41,14 +45,24 @@ const asList = (v: unknown): string[] =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : typeof v === 'string' ? [v] : [];
 
 const isTrack = (t: unknown): t is Track => t === 'amharic' || t === 'english';
+const isLevel = (l: unknown): l is Level =>
+  l === 'new' || l === 'some-words' || l === 'basic' || l === 'conversational';
 
 export function normalizeProfile(value: Record<string, unknown>): Profile {
   const track = value.track as Track;
   const tracks = asList(value.tracks).filter(isTrack);
+  const level = isLevel(value.level) ? value.level : 'new';
+  const saved = value.levels && typeof value.levels === 'object' ? (value.levels as Record<string, unknown>) : {};
+  const levels: Partial<Record<Track, Level>> = {};
+  for (const t of ['amharic', 'english'] as Track[]) if (isLevel(saved[t])) levels[t] = saved[t];
+  // Answers saved before per-language levels: the level was for the course chosen then.
+  if (!levels[track] && !value.levels) levels[track] = level;
   return {
     ...(value as Profile),
     track,
     tracks: tracks.includes(track) ? tracks : [...tracks, track],
+    level,
+    levels,
     speaks: asList(value.speaks),
     reasons: asList(value.reasons ?? value.reason),
     heardFrom: asList(value.heardFrom),

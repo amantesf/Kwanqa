@@ -18,6 +18,7 @@ import {
   isDone,
   readClimb,
   nextLesson,
+  startCamp,
   SUMMIT_ALTITUDE,
   trackCourses,
   useClimb,
@@ -91,7 +92,9 @@ export default function CoursesRoadmap() {
   // The camp the learner is scrolled to; null until the page scrolls.
   const [viewCamp, setViewCamp] = useState<number | null>(null);
 
-  const next = nextLesson(climb, track);
+  // Learners who already know some of the language start at a higher camp.
+  const start = startCamp(track, profile?.levels[track]);
+  const next = nextLesson(climb, track, start);
   const courses = trackCourses(track);
   const horns = hornLevel(climb.grass);
   const nextKey = next ? `${next.slug}:${next.lesson}` : 'summit';
@@ -219,7 +222,7 @@ export default function CoursesRoadmap() {
   const myCamp = courses[myCampIdx];
   const shownIdx = viewCamp !== null && courses[viewCamp] ? viewCamp : myCampIdx;
   const shownCamp = courses[shownIdx];
-  const shownLocked = shownIdx > currentCamp;
+  const shownLocked = shownIdx > currentCamp && shownIdx >= start;
   const shownPhrasebookHref = shownCamp
     ? `/phrasebook?track=${track}&camp=${shownCamp.slug}`
     : `/phrasebook?track=${track}`;
@@ -281,7 +284,11 @@ export default function CoursesRoadmap() {
           const campIdx = courses.indexOf(course);
           const zone = zoneForCamp(campIdx, courses.length);
           const lessons = courseContent[course.slug]?.sections ?? [];
-          const locked = campIdx > currentCamp;
+          const started = lessons.some((_, i) => isDone(climb, course.slug, i));
+          // Camps below the starting camp were skipped for the learner's level:
+          // they stay open, and any of their lessons can be climbed for review.
+          const skipped = campIdx < start && campIdx !== currentCamp && !started;
+          const locked = campIdx > currentCamp && campIdx >= start && !started;
 
           const stops: TrailStop[] = lessons.map((lesson, i) => ({
             title: lesson.title,
@@ -290,7 +297,9 @@ export default function CoursesRoadmap() {
               ? 'done'
               : next?.slug === course.slug && next.lesson === i
                 ? 'current'
-                : 'locked',
+                : campIdx < start && campIdx !== currentCamp
+                  ? 'todo'
+                  : 'locked',
             href: `/courses/${course.slug}?lesson=${i}&practice=1`,
             id: `${course.slug}:${i}`,
           }));
@@ -325,7 +334,9 @@ export default function CoursesRoadmap() {
                 <span>
                   {locked
                     ? `Camp ${campIdx + 1} · Finish Camp ${campIdx} to unlock`
-                    : `Camp ${campIdx + 1} · ${zone.name} · ${zone.from.toLocaleString()}–${zone.to.toLocaleString()} m`}
+                    : skipped
+                      ? `Camp ${campIdx + 1} · ${zone.name} · Skipped for your level, open anytime`
+                      : `Camp ${campIdx + 1} · ${zone.name} · ${zone.from.toLocaleString()}–${zone.to.toLocaleString()} m`}
                 </span>
               </div>
               <div className="trail-wrap">

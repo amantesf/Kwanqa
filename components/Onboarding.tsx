@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import Flag from '@/components/Flag';
 import Mascot from '@/components/Mascot';
+import { startCamp } from '@/lib/climb';
 import type { Track } from '@/lib/courses';
 import { readProfile, saveProfile, type Profile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
@@ -133,6 +134,7 @@ export default function Onboarding() {
   ];
 
   const done = step >= steps.length;
+  const placedAt = startCamp(answers.track ?? 'amharic', answers.level);
   const current = steps[Math.min(step, steps.length - 1)];
   const progress = Math.min(step, steps.length) / steps.length;
 
@@ -161,12 +163,15 @@ export default function Onboarding() {
 
   function finish() {
     const track = answers.track ?? 'amharic';
-    const earlier = readProfile()?.tracks ?? [];
+    const before = readProfile();
+    const earlier = before?.tracks ?? [];
+    const level = answers.level ?? 'new';
     const profile: Profile = {
       track,
       tracks: earlier.includes(track) ? earlier : [...earlier, track],
       speaks: answers.speaks,
-      level: answers.level ?? 'new',
+      level,
+      levels: { ...before?.levels, [track]: level },
       reasons: answers.reasons,
       heardFrom: answers.heardFrom,
       dailyMinutes: answers.dailyMinutes ?? 10,
@@ -200,8 +205,10 @@ export default function Onboarding() {
             You’re all set!
           </h1>
           <p className="lead">
-            Learning <strong>{lang}</strong> · <strong>{answers.dailyMinutes ?? 10} min</strong> a day.
-            Your trail is ready—let’s take the first step.
+            Learning <strong>{lang}</strong> · <strong>{answers.dailyMinutes ?? 10} min</strong> a day.{' '}
+            {placedAt > 0
+              ? `You already know some ${lang}, so you’ll start at Camp ${placedAt + 1}. The camps below stay open for review.`
+              : 'Your trail is ready—let’s take the first step.'}
           </p>
         </div>
       ) : (

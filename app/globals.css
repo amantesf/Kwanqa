@@ -6828,3 +6828,107 @@ body:has(.practice-screen) {
     width: 100%;
   }
 }
+
+/* Word tiles: tap words into the answer line, like Duolingo's word bank. */
+.build {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.build-answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 10px;
+  min-height: 140px;
+  padding: 14px 0;
+  /* two writing lines, like a notebook */
+  background: linear-gradient(var(--border), var(--border)) 0 66px / 100% 2px no-repeat,
+    linear-gradient(var(--border), var(--border)) 0 132px / 100% 2px no-repeat;
+}
+
+.build-bank {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tile {
+  min-height: 52px;
+  padding: 8px 18px;
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--text-strong);
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  animation: tile-in 0.15s ease-out;
+}
+
+.tile:hover:not(:disabled) {
+  background: var(--bg-soft);
+}
+
+.tile:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 3px;
+}
+
+.tile:disabled {
+  cursor: default;
+}
+
+/* An empty slot stays where a tile was taken from, so the bank doesn't jump around. */
+.tile.used {
+  border-color: transparent;
+  background: #ece7e2;
+  color: transparent;
+  animation: none;
+}
+
+.build.good .build-answer .tile {
+  border-color: #a5e07c;
+  color: #3f8f15;
+}
+
+.build.bad .build-answer .tile {
+  border-color: #ffb3b3;
+  color: #d33131;
+}
+
+@keyframes tile-in {
+  from {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+}
+
+@media (max-width: 600px) {
+  .build {
+    gap: 24px;
+  }
+
+  .build-answer {
+    min-height: 120px;
+    background: linear-gradient(var(--border), var(--border)) 0 58px / 100% 2px no-repeat,
+      linear-gradient(var(--border), var(--border)) 0 116px / 100% 2px no-repeat;
+  }
+
+  .tile {
+    min-height: 46px;
+    padding: 6px 14px;
+    font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    animation: none;
+  }
+}

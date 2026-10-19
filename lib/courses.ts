@@ -16,6 +16,11 @@ export type LessonSection = {
   }[];
   /** A short culture or grammar tip shown with the lesson. */
   note?: string;
+  /**
+   * The same sentence said to a man, a woman and an elder, for
+   * "Who are you talking to?" practice questions.
+   */
+  respect?: { english: string; man: string; woman: string; elder: string }[];
 };
 
 export type Course = {
@@ -270,6 +275,57 @@ export const courseContent: Record<string, Course> = {
         ],
         note:
           'Goodbyes change with who you\'re talking to: ሁን to a man, ሁኚ to a woman, ሁኑ to a group or an elder.',
+      },
+      {
+        title: 'Lesson 6 – Talking to Elders',
+        description:
+          'Show respect the Ethiopian way: talk to grandparents, elders and strangers with እርስዎ (ərswo).',
+        phrases: [
+          { amharic: 'እርስዎ', transliteration: 'ərswo', english: 'you (respectful, for elders and people you don’t know)' },
+          { amharic: 'እንዴት ኖት?', transliteration: 'endet not?', english: 'How are you? (to an elder)' },
+          { amharic: 'እንደምን አደሩ?', transliteration: 'əndemin aderu?', english: 'Good morning (to an elder)' },
+          { amharic: 'ስምዎ ማን ነው?', transliteration: 'səmwo man new?', english: 'What is your name? (to an elder)' },
+          { amharic: 'ጤናዎ እንዴት ነው?', transliteration: 'tenawo endet new?', english: 'How is your health? (to an elder)' },
+          { amharic: 'እባክዎ', transliteration: 'əbakwo', english: 'please (to an elder)' },
+          { amharic: 'ይቀመጡ', transliteration: 'yiqemetu', english: 'please sit down (to an elder)' },
+          { amharic: 'ደህና ይሁኑ', transliteration: 'dehna yihunu', english: 'goodbye / stay well (to an elder)' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'እንደምን አደሩ፣ አያቴ?',
+            transliteration: 'əndemin aderu, ayate?',
+            english: 'Good morning, Grandma! (respectful)',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ደህና ነኝ ልጄ፣ እግዚአብሔር ይመስገን። ግባ፣ ተቀመጥ።',
+            transliteration: 'dehna neñ lije, əgziabher yimmesgen. giba, teqemet.',
+            english: 'I’m fine, my child, thank God. Come in, sit down.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'አመሰግናለሁ። ጤናዎ እንዴት ነው?',
+            transliteration: 'amesegenallo. tenawo endet new?',
+            english: 'Thank you. How is your health? (respectful)',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ደህና ነው፣ እግዚአብሔር ይመስገን።',
+            transliteration: 'dehna new, əgziabher yimmesgen.',
+            english: 'It’s good, thank God.',
+          },
+        ],
+        respect: [
+          { english: 'How are you?', man: 'እንዴት ነህ?', woman: 'እንዴት ነሽ?', elder: 'እንዴት ኖት?' },
+          { english: 'What is your name?', man: 'ስምህ ማን ነው?', woman: 'ስምሽ ማን ነው?', elder: 'ስምዎ ማን ነው?' },
+          { english: 'Please', man: 'እባክህ', woman: 'እባክሽ', elder: 'እባክዎ' },
+          { english: 'Please sit down', man: 'ተቀመጥ', woman: 'ተቀመጪ', elder: 'ይቀመጡ' },
+          { english: 'Come in', man: 'ግባ', woman: 'ግቢ', elder: 'ይግቡ' },
+          { english: 'Goodbye, stay well', man: 'ደህና ሁን', woman: 'ደህና ሁኚ', elder: 'ደህና ይሁኑ' },
+        ],
+        note:
+          'In Ethiopia, how you say “you” shows respect. Use እርስዎ with grandparents, elders, teachers and people you don’t know, and the endings change too: ስምህ → ስምዎ, እባክህ → እባክዎ. Elders will still talk to you casually (ግባ, ተቀመጥ), and that’s normal. You’ll also hear እንዴት ነዎት?, which means the same as እንዴት ኖት?',
       },
     ],
   },

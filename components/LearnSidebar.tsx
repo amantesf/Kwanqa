@@ -40,6 +40,21 @@ function AlphabetIcon() {
   );
 }
 
+function CalendarIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
+      <rect x="4" y="6" width="24" height="23" rx="5" fill="var(--green-dark)" />
+      <rect x="4" y="12" width="24" height="17" rx="0" fill="var(--green)" />
+      <rect x="4" y="24" width="24" height="5" rx="5" fill="var(--green)" />
+      <rect x="9.5" y="3" width="3.4" height="7" rx="1.7" fill="#2f7a20" />
+      <rect x="19.1" y="3" width="3.4" height="7" rx="1.7" fill="#2f7a20" />
+      <text x="16" y="25.5" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff">
+        ፲
+      </text>
+    </svg>
+  );
+}
+
 function ProfileIcon({ initial }: { initial: string | null }) {
   return (
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
@@ -82,6 +97,10 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         <Link href="/fidel" className="learn-nav-link" aria-current={current('alphabet')}>
           <AlphabetIcon />
           <span>Alphabet</span>
+        </Link>
+        <Link href="/holidays" className="learn-nav-link">
+          <CalendarIcon />
+          <span>Holidays</span>
         </Link>
         <Link href="/profile" className="learn-nav-link" aria-current={current('profile')}>
           <ProfileIcon initial={initial} />

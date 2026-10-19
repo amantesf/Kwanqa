@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { DateTile, ShareGreeting, countdown, useNow } from '@/components/HolidayCards';
 import { MONTHS, formatEthiopian, fromEthiopian, geezNumber, toEthiopian, type EthiopianDate } from '@/lib/ethiopianCalendar';
 import { holidays, upcomingHolidays, type Holiday } from '@/lib/holidays';
+import Tilet from '@/components/Tilet';
 
 const WEEKDAY_SHORT = ['እሑ', 'ሰኞ', 'ማክ', 'ረቡ', 'ሐሙ', 'ዓር', 'ቅዳ'];
 const WEEKDAY_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAY_FULL = ['እሑድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'];
 const longDate = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 const monthDay = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
 const gregMonth = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
@@ -52,6 +54,7 @@ function MonthGrid({ month, today }: { month: EthiopianDate; today: EthiopianDat
 
   return (
     <figure className="month">
+      <Tilet className="month-tilet" height={22} />
       <figcaption className="month-caption">
         <span className="month-name" lang="am">
           {MONTHS[month.month - 1].amharic} {geezNumber(month.year)}
@@ -116,15 +119,23 @@ export default function HolidayCalendar() {
   return (
     <main className="section holidays-page">
       <div className="container holidays-container">
-        <header className="holidays-head">
-          <h1 className="et-date-big" lang="am">
-            {today ? formatEthiopian(today).amharic : 'Ethiopian calendar'}
-          </h1>
-          {now && today && (
-            <p className="holidays-today">
-              Today is {formatEthiopian(today).latin} in the Ethiopian calendar · {longDate.format(now)}
+        <header className="et-hero">
+          <Tilet height={36} />
+          <div className="et-hero-body">
+            <p className="et-hero-kicker" lang="am">
+              {now ? `ዛሬ ${WEEKDAY_FULL[now.getDay()]}` : 'ዛሬ'}
+              <span> · Today</span>
             </p>
-          )}
+            <h1 className="et-date-big" lang="am">
+              {today ? formatEthiopian(today).amharic : 'Ethiopian calendar'}
+            </h1>
+            {now && today && (
+              <p className="holidays-today">
+                {formatEthiopian(today).latin} in the Ethiopian calendar · {longDate.format(now)}
+              </p>
+            )}
+          </div>
+          <Tilet height={36} palette="dusk" />
         </header>
 
         {today && shown && (

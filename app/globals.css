@@ -6520,17 +6520,64 @@ body:has(.practice-screen) {
   gap: 8px;
 }
 
+/* Tilet: the woven habesha border, used as trim. */
+.tilet {
+  display: block;
+  flex: none;
+  max-width: none;
+}
+
+/* Today's date, framed like a netela: cream cotton between two tilet bands. */
+.et-hero {
+  overflow: hidden;
+  border-radius: 24px;
+  border: 2px solid #ead9bd;
+  border-bottom-width: 5px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.9), transparent 70%),
+    #fbf3e4;
+}
+
+.et-hero-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 36px 24px 34px;
+  text-align: center;
+}
+
+.et-hero-kicker {
+  margin: 0;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background-color: #1d1d1b;
+  color: #f5c21b;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.et-hero-kicker span {
+  color: #fbf3e4;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .et-date-big {
   margin: 0;
-  font-size: clamp(36px, 8vw, 60px);
-  font-weight: 800;
-  line-height: 1.1;
-  color: var(--text-strong);
+  font-size: clamp(38px, 8vw, 64px);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #3a2416;
+  text-shadow: 0 3px 0 rgba(210, 88, 46, 0.18);
 }
 
 .holidays-today {
   margin: 0;
-  color: var(--text-muted);
+  color: #7a6450;
+  font-weight: 700;
 }
 
 /* The month: a real calendar page, Ge'ez numerals first. */
@@ -6542,11 +6589,17 @@ body:has(.practice-screen) {
 
 .month {
   margin: 0;
-  padding: 24px;
+  padding: 0 24px 24px;
+  overflow: hidden;
   border-radius: 24px;
-  border: 2px solid var(--border);
+  border: 2px solid #ead9bd;
   border-bottom-width: 5px;
-  background-color: var(--page);
+  background-color: #fffaf2;
+}
+
+.month-tilet {
+  width: calc(100% + 48px);
+  margin: 0 -24px 22px;
 }
 
 .month-caption {
@@ -6577,11 +6630,27 @@ body:has(.practice-screen) {
 }
 
 .month-weekday {
-  padding-bottom: 6px;
+  padding: 7px 0;
+  margin-bottom: 4px;
   text-align: center;
   font-size: 13px;
   font-weight: 800;
-  color: var(--text-muted);
+  color: #f5c21b;
+  background-color: #1d1d1b;
+}
+
+.month-weekday {
+  margin-inline: -3px; /* close the grid gap so the labels read as one band */
+}
+
+.month-weekday:first-child {
+  margin-left: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+.month-weekday:nth-child(7) {
+  margin-right: 0;
+  border-radius: 0 10px 10px 0;
 }
 
 .day {
@@ -6609,10 +6678,29 @@ body:has(.practice-screen) {
   font-variant-numeric: tabular-nums;
 }
 
+.day:not(.today):not(.feast):hover {
+  background-color: #f6ead4;
+}
+
+/* Today: an embroidered patch with a little tilet stitch along the bottom. */
 .day.today {
   background-color: var(--primary);
   color: #fff;
   box-shadow: 0 3px 0 var(--primary-dark);
+  overflow: hidden;
+}
+
+.day.today::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background:
+    linear-gradient(45deg, transparent 33%, #f5c21b 33% 66%, transparent 66%) 0 0 / 8px 6px,
+    linear-gradient(-45deg, transparent 33%, #1f8a4c 33% 66%, transparent 66%) 4px 0 / 8px 6px,
+    #1d1d1b;
 }
 
 .day.today .day-greg {
@@ -6650,7 +6738,7 @@ body:has(.practice-screen) {
   margin: 18px 0 0;
   padding: 16px 0 0;
   list-style: none;
-  border-top: 2px solid var(--border);
+  border-top: 2px dashed #ead9bd;
   font-weight: 700;
   color: var(--text);
 }

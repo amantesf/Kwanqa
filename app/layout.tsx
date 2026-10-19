@@ -48,7 +48,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${nunito.variable} ${ethiopic.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${nunito.variable} ${ethiopic.variable}`}>
       <body>
         <AuthProvider>
           <Header />

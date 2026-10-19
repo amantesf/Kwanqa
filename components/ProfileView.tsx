@@ -10,6 +10,7 @@ import MountainScene from '@/components/MountainScene';
 import { showToast } from '@/components/Toaster';
 import LearnSidebar from '@/components/LearnSidebar';
 import TopStats from '@/components/TopStats';
+import ReminderToggle from '@/components/ReminderToggle';
 import {
   altitudeFor,
   climbStreak,
@@ -479,6 +480,7 @@ export default function ProfileView() {
             <button type="button" className="btn btn-secondary btn-sm" onClick={signOut}>
               Log out
             </button>
+            <ReminderToggle userId={user.id} />
           </div>
           <Link href="/delete-account" className="delete-link">
             Delete account

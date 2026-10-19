@@ -41,7 +41,8 @@ export default function PrivacyPage() {
               </li>
               <li>
                 <strong>Learning progress:</strong> lessons completed, grass earned, your streak,
-                and a daily log of lessons, answers, and minutes practiced.
+                and a daily log of lessons, answers, and minutes practiced. We also save your time zone,
+                so reminders arrive at the right hour.
               </li>
               <li>
                 <strong>Technical information:</strong> like most websites, our hosting provider
@@ -62,6 +63,10 @@ export default function PrivacyPage() {
             <ul>
               <li>To run your lessons, save your progress, and keep it in sync across devices.</li>
               <li>To send account emails, such as confirming your email or resetting your password.</li>
+              <li>
+                To send a streak reminder email at 7 pm your time when your streak is about to end.
+                You can turn these off on your profile or with the link in any reminder.
+              </li>
               <li>To understand, in general terms, who is learning and why, so we can improve our courses.</li>
               <li>To keep kwanqa secure and prevent misuse.</li>
             </ul>
@@ -74,7 +79,7 @@ export default function PrivacyPage() {
             <ul>
               <li><strong>Supabase</strong> — accounts, login, and saving your progress (hosted in the United States).</li>
               <li><strong>Vercel</strong> — hosts the kwanqa website.</li>
-              <li><strong>Resend</strong> — sends our account emails.</li>
+              <li><strong>Resend</strong> — sends our account and reminder emails.</li>
               <li><strong>Google</strong> — only if you choose “Continue with Google”.</li>
               <li><strong>Cloudflare</strong> — manages our domain name.</li>
             </ul>
@@ -94,6 +99,7 @@ export default function PrivacyPage() {
             <ul>
               <li><strong>See or correct your information:</strong> your name, answers, and progress are on your profile page, and you can change your name there.</li>
               <li><strong>Retake the survey</strong> at any time from your profile.</li>
+              <li><strong>Turn off reminder emails</strong> on your profile, or with the link in any reminder.</li>
               <li><strong>Delete your account</strong> at any time from your profile page (Account → Delete account). It deletes your account and progress right away.</li>
               <li><strong>Get a copy of your information</strong> by emailing us.</li>
             </ul>

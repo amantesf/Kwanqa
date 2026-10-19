@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import LearnSidebar from '@/components/LearnSidebar';
 import GrassIcon from '@/components/GrassIcon';
+import { EthiopianDateCard, HolidaySeasonCard, useHolidaySeason } from '@/components/HolidayCards';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import TopStats from '@/components/TopStats';
@@ -95,6 +96,7 @@ export default function CoursesRoadmap() {
   // Learners who already know some of the language start at a higher camp.
   const start = startCamp(track, profile?.levels[track]);
   const next = nextLesson(climb, track, start);
+  const season = useHolidaySeason();
   const courses = trackCourses(track);
   const horns = hornLevel(climb.grass);
   const nextKey = next ? `${next.slug}:${next.lesson}` : 'summit';
@@ -237,8 +239,15 @@ export default function CoursesRoadmap() {
       {/* Left: navigation */}
       <LearnSidebar active="learn" track={track} />
 
-      {/* Middle: the trail */}
-      <div className="learn-main">
+      {/* Middle: the trail, dressed up for the holiday season */}
+      <div
+        className={`learn-main${season ? ` holiday-theme holiday-${season.holiday.id}` : ''}`}
+        style={
+          season
+            ? ({ '--holiday': season.holiday.color } as React.CSSProperties)
+            : undefined
+        }
+      >
         {shownCamp && (
           <div className={`camp-header camp-color-${shownIdx % 6}`}>
             <div className="camp-header-text" key={shownIdx}>
@@ -364,6 +373,8 @@ export default function CoursesRoadmap() {
       {/* Right: the learner's climb */}
       <aside className="learn-rail" aria-label="Your climb">
         <TopStats track={track} />
+        <HolidaySeasonCard />
+        <EthiopianDateCard />
 
         {guest && (
           <div className="rail-card">

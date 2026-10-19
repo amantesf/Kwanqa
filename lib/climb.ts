@@ -1,5 +1,6 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
+import type { Level } from '@/lib/profile';
 
 // The learner's climb lives in this browser's localStorage (there are no accounts yet).
 export type Climb = {
@@ -182,9 +183,23 @@ export function trackCourses(track: Track) {
   return courseCatalog.filter(c => c.track === track).sort((a, b) => a.part - b.part);
 }
 
-/** The first unfinished lesson on a track, or null once the summit is reached. */
-export function nextLesson(climb: Climb, track: Track) {
-  for (const course of trackCourses(track)) {
+// Placement: learners who already know some of the language start higher up
+// the trail. The camps below stay open for review.
+const PLACEMENT: Record<Level, number> = { new: 0, 'some-words': 0.2, basic: 0.4, conversational: 0.7 };
+
+/** The camp (0-based) a learner starts at on a track, from their survey answer. */
+export function startCamp(track: Track, level: Level | undefined) {
+  const camps = trackCourses(track).length;
+  return Math.min(Math.floor(PLACEMENT[level ?? 'new'] * camps), Math.max(camps - 1, 0));
+}
+
+/**
+ * The next lesson to climb: the first unfinished one from the learner's
+ * starting camp upward, then any skipped ones below it. Null at the summit.
+ */
+export function nextLesson(climb: Climb, track: Track, start = 0) {
+  const courses = trackCourses(track);
+  for (const course of [...courses.slice(start), ...courses.slice(0, start)]) {
     const lessons = courseContent[course.slug]?.sections ?? [];
     const idx = lessons.findIndex((_, i) => !isDone(climb, course.slug, i));
     if (idx !== -1) return { slug: course.slug, lesson: idx };

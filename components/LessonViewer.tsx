@@ -12,6 +12,10 @@ type Props = {
   slug: string;
   track: Track;
   lessons: LessonSection[];
+  /** Where this lesson lives and where "back" goes; defaults to the course trail. */
+  basePath?: string;
+  backHref?: string;
+  backLabel?: string;
 };
 
 type Phrase = NonNullable<LessonSection['phrases']>[number];
@@ -66,7 +70,7 @@ function useHydrated() {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
 
-export default function LessonViewer({ slug, track, lessons }: Props) {
+export default function LessonViewer({ slug, track, lessons, basePath, backHref, backLabel = 'Back to the trail' }: Props) {
   const router = useRouter();
   const params = useSearchParams();
   const requested = Number(params.get('lesson'));
@@ -87,13 +91,14 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
   const lesson = lessons[active];
   const isLast = active === lessons.length - 1;
 
-  const trailHref = `/courses?track=${track}`;
+  const trailHref = backHref ?? `/courses?track=${track}`;
+  const lessonPath = basePath ?? `/courses/${slug}`;
 
   function goTo(index: number) {
     setFromTrail(false);
     setActive(index);
     setMode('learn');
-    router.replace(`/courses/${slug}?lesson=${index}`, { scroll: false });
+    router.replace(`${lessonPath}?lesson=${index}`, { scroll: false });
     panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -137,7 +142,8 @@ export default function LessonViewer({ slug, track, lessons }: Props) {
             courseLessons={lessons}
             onExit={() => (fromTrail ? router.push(trailHref) : setMode('learn'))}
             onFinish={finishLesson}
-            finishLabel={isLast || fromTrail ? 'Back to the trail' : 'Next lesson'}
+            finishLabel={isLast || fromTrail ? backLabel : 'Next lesson'}
+            track={track}
           />
           )
         ) : (

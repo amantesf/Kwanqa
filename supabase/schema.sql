@@ -119,3 +119,38 @@ $$;
 
 revoke execute on function public.reminder_candidates() from public, anon, authenticated;
 grant execute on function public.reminder_candidates() to service_role;
+
+-- Holiday emails: a greeting on each Ethiopian holiday. On by default, with
+-- their own switch, separate from streak reminders. Safe to run more than once.
+alter table public.reminders add column if not exists holiday_emails boolean not null default true;
+alter table public.reminders add column if not exists last_holiday text check (length(last_holiday) <= 40);
+
+revoke insert, update on public.reminders from anon, authenticated;
+grant insert (user_id, enabled, holiday_emails, time_zone, updated_at) on public.reminders to authenticated;
+grant update (user_id, enabled, holiday_emails, time_zone, updated_at) on public.reminders to authenticated;
+
+-- Every learner who gets holiday emails, with the course they're on.
+-- Only the server (service role) can call this.
+create or replace function public.holiday_candidates()
+returns table (user_id uuid, email text, name text, time_zone text, track text, last_holiday text)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    u.id,
+    u.email::text,
+    coalesce(u.raw_user_meta_data ->> 'name', u.raw_user_meta_data ->> 'full_name'),
+    coalesce(r.time_zone, 'UTC'),
+    u.raw_user_meta_data -> 'onboarding' ->> 'track',
+    r.last_holiday
+  from auth.users u
+  left join public.reminders r on r.user_id = u.id
+  where coalesce(r.holiday_emails, true)
+    and u.email is not null
+    and u.email_confirmed_at is not null;
+$$;
+
+revoke execute on function public.holiday_candidates() from public, anon, authenticated;
+grant execute on function public.holiday_candidates() to service_role;

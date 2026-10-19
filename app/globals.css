@@ -6387,3 +6387,444 @@ body:has(.practice-screen) {
 .reminder-toggle .small {
   font-weight: 600;
 }
+
+/* Ethiopian calendar and holidays */
+
+/* A small calendar page: Ethiopian month, Ge'ez day, Gregorian date. */
+.date-tile {
+  --holiday: var(--primary);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 64px;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  background-color: var(--page);
+  text-align: center;
+}
+
+.date-tile-month {
+  width: 100%;
+  padding: 3px 0;
+  background-color: var(--holiday);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.date-tile-day {
+  padding-top: 4px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-strong);
+}
+
+.date-tile-greg {
+  padding-bottom: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.et-date {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.et-next {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 2px solid var(--border);
+  color: var(--text);
+}
+
+.et-next > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.et-next:hover strong {
+  color: var(--primary);
+}
+
+/* Greetings are set as the Amharic text itself, not boxed. */
+.holiday-greeting {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.65;
+  color: var(--text-strong);
+  text-wrap: pretty;
+}
+
+.holiday-greeting-lg {
+  font-size: 20px;
+  max-width: 34ch;
+}
+
+.holiday-greeting-en {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.holiday-meta {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.holiday-card-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.holiday-card-head .rail-title {
+  margin-bottom: 2px;
+}
+
+.holiday-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.holiday-actions .btn {
+  margin: 0;
+}
+
+/* The trail during a holiday season: the camp banner takes the holiday's colour. */
+.holiday-theme .camp-header {
+  box-shadow: inset 0 -6px 0 var(--holiday);
+}
+
+/* /holidays */
+.holidays-container {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.holidays-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.et-date-big {
+  margin: 0;
+  font-size: clamp(36px, 8vw, 60px);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-strong);
+}
+
+.holidays-today {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* The month: a real calendar page, Ge'ez numerals first. */
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.month {
+  margin: 0;
+  padding: 24px;
+  border-radius: 24px;
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  background-color: var(--page);
+}
+
+.month-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-bottom: 18px;
+}
+
+.month-name {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.month-sub {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.month-weekday {
+  padding-bottom: 6px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 58px;
+  border-radius: 14px;
+  color: var(--text-strong);
+}
+
+.day-geez {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.day-greg {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.day.today {
+  background-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--primary-dark);
+}
+
+.day.today .day-greg {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.day.feast {
+  background-color: color-mix(in srgb, var(--holiday) 16%, var(--page));
+  color: var(--holiday);
+  transition: background-color 0.15s ease;
+}
+
+.day.feast .day-greg {
+  color: color-mix(in srgb, var(--holiday) 70%, var(--text));
+}
+
+.day.feast:hover {
+  background-color: color-mix(in srgb, var(--holiday) 26%, var(--page));
+}
+
+.day.feast::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--holiday);
+}
+
+.month-feasts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 18px 0 0;
+  padding: 16px 0 0;
+  list-style: none;
+  border-top: 2px solid var(--border);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.month-feasts span {
+  margin-right: 4px;
+  font-weight: 800;
+  color: var(--holiday);
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calendar-nav .btn {
+  margin: 0;
+}
+
+.calendar-nav .text-link {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.holidays-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.holiday-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.holiday-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 2px solid var(--border);
+}
+
+.holiday-item:last-child {
+  border-bottom: 0;
+}
+
+.holiday-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.holiday-name {
+  margin: 0 0 2px;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.holiday-name a {
+  color: inherit;
+}
+
+.holiday-name a:hover {
+  color: var(--holiday);
+}
+
+.holiday-name span,
+.holiday-hero h1 span {
+  margin-left: 6px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.holiday-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.holiday-item-actions .btn {
+  margin: 0;
+}
+
+.holidays-note {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* /holidays/[id] */
+.holiday-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 0 32px;
+  border-bottom: 2px solid var(--border);
+}
+
+.holiday-hero .date-tile {
+  width: 80px;
+}
+
+.holiday-hero-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.holiday-hero-text .h2 {
+  margin: 0;
+}
+
+.holiday-hero-text .holiday-greeting-lg {
+  margin-top: 10px;
+}
+
+.holiday-hero-share {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .month {
+    padding: 16px 12px;
+  }
+
+  .month-grid {
+    gap: 3px;
+  }
+
+  .day {
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 10px;
+  }
+
+  .day-geez {
+    font-size: 16px;
+  }
+
+  .day-greg {
+    font-size: 10px;
+  }
+
+  .day.feast::after {
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+  }
+
+  .holiday-item {
+    flex-wrap: wrap;
+  }
+
+  .holiday-item-actions {
+    width: 100%;
+    padding-left: 82px;
+    justify-content: space-between;
+  }
+
+  .holiday-hero {
+    flex-wrap: wrap;
+  }
+
+  .holiday-hero-share {
+    width: 100%;
+  }
+}

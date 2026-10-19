@@ -14,7 +14,7 @@ import {
   useClimb,
 } from '@/lib/climb';
 import { courseCatalog } from '@/lib/courses';
-import type { LessonSection } from '@/lib/courses';
+import type { LessonSection, Track } from '@/lib/courses';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 
 const MAX_STAMINA = 5;
@@ -208,6 +208,7 @@ export default function Practice({
   onExit,
   onFinish,
   finishLabel,
+  track: trackProp,
 }: {
   slug: string;
   lessonIndex: number;
@@ -216,9 +217,11 @@ export default function Practice({
   onExit: () => void;
   onFinish: () => void;
   finishLabel: string;
+  /** Which course this is; looked up from the catalog when not given. */
+  track?: Track;
 }) {
   const climb = useClimb();
-  const track = courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
+  const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
   const [initial] = useState(() => buildExercises(lesson, courseLessons, track));
   const [queue, setQueue] = useState<Exercise[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());

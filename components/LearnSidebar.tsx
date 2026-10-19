@@ -1,7 +1,7 @@
 'use client';
 
 // The left navigation shared by the learn dashboard and the profile page,
-// like Duolingo's sidebar: Learn, Phrasebook, Alphabet, and Profile.
+// like Duolingo's sidebar: Learn, Phrasebook, Alphabet, Proverbs, Holidays and Profile.
 
 import Link from 'next/link';
 import { displayName, useAuth } from '@/components/AuthProvider';
@@ -55,6 +55,16 @@ function CalendarIcon() {
   );
 }
 
+function ProverbIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
+      <path d="M5 6 h22 a3 3 0 0 1 3 3 v12 a3 3 0 0 1 -3 3 h-12 l-6 5 v-5 h-4 a3 3 0 0 1 -3 -3 v-12 a3 3 0 0 1 3 -3 z" fill="var(--primary)" />
+      <path d="M16 10 L20 15 L16 20 L12 15 Z" fill="var(--gold)" />
+      <path d="M16 12.6 L18 15 L16 17.4 L14 15 Z" fill="#fff" />
+    </svg>
+  );
+}
+
 function ProfileIcon({ initial }: { initial: string | null }) {
   return (
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
@@ -97,6 +107,10 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         <Link href="/fidel" className="learn-nav-link" aria-current={current('alphabet')}>
           <AlphabetIcon />
           <span>Alphabet</span>
+        </Link>
+        <Link href="/proverbs" className="learn-nav-link">
+          <ProverbIcon />
+          <span>Proverbs</span>
         </Link>
         <Link href="/holidays" className="learn-nav-link">
           <CalendarIcon />

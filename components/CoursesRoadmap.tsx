@@ -7,6 +7,7 @@ import { useAuth } from '@/components/AuthProvider';
 import LearnSidebar from '@/components/LearnSidebar';
 import GrassIcon from '@/components/GrassIcon';
 import { EthiopianDateCard, HolidaySeasonCard, useHolidaySeason } from '@/components/HolidayCards';
+import ProverbCard from '@/components/ProverbCard';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import TopStats from '@/components/TopStats';
@@ -375,6 +376,7 @@ export default function CoursesRoadmap() {
         <TopStats track={track} />
         <HolidaySeasonCard />
         <EthiopianDateCard />
+        <ProverbCard />
 
         {guest && (
           <div className="rail-card">

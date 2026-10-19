@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { showToast } from "@/components/Toaster";
+import Tilet from "@/components/Tilet";
 import {
   MONTHS,
   formatEthiopian,
@@ -44,6 +45,8 @@ export function countdown(days: number) {
   if (days === -1) return "yesterday";
   return `in ${days} days`;
 }
+
+const WEEKDAY_AMHARIC = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሐሙስ", "ዓርብ", "ቅዳሜ"];
 
 const shortDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -110,13 +113,17 @@ export function EthiopianDateCard() {
   const inSeason = currentHoliday(now)?.holiday.id === next.holiday.id; // the season card already shows it
   return (
     <div className="rail-card rail-extra et-date-card">
+      <Tilet className="et-date-card-tilet" height={10} palette="ink" />
       <div className="rail-card-head">
         <h3 className="rail-title">Ethiopian calendar</h3>
         <Link href="/holidays" className="rail-link">
           Holidays
         </Link>
       </div>
-      <div>
+      <div className="et-date-block">
+        <span className="et-date-kicker" lang="am">
+          ዛሬ {WEEKDAY_AMHARIC[now.getDay()]}
+        </span>
         <strong className="et-date" lang="am">
           {today.amharic}
         </strong>

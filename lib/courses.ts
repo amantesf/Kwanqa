@@ -1,3 +1,5 @@
+import { englishCatalog, englishCourses } from '@/lib/courses-english';
+
 export type LessonSection = {
   title: string;
   description: string;
@@ -1106,187 +1108,8 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
-  // English from Amharic – Part 1
-  'english-from-amharic-1': {
-    title: 'English from Amharic – Part 1',
-    intro:
-      'Designed for Amharic speakers who want to build everyday English, with explanations in Amharic and English side‑by‑side.',
-    sections: [
-      {
-        title: 'Lesson 1 – Greetings in English',
-        description:
-          'Practice simple English greetings and polite expressions, explained in Amharic.',
-        phrases: [
-          {
-            amharic: 'ሰላም',
-            transliteration: 'selam',
-            english: 'Hello.',
-          },
-          {
-            amharic: 'እንዴት ነህ?',
-            transliteration: 'endet neh?',
-            english: 'How are you?',
-          },
-          {
-            amharic: 'ደህና ነኝ፣ አንተ?',
-            transliteration: 'dehna neñ, ante?',
-            english: 'I’m fine, and you?',
-          },
-          {
-            amharic: 'እጅግ አመሰግናለሁ',
-            transliteration: 'əjjəg amesegenallo',
-            english: 'Thank you very much.',
-          },
-        ],
-        dialogue: [
-          {
-            speaker: 'A',
-            amharic: 'ሰላም እንዴት ነህ?',
-            transliteration: 'selam, endet neh?',
-            english: 'Hello, how are you?',
-          },
-          {
-            speaker: 'B',
-            amharic: 'ደህና ነኝ፣ አንተ?',
-            transliteration: 'dehna neñ, ante?',
-            english: 'I’m fine, and you?',
-          },
-        ],
-      },
-      {
-        title: 'Lesson 2 – Introducing Yourself in English',
-        description:
-          'Learn to talk about your name and where you are from, starting from Amharic.',
-        phrases: [
-          {
-            amharic: 'ስሜ ... ነው።',
-            transliteration: 'səme ... new.',
-            english: 'My name is ....',
-          },
-          {
-            amharic: 'ከኢትዮጵያ መጣሁ።',
-            transliteration: 'kə Ityopya metahu.',
-            english: 'I am from Ethiopia.',
-          },
-          {
-            amharic: 'እባክህ ስምህ?',
-            transliteration: 'əbbakih, səmməh?',
-            english: 'What is your name?',
-          },
-        ],
-        dialogue: [
-          {
-            speaker: 'A',
-            amharic: 'ስሜ አማኑኤል ነው። ከኢትዮጵያ መጣሁ።',
-            transliteration: 'səme Amanuel new. kə Ityopya metahu.',
-            english: 'My name is Amanuel. I am from Ethiopia.',
-          },
-          {
-            speaker: 'B',
-            amharic: 'ደህና መጣህ፣ አማኑኤል።',
-            transliteration: 'dehna metah, Amanuel.',
-            english: 'Welcome, Amanuel.',
-          },
-        ],
-      },
-      {
-        title: 'Lesson 3 – Everyday English Responses',
-        description:
-          'Short English replies to common questions, starting from Amharic prompts.',
-        phrases: [
-          {
-            amharic: 'ጊዜ አለህ?',
-            transliteration: 'gize alleh?',
-            english: 'Do you have time?',
-          },
-          {
-            amharic: 'አሁን አልችልም።',
-            transliteration: 'ahun alchilem.',
-            english: 'I can’t right now.',
-          },
-          {
-            amharic: 'ድጋሚ ተናገር እባክህ።',
-            transliteration: 'dɨgami tenager əbbakih.',
-            english: 'Please say it again.',
-          },
-        ],
-        dialogue: [
-          {
-            speaker: 'A',
-            amharic: 'ጊዜ አለህ?',
-            transliteration: 'gize alleh?',
-            english: 'Do you have time?',
-          },
-          {
-            speaker: 'B',
-            amharic: 'አሁን አልችልም፣ ነግ እችላለሁ።',
-            transliteration: 'ahun alchilem, nəg əchəlalhu.',
-            english: 'I can’t right now, but I can tomorrow.',
-          },
-        ],
-      },
-    ],
-  },
-
-  // English from Amharic – Part 2
-  'english-from-amharic-2': {
-    title: 'English from Amharic – Part 2',
-    intro:
-      'Continue building everyday English as an Amharic speaker, focusing on family, work, and daily routines.',
-    sections: [
-      {
-        title: 'Lesson 1 – Family & People in English',
-        description:
-          'Talk about your family members and people around you in English, starting from Amharic.',
-        phrases: [
-          {
-            amharic: 'አባቴ በአውሮፓ ይኖራል።',
-            transliteration: 'abate be-Europa yinoral.',
-            english: 'My father lives in Europe.',
-          },
-          {
-            amharic: 'እናቴ በቤት ትሰራለች።',
-            transliteration: 'ənnate be-bet tɨseralech.',
-            english: 'My mother works at home.',
-          },
-        ],
-      },
-      {
-        title: 'Lesson 2 – Work & Study in English',
-        description:
-          'Build English sentences about your job, school, or what you do every day.',
-        phrases: [
-          {
-            amharic: 'እኔ ተማሪ ነኝ።',
-            transliteration: 'ene temari neñ.',
-            english: 'I am a student.',
-          },
-          {
-            amharic: 'በቢሮ እሰራለሁ።',
-            transliteration: 'be-biro əsəralehu.',
-            english: 'I work in an office.',
-          },
-        ],
-      },
-      {
-        title: 'Lesson 3 – Daily Routine in English',
-        description:
-          'Talk about your typical day—waking up, eating, working or studying—in English.',
-        phrases: [
-          {
-            amharic: 'ጠዋት ስድስት ሰዓት እነሳለሁ።',
-            transliteration: 'ṯewat sɨdɨst se-at ənəsalehu.',
-            english: 'I wake up at six in the morning.',
-          },
-          {
-            amharic: 'ስራ በኋላ ወደ ቤት እመለሳለሁ።',
-            transliteration: 'səra behwala wede bet əmelesalehu.',
-            english: 'I go back home after work.',
-          },
-        ],
-      },
-    ],
-  },
+  // The English course lives in its own file.
+  ...englishCourses,
 };
 
 export type Track = 'amharic' | 'english';
@@ -1349,22 +1172,7 @@ export const courseCatalog: CourseSummary[] = [
     track: 'amharic',
     part: 6,
   },
-  {
-    slug: 'english-from-amharic-1',
-    title: 'English from Amharic – Part 1',
-    description: 'Everyday English greetings and basics explained in Amharic.',
-    audience: 'Amharic speakers learning English',
-    track: 'english',
-    part: 1,
-  },
-  {
-    slug: 'english-from-amharic-2',
-    title: 'English from Amharic – Part 2',
-    description: 'Family, work, and simple daily English phrases.',
-    audience: 'Amharic speakers learning English',
-    track: 'english',
-    part: 2,
-  },
+  ...englishCatalog,
 ];
 
 export function lessonCount(slug: string) {

@@ -80,32 +80,35 @@ function CheckIcon() {
   );
 }
 
-// Each camp is drawn as its own mountain: Simien rock cliffs with a snow cap,
-// distant peaks behind, and hills at the base tinted by altitude zone.
+// Each camp is drawn as its own mountain: Simien rock cliffs crowned with bare
+// summit rock (the Simien has no permanent snow), distant peaks behind, and
+// hills at the base tinted by altitude zone.
 type Palette = {
   sky: string | null;
   far: string;
   rock: string;
   rockShade: string;
   ledge: string;
-  snowShade: string;
+  summit: string;
+  summitShade: string;
   hill: string;
   hillFront: string;
   decor: string;
 };
-const ROCK = { rock: '#efcfb8', rockShade: '#dfae90', ledge: '#c98b68', snowShade: '#e4ecf5' };
+const ROCK = { rock: '#efcfb8', rockShade: '#dfae90', ledge: '#c98b68', summit: '#c98b68', summitShade: '#a8684c' };
 const SCENERY: Record<Scenery, Palette> = {
   foothills: { sky: '#e9f5fc', far: '#dfe8f2', ...ROCK, hill: '#d3e7ad', hillFront: '#bcd98f', decor: '#86b35c' },
   forest: { sky: '#e9f5fc', far: '#dfe8f2', ...ROCK, hill: '#b5d8ae', hillFront: '#98c693', decor: '#5a9a5e' },
   heather: { sky: '#eef1fb', far: '#e3e4f2', ...ROCK, hill: '#dccbe6', hillFront: '#c9b0d8', decor: '#a27dbd' },
-  alpine: { sky: '#eaf2fb', far: '#dde6f1', ...ROCK, hill: '#e6eef5', hillFront: '#d3e0ec', decor: '#adbfd3' },
+  alpine: { sky: '#eef3f8', far: '#e4dfd6', ...ROCK, hill: '#e8d9a4', hillFront: '#d8c47f', decor: '#a8915a' },
   locked: {
     sky: null,
     far: '#f4f4f4',
     rock: '#efefef',
     rockShade: '#e3e3e3',
     ledge: '#d6d6d6',
-    snowShade: '#f4f4f4',
+    summit: '#e0e0e0',
+    summitShade: '#d4d4d4',
     hill: '#f2f2f2',
     hillFront: '#eaeaea',
     decor: '#dcdcdc',
@@ -121,7 +124,7 @@ const toPath = (pts: Pt[], close = true) =>
 function Mountain({ scenery, peakX, height }: { scenery: Scenery; peakX: number; height: number }) {
   const c = SCENERY[scenery];
   const W = MOUNTAIN_WIDTH;
-  const top = -44; // a little above the top stop, so the trophy sits in the snow
+  const top = -44; // a little above the top stop, so the trophy sits on the summit rocks
   const H = height + 24;
   const h = H - top;
   const px = Math.min(Math.max(peakX + (W - WIDTH) / 2, 210), W - 210);
@@ -167,7 +170,8 @@ function Mountain({ scenery, peakX, height }: { scenery: Scenery; peakX: number;
 
   const body = toPath([[px, top], ...rightRidge, [W, H], [0, H], ...[...leftRidge].reverse()]);
   const shade = toPath([[px, top], ...rightRidge, [W, H], ...[...spine].reverse()]);
-  const snow = toPath([
+  // The bare summit rock at the top of the climb.
+  const summit = toPath([
     [px, top],
     [px + 26, top + 44],
     [px + 60, top + 96],
@@ -181,7 +185,7 @@ function Mountain({ scenery, peakX, height }: { scenery: Scenery; peakX: number;
     [px - 48, top + 62],
     [px - 30, top + 50],
   ]);
-  const snowShade = toPath([
+  const summitShade = toPath([
     [px, top],
     [px + 26, top + 44],
     [px + 60, top + 96],
@@ -227,10 +231,6 @@ function Mountain({ scenery, peakX, height }: { scenery: Scenery; peakX: number;
     [W, H],
     [0, H],
   ]);
-  const farSnow = [
-    toPath([[96, at(0.12)], [116, at(0.17)], [104, at(0.16)], [96, at(0.19)], [84, at(0.16)], [76, at(0.17)]]),
-    toPath([[W - 92, at(0.06)], [W - 72, at(0.11)], [W - 84, at(0.1)], [W - 92, at(0.13)], [W - 102, at(0.1)], [W - 114, at(0.11)]]),
-  ];
   const hill = `M0 ${at(0.8)} Q 110 ${at(0.73)} 220 ${at(0.82)} T 420 ${at(0.8)} T ${W} ${at(0.76)} L ${W} ${H} L 0 ${H} Z`;
   const hillFront = `M0 ${at(0.9)} Q 150 ${at(0.83)} 300 ${at(0.91)} T ${W} ${at(0.88)} L ${W} ${H} L 0 ${H} Z`;
 
@@ -271,14 +271,13 @@ function Mountain({ scenery, peakX, height }: { scenery: Scenery; peakX: number;
       </defs>
       {c.sky && <rect x="0" y={top} width={W} height={h} fill={`url(#${skyId})`} />}
       <path d={far} fill={c.far} />
-      {scenery !== 'locked' && farSnow.map((d, i) => <path key={i} d={d} fill="#fff" />)}
       <path d={body} fill={c.rock} />
       <path d={shade} fill={c.rockShade} />
       {ledges.map((d, i) => (
         <path key={i} d={d} fill={c.ledge} opacity="0.45" />
       ))}
-      <path d={snow} fill="#fff" />
-      <path d={snowShade} fill={c.snowShade} />
+      <path d={summit} fill={c.summit} />
+      <path d={summitShade} fill={c.summitShade} />
       <path d={hill} fill={c.hill} />
       <path d={hillFront} fill={c.hillFront} />
       {decor.map(([x, y], i) =>
@@ -397,7 +396,7 @@ export default function Trail({
                 Start
               </span>
             )}
-            {stop.state === 'locked' ? (
+            {stop.state === 'locked' && !stop.href ? (
               <span className={className} role="img" aria-label={aria} title={label}>
                 {content}
               </span>

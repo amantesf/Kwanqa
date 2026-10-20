@@ -12,7 +12,7 @@ function TrailIcon() {
   return (
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
       <path d="M2 28 L12 10 L18 19 L22 13 L30 28 Z" fill="var(--primary)" />
-      <path d="M12 10 L15 15.5 L13 14.6 L10.6 16.4 Z" fill="#fff" />
+      <path d="M12 10 L15 15.5 L13 14.6 L10.6 16.4 Z" fill="rgba(0,0,0,0.22)" />
       <circle cx="25" cy="7" r="3.4" fill="var(--gold)" />
     </svg>
   );

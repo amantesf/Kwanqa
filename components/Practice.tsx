@@ -251,7 +251,16 @@ export default function Practice({
 
   // A recording of the Amharic in the question, when we have one: it plays by
   // itself when the question appears (unless muted) and the speaker replays it.
-  const promptAudio = current && current.kind !== 'match' ? phraseAudio(current.prompt) : null;
+  // Fill-in-the-blank questions keep quiet until answered, then say the whole line.
+  const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
+  const promptAudio =
+    !current || current.kind === 'match'
+      ? null
+      : reveal
+        ? phase === 'feedback'
+          ? phraseAudio(reveal)
+          : null
+        : phraseAudio(current.prompt);
   const voice = useRef<HTMLAudioElement | null>(null);
   function playClip(src: string | null) {
     if (!src) return;
@@ -267,7 +276,13 @@ export default function Practice({
   function sayAloud(text: string) {
     if (!sounds.muted) playClip(phraseAudio(text));
   }
-  const promptKey = phase === 'question' && promptAudio ? `${current.id}:${queue.length}` : null;
+  const promptKey = !promptAudio
+    ? null
+    : reveal
+      ? `${current.id}:${queue.length}:reveal`
+      : phase === 'question'
+        ? `${current.id}:${queue.length}`
+        : null;
   useEffect(() => {
     if (!promptKey || sounds.muted) return;
     playPrompt();

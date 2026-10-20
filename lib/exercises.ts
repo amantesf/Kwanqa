@@ -16,6 +16,11 @@ export type ChoiceExercise = {
   answer: string;
   /** Shown after answering, so mistakes become learning moments. */
   explain: string;
+  /**
+   * Amharic to say out loud after answering instead of while answering
+   * (fill-in-the-blank: hearing the whole line first would give it away).
+   */
+  revealAudio?: string;
 };
 
 export type MatchExercise = {
@@ -258,6 +263,7 @@ export function buildExercises(
       `The full line is ${line.amharic} — “${line.english}”.`,
       line.english,
     );
+    if (ex) ex.revealAudio = line.amharic;
     if (ex && answer) exercises.splice(Math.min(3, exercises.length), 0, ex);
   }
 

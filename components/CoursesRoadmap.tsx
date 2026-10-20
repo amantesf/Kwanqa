@@ -10,6 +10,7 @@ import { EthiopianDateCard, HolidaySeasonCard, useHolidaySeason } from '@/compon
 import ProverbCard from '@/components/ProverbCard';
 import MesobBasket from '@/components/MesobBasket';
 import SiniCup from '@/components/SiniCup';
+import AddisTaxi from '@/components/AddisTaxi';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import TopStats from '@/components/TopStats';
@@ -257,6 +258,9 @@ export default function CoursesRoadmap() {
             {shownCamp.slug === 'amharic-beginner-3' ? (
               // the coffee camp gets a sini of buna instead of a basket
               <SiniCup key={`cup-${shownIdx}`} className="camp-cup" />
+            ) : shownCamp.slug === 'amharic-beginner-4' ? (
+              // the directions-and-taxis camp gets a blue-and-white Addis taxi
+              <AddisTaxi key={`taxi-${shownIdx}`} className="camp-taxi" />
             ) : (
               <MesobBasket key={`basket-${shownIdx}`} camp={shownIdx} className="camp-basket" />
             )}

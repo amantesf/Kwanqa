@@ -3816,6 +3816,47 @@ body:has(.learn-app) .site-footer {
   }
 }
 
+/* The numbers camp's card of Ge'ez numerals: it flips in, then counts ፩ ፪ ፫ … */
+.camp-numbers {
+  position: absolute;
+  top: 50%;
+  right: -4px;
+  width: 116px;
+  height: 116px;
+  margin-top: -58px;
+  pointer-events: none;
+  animation: numbers-in 0.7s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.geez-font {
+  font-family: var(--font-ethiopic), var(--font-nunito), serif;
+}
+
+.camp-numbers .geez-num {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: geez-count 4.4s ease-in-out infinite;
+}
+
+@keyframes numbers-in {
+  from {
+    opacity: 0;
+    transform: perspective(300px) rotateY(80deg) scale(0.8);
+  }
+}
+
+@keyframes geez-count {
+  0%,
+  14%,
+  100% {
+    transform: none;
+    fill: inherit;
+  }
+  6% {
+    transform: scale(1.22);
+  }
+}
+
 @keyframes cup-in {
   from {
     opacity: 0;
@@ -3896,7 +3937,9 @@ body:has(.learn-app) .site-footer {
   .camp-taxi .taxi-body,
   .camp-taxi .taxi-puff,
   .camp-elder,
-  .camp-elder .elder-head {
+  .camp-elder .elder-head,
+  .camp-numbers,
+  .camp-numbers .geez-num {
     animation: none;
   }
 }
@@ -5053,6 +5096,13 @@ a.rail-link:hover {
     width: 116px;
     height: 116px;
     margin-top: -58px;
+  }
+
+  .camp-numbers {
+    right: -8px;
+    width: 86px;
+    height: 86px;
+    margin-top: -43px;
   }
 
   .camp-elder {

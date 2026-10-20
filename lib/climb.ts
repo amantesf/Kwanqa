@@ -5,7 +5,7 @@ import type { Level } from '@/lib/profile';
 // The learner's climb lives in this browser's localStorage (there are no accounts yet).
 export type Climb = {
   completed: Record<string, number[]>; // course slug -> completed lesson indexes
-  grass: number; // ሳር — earned by finishing lessons, spent to recover stamina
+  grass: number; // ሳር: earned by finishing lessons, spent to recover stamina
   days: string[]; // local dates (YYYY-MM-DD) with at least one finished lesson, for the climb streak
   log: Record<string, DayWork>; // what the learner did on each of those dates
 };

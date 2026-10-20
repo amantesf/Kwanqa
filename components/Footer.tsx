@@ -38,7 +38,7 @@ export default function Footer() {
               kwanqa
             </Link>
             <p>
-              The fun way to learn Amharic and English—built for Ethiopian families and
+              The fun way to learn Amharic and English, built for Ethiopian families and
               the diaspora.
             </p>
           </div>

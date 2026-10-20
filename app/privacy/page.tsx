@@ -31,7 +31,7 @@ export default function PrivacyPage() {
               <li>
                 <strong>Account details:</strong> your name and email address. If you sign up with
                 an email and password, your password is stored securely by our login provider as a
-                scrambled (hashed) value—we never see it. If you continue with Google, Google shares
+                scrambled (hashed) value, so we never see it. If you continue with Google, Google shares
                 your name, email address, and profile picture with us.
               </li>
               <li>
@@ -82,11 +82,11 @@ export default function PrivacyPage() {
               provide their service to us:
             </p>
             <ul>
-              <li><strong>Supabase</strong> — accounts, login, and saving your progress (hosted in the United States).</li>
-              <li><strong>Vercel</strong> — hosts the kwanqa website.</li>
-              <li><strong>Resend</strong> — sends our account and reminder emails.</li>
-              <li><strong>Google</strong> — only if you choose “Continue with Google”.</li>
-              <li><strong>Cloudflare</strong> — manages our domain name.</li>
+              <li><strong>Supabase:</strong> accounts, login, and saving your progress (hosted in the United States).</li>
+              <li><strong>Vercel:</strong> hosts the kwanqa website.</li>
+              <li><strong>Resend:</strong> sends our account and reminder emails.</li>
+              <li><strong>Google:</strong> only if you choose “Continue with Google”.</li>
+              <li><strong>Cloudflare:</strong> manages our domain name.</li>
             </ul>
             <p>
               We don’t sell or rent your information, and we don’t share it with advertisers. We

@@ -10,7 +10,7 @@ export default function ApproachPage() {
       <PageHero
         kicker="Our approach"
         title="How Kwanqa teaches Amharic, English, and heritage languages."
-        lead="We’re committed to making language learning accessible, engaging, and meaningful—while honoring culture and identity."
+        lead="We’re committed to making language learning accessible, engaging, and meaningful, while honoring culture and identity."
       />
       <section className="section">
         <div className="container">

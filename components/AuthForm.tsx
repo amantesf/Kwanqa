@@ -16,7 +16,7 @@ type Mode = 'signup' | 'login';
 function friendly(message: string) {
   const m = message.toLowerCase();
   if (m.includes('invalid login credentials')) return 'That email and password don’t match. Try again?';
-  if (m.includes('email not confirmed')) return 'Please confirm your email first—check your inbox for the link.';
+  if (m.includes('email not confirmed')) return 'Please confirm your email first. Check your inbox for the link.';
   if (m.includes('already registered')) return 'There’s already an account with that email. Try logging in.';
   if (m.includes('captcha')) return 'The “are you human?” check didn’t go through. Please try again.';
   if (m.includes('rate limit')) return 'Too many tries for now. Please wait a few minutes and try again.';
@@ -80,7 +80,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           Accounts are coming soon
         </h1>
         <p className="muted">
-          You can still climb the whole trail—your progress is saved in this browser.
+          You can still climb the whole trail. Your progress is saved in this browser.
         </p>
         <Link href="/courses" className="btn btn-block">
           Try a lesson

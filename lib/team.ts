@@ -22,6 +22,6 @@ export const founders: Founder[] = [
     name: 'Nehmiya Erkelo',
     role: 'Co‑founder',
     image: '/team/nehmiya.png',
-    bio: 'Nehmiya co‑founded Kwanqa to bridge the gap between Ethiopia and the diaspora through language. He believes technology should amplify teachers, families, and cultural knowledge—not replace them.',
+    bio: 'Nehmiya co‑founded Kwanqa to bridge the gap between Ethiopia and the diaspora through language. He believes technology should amplify teachers, families, and cultural knowledge, not replace them.',
   },
 ];

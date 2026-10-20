@@ -24,19 +24,19 @@ const ethiopic = Noto_Sans_Ethiopic({
 
 export const metadata: Metadata = {
   title: {
-    default: 'kwanqa — The fun way to learn Amharic & English',
+    default: 'kwanqa · The fun way to learn Amharic & English',
     template: '%s · kwanqa',
   },
   description:
-    'Learn Amharic and English with bite-sized lessons, real phrases, and everyday dialogues—built for Ethiopian families and the diaspora.',
+    'Learn Amharic and English with bite-sized lessons, real phrases, and everyday dialogues, built for Ethiopian families and the diaspora.',
   icons: { icon: '/favicon.ico' },
   metadataBase: new URL('https://kwanqa.com'),
   openGraph: {
     type: 'website',
     siteName: 'kwanqa',
-    title: 'kwanqa — The fun way to learn Amharic & English',
+    title: 'kwanqa · The fun way to learn Amharic & English',
     description:
-      'Bite-sized lessons, real phrases, and everyday dialogues—built for Ethiopian families and the diaspora.',
+      'Bite-sized lessons, real phrases, and everyday dialogues, built for Ethiopian families and the diaspora.',
     images: [{ url: '/brand/walia-og.jpg', width: 1200, height: 630, alt: 'Walia the ibex on a mountain peak' }],
   },
   twitter: { card: 'summary_large_image', images: ['/brand/walia-og.jpg'] },

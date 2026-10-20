@@ -300,7 +300,7 @@ export default function CoursesRoadmap() {
               {next ? 'Finish every lesson to reach the summit' : 'You made it to the top!'}
             </h2>
             <p className="muted small">
-              Ras Dashen is the highest peak of the Simien Mountains—home of the Walia ibex.
+              Ras Dashen is the highest peak of the Simien Mountains and home of the Walia ibex.
             </p>
           </div>
           {!next && (
@@ -386,7 +386,7 @@ export default function CoursesRoadmap() {
         <div className="trailhead">
           <span className="kicker">Trailhead · {BASE_ALTITUDE.toLocaleString()} m</span>
           <p className="muted small">
-            Your climb starts here. Finish lessons to earn grass (ሳር)—it grows Walia’s horns
+            Your climb starts here. Finish lessons to earn grass (ሳር). It grows Walia’s horns
             and gives you energy when the climb gets tough.
           </p>
         </div>

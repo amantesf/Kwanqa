@@ -97,7 +97,7 @@ export default function Home() {
                 <h2 className="h2">bite‑sized. fun. effective.</h2>
                 <p className="lead">
                   Every lesson takes just a few minutes. Learn the phrases that matter
-                  first—greetings, introductions, family—and build real confidence one
+                  first (greetings, introductions, family) and build real confidence one
                   small step at a time.
                 </p>
               </div>
@@ -125,7 +125,7 @@ export default function Home() {
                 <h2 className="h2">rooted in culture</h2>
                 <p className="lead">
                   Learn the Ge’ez script with transliteration as your bridge. Our lessons
-                  honor Amharic as identity, history, and connection—not just vocabulary.
+                  honor Amharic as identity, history, and connection, not just vocabulary.
                 </p>
               </div>
               <div className="feature-art">
@@ -147,7 +147,7 @@ export default function Home() {
                 <h2 className="h2">real conversations</h2>
                 <p className="lead">
                   Practice short, everyday dialogues with script, transliteration, and
-                  translation side by side—so you can talk with family and friends from
+                  translation side by side, so you can talk with family and friends from
                   day one.
                 </p>
               </div>
@@ -178,7 +178,7 @@ export default function Home() {
                 <h2 className="h2">made for our community</h2>
                 <p className="lead">
                   For years, major language apps ignored Amharic. kwanqa is built by
-                  Ethiopians for families at home and across the diaspora—free, with no
+                  Ethiopians for families at home and across the diaspora. It’s free, with no
                   account needed.
                 </p>
                 <div>

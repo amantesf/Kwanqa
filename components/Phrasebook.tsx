@@ -64,7 +64,7 @@ export default function Phrasebook() {
           <p className="small">
             {english
               ? 'Every phrase from this camp in one place. Say each one out loud in English, then check the Amharic meaning.'
-              : 'Every phrase from this camp in one place. Say each one out loud—use the transliteration as a bridge, not a crutch.'}
+              : 'Every phrase from this camp in one place. Say each one out loud, and use the transliteration as a bridge, not a crutch.'}
           </p>
         </div>
         <label className="toggle">

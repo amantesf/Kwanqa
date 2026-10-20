@@ -45,7 +45,7 @@ function HoofIcon() {
 const HOW_IT_WORKS = [
   { icon: <StoneIcon />, title: 'Climb stone by stone', body: 'Each stone on the trail is a bite-sized lesson. Each camp is a course.' },
   { icon: <GrassIcon size={44} />, title: 'Earn grass', body: 'Finish lessons to collect ሳር (grass) and keep Walia well fed.' },
-  { icon: <Mascot pose="cheer" size={44} />, title: 'Grow Walia’s horns', body: 'Walia’s horns grow a new ridge as you learn—just like a real ibex.' },
+  { icon: <Mascot pose="cheer" size={44} />, title: 'Grow Walia’s horns', body: 'Walia’s horns grow a new ridge as you learn, just like a real ibex.' },
   { icon: <HoofIcon />, title: 'Keep your footing', body: 'Wrong answers cost stamina. Get three right in a row to win it back.' },
 ];
 
@@ -55,7 +55,7 @@ export default function CourseCatalog() {
       <PageHero
         kicker="Courses"
         title="Choose your climb up the Simien Mountains."
-        lead="Short lessons, real phrases, and everyday dialogues. Answer a few quick questions and start climbing—no account needed to try it."
+        lead="Short lessons, real phrases, and everyday dialogues. Answer a few quick questions and start climbing. No account needed to try it."
         pose="wave"
       >
         <div className="row">
@@ -142,7 +142,7 @@ export default function CourseCatalog() {
                 Learn to read ፊደል, the Ge’ez alphabet
               </h2>
               <p className="muted small">
-                An interactive chart of every Amharic letter and its seven vowel forms—tap any
+                An interactive chart of every Amharic letter and its seven vowel forms. Tap any
                 letter to see how it’s built.
               </p>
             </div>

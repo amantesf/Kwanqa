@@ -10,7 +10,7 @@ export const values: Feature[] = [
   },
   {
     title: 'Culture matters',
-    body: 'We honor heritage languages—Amharic, Afaan Oromo, Tigrinya, and more—because language is identity, history, and connection, not just vocabulary.',
+    body: 'We honor heritage languages (Amharic, Afaan Oromo, Tigrinya, and more) because language is identity, history, and connection, not just vocabulary.',
   },
   {
     title: 'Learning made simple',
@@ -22,18 +22,18 @@ export const values: Feature[] = [
   },
   {
     title: 'Empowerment through education',
-    body: 'Whether you’re learning English to unlock opportunities or Amharic to reconnect with family, our goal is to lift you higher—not just help you memorize words.',
+    body: 'Whether you’re learning English to unlock opportunities or Amharic to reconnect with family, our goal is to lift you higher, not just help you memorize words.',
   },
   {
     title: 'Technology with a heart',
-    body: 'Our tools support teachers and learners—they never replace the human connection that real language is built on. Technology is the tool; people are the purpose.',
+    body: 'Our tools support teachers and learners. They never replace the human connection that real language is built on. Technology is the tool; people are the purpose.',
   },
 ];
 
 export const approach: Feature[] = [
   {
     title: 'Personalized learning paths',
-    body: 'Lessons adapt to each learner’s skill level, pace, and goals, ensuring steady progress and real‑world fluency—whether you’re learning Amharic or English.',
+    body: 'Lessons adapt to each learner’s skill level, pace, and goals, ensuring steady progress and real‑world fluency, whether you’re learning Amharic or English.',
   },
   {
     title: 'Tutors & practice partners',

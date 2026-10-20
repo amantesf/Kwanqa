@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { phraseAudio } from '@/lib/phraseAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
 import Mascot from '@/components/Mascot';
@@ -247,6 +248,25 @@ export default function Practice({
   const sounds = useAnswerSounds();
 
   const current = queue[0];
+
+  // A recording of the Amharic in the question, when we have one: it plays by
+  // itself when the question appears (unless muted) and the speaker replays it.
+  const promptAudio = current && current.kind !== 'match' ? phraseAudio(current.prompt) : null;
+  const voice = useRef<HTMLAudioElement | null>(null);
+  function playPrompt() {
+    if (!promptAudio) return;
+    voice.current?.pause();
+    const el = new Audio(promptAudio);
+    voice.current = el;
+    el.play().catch(() => {});
+  }
+  const promptKey = phase === 'question' && promptAudio ? `${current.id}:${queue.length}` : null;
+  useEffect(() => {
+    if (!promptKey || sounds.muted) return;
+    playPrompt();
+    // play once per question, not on every re-render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promptKey]);
   const progress = initial.length ? solved.size / initial.length : 1;
   const horns = hornLevel(climb.grass);
 
@@ -486,7 +506,15 @@ export default function Practice({
               <Mascot pose={reaction?.kind === 'hop' ? 'cheer' : 'happy'} size={110} hornScale={horns.scale} />
             </div>
             {current.kind !== 'match' && (
-              <div className="prompt-bubble">
+              <div className={`prompt-bubble${promptAudio ? ' has-audio' : ''}`}>
+                {promptAudio && (
+                  <button type="button" className="prompt-speak" onClick={playPrompt} aria-label="Play the Amharic again">
+                    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                      <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+                      <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
                 <span className="prompt-main">{current.prompt}</span>
                 {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
               </div>

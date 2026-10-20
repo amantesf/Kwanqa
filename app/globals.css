@@ -3718,6 +3718,66 @@ body:has(.learn-app) .site-footer {
   animation-delay: 1.2s;
 }
 
+/* The taxi camp's Addis taxi: it drives in from the right, wheels turning, then idles. */
+.camp-taxi {
+  position: absolute;
+  top: 50%;
+  right: -34px;
+  width: 132px;
+  height: 68px;
+  margin-top: -30px;
+  pointer-events: none;
+  animation: taxi-in 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+.camp-taxi .taxi-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-spin 0.9s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.camp-taxi .taxi-body {
+  animation: taxi-idle 1.4s ease-in-out 0.9s infinite;
+}
+
+.camp-taxi .taxi-puff {
+  opacity: 0;
+  animation: taxi-puff 1.2s ease-out 0.5s;
+}
+
+@keyframes taxi-in {
+  from {
+    opacity: 0;
+    transform: translateX(150px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wheel-spin {
+  from {
+    transform: rotate(-720deg);
+  }
+}
+
+@keyframes taxi-idle {
+  50% {
+    transform: translateY(0.6px);
+  }
+}
+
+@keyframes taxi-puff {
+  0% {
+    opacity: 0.9;
+    transform: translateX(0) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-8px) scale(1.6);
+  }
+}
+
 @keyframes cup-in {
   from {
     opacity: 0;
@@ -3792,7 +3852,11 @@ body:has(.learn-app) .site-footer {
   .camp-header-text,
   .camp-basket,
   .camp-cup,
-  .camp-cup .sini-steam path {
+  .camp-cup .sini-steam path,
+  .camp-taxi,
+  .camp-taxi .taxi-wheel,
+  .camp-taxi .taxi-body,
+  .camp-taxi .taxi-puff {
     animation: none;
   }
 }
@@ -4949,6 +5013,13 @@ a.rail-link:hover {
     width: 116px;
     height: 116px;
     margin-top: -58px;
+  }
+
+  .camp-taxi {
+    right: -40px;
+    width: 104px;
+    height: 54px;
+    margin-top: -24px;
   }
 
   .camp-cup {

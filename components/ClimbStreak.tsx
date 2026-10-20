@@ -12,8 +12,8 @@ function MountainIcon({ size, lit }: { size: number; lit: boolean }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
       <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill={lit ? 'var(--primary)' : '#d6d0ca'} />
-      <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="#fff" />
-      <path d="M16 10 L17.6 12.7 L16.5 12.3 L15.4 13.2 Z" fill="#fff" opacity={lit ? 1 : 0.8} />
+      <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="rgba(0,0,0,0.22)" />
+      <path d="M16 10 L17.6 12.7 L16.5 12.3 L15.4 13.2 Z" fill="rgba(0,0,0,0.22)" />
     </svg>
   );
 }
@@ -26,7 +26,7 @@ function Check() {
   );
 }
 
-/** The big mountain in the popover header: sun, snowy peak and a waving flag once you've climbed. */
+/** The big mountain in the popover header: sun, a bare rocky peak and a waving flag once you've climbed. */
 function PeakScene({ lit, started }: { lit: boolean; started: boolean }) {
   return (
     <svg className="streak-peak" width="104" height="92" viewBox="0 0 104 92" aria-hidden>
@@ -34,7 +34,7 @@ function PeakScene({ lit, started }: { lit: boolean; started: boolean }) {
       <path d="M44 88 L72 46 L102 88 Z" fill={lit ? '#f0a27c' : 'rgba(255,255,255,0.35)'} />
       <path d="M2 88 L40 26 L80 88 Z" fill={lit ? '#fff3ea' : 'rgba(255,255,255,0.7)'} />
       <path d="M40 26 L80 88 L52 88 L44 60 Z" fill={lit ? '#f6d5c2' : 'rgba(255,255,255,0.45)'} />
-      <path d="M40 26 L50 42 L45 40 L40 46 L35 40 L30 42 Z" fill="#fff" />
+      <path d="M40 26 L50 42 L45 40 L40 46 L35 40 L30 42 Z" fill={lit ? '#c98b68' : 'rgba(255,255,255,0.25)'} />
       {started && (
         <g>
           <line x1="40" y1="27" x2="40" y2="6" stroke={lit ? '#5c3a24' : '#fff'} strokeWidth="2.6" strokeLinecap="round" />

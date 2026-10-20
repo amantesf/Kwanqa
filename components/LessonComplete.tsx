@@ -46,12 +46,12 @@ function Scene() {
         <rect width="560" height="280" fill="url(#lc-sky)" />
         <circle cx="470" cy="70" r="90" fill="url(#lc-sun)" />
         {/* distant peaks */}
-        <path d="M180 280 L300 120 L345 165 L400 95 L470 160 L560 110 L560 280 Z" fill="#e3eaf2" />
-        <path d="M400 95 L420 122 L408 118 L398 128 L388 117 Z" fill="#fff" />
+        <path d="M180 280 L300 120 L345 165 L400 95 L470 160 L560 110 L560 280 Z" fill="#ead8c9" />
+        <path d="M400 95 L420 122 L408 118 L398 128 L388 117 Z" fill="#d6b49d" />
         {/* the mountain, sunlit and shaded faces */}
         <path d="M0 280 L0 170 L95 102 L150 64 L205 100 L320 150 L440 205 L560 236 L560 280 Z" fill="#efcfb8" />
         <path d="M150 64 L205 100 L320 150 L440 205 L560 236 L560 280 L300 280 L230 190 L172 120 Z" fill="#dfae90" />
-        <path d="M150 64 L175 82 L163 88 L152 80 L140 92 L128 80 L116 86 Z" fill="#fff" />
+        <path d="M150 64 L175 82 L163 88 L152 80 L140 92 L128 80 L116 86 Z" fill="#c98b68" />
         {/* rock ledges */}
         <path d="M60 150 L80 146 L98 151 L116 147 L112 155 L64 156 Z" fill="#c98b68" opacity="0.45" />
         <path d="M250 150 L272 146 L292 152 L284 158 L254 157 Z" fill="#c98b68" opacity="0.45" />
@@ -163,7 +163,7 @@ export default function LessonComplete({
             <span className="lc-stat-value">
               <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden>
                 <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill="currentColor" />
-                <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="#fff" />
+                <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="rgba(0,0,0,0.22)" />
               </svg>
               {altitude.toLocaleString()} m
             </span>

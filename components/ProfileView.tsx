@@ -389,7 +389,7 @@ export default function ProfileView() {
               icon={
                 <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden>
                   <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill={streak ? 'var(--primary)' : '#d6d0ca'} />
-                  <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="#fff" />
+                  <path d="M9 8 L11 11.5 L9.8 11 L8.3 12 Z" fill="rgba(0,0,0,0.22)" />
                 </svg>
               }
               value={streak}
@@ -399,8 +399,8 @@ export default function ProfileView() {
             <Stat
               icon={
                 <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden>
-                  <path d="M12 3 L21 20 H3 Z" fill="#8ea2b8" />
-                  <path d="M12 3 L15 8.6 L13 8 L11.6 9.4 L10.4 8.2 L9 8.6 Z" fill="#fff" />
+                  <path d="M12 3 L21 20 H3 Z" fill="#c98b68" />
+                  <path d="M12 3 L15 8.6 L13 8 L11.6 9.4 L10.4 8.2 L9 8.6 Z" fill="#8f5a40" />
                   <rect x="11.2" y="1" width="1.6" height="5" fill="#5c3a24" />
                   <path d="M12.8 1.2 L17 2.4 L12.8 3.8 Z" fill="var(--primary)" />
                 </svg>

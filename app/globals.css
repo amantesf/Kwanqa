@@ -1099,7 +1099,7 @@ a.lang-item:hover {
 .zone-foothills { background: linear-gradient(180deg, #f3f8ea 0%, #eaf3dc 100%); }
 .zone-forest { background: linear-gradient(180deg, #eaf4ec 0%, #dfeee2 100%); }
 .zone-heather { background: linear-gradient(180deg, #f3eef6 0%, #ece4f1 100%); }
-.zone-alpine { background: linear-gradient(180deg, #f2f6fa 0%, #fbf6ee 100%); }
+.zone-alpine { background: linear-gradient(180deg, #f7f3e8 0%, #fbf6ee 100%); }
 
 .zone-locked {
   filter: grayscale(1);

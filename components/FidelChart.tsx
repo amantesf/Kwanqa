@@ -6,7 +6,7 @@ import { FIDEL, VOWELS, type FidelCell, type FidelRow } from '@/lib/fidel';
 type Selected = { row: FidelRow; cell: FidelCell };
 
 function sound(cell: FidelCell) {
-  return cell.roman || '—';
+  return cell.roman || '·';
 }
 
 /** Plays a letter's recording. Each sound is loaded once and reused. */
@@ -89,18 +89,17 @@ export default function FidelChart() {
             {carrier ? (
               <>
                 <strong>{row.base}</strong> carries a vowel on its own, so {cell.char} is just the
-                vowel <strong>{cell.vowel.roman}</strong> — {cell.vowel.hint}.
+                vowel <strong>{cell.vowel.roman}</strong>, {cell.vowel.hint}.
               </>
             ) : (
               <>
-                <strong>{row.base}</strong> ({row.name}) + vowel <strong>{cell.vowel.roman}</strong>{' '}
-                — {cell.vowel.hint}.
+                <strong>{row.base}</strong> ({row.name}) + vowel <strong>{cell.vowel.roman}</strong>, {cell.vowel.hint}.
               </>
             )}
           </p>
           {row.sameAs && (
             <p className="fidel-note small">
-              Sounds the same as <strong>{row.sameAs}</strong> in Amharic today—it appears in some
+              Sounds the same as <strong>{row.sameAs}</strong> in Amharic today. It appears in some
               traditional spellings.
             </p>
           )}

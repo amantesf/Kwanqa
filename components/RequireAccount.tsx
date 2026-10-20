@@ -40,7 +40,7 @@ export default function RequireAccount({ children, what = 'this lesson' }: { chi
         Answer a few quick questions to start {what}
       </h2>
       <p className="muted">
-        Tell Walia what you want to learn and why—it takes under a minute. No account needed to
+        Tell Walia what you want to learn and why. It takes under a minute. No account needed to
         try it.
       </p>
       <div className="row" style={{ justifyContent: 'center' }}>

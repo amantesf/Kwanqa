@@ -260,7 +260,7 @@ export function buildExercises(
       sentence,
       answer,
       distractors(answer, [], wordPool),
-      `The full line is ${line.amharic} — “${line.english}”.`,
+      `The full line is ${line.amharic} (“${line.english}”).`,
       line.english,
     );
     if (ex) ex.revealAudio = line.amharic;
@@ -396,7 +396,7 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
       blank.sentence,
       blank.answer,
       distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
-      `The full line is “${line.english}” — ${line.amharic}`,
+      `The full line is “${line.english}” (${line.amharic})`,
       line.amharic,
     );
     if (ex) exercises.splice(Math.min(3, exercises.length), 0, ex);

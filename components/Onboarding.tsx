@@ -208,7 +208,7 @@ export default function Onboarding() {
             Learning <strong>{lang}</strong> · <strong>{answers.dailyMinutes ?? 10} min</strong> a day.{' '}
             {placedAt > 0
               ? `You already know some ${lang}, so you’ll start at Camp ${placedAt + 1}. The camps below stay open for review.`
-              : 'Your trail is ready—let’s take the first step.'}
+              : 'Your trail is ready. Let’s take the first step.'}
           </p>
         </div>
       ) : (

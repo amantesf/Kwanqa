@@ -24,7 +24,7 @@ export default function AboutPage() {
     <main>
       <PageHero
         kicker="About Kwanqa"
-        title="The modern way to learn Amharic and English—built for connection."
+        title="The modern way to learn Amharic and English, built for connection."
         lead="We built Kwanqa for Amharic speakers, Ethiopian families, and the diaspora who never saw themselves in traditional language apps."
       >
         <nav className="anchor-nav" aria-label="On this page">
@@ -41,13 +41,13 @@ export default function AboutPage() {
         <div className="container grid-2" style={{ gap: 48, alignItems: 'start' }}>
           <SectionHead
             kicker="Why we built Kwanqa"
-            title="No one built it for us—so we built it ourselves."
+            title="No one built it for us, so we built it ourselves."
           />
           <FadeInOnScroll delay={0.06}>
             <div className="prose">
               <p>
                 Millions of Amharic speakers still don’t have quality tools to learn
-                English—and millions of Ethiopian diaspora kids grow up wanting to learn
+                English, and millions of Ethiopian diaspora kids grow up wanting to learn
                 Amharic but never get the chance. The world didn’t make space for our
                 language, so we decided to build it ourselves.
               </p>
@@ -65,7 +65,7 @@ export default function AboutPage() {
                 <li>Our community deserves a place to learn and stay connected.</li>
               </ul>
               <p>
-                So we created Kwanqa—a modern, culturally grounded platform for Amharic
+                So we created Kwanqa: a modern, culturally grounded platform for Amharic
                 speakers and the Ethiopian diaspora, with tools to help you learn your
                 parents’ languages too, including Afaan Oromo, Tigrinya, and more.
               </p>

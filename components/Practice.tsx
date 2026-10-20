@@ -470,7 +470,7 @@ export default function Practice({
         </div>
         <p className="faint small">
           You have <GrassIcon size={16} className="inline-icon" /> {climb.grass} grass
-          {canRest ? '' : ' — finish lessons to earn more'}.
+          {canRest ? '' : '. Finish lessons to earn more'}.
         </p>
       </div>
     );
@@ -658,7 +658,7 @@ export default function Practice({
         ) : (
           <>
             <span className="faint small">
-              {streak > 0 ? `${streak} in a row — ${STREAK_TO_RECOVER - streak} more to regain stamina` : ' '}
+              {streak > 0 ? `${streak} in a row. ${STREAK_TO_RECOVER - streak} more to regain stamina` : ' '}
             </span>
             {current.kind !== 'match' && (
               <button type="button" className="btn" onClick={check} disabled={!canCheck}>

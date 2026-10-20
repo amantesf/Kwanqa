@@ -203,7 +203,7 @@ export default function ProfileView() {
           Create a profile to see your stats
         </h1>
         <p className="muted">
-          Your profile keeps your grass, lessons, achievements, and Walia’s horns—on any device.
+          Your profile keeps your grass, lessons, achievements, and Walia’s horns on any device.
         </p>
         {enabled ? (
           <div className="row" style={{ justifyContent: 'center' }}>
@@ -441,7 +441,7 @@ export default function ProfileView() {
                 </div>
                 <div>
                   <dt>Speaks</dt>
-                  <dd>{profile.speaks.map(sp => LANGUAGE[sp] ?? sp).join(', ') || '—'}</dd>
+                  <dd>{profile.speaks.map(sp => LANGUAGE[sp] ?? sp).join(', ') || 'Not answered'}</dd>
                 </div>
                 <div>
                   <dt>Starting level</dt>
@@ -449,7 +449,7 @@ export default function ProfileView() {
                 </div>
                 <div>
                   <dt>Why</dt>
-                  <dd>{profile.reasons.map(r => REASON[r] ?? r).join(', ') || '—'}</dd>
+                  <dd>{profile.reasons.map(r => REASON[r] ?? r).join(', ') || 'Not answered'}</dd>
                 </div>
                 <div>
                   <dt>Daily goal</dt>

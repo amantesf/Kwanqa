@@ -6,6 +6,8 @@ const RECORDINGS: Record<string, string> = {
   'እግዚአብሔር ይመስገን': 'egziabher-yimesgen.mp3',
   'ደህና ነኝ፣ አንተስ?': 'dehna-negn-antes.mp3',
   'ሰላም እንዴት ነህ?': 'selam-endet-neh.mp3',
+  'ሰላም እንዴት ነሽ?': 'selam-endet-nesh.mp3',
+  'ደህና ነኝ፣ አንቺስ?': 'dehna-negn-anchis.mp3',
   // single words, for the word tiles
   'ነህ': 'neh.mp3',
   'ደህና': 'dehna.mp3',

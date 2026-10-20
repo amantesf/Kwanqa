@@ -29,7 +29,6 @@ export const metadata: Metadata = {
   },
   description:
     'Learn Amharic and English with bite-sized lessons, real phrases, and everyday dialogues, built for Ethiopian families and the diaspora.',
-  icons: { icon: '/favicon.ico' },
   metadataBase: new URL('https://kwanqa.com'),
   openGraph: {
     type: 'website',

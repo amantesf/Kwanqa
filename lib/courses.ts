@@ -53,13 +53,13 @@ export const courseContent: Record<string, Course> = {
             english: 'Hello, how are you? (to a woman)',
           },
           {
-            amharic: 'ደህና ነኝ፣ አንተ?',
-            transliteration: 'dehna neñ, ante?',
+            amharic: 'ደህና ነኝ፣ አንተስ?',
+            transliteration: 'dehna neñ, antes?',
             english: 'I am fine, and you? (to a man)',
           },
           {
-            amharic: 'ደህና ነኝ፣ አንቺ?',
-            transliteration: 'dehna neñ, anchi?',
+            amharic: 'ደህና ነኝ፣ አንቺስ?',
+            transliteration: 'dehna neñ, anchis?',
             english: 'I am fine, and you? (to a woman)',
           },
           {
@@ -77,8 +77,8 @@ export const courseContent: Record<string, Course> = {
           },
           {
             speaker: 'B',
-            amharic: 'ደህና ነኝ፣ አንተ?',
-            transliteration: 'dehna neñ, ante?',
+            amharic: 'ደህና ነኝ፣ አንተስ?',
+            transliteration: 'dehna neñ, antes?',
             english: 'I am fine, and you?',
           },
           {

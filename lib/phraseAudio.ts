@@ -4,6 +4,7 @@
 
 const RECORDINGS: Record<string, string> = {
   'እግዚአብሔር ይመስገን': 'egziabher-yimesgen.mp3',
+  'ደህና ነኝ፣ አንተስ?': 'dehna-negn-antes.mp3',
 };
 
 /** Ignore Ethiopic and Latin punctuation and spaces when matching. */

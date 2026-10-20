@@ -253,13 +253,12 @@ export default function Practice({
   // itself when the question appears (unless muted) and the speaker replays it.
   // Fill-in-the-blank questions keep quiet until answered, then say the whole line.
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
+  // While answering they play only the part you can see (if recorded), never the answer.
   const promptAudio =
     !current || current.kind === 'match'
       ? null
-      : reveal
-        ? phase === 'feedback'
-          ? phraseAudio(reveal)
-          : null
+      : reveal && phase === 'feedback'
+        ? (phraseAudio(reveal) ?? phraseAudio(current.prompt))
         : phraseAudio(current.prompt);
   const voice = useRef<HTMLAudioElement | null>(null);
   function playClip(src: string | null) {
@@ -278,10 +277,10 @@ export default function Practice({
   }
   const promptKey = !promptAudio
     ? null
-    : reveal
-      ? `${current.id}:${queue.length}:reveal`
-      : phase === 'question'
-        ? `${current.id}:${queue.length}`
+    : phase === 'question'
+      ? `${current.id}:${queue.length}`
+      : reveal && phase === 'feedback'
+        ? `${current.id}:${queue.length}:reveal`
         : null;
   useEffect(() => {
     if (!promptKey || sounds.muted) return;

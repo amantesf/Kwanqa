@@ -8,6 +8,7 @@ import LearnSidebar from '@/components/LearnSidebar';
 import GrassIcon from '@/components/GrassIcon';
 import { EthiopianDateCard, HolidaySeasonCard, useHolidaySeason } from '@/components/HolidayCards';
 import ProverbCard from '@/components/ProverbCard';
+import MesobBasket from '@/components/MesobBasket';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import TopStats from '@/components/TopStats';
@@ -251,6 +252,8 @@ export default function CoursesRoadmap() {
       >
         {shownCamp && (
           <div className={`camp-header camp-color-${shownIdx % 6}`}>
+            {/* each camp's own woven basket peeks in from the right */}
+            <MesobBasket key={`basket-${shownIdx}`} camp={shownIdx} className="camp-basket" />
             <div className="camp-header-text" key={shownIdx}>
               <span className="camp-header-kicker">
                 Camp {shownIdx + 1} ·{' '}

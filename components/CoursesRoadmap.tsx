@@ -11,6 +11,7 @@ import ProverbCard from '@/components/ProverbCard';
 import MesobBasket from '@/components/MesobBasket';
 import SiniCup from '@/components/SiniCup';
 import AddisTaxi from '@/components/AddisTaxi';
+import Elder from '@/components/Elder';
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import TopStats from '@/components/TopStats';
@@ -261,6 +262,9 @@ export default function CoursesRoadmap() {
             ) : shownCamp.slug === 'amharic-beginner-4' ? (
               // the directions-and-taxis camp gets a blue-and-white Addis taxi
               <AddisTaxi key={`taxi-${shownIdx}`} className="camp-taxi" />
+            ) : shownCamp.slug === 'amharic-beginner-6' ? (
+              // the elders-and-blessings camp gets Ababa in his gabi
+              <Elder key={`elder-${shownIdx}`} className="camp-elder" />
             ) : (
               <MesobBasket key={`basket-${shownIdx}`} camp={shownIdx} className="camp-basket" />
             )}

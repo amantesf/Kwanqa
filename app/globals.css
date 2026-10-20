@@ -3778,6 +3778,44 @@ body:has(.learn-app) .site-footer {
   }
 }
 
+/* The elders camp's Ababa: he rises up from the bottom of the banner, then nods now and then. */
+.camp-elder {
+  position: absolute;
+  right: -2px;
+  bottom: -5px;
+  width: 104px;
+  height: 114px;
+  pointer-events: none;
+  animation: elder-in 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.camp-elder .elder-head {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: elder-nod 5s ease-in-out 1s infinite;
+}
+
+@keyframes elder-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+@keyframes elder-nod {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0);
+  }
+  78% {
+    transform: rotate(4deg) translateY(1px);
+  }
+  86% {
+    transform: rotate(-1.5deg);
+  }
+}
+
 @keyframes cup-in {
   from {
     opacity: 0;
@@ -3856,7 +3894,9 @@ body:has(.learn-app) .site-footer {
   .camp-taxi,
   .camp-taxi .taxi-wheel,
   .camp-taxi .taxi-body,
-  .camp-taxi .taxi-puff {
+  .camp-taxi .taxi-puff,
+  .camp-elder,
+  .camp-elder .elder-head {
     animation: none;
   }
 }
@@ -5013,6 +5053,12 @@ a.rail-link:hover {
     width: 116px;
     height: 116px;
     margin-top: -58px;
+  }
+
+  .camp-elder {
+    right: -6px;
+    width: 68px;
+    height: 75px;
   }
 
   .camp-taxi {

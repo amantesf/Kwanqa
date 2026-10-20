@@ -3,7 +3,7 @@
 // appears in the lesson (punctuation and spacing don't matter).
 
 const RECORDINGS: Record<string, string> = {
-  'ደህና ነኝ፣ አንቺ?': 'dehna-negn-anchi.mp3',
+  'እግዚአብሔር ይመስገን': 'egziabher-yimesgen.mp3',
 };
 
 /** Ignore Ethiopic and Latin punctuation and spaces when matching. */

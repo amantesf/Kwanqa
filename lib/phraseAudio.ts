@@ -5,6 +5,12 @@
 const RECORDINGS: Record<string, string> = {
   'እግዚአብሔር ይመስገን': 'egziabher-yimesgen.mp3',
   'ደህና ነኝ፣ አንተስ?': 'dehna-negn-antes.mp3',
+  // single words, for the word tiles
+  'ነህ': 'neh.mp3',
+  'ደህና': 'dehna.mp3',
+  'ሰላም': 'selam.mp3',
+  'ነኝ': 'negn.mp3',
+  'እንዴት': 'endet.mp3',
 };
 
 /** Ignore Ethiopic and Latin punctuation and spaces when matching. */

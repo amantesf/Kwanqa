@@ -253,12 +253,19 @@ export default function Practice({
   // itself when the question appears (unless muted) and the speaker replays it.
   const promptAudio = current && current.kind !== 'match' ? phraseAudio(current.prompt) : null;
   const voice = useRef<HTMLAudioElement | null>(null);
-  function playPrompt() {
-    if (!promptAudio) return;
+  function playClip(src: string | null) {
+    if (!src) return;
     voice.current?.pause();
-    const el = new Audio(promptAudio);
+    const el = new Audio(src);
     voice.current = el;
     el.play().catch(() => {});
+  }
+  function playPrompt() {
+    playClip(promptAudio);
+  }
+  /** Say an Amharic word or answer out loud when it's tapped, if we have a recording. */
+  function sayAloud(text: string) {
+    if (!sounds.muted) playClip(phraseAudio(text));
   }
   const promptKey = phase === 'question' && promptAudio ? `${current.id}:${queue.length}` : null;
   useEffect(() => {
@@ -541,7 +548,10 @@ export default function Practice({
                       type="button"
                       className={`option${state}`}
                       disabled={reveal}
-                      onClick={() => setChoice(option)}
+                      onClick={() => {
+                        setChoice(option);
+                        sayAloud(option);
+                      }}
                     >
                       <span className="option-key">{i + 1}</span>
                       {option}
@@ -577,7 +587,10 @@ export default function Practice({
                       lang={track === 'english' ? 'en' : 'am'}
                       aria-hidden={used}
                       disabled={used || phase === 'feedback'}
-                      onClick={() => setPicked(p => [...p, i])}
+                      onClick={() => {
+                        setPicked(p => [...p, i]);
+                        sayAloud(tile);
+                      }}
                     >
                       {tile}
                     </button>

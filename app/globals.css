@@ -5668,6 +5668,180 @@ body:has(.practice-screen) {
   }
 }
 
+/* ---------- Walia's moods during practice ----------
+   thinking: head tilted, "?" bubble bobbing; cheer: jumps, arms waving,
+   sparkles; sad: shakes his head "no", ears droop, a sweat drop slides. */
+.walia-mood {
+  overflow: visible; /* so he can jump above his own box */
+}
+
+.walia-mood g,
+.walia-mood path {
+  transform-box: view-box;
+}
+
+.mood-thinking .w-head {
+  transform-origin: 120px 168px;
+  animation: m-ponder 3.2s ease-in-out infinite;
+}
+
+.mood-thinking .w-question {
+  transform-origin: 206px 52px;
+  animation: m-bob 1.6s ease-in-out infinite;
+}
+
+.mood-cheer .w-hop {
+  transform-origin: 120px 262px;
+  animation: m-jump 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) 2;
+}
+
+.mood-cheer .w-arm-r {
+  transform-origin: 170px 196px;
+  animation: m-wave-r 0.45s ease-in-out infinite alternate;
+}
+
+.mood-cheer .w-arm-l {
+  transform-origin: 70px 196px;
+  animation: m-wave-l 0.45s ease-in-out infinite alternate;
+}
+
+.mood-cheer .w-sparkles path {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: m-twinkle 0.9s ease-in-out infinite alternate;
+}
+
+.mood-cheer .w-sparkles path:nth-child(2n) {
+  animation-delay: 0.45s;
+}
+
+.mood-sad .w-head {
+  transform-origin: 120px 168px;
+  animation: m-no 1.3s ease-in-out forwards;
+}
+
+.mood-sad .w-ear-l {
+  transform-origin: 78px 110px;
+  transform: rotate(-22deg);
+  transition: transform 0.3s ease;
+}
+
+.mood-sad .w-ear-r {
+  transform-origin: 162px 110px;
+  transform: rotate(22deg);
+  transition: transform 0.3s ease;
+}
+
+.mood-sad .w-sweat {
+  animation: m-sweat 1.6s ease-in 0.3s infinite;
+}
+
+@keyframes m-ponder {
+  0%,
+  100% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(-3deg) translateY(-2px);
+  }
+}
+
+@keyframes m-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(4deg);
+  }
+}
+
+@keyframes m-jump {
+  0%,
+  100% {
+    transform: none;
+  }
+  45% {
+    transform: translateY(-34px) scale(1.04, 0.98);
+  }
+  80% {
+    transform: translateY(0) scale(1.06, 0.94);
+  }
+}
+
+@keyframes m-wave-r {
+  from {
+    transform: rotate(-10deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes m-wave-l {
+  from {
+    transform: rotate(10deg);
+  }
+  to {
+    transform: rotate(-14deg);
+  }
+}
+
+@keyframes m-twinkle {
+  from {
+    transform: scale(0.5) rotate(0);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.15) rotate(25deg);
+    opacity: 1;
+  }
+}
+
+/* shake "no" a few times, then hang the head a little */
+@keyframes m-no {
+  0% {
+    transform: none;
+  }
+  15% {
+    transform: rotate(-9deg);
+  }
+  32% {
+    transform: rotate(9deg);
+  }
+  49% {
+    transform: rotate(-7deg);
+  }
+  66% {
+    transform: rotate(6deg);
+  }
+  100% {
+    transform: rotate(0) translateY(5px);
+  }
+}
+
+@keyframes m-sweat {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .walia-mood *,
+  .walia-mood {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* ---------- Walia comes alive ----------
    Breathing and blinking all the time, plus a 12-second loop of little emotes:
    wave → look around → ear twitch → happy hop → head tilt. The drawing never

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'reac
 import { phraseAudio } from '@/lib/phraseAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
-import Mascot from '@/components/Mascot';
+import Mascot, { type Mood } from '@/components/Mascot';
 import {
   altitudeFor,
   completeLesson,
@@ -290,6 +290,18 @@ export default function Practice({
   }, [promptKey]);
   const progress = initial.length ? solved.size / initial.length : 1;
   const horns = hornLevel(climb.grass);
+  // Walia's face: puzzling over the question, then cheering or disappointed.
+  // Matching rounds react pair by pair, so they follow the last tap instead.
+  const mood: Mood =
+    phase === 'feedback'
+      ? lastCorrect
+        ? 'cheer'
+        : 'sad'
+      : current?.kind === 'match' && reaction
+        ? reaction.kind === 'hop'
+          ? 'cheer'
+          : 'sad'
+        : 'thinking';
 
   function react(kind: 'slip' | 'hop') {
     setReaction(prev => ({ kind, n: (prev?.n ?? 0) + 1 }));
@@ -354,6 +366,7 @@ export default function Practice({
     setQueue(nextQueue);
     setChoice(null);
     setPicked([]);
+    setReaction(null);
 
     if (nextQueue.length === 0) {
       // Every question was answered correctly once, plus each wrong try along the way.
@@ -519,12 +532,8 @@ export default function Practice({
           <h2 className="practice-instruction">{current.instruction}</h2>
 
           <div className="practice-ask">
-            <div
-              key={reaction?.n ?? 0}
-              className={`practice-walia${reaction ? ` ${reaction.kind}` : ''}`}
-              aria-hidden
-            >
-              <Mascot pose={reaction?.kind === 'hop' ? 'cheer' : 'happy'} size={110} hornScale={horns.scale} />
+            <div key={`${mood}-${reaction?.n ?? 0}`} className="practice-walia" aria-hidden>
+              <Mascot mood={mood} size={110} hornScale={horns.scale} />
             </div>
             {current.kind !== 'match' && (
               <div className={`prompt-bubble${promptAudio ? ' has-audio' : ''}`}>

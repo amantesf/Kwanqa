@@ -6,10 +6,10 @@ export default function Logo({ onClick }: { onClick?: () => void }) {
     <Link href="/" className="brand" aria-label="kwanqa home" onClick={onClick}>
       <span className="brand-mark">
         <Image
-          src="/logo-light.png"
+          src="/brand/walia-logo.png"
           alt=""
           fill
-          sizes="38px"
+          sizes="44px"
           style={{ objectFit: 'contain' }}
           priority
         />

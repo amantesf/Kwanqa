@@ -9,6 +9,7 @@ const RECORDINGS: Record<string, string> = {
   'ሰላም እንዴት ነሽ?': 'selam-endet-nesh.mp3',
   'ደህና ነኝ፣ አንቺስ?': 'dehna-negn-anchis.mp3',
   'ደህና ነኝ፣ እግዚአብሔር ይመስገን።': 'dehna-negn-egziabher-yimesgen.mp3',
+  'ስሜ አሌክስ ነው። ከአሜሪካ መጣሁ።': 'sime-alex-new.mp3',
   'ደህና ነኝ': 'dehna-negn.mp3',
   'ሰላም እንዴት': 'selam-endet.mp3',
   'ነኝ፣ አንተስ?': 'negn-antes.mp3',

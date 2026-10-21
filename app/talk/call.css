@@ -495,3 +495,208 @@
   font-size: 13px;
   color: var(--text-muted);
 }
+
+/* The transcript of the call so far; only shown on wide screens. */
+.call-log {
+  display: none;
+}
+
+/* On a computer the call becomes a wide video call: Walia's video on the left,
+   the conversation in its own column on the right, so nothing overlaps. */
+@media (min-width: 900px) {
+  .call-page {
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .call-phone {
+    width: min(1180px, 100%);
+    height: min(780px, calc(100dvh - 48px));
+    min-height: 600px;
+    border-radius: 28px;
+    border-width: 8px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+  }
+
+  .call-video {
+    position: relative;
+    inset: auto;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .call-walia {
+    top: auto;
+    bottom: 26%;
+  }
+
+  .call-walia svg {
+    width: 300px;
+    height: auto;
+  }
+
+  .call-top {
+    right: 420px;
+  }
+
+  .call-bottom {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 0;
+    padding: 20px 20px 22px;
+    background: #fff;
+    border-left: 2px solid var(--border);
+    justify-content: flex-end;
+  }
+
+  .call-turns {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-soft);
+  }
+
+  .call-log {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 36px 0 4px;
+    padding: 0 2px;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .call-log li {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .call-log li:first-child {
+    margin-top: auto;
+  }
+
+  .call-log li.walia {
+    align-self: flex-start;
+    background: var(--bg-soft);
+    color: var(--text-strong);
+    border-bottom-left-radius: 6px;
+  }
+
+  .call-log li.learner {
+    align-self: flex-end;
+    background: var(--blue-soft);
+    color: var(--blue-shadow);
+    border-bottom-right-radius: 6px;
+  }
+
+  .call-caption {
+    background: #fff;
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
+  .call-caption.good {
+    border-color: var(--green);
+  }
+
+  .call-caption.bad {
+    border-color: var(--red);
+  }
+
+  .call-hint {
+    text-shadow: none;
+    color: var(--text-muted);
+  }
+
+  .call-controls {
+    background: var(--text-strong);
+  }
+}
+
+/* Phones (and the phone frame on mid-size screens): Walia's video on top,
+   the conversation underneath it, so the captions never cover him. */
+@media (max-width: 899px) {
+  .call-phone {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .call-video {
+    position: relative;
+    inset: auto;
+    flex: none;
+    height: 32%;
+    min-height: 200px;
+  }
+
+  .call-mountains {
+    height: 75%;
+  }
+
+  .call-walia {
+    top: auto;
+    bottom: 6%;
+  }
+
+  .call-walia svg {
+    width: 150px;
+    height: auto;
+  }
+
+  .call-self {
+    width: 64px;
+    height: 84px;
+  }
+
+  .call-bottom {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: 14px 14px 18px;
+    overflow-y: auto;
+    background: #fff;
+    border-top: 2px solid var(--border);
+  }
+
+  .call-turns {
+    background: var(--bg-soft);
+  }
+
+  .call-caption {
+    background: #fff;
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
+  .call-caption.good {
+    border-color: var(--green);
+  }
+
+  .call-caption.bad {
+    border-color: var(--red);
+  }
+
+  .call-hint {
+    text-shadow: none;
+    color: var(--text-muted);
+  }
+
+  .call-controls {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    margin-top: auto;
+    flex: none;
+    background: var(--text-strong);
+    box-shadow: 0 -10px 16px #fff;
+  }
+}

@@ -3569,8 +3569,9 @@ body:has(.learn-app) .site-footer {
   padding: 0 12px 8px;
 }
 
+/* the learn sidebar shows just the word "kwanqa" */
 .learn-logo .brand-mark {
-  background-color: transparent;
+  display: none;
 }
 
 .learn-nav {

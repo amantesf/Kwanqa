@@ -139,10 +139,13 @@ function MatchRound({
   exercise,
   onMistake,
   onSolved,
+  onSay,
 }: {
   exercise: MatchExercise;
   onMistake: () => void;
   onSolved: () => void;
+  /** Say a card out loud when it's tapped (does nothing without a recording). */
+  onSay?: (text: string) => void;
 }) {
   const rights = useMemo(() => shuffle(exercise.pairs.map(p => p.right)), [exercise]);
   const [left, setLeft] = useState<string | null>(null);
@@ -178,7 +181,10 @@ function MatchRound({
             type="button"
             className={`option${left === p.left ? ' selected' : ''}${matched.has(p.left) ? ' matched' : ''}`}
             disabled={matched.has(p.left)}
-            onClick={() => setLeft(p.left)}
+            onClick={() => {
+              setLeft(p.left);
+              onSay?.(p.left);
+            }}
           >
             {p.left}
           </button>
@@ -191,7 +197,10 @@ function MatchRound({
             type="button"
             className={`option${matchedRights.has(r) ? ' matched' : ''}${wrong === r ? ' wrong' : ''}`}
             disabled={matchedRights.has(r) || !left}
-            onClick={() => pickRight(r)}
+            onClick={() => {
+              onSay?.(r);
+              pickRight(r);
+            }}
           >
             {r}
           </button>
@@ -625,6 +634,7 @@ export default function Practice({
             <MatchRound
               key={current.id + solved.size + queue.length}
               exercise={current}
+              onSay={sayAloud}
               onMistake={() => {
                 sounds.play('wrong');
                 loseStamina();

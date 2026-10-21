@@ -136,11 +136,9 @@ export function buildExercises(
   const poolCards = courseLessons.flatMap(l => [...(l.phrases ?? []), ...(l.dialogue ?? [])]);
   const local = {
     english: uniqueCards.map(c => c.english),
-    translit: uniqueCards.map(c => c.transliteration),
   };
   const pool = {
     english: poolCards.map(c => c.english),
-    translit: poolCards.map(c => c.transliteration),
   };
 
   const exercises: Exercise[] = [];
@@ -177,13 +175,15 @@ export function buildExercises(
         );
         break;
       default:
+        // Answers in English, with the transliteration shown as a hint under the Amharic.
         ex = choice(
           `read-${i}`,
-          'How is this read?',
+          'What does this mean?',
           card.amharic,
-          card.transliteration,
-          distractors(card.transliteration, local.translit, pool.translit),
+          card.english,
+          distractors(card.english, local.english, pool.english),
           explain,
+          card.transliteration,
         );
     }
     if (ex) exercises.push(ex);

@@ -2,14 +2,17 @@
 
 // The call screen for Talk with Walia. Walia says a line (Azure, Ameha's voice),
 // the learner taps the mic and answers out loud, Azure writes down what it
-// heard, and lib/conversations.ts decides whether it fits.
+// heard, and Walia's brain (/api/tutor, Claude) decides whether it fits and
+// what to say back. If the brain is unavailable, the script in
+// lib/conversations.ts checks the answer instead.
 
 import { useEffect, useRef, useState } from 'react';
 import Mascot, { type Mood } from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
-import { check, waliaLine, type Conversation, type Gender, type Line, type Verdict } from '@/lib/conversations';
+import { check, normalize, waliaLine, type Conversation, type Gender, type Line } from '@/lib/conversations';
 import { startRecording, type Recording } from '@/lib/recorder';
 import { supabase } from '@/lib/supabase';
+import type { CallLine, TutorReply, TutorVerdict } from '@/lib/tutor';
 
 const MUTE_KEY = 'kwanqa-sound-off'; // shared with the lessons' mute button
 
@@ -29,6 +32,34 @@ function effect(kind: 'correct' | 'wrong') {
 function speakUrl(text: string, slow = false) {
   return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}`;
 }
+
+async function authHeaders(): Promise<Record<string, string>> {
+  const token = (await supabase?.auth.getSession())?.data.session?.access_token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+type Answer = { verdict: TutorVerdict; reply: Line | null; note: string };
+
+// When Walia's brain can't be reached, the script's own checker decides.
+function scriptAnswer(verdict: ReturnType<typeof check>): Answer {
+  switch (verdict.kind) {
+    case 'right':
+      return { verdict: 'right', reply: null, note: '' };
+    case 'tip':
+      return { verdict: 'slip', reply: null, note: verdict.tip };
+    case 'silent':
+      return { verdict: 'retry', reply: null, note: 'Walia didn’t catch anything. Hold the phone a little closer and try again.' };
+    default:
+      return { verdict: 'retry', reply: null, note: 'Hmm, that didn’t sound like an answer to Walia. Try again, or tap “What can I say?”.' };
+  }
+}
+
+const TITLES: Record<TutorVerdict, string> = {
+  right: 'Nice footing!',
+  slip: 'Almost there',
+  retry: 'Let’s try that again',
+  question: 'Good question',
+};
 
 function formatTime(total: number) {
   return `${Math.floor(total / 60)}:${(total % 60).toString().padStart(2, '0')}`;
@@ -89,11 +120,6 @@ function LineText({ line, english }: { line: Line; english: boolean }) {
   );
 }
 
-const VERDICT_TEXT: Record<Exclude<Verdict['kind'], 'right' | 'tip'>, string> = {
-  unclear: 'Hmm, that didn’t sound like an answer to Walia. Try again, or tap “What can I say?”.',
-  silent: 'Walia didn’t catch anything. Hold the phone a little closer and try again.',
-};
-
 export default function TalkCall({
   conversation,
   gender,
@@ -106,7 +132,8 @@ export default function TalkCall({
   const [turnIndex, setTurnIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('walia');
   const [heard, setHeard] = useState('');
-  const [verdict, setVerdict] = useState<Verdict | null>(null);
+  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [history, setHistory] = useState<CallLine[]>([]);
   const [misses, setMisses] = useState(0);
   const [showExample, setShowExample] = useState(false);
   const [english, setEnglish] = useState(true);
@@ -119,6 +146,7 @@ export default function TalkCall({
 
   const recording = useRef<Recording | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
+  const spoken = useRef(new Map<string, string>()); // reply text → object URL of its audio
   const stopRef = useRef<() => void>(() => {});
 
   const turn = conversation.turns[turnIndex];
@@ -132,16 +160,18 @@ export default function TalkCall({
   }, []);
 
   // hang up cleanly: stop the mic and any audio
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    const clips = spoken.current;
+    return () => {
       recording.current?.cancel();
       audio.current?.pause();
-    },
-    [],
-  );
+      clips.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   // Walia says his line at the start of every turn
   useEffect(() => {
+    setHistory(h => [...h, { from: 'walia', text: line.amharic }]);
     play(line.amharic, false, () => setPhase(p => (p === 'walia' ? 'ready' : p)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex]);
@@ -153,24 +183,76 @@ export default function TalkCall({
     return () => clearInterval(id);
   }, [phase]);
 
-  function play(text: string, slow = false, done?: () => void) {
+  function playSrc(src: string, done?: () => void) {
     audio.current?.pause();
-    const clip = new Audio(speakUrl(text, slow));
+    const clip = new Audio(src);
     audio.current = clip;
     clip.onended = () => done?.();
     clip.onerror = () => done?.();
     void clip.play().catch(() => done?.());
   }
 
-  function judge(text: string) {
-    const result = check(turn, text);
+  /** One of Walia's scripted lines: cached and open to everyone. */
+  function play(text: string, slow = false, done?: () => void) {
+    playSrc(speakUrl(text, slow), done);
+  }
+
+  /** A reply Walia's brain just wrote: spoken fresh, for signed-in learners. */
+  async function playReply(text: string, slow = false) {
+    const key = `${slow ? 'slow:' : ''}${text}`;
+    let url = spoken.current.get(key);
+    if (!url) {
+      const res = await fetch('/api/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+        body: JSON.stringify({ text, slow }),
+      });
+      if (!res.ok) return; // the words are on screen either way
+      url = URL.createObjectURL(await res.blob());
+      spoken.current.set(key, url);
+    }
+    playSrc(url);
+  }
+
+  function say(shown: Line, slow = false) {
+    if (shown === line) play(shown.amharic, slow);
+    else void playReply(shown.amharic, slow);
+  }
+
+  async function askBrain(text: string): Promise<Answer | null> {
+    try {
+      const res = await fetch('/api/tutor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+        body: JSON.stringify({ slug: conversation.slug, turn: turnIndex, gender, heard: text, history }),
+      });
+      if (!res.ok) return null;
+      const data = (await res.json()) as TutorReply;
+      return { verdict: data.verdict, reply: data.reply.amharic ? data.reply : null, note: data.note };
+    } catch {
+      return null;
+    }
+  }
+
+  async function judge(text: string) {
     setHeard(text);
-    setVerdict(result);
+    setPhase('checking');
+    const said = normalize(text);
+    const result = (said && (await askBrain(said))) || scriptAnswer(check(turn, text));
+
+    setAnswer(result);
     setPhase('verdict');
-    if (result.kind === 'right') {
+    setHistory(h => [
+      ...h,
+      ...(said ? [{ from: 'learner' as const, text: said }] : []),
+      ...(result.reply ? [{ from: 'walia' as const, text: result.reply.amharic }] : []),
+    ]);
+    if (result.reply) void playReply(result.reply.amharic);
+
+    if (result.verdict === 'right') {
       effect('correct');
       if (misses === 0 && !showExample) setOnOwn(n => n + 1);
-    } else {
+    } else if (result.verdict !== 'question') {
       effect('wrong');
       const nextMisses = misses + 1;
       setMisses(nextMisses);
@@ -197,15 +279,14 @@ export default function TalkCall({
     setPhase('checking');
     try {
       const wav = await rec.stop();
-      const token = (await supabase?.auth.getSession())?.data.session?.access_token;
       const res = await fetch('/api/listen', {
         method: 'POST',
-        headers: { 'Content-Type': 'audio/wav', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        headers: { 'Content-Type': 'audio/wav', ...(await authHeaders()) },
         body: wav,
       });
       const data = (await res.json()) as { text?: string; error?: string };
       if (!res.ok) throw new Error(data.error ?? 'Something went wrong');
-      judge(data.text ?? '');
+      await judge(data.text ?? '');
     } catch (error) {
       setProblem(error instanceof Error ? error.message : 'Something went wrong. Try again.');
       setPhase('ready');
@@ -220,18 +301,18 @@ export default function TalkCall({
 
   function sendTyped() {
     if (!typed.trim()) return;
-    judge(typed);
+    void judge(typed);
     setTyped('');
   }
 
   function retry() {
-    setVerdict(null);
+    setAnswer(null);
     setHeard('');
     setPhase('ready');
   }
 
   function next() {
-    setVerdict(null);
+    setAnswer(null);
     setHeard('');
     setMisses(0);
     setShowExample(false);
@@ -246,7 +327,8 @@ export default function TalkCall({
   function callAgain() {
     setOnOwn(0);
     setSeconds(0);
-    setVerdict(null);
+    setAnswer(null);
+    setHistory([]);
     setHeard('');
     setMisses(0);
     setShowExample(false);
@@ -255,10 +337,20 @@ export default function TalkCall({
     setTurnIndex(0);
   }
 
-  const right = verdict?.kind === 'right';
-  const tone = phase === 'verdict' ? (right ? ' good' : ' bad') : phase === 'done' ? ' good' : '';
+  const verdict = phase === 'verdict' ? answer?.verdict : undefined;
+  const right = verdict === 'right';
+  // What Walia is saying right now: his reply after an answer, otherwise his question.
+  const shown = (phase === 'verdict' && answer?.reply) || line;
+  const tone =
+    phase === 'done' || right ? ' good' : verdict === 'slip' || verdict === 'retry' ? ' bad' : '';
   const mood: Mood | undefined =
-    phase === 'checking' ? 'thinking' : phase === 'done' || right ? 'cheer' : phase === 'verdict' ? 'sad' : undefined;
+    phase === 'checking'
+      ? 'thinking'
+      : phase === 'done' || right
+        ? 'cheer'
+        : verdict === 'slip' || verdict === 'retry'
+          ? 'sad'
+          : undefined;
   const busy = phase === 'checking' || phase === 'done';
 
   return (
@@ -330,12 +422,18 @@ export default function TalkCall({
                     <span />
                   </span>
                 ) : (
-                  <LineText line={line} english={english} />
+                  <LineText line={shown} english={english} />
+                )}
+
+                {shown !== line && verdict !== 'retry' && (
+                  <span className="call-asked">
+                    Walia asked: <span lang="am">{line.amharic}</span>
+                  </span>
                 )}
 
                 {phase !== 'checking' && (
                   <div className="call-caption-tools">
-                    <button type="button" className="call-link" onClick={() => play(line.amharic, true)}>
+                    <button type="button" className="call-link" onClick={() => say(shown, true)}>
                       Say it slowly
                     </button>
                     <button type="button" className="call-link" onClick={() => setShowExample(s => !s)}>
@@ -351,15 +449,18 @@ export default function TalkCall({
                   </div>
                 )}
 
-                {phase === 'verdict' && verdict && (
+                {verdict && answer && (
                   <div className="call-feedback">
-                    <strong>{right ? 'Nice footing!' : verdict.kind === 'tip' ? 'Almost there' : 'Let’s try that again'}</strong>
-                    {verdict.kind === 'tip' && <span>{verdict.tip}</span>}
-                    {(verdict.kind === 'unclear' || verdict.kind === 'silent') && <span>{VERDICT_TEXT[verdict.kind]}</span>}
+                    <strong>{TITLES[verdict]}</strong>
+                    {answer.note && <span>{answer.note}</span>}
                     <div className="call-actions">
                       {right ? (
                         <button type="button" className="btn btn-sm" onClick={next} autoFocus>
                           {last ? 'Finish' : 'Continue'}
+                        </button>
+                      ) : verdict === 'question' ? (
+                        <button type="button" className="btn btn-sm" onClick={retry} autoFocus>
+                          Answer Walia
                         </button>
                       ) : (
                         <>
@@ -426,7 +527,7 @@ export default function TalkCall({
             <button
               type="button"
               className="call-btn"
-              onClick={() => play(line.amharic)}
+              onClick={() => say(shown)}
               disabled={busy || phase === 'listening'}
               aria-label="Hear Walia again"
             >

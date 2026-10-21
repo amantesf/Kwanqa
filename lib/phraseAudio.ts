@@ -26,6 +26,10 @@ const RECORDINGS: Record<string, string> = {
   'በመንገድህ': 'bemengedih.mp3',
   'ትናገራለህ': 'tinageraleh.mp3',
   'አደሩ': 'aderu.mp3',
+  'እግዚአብሔር': 'egziabher.mp3',
+  'ነሽ': 'nesh.mp3',
+  'ይመስገን': 'yimesgen.mp3',
+  'አንቺስ': 'anchis.mp3',
 };
 
 /**

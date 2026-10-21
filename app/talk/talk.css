@@ -1,64 +1,763 @@
-/* /talk: choose how Walia addresses you, then pick a conversation to call. */
+/* /talk: a ringing phone up top, then choose how Walia addresses you and pick a call. */
+
+.talk-page {
+  overflow-x: clip;
+}
+
+.talk-container {
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.talk-container > .back-link {
+  align-self: flex-start;
+  margin-bottom: -36px;
+}
 
 .talk-page section {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- hero ---------- */
+
+.talk-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  align-items: center;
+  gap: 40px;
+}
+
+.talk-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.talk-kicker {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  border: 2px solid var(--primary-border);
+  color: var(--primary-dark);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.talk-kicker span {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.talk-title {
+  margin: 0;
+  font-size: clamp(40px, 6vw, 60px);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.talk-title span {
+  background: linear-gradient(100deg, var(--primary) 10%, #e8345a 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.talk-lede {
+  margin: 0;
+  max-width: 470px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.talk-steps {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+.talk-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.talk-step strong {
+  display: block;
+  font-size: 17px;
+  color: var(--text-strong);
+}
+
+.talk-step-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  color: #fff;
+  box-shadow: 0 4px 0 var(--edge);
+}
+
+.talk-step-1 .talk-step-icon {
+  background: var(--primary);
+  --edge: var(--primary-shadow);
+}
+
+.talk-step-2 .talk-step-icon {
+  background: var(--green);
+  --edge: var(--green-dark);
+}
+
+.talk-step-3 .talk-step-icon {
+  background: var(--gold);
+  --edge: var(--gold-shadow);
+}
+
+/* ---------- the ringing phone ---------- */
+
+.talk-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 20px 0;
+}
+
+.talk-stage-glow {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 194, 51, 0.45), transparent 62%),
+    radial-gradient(circle at 70% 70%, rgba(232, 52, 90, 0.25), transparent 60%);
+  filter: blur(6px);
+}
+
+.talk-phone {
+  position: relative;
+  width: 272px;
+  height: 556px;
+  padding: 11px;
+  border-radius: 48px;
+  background: linear-gradient(145deg, #3a3a3e, #121214);
+  box-shadow:
+    0 0 0 2px #55555c inset,
+    0 30px 60px rgba(60, 20, 10, 0.28),
+    0 10px 20px rgba(0, 0, 0, 0.12);
+  transform: rotate(4deg);
+  animation: talk-ring-shake 3.2s ease-in-out 0.8s infinite;
+}
+
+.talk-phone.quiet {
+  animation: none;
+}
+
+.talk-phone-btn {
+  position: absolute;
+  width: 4px;
+  border-radius: 2px;
+  background: #2a2a2e;
+}
+
+.talk-phone-btn-1 {
+  left: -3px;
+  top: 110px;
+  height: 28px;
+}
+
+.talk-phone-btn-2 {
+  left: -3px;
+  top: 152px;
+  height: 52px;
+}
+
+.talk-phone-btn-3 {
+  right: -3px;
+  top: 140px;
+  height: 72px;
+}
+
+.talk-screen {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 18px 16px;
+  border-radius: 38px;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.28), transparent 46%),
+    linear-gradient(170deg, #ff3f63 0%, #f2552c 52%, #ff9a1f 100%);
+}
+
+/* a soft woven pattern across the wallpaper */
+.talk-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image:
+    linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%),
+    linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%);
+  background-size: 22px 22px;
+  background-position: 0 0, 11px 11px;
+  mask-image: linear-gradient(180deg, transparent 50%, #000 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 50%, #000 100%);
+  pointer-events: none;
+}
+
+.talk-screen > * {
+  position: relative;
+}
+
+.talk-status {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.talk-notch {
+  width: 82px;
+  height: 22px;
+  border-radius: 12px;
+  background: #121214;
+}
+
+.talk-status-icons {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.talk-status-icons i {
+  width: 3px;
+  border-radius: 1px;
+  background: #fff;
+}
+
+.talk-status-icons i:nth-child(1) {
+  height: 5px;
+}
+
+.talk-status-icons i:nth-child(2) {
+  height: 8px;
+}
+
+.talk-status-icons i:nth-child(3) {
+  height: 11px;
+}
+
+.talk-status-icons b {
+  width: 20px;
+  height: 10px;
+  margin-left: 4px;
+  border-radius: 3px;
+  border: 1.5px solid #fff;
+  background: linear-gradient(90deg, #fff 70%, transparent 70%);
+  background-clip: content-box;
+  padding: 1px;
+}
+
+.talk-incoming {
+  margin: 34px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.9;
+  letter-spacing: 0.02em;
+}
+
+.talk-avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  margin-top: 22px;
+}
+
+.talk-avatar-face {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #fff 0%, #ffe9c7 100%);
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(120, 20, 10, 0.3);
+  overflow: hidden;
+}
+
+.talk-avatar-face svg {
+  margin-top: 26px;
+}
+
+.talk-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  animation: talk-pulse 2s ease-out infinite;
+}
+
+.talk-ring-2 {
+  animation-delay: 1s;
+}
+
+.talk-caller {
+  margin: 18px 0 0;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.talk-caller-sub {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.talk-answer-row {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: 8px;
+}
+
+.talk-answer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.talk-round {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.talk-round:hover {
+  transform: scale(1.06);
+}
+
+.talk-round:active {
+  transform: scale(0.94);
+}
+
+.talk-round:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.talk-round.decline {
+  background: #ff3b30;
+  box-shadow: 0 5px 0 #c4271e;
+}
+
+.talk-round.decline:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.talk-round.accept {
+  background: #34c759;
+  box-shadow: 0 5px 0 #23983f;
+}
+
+.talk-round.accept.ringing svg {
+  animation: talk-wiggle 1.6s ease-in-out infinite;
+}
+
+.talk-screen-tip {
+  margin: 6px 0 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.talk-home-bar {
+  width: 110px;
+  height: 5px;
+  margin-top: 10px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* answered before choosing: the screen asks how Walia should talk */
+.talk-screen-ask {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 4px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.talk-screen-ask button {
+  padding: 12px;
+  border: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 0 rgba(120, 20, 10, 0.25);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.talk-screen-ask button b {
+  margin-left: 4px;
+  color: var(--primary);
+}
+
+.talk-screen-ask button:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+/* the same question, asked in a card's call slot */
+.talk-ask {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* speech bubbles floating round the phone */
+.talk-float {
+  position: absolute;
+  z-index: 1;
+  padding: 9px 15px;
+  border-radius: 18px 18px 18px 6px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-strong);
+  white-space: nowrap;
+  animation: talk-float 5s ease-in-out infinite;
+}
+
+.talk-float.you {
+  border-radius: 18px 18px 6px 18px;
+  background: var(--blue);
+  border-color: var(--blue-shadow);
+  color: #fff;
+}
+
+.talk-float-1 {
+  top: 54px;
+  left: -26px;
+}
+
+.talk-float-2 {
+  top: 200px;
+  right: -34px;
+  animation-delay: 1.4s;
+}
+
+.talk-float-3 {
+  top: 330px;
+  left: -58px;
+  animation-delay: 2.6s;
+}
+
+@keyframes talk-ring-shake {
+  0%,
+  30%,
+  100% {
+    transform: rotate(4deg);
+  }
+  3%,
+  9%,
+  15%,
+  21% {
+    transform: rotate(1.5deg);
+  }
+  6%,
+  12%,
+  18%,
+  24% {
+    transform: rotate(6.5deg);
+  }
+}
+
+@keyframes talk-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+@keyframes talk-wiggle {
+  0%,
+  40%,
+  100% {
+    transform: rotate(0);
+  }
+  8%,
+  24% {
+    transform: rotate(-16deg);
+  }
+  16%,
+  32% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes talk-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ---------- sign-up gate ---------- */
+
+.talk-gate {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 26px 30px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(120deg, var(--primary-soft), var(--gold-soft));
+  border: 2px solid var(--primary-border);
+}
+
+.talk-gate-walia {
+  flex: none;
+}
+
+.talk-gate-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.talk-gate-text h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.talk-gate-text p {
+  margin: 0;
+  color: var(--text);
+}
+
+.talk-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* ---------- sections ---------- */
+
+.talk-section-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.talk-num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--text-strong);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 900;
 }
 
 .talk-h2 {
   margin: 0;
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 900;
   color: var(--text-strong);
 }
 
 .talk-note {
-  margin: 0;
+  margin: 2px 0 0;
   font-size: 15px;
   color: var(--text-muted);
 }
 
+/* ---------- ነህ / ነሽ ---------- */
+
 .talk-gender {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
 }
 
 .talk-gender-option {
+  --accent: var(--primary);
+  --accent-soft: var(--primary-soft);
+  --accent-edge: var(--primary-shadow);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 14px 18px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
   border: 2px solid var(--border);
-  border-bottom-width: 4px;
-  border-radius: var(--radius);
+  border-bottom-width: 5px;
+  border-radius: var(--radius-lg);
   background: #fff;
   font: inherit;
   text-align: left;
   color: var(--text);
   cursor: pointer;
+  transition:
+    transform 0.12s,
+    border-color 0.12s,
+    background 0.12s;
 }
 
-.talk-gender-option strong {
-  font-size: 17px;
+.talk-gender-f {
+  --accent: var(--purple);
+  --accent-soft: var(--purple-soft);
+  --accent-edge: var(--purple-shadow);
+}
+
+.talk-gender-option:hover {
+  transform: translateY(-2px);
+}
+
+.talk-gender-option:active {
+  transform: translateY(2px);
+}
+
+.talk-gender-ending {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 20px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 28px;
+  font-weight: 900;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+
+.talk-gender-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.talk-gender-text strong {
+  font-size: 18px;
   color: var(--text-strong);
 }
 
-.talk-gender-option span {
+.talk-gender-text > span {
   font-size: 15px;
   color: var(--text-muted);
 }
 
-.talk-gender-option.on {
-  border-color: var(--blue);
-  background: var(--blue-soft);
+.talk-gender-text b {
+  color: var(--text-strong);
 }
 
-.talk-gender-option.on strong {
-  color: var(--blue-shadow);
+.talk-gender-text em {
+  font-style: normal;
+  color: var(--text-faint);
 }
+
+.talk-gender-check {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  color: #fff;
+}
+
+.talk-gender-option.on {
+  border-color: var(--accent);
+  border-bottom-color: var(--accent-edge);
+  background: var(--accent-soft);
+}
+
+.talk-gender-option.on .talk-gender-ending {
+  background: var(--accent);
+  color: #fff;
+}
+
+.talk-gender-option.on .talk-gender-check {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+
+/* ---------- the call list ---------- */
 
 .talk-list {
   display: flex;
@@ -69,12 +768,43 @@
 .talk-card {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 20px 22px;
+  gap: 18px;
+  padding: 18px 20px;
   border: 2px solid var(--border);
-  border-bottom-width: 4px;
+  border-bottom-width: 5px;
   border-radius: var(--radius-lg);
   background: #fff;
+}
+
+.talk-card-avatar {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #fff 0%, #ffe3c2 100%);
+  border: 3px solid var(--primary-border);
+}
+
+.talk-card-avatar svg {
+  margin-top: 8px;
+}
+
+.talk-card-avatar > svg:only-child {
+  overflow: visible;
+}
+
+.talk-online {
+  position: absolute;
+  right: 1px;
+  bottom: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 3px solid #fff;
 }
 
 .talk-card-text {
@@ -88,7 +818,7 @@
 .talk-card h3 {
   margin: 0;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 900;
   color: var(--text-strong);
 }
 
@@ -100,39 +830,229 @@
 .talk-card p {
   margin: 0;
   font-size: 16px;
+  line-height: 1.45;
 }
 
-.talk-card-meta {
-  font-size: 14px;
+.talk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.talk-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  border: 1.5px solid var(--border);
+  font-size: 13px;
+  font-weight: 800;
   color: var(--text-muted);
+}
+
+.talk-chip.beginner {
+  background: var(--green-soft);
+  border-color: #c8ecbf;
+  color: var(--green-dark);
 }
 
 .talk-call-btn {
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* asked right in the card when someone calls before choosing */
-.talk-ask {
-  flex: none;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   font-size: 14px;
+  font-weight: 900;
+  color: var(--green-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.talk-call-btn-circle {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #34c759;
+  box-shadow: 0 5px 0 #23983f;
+  color: #fff;
+  transition: transform 0.12s;
+}
+
+.talk-call-btn:hover:not(:disabled) .talk-call-btn-circle {
+  transform: translateY(-2px) rotate(-8deg);
+}
+
+.talk-call-btn:active:not(:disabled) .talk-call-btn-circle {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #23983f;
+}
+
+.talk-call-btn:disabled {
+  color: var(--text-faint);
+  cursor: default;
+}
+
+.talk-call-btn:disabled .talk-call-btn-circle {
+  background: var(--border);
+  box-shadow: 0 5px 0 #d0d0d0;
+  color: var(--text-faint);
+}
+
+.talk-card.soon {
+  background: var(--bg-soft);
+  border-style: dashed;
+  border-bottom-width: 2px;
+}
+
+.talk-card.soon .talk-card-avatar {
+  background: #ececec;
+  border-color: var(--border);
+  color: var(--text-faint);
+}
+
+.talk-card.soon h3 {
   color: var(--text-muted);
-  text-align: center;
+}
+
+.talk-card.soon h3 span {
+  color: var(--text-faint);
+}
+
+.talk-card.soon p {
+  color: var(--text-faint);
+}
+
+.talk-card.soon .talk-chip {
+  background: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .talk-phone,
+  .talk-ring,
+  .talk-round.accept.ringing svg,
+  .talk-float {
+    animation: none;
+  }
+}
+
+/* ---------- smaller screens ---------- */
+
+@media (max-width: 860px) {
+  .talk-hero {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .talk-hero-text {
+    align-items: center;
+    text-align: center;
+  }
+
+  .talk-kicker {
+    align-self: center;
+  }
+
+  .talk-steps {
+    align-self: stretch;
+    text-align: left;
+    max-width: 420px;
+    margin-inline: auto;
+  }
 }
 
 @media (max-width: 600px) {
-  .talk-card {
-    flex-direction: column;
-    align-items: stretch;
+  .talk-container {
+    gap: 36px;
   }
 
-  .talk-call-btn {
+  .talk-phone {
+    width: 236px;
+    height: 486px;
+  }
+
+  .talk-avatar {
+    margin-top: 14px;
+  }
+
+  .talk-incoming {
+    margin-top: 22px;
+  }
+
+  .talk-float {
+    font-size: 15px;
+    padding: 7px 12px;
+  }
+
+  .talk-float-1 {
+    left: 4px;
+  }
+
+  .talk-float-2 {
+    right: 0;
+  }
+
+  .talk-float-3 {
+    display: none;
+  }
+
+  .talk-gender {
+    grid-template-columns: 1fr;
+  }
+
+  .talk-gate {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .talk-gate-actions {
     justify-content: center;
+  }
+
+  .talk-card {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 14px;
+  }
+
+  .talk-card-avatar {
+    width: 50px;
+    height: 50px;
+    border-width: 2px;
+  }
+
+  .talk-card:not(.soon) .talk-card-avatar svg {
+    width: 44px;
+    height: 44px;
+    margin-top: 6px;
+  }
+
+  .talk-card h3 {
+    font-size: 18px;
+  }
+
+  .talk-card p {
+    font-size: 15px;
+  }
+
+  .talk-call-btn,
+  .talk-ask {
+    align-self: center;
+  }
+
+  .talk-ask {
+    max-width: 120px;
+  }
+
+  .talk-call-btn-circle {
+    width: 54px;
+    height: 54px;
   }
 }

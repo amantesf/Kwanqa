@@ -26,6 +26,7 @@ export default function TalkPage() {
   const { enabled, loading, user } = useAuth();
   const [gender, setGender] = useState<Gender | null>(null);
   const [calling, setCalling] = useState<Conversation | null>(null);
+  const [asking, setAsking] = useState<Conversation | null>(null);
 
   useEffect(() => {
     try {
@@ -128,20 +129,37 @@ export default function TalkPage() {
                       <p>{c.blurb}</p>
                       <span className="talk-card-meta">{c.turns.length} questions · about 3 minutes</span>
                     </div>
-                    <button
-                      type="button"
-                      className="btn talk-call-btn"
-                      onClick={() => setCalling(c)}
-                      disabled={!gender}
-                      title={gender ? undefined : 'Choose how Walia should talk to you first'}
-                    >
-                      <PhoneIcon />
-                      Call Walia
-                    </button>
+                    {asking === c && !gender ? (
+                      <div className="talk-ask" role="group" aria-label="How should Walia talk to you?">
+                        <span>Walia should talk to me</span>
+                        {(['m', 'f'] as Gender[]).map(g => (
+                          <button
+                            key={g}
+                            type="button"
+                            className="btn btn-sm btn-secondary"
+                            onClick={() => {
+                              pickGender(g);
+                              setAsking(null);
+                              setCalling(c);
+                            }}
+                          >
+                            {g === 'm' ? 'As a man' : 'As a woman'}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn talk-call-btn"
+                        onClick={() => (gender ? setCalling(c) : setAsking(c))}
+                      >
+                        <PhoneIcon />
+                        Call Walia
+                      </button>
+                    )}
                   </article>
                 ))}
               </div>
-              {!gender && <p className="talk-note">Choose how Walia should talk to you, then call him.</p>}
               <p className="talk-note">More conversations, and harder levels, are on the way.</p>
             </section>
           </>

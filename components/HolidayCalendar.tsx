@@ -119,6 +119,9 @@ export default function HolidayCalendar() {
   return (
     <main className="section holidays-page">
       <div className="container holidays-container">
+        <Link href="/courses" className="back-link">
+          ← Back to the trail
+        </Link>
         <header className="et-hero">
           <Tilet height={14} palette="ink" />
           <div className="et-hero-body">

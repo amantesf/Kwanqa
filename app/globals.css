@@ -393,6 +393,13 @@ svg {
   opacity: 1;
 }
 
+/* in the stacked page layouts the gap already spaces it */
+.pv-container > .back-link,
+.holidays-container > .back-link {
+  align-self: flex-start;
+  margin-bottom: -12px;
+}
+
 /* --------------------------------------------------------------------------
    Cards
    -------------------------------------------------------------------------- */

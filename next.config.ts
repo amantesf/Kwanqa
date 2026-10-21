@@ -14,7 +14,8 @@ const contentSecurityPolicy = [
   `style-src 'self' 'unsafe-inline' ${google}/gsi/style`,
   "img-src 'self' data: blob: https://*.googleusercontent.com",
   "font-src 'self' data:",
-  "media-src 'self'",
+  // blob: lets Walia's freshly spoken replies play (fetched audio turned into a local URL).
+  "media-src 'self' blob:",
   `connect-src 'self' ${supabase} ${supabase.replace("https://", "wss://")} ${google}/gsi/`,
   `frame-src ${google}/gsi/ ${turnstile}`,
   "object-src 'none'",

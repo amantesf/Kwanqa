@@ -54,6 +54,11 @@ export function safeNext(next: string | null | undefined, fallback = '/courses')
 
 const RETRY_MS = 15000;
 
+/** True when the database is missing a column (an older table without the streak columns). */
+function missingColumn(error: { code?: string } | null) {
+  return error?.code === '42703' || error?.code === 'PGRST204';
+}
+
 let syncUser: string | null = null; // whose account we're syncing with
 let lastSynced: Climb | null = null; // the account's row as of our last sync
 let syncing = false;
@@ -87,8 +92,14 @@ async function fetchRemote(userId: string): Promise<Climb | null> {
   if (!supabase) return null;
   let result = await supabase.from('climbs').select('completed, grass, days, log').eq('user_id', userId).maybeSingle();
   // Older databases have no streak columns yet; read the rest of the progress without them.
-  if (result.error) result = await supabase.from('climbs').select('completed, grass').eq('user_id', userId).maybeSingle();
-  if (result.error) return null;
+  if (missingColumn(result.error)) {
+    console.warn('Kwanqa: the climbs table has no days/log columns, so the streak is not saved. Run supabase/schema.sql.');
+    result = await supabase.from('climbs').select('completed, grass').eq('user_id', userId).maybeSingle();
+  }
+  if (result.error) {
+    console.warn('Kwanqa: could not read progress', result.error.message);
+    return null;
+  }
   const row = result.data as { completed?: Climb['completed']; grass?: number; days?: string[]; log?: Climb['log'] } | null;
   return {
     completed: row?.completed && typeof row.completed === 'object' ? row.completed : {},
@@ -104,7 +115,13 @@ async function pushClimb(userId: string, climb: Climb) {
   const base = { user_id: userId, completed: climb.completed, grass: climb.grass, updated_at: new Date().toISOString() };
   const { error } = await supabase.from('climbs').upsert({ ...base, days: climb.days, log: climb.log });
   if (!error) return true;
-  // If the database doesn't have the streak columns yet, still save the rest of the progress.
+  // Only an older database without the streak columns gets a save without them;
+  // any other error is retried, so the streak days are never dropped.
+  if (!missingColumn(error)) {
+    console.warn('Kwanqa: could not save progress', error.message);
+    return false;
+  }
+  console.warn('Kwanqa: the climbs table has no days/log columns, so the streak is not saved. Run supabase/schema.sql.');
   const fallback = await supabase.from('climbs').upsert(base);
   return !fallback.error;
 }

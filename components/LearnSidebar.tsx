@@ -55,6 +55,17 @@ function CalendarIcon() {
   );
 }
 
+function TalkIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
+      <rect x="9" y="3" width="14" height="26" rx="4" fill="var(--blue)" />
+      <rect x="11.5" y="7" width="9" height="15" rx="2" fill="#5b8ce6" />
+      <circle cx="16" cy="25.2" r="1.6" fill="#fff" />
+      <path d="M14 12.5 h4 M14 16 h3" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function ProverbIcon() {
   return (
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden>
@@ -107,6 +118,10 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         <Link href="/fidel" className="learn-nav-link" aria-current={current('alphabet')}>
           <AlphabetIcon />
           <span>Alphabet</span>
+        </Link>
+        <Link href="/talk" className="learn-nav-link">
+          <TalkIcon />
+          <span>Talk</span>
         </Link>
         <Link href="/proverbs" className="learn-nav-link">
           <ProverbIcon />

@@ -30,7 +30,8 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   // Google sign-in needs the "identity-credentials-get" feature, so it isn't blocked here.
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+  // The microphone is allowed for kwanqa itself (Talk with Walia), never for embedded sites.
+  { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=()" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 

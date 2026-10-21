@@ -4,6 +4,7 @@
 // proverb as a flip card, sorted into five colourful themes.
 
 import { useState, type CSSProperties } from 'react';
+import Link from 'next/link';
 import Mascot from '@/components/Mascot';
 import { useNow } from '@/components/HolidayCards';
 import { showToast } from '@/components/Toaster';
@@ -244,6 +245,9 @@ export default function ProverbsPage() {
   return (
     <main className="section pv-page">
       <div className="container pv-container">
+        <Link href="/courses" className="back-link">
+          ← Back to the trail
+        </Link>
         <header className="pv-hero">
           <div className="pv-hero-walia">
             <Mascot pose="wave" size={150} animated />

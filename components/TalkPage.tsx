@@ -50,6 +50,9 @@ export default function TalkPage() {
   return (
     <main className="section pv-page talk-page">
       <div className="container pv-container">
+        <Link href="/courses" className="back-link">
+          ← Back to the trail
+        </Link>
         <header className="pv-hero">
           <div className="pv-hero-walia">
             <Mascot pose="wave" size={150} animated />

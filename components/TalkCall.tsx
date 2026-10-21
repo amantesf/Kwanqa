@@ -148,6 +148,8 @@ export default function TalkCall({
   const audio = useRef<HTMLAudioElement | null>(null);
   const spoken = useRef(new Map<string, string>()); // reply text → object URL of its audio
   const stopRef = useRef<() => void>(() => {});
+  const logRef = useRef<HTMLOListElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const turn = conversation.turns[turnIndex];
   const line = waliaLine(turn, gender);
@@ -175,6 +177,13 @@ export default function TalkCall({
     play(line.amharic, false, () => setPhase(p => (p === 'walia' ? 'ready' : p)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex]);
+
+  // keep the newest lines of the transcript in view
+  useEffect(() => {
+    logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
+    // on phones the whole panel scrolls: bring Walia's latest reply and its buttons into view
+    panelRef.current?.scrollTo({ top: panelRef.current.scrollHeight, behavior: 'smooth' });
+  }, [history.length, phase]);
 
   // live mic level for the self-view tile
   useEffect(() => {
@@ -353,6 +362,17 @@ export default function TalkCall({
           : undefined;
   const busy = phase === 'checking' || phase === 'done';
 
+  // Everything said before the current exchange, for the transcript beside the
+  // video on wide screens (the current lines already show below it).
+  let cut = history.length;
+  if (phase === 'verdict' && answer) {
+    if (answer.reply) cut--;
+    if (normalize(heard)) cut--;
+  } else if (phase !== 'done') {
+    cut--;
+  }
+  const earlier = history.slice(0, Math.max(0, cut));
+
   return (
     <div className="call-page" role="dialog" aria-modal="true" aria-label={`Call with Walia: ${conversation.title}`}>
       <div className="call-phone">
@@ -382,12 +402,22 @@ export default function TalkCall({
           </div>
         </div>
 
-        <div className="call-bottom">
+        <div className="call-bottom" ref={panelRef}>
           <div className="call-turns" aria-label={`Question ${Math.min(turnIndex + 1, conversation.turns.length)} of ${conversation.turns.length}`}>
             {conversation.turns.map((_, i) => (
               <span key={i} className={i < turnIndex || phase === 'done' ? 'done' : i === turnIndex ? 'now' : ''} />
             ))}
           </div>
+
+          {earlier.length > 0 && (
+            <ol className="call-log" aria-label="The call so far" ref={logRef}>
+              {earlier.map((l, i) => (
+                <li key={i} className={l.from}>
+                  <span lang="am">{l.text}</span>
+                </li>
+              ))}
+            </ol>
+          )}
 
           {heard && phase === 'verdict' && (
             <div className="call-heard">

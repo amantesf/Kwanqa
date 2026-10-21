@@ -1,0 +1,490 @@
+/* Talk with Walia: a FaceTime-style call. Walia is the video, his words are captions. */
+
+.call-page {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 16px 24px;
+  overflow-y: auto;
+  background: var(--bg-soft);
+}
+
+.call-preview {
+  max-width: 640px;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+}
+
+/* On wide screens the call sits in a phone-shaped frame. */
+.call-phone {
+  position: relative;
+  flex-shrink: 0;
+  width: 390px;
+  height: min(844px, calc(100dvh - 110px));
+  min-height: 640px;
+  border-radius: 44px;
+  overflow: hidden;
+  border: 10px solid #1f1f1f;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  background: #fff;
+}
+
+.call-video {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #bfe1f6 0%, #e9f4fb 45%, var(--primary-soft) 100%);
+}
+
+.call-mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 62%;
+}
+
+.call-walia {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  transform: translateX(-50%);
+}
+
+.call-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 18px;
+}
+
+.call-who {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  line-height: 1.3;
+}
+
+.call-who strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.call-who span {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Your own little tile in the corner, like the self view on a call. */
+.call-self {
+  position: relative;
+  width: 84px;
+  height: 112px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: #3c3c3c;
+  border: 3px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.call-self.live {
+  border-color: var(--green);
+}
+
+.call-self-face {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #5a5a5a;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.call-self-level {
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 18px;
+}
+
+.call-self-level i {
+  width: 4px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--green);
+  transition: transform 0.08s linear;
+}
+
+@keyframes call-dot {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Walia bobs gently while he talks (until the Rive version can move his mouth). */
+.call-walia.talking svg {
+  animation: call-talk 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes call-talk {
+  from { transform: translateY(0) rotate(-1deg); }
+  to { transform: translateY(-4px) rotate(1deg); }
+}
+
+/* one dot per question */
+.call-turns {
+  align-self: center;
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.call-turns span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(60, 60, 60, 0.25);
+}
+
+.call-turns span.now {
+  background: var(--blue);
+}
+
+.call-turns span.done {
+  background: var(--green);
+}
+
+.call-caption-tools {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.call-caption .call-link {
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.call-caption .call-link:hover {
+  text-decoration: underline;
+}
+
+.call-example {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--gold-soft);
+}
+
+.call-example .call-am {
+  font-size: 20px;
+}
+
+.call-example-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.call-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.call-finish {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.call-type {
+  display: flex;
+  gap: 8px;
+}
+
+.call-type input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  font-size: 18px;
+  color: var(--text-strong);
+}
+
+.call-type input:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.call-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 14px 22px;
+}
+
+.call-heard {
+  align-self: flex-end;
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 18px 18px 6px 18px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 19px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.call-heard-label {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.call-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+/* Walia's live captions. */
+.call-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid transparent;
+}
+
+.call-caption.good {
+  border-color: var(--green);
+}
+
+.call-caption.bad {
+  border-color: var(--red);
+}
+
+.call-am {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-strong);
+  line-height: 1.3;
+}
+
+.call-tr {
+  font-size: 16px;
+  color: var(--blue-shadow);
+}
+
+.call-en {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.call-dots {
+  display: flex;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.call-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  animation: call-dot 1s ease-in-out infinite;
+}
+
+.call-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.call-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.call-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid var(--border);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.call-caption.good .call-feedback strong {
+  color: var(--green-dark);
+}
+
+.call-caption.bad .call-feedback strong {
+  color: var(--red-shadow);
+}
+
+.call-feedback strong {
+  font-size: 18px;
+  color: var(--text-strong);
+}
+
+.call-feedback > .btn {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+.call-hint {
+  min-height: 20px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* The call controls row. */
+.call-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(30, 30, 30, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.call-btn {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.call-btn.on {
+  background: #fff;
+  color: var(--text-strong);
+}
+
+.call-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.call-btn-text {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.call-end {
+  background: var(--red);
+}
+
+.call-mic {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 5px 0 var(--blue-shadow);
+  color: #fff;
+  cursor: pointer;
+}
+
+.call-mic.on {
+  background: var(--red);
+  box-shadow: 0 5px 0 var(--red-shadow);
+}
+
+.call-mic:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .call-dots span,
+  .call-walia.talking svg {
+    animation: none;
+  }
+}
+
+/* On a phone the call fills the screen; no frame. */
+@media (max-width: 500px) {
+  .call-page {
+    padding: 8px 0 0;
+    gap: 8px;
+  }
+
+  .call-preview {
+    padding: 0 12px;
+  }
+
+  .call-phone {
+    width: 100%;
+    height: auto;
+    flex: 1;
+    min-height: 600px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

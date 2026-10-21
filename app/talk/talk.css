@@ -1,0 +1,126 @@
+/* /talk: choose how Walia addresses you, then pick a conversation to call. */
+
+.talk-page section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.talk-h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.talk-note {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.talk-gender {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.talk-gender-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius);
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.talk-gender-option strong {
+  font-size: 17px;
+  color: var(--text-strong);
+}
+
+.talk-gender-option span {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.talk-gender-option.on {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.talk-gender-option.on strong {
+  color: var(--blue-shadow);
+}
+
+.talk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.talk-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 22px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.talk-card-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.talk-card h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.talk-card h3 span {
+  margin-left: 6px;
+  color: var(--primary);
+}
+
+.talk-card p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.talk-card-meta {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.talk-call-btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .talk-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .talk-call-btn {
+    justify-content: center;
+  }
+}

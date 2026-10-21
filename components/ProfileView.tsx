@@ -516,13 +516,6 @@ export default function ProfileView() {
               : `Collect ${horns.next - climb.grass} more grass to grow a new ridge.`}
           </p>
         </div>
-
-        <nav className="pf-links" aria-label="About Kwanqa">
-          <Link href="/about">About</Link>
-          <Link href="/approach">Our approach</Link>
-          <Link href="/values">Values</Link>
-          <Link href={`/phrasebook?track=${track}`}>Phrasebook</Link>
-        </nav>
       </aside>
     </div>
   );

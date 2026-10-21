@@ -488,3 +488,10 @@
     box-shadow: none;
   }
 }
+
+/* after Walia replies, a reminder of the question he's waiting on */
+.call-asked {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}

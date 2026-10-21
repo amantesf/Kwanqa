@@ -17,6 +17,8 @@ export type Answer =
 
 export type Turn = {
   walia: Gendered<Line>;
+  /** What the learner's answer should do, in plain English; guides Walia's brain. */
+  goal: string;
   answers: Answer[];
   /** Shown when the learner asks for help, and after two misses. */
   example: Line;
@@ -43,6 +45,7 @@ export const conversations: Conversation[] = [
     turns: [
       {
         walia: { amharic: 'ሰላም!', transliteration: 'selam!', english: 'Hello!' },
+        goal: 'Greet Walia back.',
         answers: [{ say: 'ሰላም' }, { say: 'ጤና ይስጥልኝ' }],
         example: { amharic: 'ሰላም!', transliteration: 'selam!', english: 'Hello!' },
       },
@@ -51,6 +54,7 @@ export const conversations: Conversation[] = [
           m: { amharic: 'እንዴት ነህ?', transliteration: 'indet neh?', english: 'How are you?' },
           f: { amharic: 'እንዴት ነሽ?', transliteration: 'indet nesh?', english: 'How are you?' },
         },
+        goal: 'Say how they are. Asking Walia back (አንተስ?) is a bonus.',
         answers: [{ say: 'ደህና ነኝ' }, { say: 'ደህና ነኝ፣ አንተስ?' }, { say: 'ደህና ነኝ፣ እግዚአብሔር ይመስገን' }],
         example: { amharic: 'ደህና ነኝ፣ አንተስ?', transliteration: 'dehna negn, antes?', english: 'I’m fine, and you?' },
         mistakes: [{ say: 'አንቺስ', tip: 'Walia is a he, so ask አንተስ? (antes). አንቺስ? is for asking a woman.' }],
@@ -60,6 +64,7 @@ export const conversations: Conversation[] = [
           m: { amharic: 'እኔም ደህና ነኝ። ስምህ ማን ነው?', transliteration: 'inem dehna negn. simih man new?', english: 'I’m fine too. What’s your name?' },
           f: { amharic: 'እኔም ደህና ነኝ። ስምሽ ማን ነው?', transliteration: 'inem dehna negn. simish man new?', english: 'I’m fine too. What’s your name?' },
         },
+        goal: 'Tell Walia their name.',
         answers: [{ pattern: /^ስሜ.+ነው$/ }, { pattern: /^.+እባላለሁ$/ }],
         example: { amharic: 'ስሜ … ነው።', transliteration: 'sime … new.', english: 'My name is …' },
       },
@@ -68,6 +73,7 @@ export const conversations: Conversation[] = [
           m: { amharic: 'ደስ ብሎኛል! ከየት ነህ?', transliteration: 'des bilognal! keyet neh?', english: 'Nice to meet you! Where are you from?' },
           f: { amharic: 'ደስ ብሎኛል! ከየት ነሽ?', transliteration: 'des bilognal! keyet nesh?', english: 'Nice to meet you! Where are you from?' },
         },
+        goal: 'Say where they are from (a country, city or town).',
         answers: [{ pattern: /^ከ.+(ነኝ|መጣሁ)$/ }],
         example: { amharic: 'ከአሜሪካ ነኝ።', transliteration: 'ke-america negn.', english: 'I’m from America.' },
       },
@@ -76,6 +82,7 @@ export const conversations: Conversation[] = [
           m: { amharic: 'አማርኛ ትናገራለህ?', transliteration: 'amarigna tinageraleh?', english: 'Do you speak Amharic?' },
           f: { amharic: 'አማርኛ ትናገሪያለሽ?', transliteration: 'amarigna tinageriyalesh?', english: 'Do you speak Amharic?' },
         },
+        goal: 'Say whether they speak Amharic (yes, a little, or no are all fine).',
         answers: [
           { say: 'ትንሽ ትንሽ እናገራለሁ' },
           { say: 'አዎ፣ እናገራለሁ' },
@@ -91,6 +98,7 @@ export const conversations: Conversation[] = [
           m: { amharic: 'በጣም ጥሩ! ደህና ሁን!', transliteration: 'betam tiru! dehna hun!', english: 'Very good! Goodbye!' },
           f: { amharic: 'በጣም ጥሩ! ደህና ሁኚ!', transliteration: 'betam tiru! dehna hugn!', english: 'Very good! Goodbye!' },
         },
+        goal: 'Say goodbye to Walia, using the male form ደህና ሁን if they use that phrase.',
         answers: [{ say: 'ደህና ሁን' }, { say: 'ቻው' }, { say: 'በኋላ እንገናኝ' }, { say: 'ነገ እንገናኝ' }],
         example: { amharic: 'ደህና ሁን! ነገ እንገናኝ።', transliteration: 'dehna hun! nege inigenagn.', english: 'Goodbye! See you tomorrow.' },
         mistakes: [{ say: 'ደህና ሁኚ', tip: 'Walia is a he, so say ደህና ሁን (dehna hun). ደህና ሁኚ is for a woman.' }],

@@ -3771,6 +3771,95 @@ body:has(.learn-app) .site-footer {
   }
 }
 
+/* The daily-life camp's two friends: they rise up together, laugh, and their speech bubbles take turns. */
+.camp-friends {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 116px;
+  height: 93px;
+  pointer-events: none;
+  overflow: visible;
+  animation: elder-in 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.camp-friends .friend-him,
+.camp-friends .friend-her {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: friend-laugh 4s ease-in-out 1s infinite;
+}
+
+.camp-friends .friend-her {
+  animation-delay: 3s;
+}
+
+.camp-friends .friend-hand {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: friend-wave 4s ease-in-out 1s infinite;
+}
+
+.camp-friends .friend-bubble {
+  transform-box: fill-box;
+  transform-origin: 30% 100%;
+  opacity: 0;
+  animation: friend-bubble 4s ease-in-out 0.8s infinite;
+}
+
+.camp-friends .friend-bubble-2 {
+  transform-origin: 60% 100%;
+  animation-delay: 2.8s;
+}
+
+@keyframes friend-laugh {
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+  10%,
+  24% {
+    transform: translateY(-1.5px) rotate(-1deg);
+  }
+  17%,
+  31% {
+    transform: translateY(0) rotate(0.5deg);
+  }
+}
+
+@keyframes friend-wave {
+  0%,
+  40%,
+  100% {
+    transform: rotate(0);
+  }
+  12%,
+  28% {
+    transform: rotate(-8deg);
+  }
+  20% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes friend-bubble {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  8%,
+  42% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
 /* The elders camp's Ababa: he rises up from the bottom of the banner, then nods now and then. */
 .camp-elder {
   position: absolute;
@@ -3931,9 +4020,18 @@ body:has(.learn-app) .site-footer {
   .camp-taxi .taxi-puff,
   .camp-elder,
   .camp-elder .elder-head,
+  .camp-friends,
+  .camp-friends .friend-him,
+  .camp-friends .friend-her,
+  .camp-friends .friend-hand,
   .camp-numbers,
   .camp-numbers .geez-num {
     animation: none;
+  }
+
+  .camp-friends .friend-bubble {
+    animation: none;
+    opacity: 1;
   }
 }
 
@@ -5102,6 +5200,12 @@ a.rail-link:hover {
     right: -6px;
     width: 68px;
     height: 75px;
+  }
+
+  .camp-friends {
+    right: -8px;
+    width: 88px;
+    height: 70px;
   }
 
   .camp-taxi {

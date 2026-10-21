@@ -11,6 +11,7 @@ const RECORDINGS: Record<string, string> = {
   'ደህና ነኝ፣ እግዚአብሔር ይመስገን።': 'dehna-negn-egziabher-yimesgen.mp3',
   'ደህና ነኝ': 'dehna-negn.mp3',
   'ሰላም እንዴት': 'selam-endet.mp3',
+  'ነኝ፣ አንተስ?': 'negn-antes.mp3',
   // single words, for the word tiles
   'ነህ': 'neh.mp3',
   'ደህና': 'dehna.mp3',
@@ -30,6 +31,8 @@ const RECORDINGS: Record<string, string> = {
   'ነሽ': 'nesh.mp3',
   'ይመስገን': 'yimesgen.mp3',
   'አንቺስ': 'anchis.mp3',
+  'አዎ': 'awo.mp3',
+  'አሌክስ': 'alex.mp3',
 };
 
 /**

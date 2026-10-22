@@ -9,16 +9,12 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import Mascot from '@/components/Mascot';
 import TalkCall from '@/components/TalkCall';
-import { conversations, type Conversation, type Gender } from '@/lib/conversations';
+import { LEVELS, conversations, type Conversation, type Gender, type Level } from '@/lib/conversations';
 
 const GENDER_KEY = 'kwanqa-talk-gender';
 
-// Calls on the way, shown locked so learners can see where Talk is going.
-const SOON = [
-  { title: 'Coffee with family', amharic: 'ቡና', blurb: 'Accept a cup, say it’s delicious, and ask about everyone.' },
-  { title: 'At the market', amharic: 'ገበያ', blurb: 'Ask what something costs and bargain a little.' },
-  { title: 'Finding your way', amharic: 'አቅጣጫ', blurb: 'Ask where a place is and understand left, right and straight on.' },
-];
+// Rough call length by level: harder calls take longer answers.
+const MINUTES = { beginner: 3, intermediate: 4, advanced: 5 } as const;
 
 function PhoneIcon({ size = 22 }: { size?: number }) {
   return (
@@ -38,15 +34,6 @@ function HangUpIcon() {
         d="M3.5 14.2c4.9-4.3 12.1-4.3 17 0l-1.9 2.6c-.3.4-.9.5-1.3.3l-2.6-1.3c-.4-.2-.6-.6-.6-1v-1.6a10.6 10.6 0 0 0-4.2 0v1.6c0 .4-.2.8-.6 1l-2.6 1.3c-.4.2-1 .1-1.3-.3z"
         fill="currentColor"
       />
-    </svg>
-  );
-}
-
-function LockIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
-      <rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor" stroke="none" />
-      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
     </svg>
   );
 }
@@ -212,6 +199,7 @@ export default function TalkPage() {
   const [gender, setGender] = useState<Gender | null>(null);
   const [calling, setCalling] = useState<Conversation | null>(null);
   // Calling before choosing ነህ / ነሽ asks right where the call was made.
+  const [level, setLevel] = useState<Level>('beginner');
   const [asking, setAsking] = useState<Conversation | null>(null);
   const [askingOnPhone, setAskingOnPhone] = useState(false);
 
@@ -371,69 +359,71 @@ export default function TalkPage() {
                     Pick a call
                   </h2>
                   <p className="talk-note">
-                    Each call is a few minutes long. Start with hello.
+                    Each call is a few minutes long. Start with Beginner and work your way up.
                   </p>
                 </div>
               </div>
 
-              <div className="talk-list">
-                {conversations.map(c => (
-                  <article key={c.slug} className="talk-card">
-                    <div className="talk-card-avatar" aria-hidden>
-                      <Mascot pose="wave" size={58} />
-                      <span className="talk-online" />
-                    </div>
-                    <div className="talk-card-text">
-                      <h3>
-                        {c.title} <span lang="am">{c.amharicTitle}</span>
-                      </h3>
-                      <p>{c.blurb}</p>
-                      <div className="talk-chips">
-                        <span className="talk-chip beginner">Beginner</span>
-                        <span className="talk-chip">{c.turns.length} questions</span>
-                        <span className="talk-chip">about 3 min</span>
-                      </div>
-                    </div>
-                    {asking === c && !gender ? (
-                      <div className="talk-ask" role="group" aria-label="How should Walia talk to you?">
-                        <span>Walia should talk to me</span>
-                        {(['m', 'f'] as Gender[]).map(g => (
-                          <button key={g} type="button" className="btn btn-sm btn-secondary" onClick={() => pickAndCall(g, c)}>
-                            {g === 'm' ? 'As a man' : 'As a woman'}
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        className="talk-call-btn"
-                        onClick={() => (gender ? setCalling(c) : (setAskingOnPhone(false), setAsking(c)))}
-                      >
-                        <span className="talk-call-btn-circle">
-                          <PhoneIcon size={24} />
-                        </span>
-                        <span>Call</span>
-                      </button>
-                    )}
-                  </article>
+              <div className="talk-tabs" role="tablist" aria-label="Difficulty">
+                {LEVELS.map(l => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    role="tab"
+                    id={`talk-tab-${l.id}`}
+                    aria-selected={level === l.id}
+                    aria-controls="talk-level-panel"
+                    className={`talk-tab ${l.id}${level === l.id ? ' on' : ''}`}
+                    onClick={() => setLevel(l.id)}
+                  >
+                    {l.label}
+                  </button>
                 ))}
+              </div>
 
-                {SOON.map(s => (
-                  <article key={s.title} className="talk-card soon" aria-label={`${s.title}, coming soon`}>
-                    <div className="talk-card-avatar" aria-hidden>
-                      <LockIcon />
-                    </div>
-                    <div className="talk-card-text">
-                      <h3>
-                        {s.title} <span lang="am">{s.amharic}</span>
-                      </h3>
-                      <p>{s.blurb}</p>
-                      <div className="talk-chips">
-                        <span className="talk-chip">Coming soon</span>
+              <div id="talk-level-panel" role="tabpanel" aria-labelledby={`talk-tab-${level}`} className="talk-level">
+                <p className="talk-note">{LEVELS.find(l => l.id === level)?.blurb}</p>
+                <div className="talk-list">
+                  {conversations.filter(c => c.level === level).map(c => (
+                    <article key={c.slug} className="talk-card">
+                      <div className="talk-card-avatar" aria-hidden>
+                        <Mascot pose="wave" size={58} />
+                        <span className="talk-online" />
                       </div>
-                    </div>
-                  </article>
-                ))}
+                      <div className="talk-card-text">
+                        <h3>
+                          {c.title} <span lang="am">{c.amharicTitle}</span>
+                        </h3>
+                        <p>{c.blurb}</p>
+                        <div className="talk-chips">
+                          <span className="talk-chip">{c.turns.length} questions</span>
+                          <span className="talk-chip">about {MINUTES[c.level]} min</span>
+                        </div>
+                      </div>
+                      {asking === c && !gender ? (
+                        <div className="talk-ask" role="group" aria-label="How should Walia talk to you?">
+                          <span>Walia should talk to me</span>
+                          {(['m', 'f'] as Gender[]).map(g => (
+                            <button key={g} type="button" className="btn btn-sm btn-secondary" onClick={() => pickAndCall(g, c)}>
+                              {g === 'm' ? 'As a man' : 'As a woman'}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="talk-call-btn"
+                          onClick={() => (gender ? setCalling(c) : (setAskingOnPhone(false), setAsking(c)))}
+                        >
+                          <span className="talk-call-btn-circle">
+                            <PhoneIcon size={24} />
+                          </span>
+                          <span>Call</span>
+                        </button>
+                      )}
+                    </article>
+                  ))}
+                </div>
               </div>
             </section>
           </>

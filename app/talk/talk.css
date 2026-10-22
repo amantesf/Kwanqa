@@ -760,9 +760,9 @@
 /* ---------- the call list ---------- */
 
 .talk-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+  gap: 14px;
 }
 
 .talk-card {
@@ -856,6 +856,50 @@
   color: var(--green-dark);
 }
 
+/* difficulty tabs: one level of calls at a time */
+.talk-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.talk-tab {
+  padding: 14px 10px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius);
+  background: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.talk-tab.beginner.on {
+  border-color: var(--green);
+  background: var(--green-soft);
+  color: var(--green-dark);
+}
+
+.talk-tab.intermediate.on {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue-shadow);
+}
+
+.talk-tab.advanced.on {
+  border-color: var(--purple);
+  background: var(--purple-soft);
+  color: var(--purple-shadow);
+}
+
+.talk-level {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .talk-call-btn {
   flex: none;
   display: flex;
@@ -904,34 +948,6 @@
   background: var(--border);
   box-shadow: 0 5px 0 #d0d0d0;
   color: var(--text-faint);
-}
-
-.talk-card.soon {
-  background: var(--bg-soft);
-  border-style: dashed;
-  border-bottom-width: 2px;
-}
-
-.talk-card.soon .talk-card-avatar {
-  background: #ececec;
-  border-color: var(--border);
-  color: var(--text-faint);
-}
-
-.talk-card.soon h3 {
-  color: var(--text-muted);
-}
-
-.talk-card.soon h3 span {
-  color: var(--text-faint);
-}
-
-.talk-card.soon p {
-  color: var(--text-faint);
-}
-
-.talk-card.soon .talk-chip {
-  background: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1028,7 +1044,7 @@
     border-width: 2px;
   }
 
-  .talk-card:not(.soon) .talk-card-avatar svg {
+  .talk-card .talk-card-avatar svg {
     width: 44px;
     height: 44px;
     margin-top: 6px;

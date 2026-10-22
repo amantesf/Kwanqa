@@ -232,9 +232,13 @@ export default function Practice({
 }) {
   const climb = useClimb();
   const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
-  const [initial] = useState(() => buildExercises(lesson, courseLessons, track));
+  const [initial] = useState(() =>
+    buildExercises(lesson, courseLessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0),
+  );
   const [queue, setQueue] = useState<Exercise[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());
+  // Questions missed once: when they come back they're labelled "Previous mistake".
+  const [missed, setMissed] = useState<Set<string>>(new Set());
   const [stamina, setStamina] = useState(MAX_STAMINA);
   const [streak, setStreak] = useState(0);
   const [combo, setCombo] = useState(0); // correct answers in a row; resets on any mistake
@@ -370,6 +374,7 @@ export default function Practice({
       nextSolved.add(current.id);
     } else {
       nextQueue = [...nextQueue, current]; // missed questions come back later
+      setMissed(m => new Set(m).add(current.id));
     }
     setSolved(nextSolved);
     setQueue(nextQueue);
@@ -538,31 +543,50 @@ export default function Practice({
           </div>
         ) : (
         <div className="practice-question">
+          {missed.has(current.id) && (
+            <span className="practice-retry">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+                <circle cx="12" cy="12" r="11" fill="currentColor" />
+                <path
+                  d="M7.5 11a4.6 4.6 0 0 1 8.2-2.4M16.5 13a4.6 4.6 0 0 1-8.2 2.4M15.9 5.8v3h-3M8.1 18.2v-3h3"
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth="1.9"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Previous mistake
+            </span>
+          )}
           <h2 className="practice-instruction">{current.instruction}</h2>
 
-          <div className="practice-ask">
-            <div key={`${mood}-${reaction?.n ?? 0}`} className="practice-walia" aria-hidden>
-              <Mascot mood={mood} size={110} hornScale={horns.scale} />
-            </div>
-            {current.kind !== 'match' && (
-              <div className={`prompt-bubble${promptAudio ? ' has-audio' : ''}`}>
-                {promptAudio && (
-                  <button type="button" className="prompt-speak" onClick={playPrompt} aria-label="Play the Amharic again">
-                    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
-                      <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
-                      <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                )}
-                <span className="prompt-main">{current.prompt}</span>
-                {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
+          {/* "Which one of these is “coffee”?" already says it all, so the cards come straight after */}
+          {!(current.kind === 'choice' && current.pictures && !current.hideWords) && (
+            <div className="practice-ask">
+              <div key={`${mood}-${reaction?.n ?? 0}`} className="practice-walia" aria-hidden>
+                <Mascot mood={mood} size={110} hornScale={horns.scale} />
               </div>
-            )}
-          </div>
+              {current.kind !== 'match' && (
+                <div className={`prompt-bubble${promptAudio ? ' has-audio' : ''}`}>
+                  {promptAudio && (
+                    <button type="button" className="prompt-speak" onClick={playPrompt} aria-label="Play the Amharic again">
+                      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                        <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+                        <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  )}
+                  <span className="prompt-main">{current.prompt}</span>
+                  {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
+                </div>
+              )}
+            </div>
+          )}
 
           {current.kind === 'choice' ? (
             <>
-              <div className="options">
+              <div className={`options${current.pictures ? ' picture-options' : ''}`}>
                 {current.options.map((option, i) => {
                   const reveal = phase === 'feedback';
                   const state = reveal
@@ -585,8 +609,26 @@ export default function Practice({
                         sayAloud(option);
                       }}
                     >
-                      <span className="option-key">{i + 1}</span>
-                      {option}
+                      {current.pictures?.[option] ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element -- small local pictures */}
+                          <img className="picture-img" src={current.pictures[option].src} alt="" draggable={false} />
+                          {current.hideWords && !reveal ? (
+                            <span className="picture-word picture-word-hidden" aria-label={`Picture ${i + 1}`} />
+                          ) : (
+                            <span className="picture-word">
+                              <span lang="am">{option}</span>
+                              <small>{current.pictures[option].transliteration}</small>
+                            </span>
+                          )}
+                          <span className="option-key">{i + 1}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="option-key">{i + 1}</span>
+                          {option}
+                        </>
+                      )}
                     </button>
                   );
                 })}

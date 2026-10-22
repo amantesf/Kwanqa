@@ -1,4 +1,5 @@
 import type { LessonSection, Track } from '@/lib/courses';
+import { PICTURES, pictureFor } from '@/lib/pictures';
 
 // Practice questions generated from a lesson's phrases and dialogue. The Amharic
 // course quizzes Amharic; the English course quizzes English, with Amharic as
@@ -21,6 +22,10 @@ export type ChoiceExercise = {
    * (fill-in-the-blank: hearing the whole line first would give it away).
    */
   revealAudio?: string;
+  /** Picture questions: each option is a card with this picture. */
+  pictures?: Record<string, { src: string; transliteration: string }>;
+  /** Harder picture questions: the cards show only pictures until answered. */
+  hideWords?: boolean;
 };
 
 export type MatchExercise = {
@@ -116,6 +121,8 @@ export function buildExercises(
   lesson: LessonSection,
   courseLessons: LessonSection[],
   track: Track = 'amharic',
+  /** The very first lesson of the course opens with a picture question, like Duolingo. */
+  firstLesson = false,
 ): Exercise[] {
   if (track === 'english') return buildEnglishExercises(lesson, courseLessons);
   const cards: Card[] = [
@@ -265,6 +272,44 @@ export function buildExercises(
     );
     if (ex) ex.revealAudio = line.amharic;
     if (ex && answer) exercises.splice(Math.min(3, exercises.length), 0, ex);
+  }
+
+  // Picture questions for a word with a picture: "Which one of these is “coffee”?"
+  // opens the lesson, and near the end the same word comes back the other way
+  // round, as Amharic only, with picture cards and no words to lean on.
+  const pictured =
+    shuffle(uniqueCards)
+      .map(c => pictureFor(c.amharic.replace(PUNCT, '').trim()))
+      .find(Boolean) ?? (firstLesson ? shuffle(PICTURES)[0] : undefined);
+  if (pictured) {
+    const others = shuffle(PICTURES.filter(p => p.amharic !== pictured.amharic)).slice(0, 2);
+    const cards = [pictured, ...others];
+    const pictures = Object.fromEntries(cards.map(p => [p.amharic, { src: p.src, transliteration: p.transliteration }]));
+    const explain = `${pictured.amharic} (${pictured.transliteration}) means “${pictured.english}”.`;
+    exercises.unshift({
+      kind: 'choice',
+      id: 'picture-see',
+      instruction: `Which one of these is “${pictured.english}”?`,
+      prompt: pictured.english,
+      options: shuffle(cards.map(p => p.amharic)),
+      answer: pictured.amharic,
+      explain,
+      pictures,
+    });
+    // The harder one comes back fourth or last, so it's never in the same spot.
+    const read: ChoiceExercise = {
+      kind: 'choice',
+      id: 'picture-read',
+      instruction: 'Tap the picture for this word',
+      prompt: pictured.amharic,
+      options: shuffle(cards.map(p => p.amharic)),
+      answer: pictured.amharic,
+      explain,
+      pictures,
+      hideWords: true,
+    };
+    if (Math.random() < 0.5) exercises.splice(Math.min(3, exercises.length), 0, read);
+    else exercises.push(read);
   }
 
   // Match pairs as a final round.

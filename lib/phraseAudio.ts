@@ -11,6 +11,7 @@ const RECORDINGS: Record<string, string> = {
   'ደህና ነኝ፣ እግዚአብሔር ይመስገን።': 'dehna-negn-egziabher-yimesgen.mp3',
   'ስሜ አሌክስ ነው። ከአሜሪካ መጣሁ።': 'sime-alex-new.mp3',
   'እባክሽ ስምሽ?': 'ebakish-simish.mp3',
+  'ስምህ ማን ነው?': 'simih-man-new.mp3',
   'ደህና ነኝ': 'dehna-negn.mp3',
   'ሰላም እንዴት': 'selam-endet.mp3',
   'ነኝ፣ አንተስ?': 'negn-antes.mp3',

@@ -556,6 +556,7 @@ export const courseContent: Record<string, Course> = {
         phrases: [
           { amharic: 'ምግብ', transliteration: 'migib', english: 'food' },
           { amharic: 'እንጀራ', transliteration: 'injera', english: 'injera (sourdough flatbread)' },
+          { amharic: 'ዳቦ', transliteration: 'dabo', english: 'bread' },
           { amharic: 'ወጥ', transliteration: 'wet', english: 'stew (wat)' },
           { amharic: 'ሽሮ', transliteration: 'shiro', english: 'shiro (chickpea stew)' },
           { amharic: 'ውሃ', transliteration: 'wiha', english: 'water' },

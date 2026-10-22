@@ -152,20 +152,51 @@ export function completeLesson(slug: string, lesson: number, mistakes: number, w
   done.add(lesson);
   climb.completed[slug] = [...done].sort((a, b) => a - b);
   climb.grass += earned;
-  if (work && work.answers > 0) {
-    const today = dateKey();
-    if (!climb.days.includes(today)) climb.days = [...climb.days, today].sort();
-    const day = climb.log[today] ?? { lessons: 0, answers: 0, correct: 0, seconds: 0 };
-    climb.log = {
-      ...climb.log,
-      [today]: {
-        lessons: day.lessons + 1,
-        answers: day.answers + work.answers,
-        correct: day.correct + work.correct,
-        seconds: day.seconds + Math.min(Math.max(0, Math.round(work.seconds)), MAX_LESSON_SECONDS),
-      },
-    };
-  }
+  if (work && work.answers > 0) logToday(climb, work);
+  write(climb);
+  return earned;
+}
+
+/** Adds one finished lesson or call to today's log and the climb streak. */
+function logToday(climb: Climb, work: LessonWork) {
+  const today = dateKey();
+  if (!climb.days.includes(today)) climb.days = [...climb.days, today].sort();
+  const day = climb.log[today] ?? { lessons: 0, answers: 0, correct: 0, seconds: 0 };
+  climb.log = {
+    ...climb.log,
+    [today]: {
+      lessons: day.lessons + 1,
+      answers: day.answers + work.answers,
+      correct: day.correct + work.correct,
+      seconds: day.seconds + Math.min(Math.max(0, Math.round(work.seconds)), MAX_LESSON_SECONDS),
+    },
+  };
+}
+
+// Talk calls are kept in `completed` too, under "talk:<slug>", so they sync with
+// the rest of the climb. The list holds the best number of questions the learner
+// answered on their own (devices may each add one; the highest counts).
+const CALL_PREFIX = 'talk:';
+
+/** True for a `completed` key that belongs to a Talk call rather than a lesson. */
+export function isCallKey(key: string) {
+  return key.startsWith(CALL_PREFIX);
+}
+
+/** The most questions answered on their own in this call, or null if never finished. */
+export function callBest(climb: Climb, slug: string): number | null {
+  const list = climb.completed[CALL_PREFIX + slug];
+  return list?.length ? Math.max(...list) : null;
+}
+
+/** Marks a Talk call finished, keeps the best score, and returns the grass earned. */
+export function completeCall(slug: string, onOwn: number, questions: number, work: LessonWork) {
+  const climb = parse(readRaw());
+  const best = callBest(climb, slug);
+  const earned = best === null ? LESSON_GRASS + (onOwn === questions ? PERFECT_BONUS : 0) : REPLAY_GRASS;
+  climb.completed[CALL_PREFIX + slug] = [Math.max(best ?? 0, onOwn)];
+  climb.grass += earned;
+  if (work.answers > 0) logToday(climb, work);
   write(climb);
   return earned;
 }

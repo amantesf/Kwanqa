@@ -219,7 +219,7 @@
   margin-top: 6px;
 }
 
-.call-finish {
+.call-feedback.call-finish {
   margin-top: 0;
   padding-top: 0;
   border-top: 0;
@@ -699,4 +699,16 @@
     background: var(--text-strong);
     box-shadow: 0 -10px 16px #fff;
   }
+}
+
+.call-earned {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-weight: 800;
 }

@@ -15,6 +15,7 @@ import {
   altitudeFor,
   climbStreak,
   hornLevel,
+  isCallKey,
   trackCourses,
   trackTotals,
   useClimb,
@@ -48,7 +49,9 @@ const REASON: Record<string, string> = {
 const GOAL: Record<number, string> = { 5: 'Casual', 10: 'Regular', 15: 'Serious', 20: 'Intense' };
 
 function lessonsDone(climb: Climb) {
-  return Object.values(climb.completed).reduce((sum, list) => sum + list.length, 0);
+  return Object.entries(climb.completed)
+    .filter(([key]) => !isCallKey(key))
+    .reduce((sum, [, list]) => sum + list.length, 0);
 }
 
 function campsDone(climb: Climb) {

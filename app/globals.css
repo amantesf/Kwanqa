@@ -3720,7 +3720,22 @@ body:has(.learn-app) .site-footer {
 .learn-nav {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+}
+
+/* small group names: Learn, Culture, You */
+.learn-nav-heading {
+  margin: 14px 0 4px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.learn-nav-heading:first-child {
+  margin-top: 0;
 }
 
 .learn-account {
@@ -3737,12 +3752,18 @@ body:has(.learn-app) .site-footer {
 }
 
 .learn-logout {
-  width: 44px;
-  height: 44px;
+  width: 100%;
+  height: 46px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   border-radius: 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   border: 2px solid var(--border);
   border-bottom-width: 4px;
   background: #fff;
@@ -3756,33 +3777,99 @@ body:has(.learn-app) .site-footer {
 }
 
 .learn-nav-link {
+  --c: var(--primary);
+  --c-soft: var(--primary-soft);
+  --c-edge: var(--primary-shadow);
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 18px;
-  min-height: 56px;
-  padding: 8px 16px;
-  border-radius: 14px;
+  gap: 14px;
+  min-height: 58px;
+  padding: 7px 12px;
+  border-radius: 16px;
   border: 2px solid transparent;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--text);
   text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.learn-nav-link svg {
+/* an app-style tile in the page's own colour */
+.learn-nav-tile {
   flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--c);
+  box-shadow: 0 3px 0 var(--c-edge);
+  transition: transform 0.18s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.learn-nav-initial {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.learn-nav-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.learn-nav-label {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.learn-nav-am {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .learn-nav-link:hover {
   background-color: var(--bg-soft);
 }
 
+.learn-nav-link:hover .learn-nav-tile {
+  transform: translateY(-2px) rotate(-6deg);
+}
+
+.learn-nav-link:active .learn-nav-tile {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--c-edge);
+}
+
 .learn-nav-link[aria-current='page'] {
-  color: var(--primary);
-  background-color: var(--primary-soft);
-  border-color: var(--primary-border);
+  background-color: var(--c-soft);
+  border-color: color-mix(in srgb, var(--c) 35%, transparent);
+}
+
+.learn-nav-link[aria-current='page'] .learn-nav-label {
+  color: var(--c-edge);
+}
+
+.learn-nav-link[aria-current='page'] .learn-nav-am {
+  color: var(--c-edge);
+  opacity: 0.7;
+}
+
+/* a little marker on the current page */
+.learn-nav-link[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 14px;
+  bottom: 14px;
+  width: 5px;
+  border-radius: 0 4px 4px 0;
+  background: var(--c);
 }
 
 /* ---------- centre column ---------- */
@@ -5221,17 +5308,45 @@ a.rail-link:hover {
     padding: 0;
   }
 
+  /* no room for the word here, so the Walia head stands in for it */
+  .learn-logo .brand-mark {
+    display: block;
+  }
+
   .learn-nav-link {
     justify-content: center;
     padding: 8px;
   }
 
-  .learn-nav-link span {
+  .learn-nav-text,
+  .learn-logout-text {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
+  }
+
+  .learn-nav-heading {
+    height: 2px;
+    margin: 10px 18px;
+    padding: 0;
+    font-size: 0;
+    border-radius: 2px;
+    background: var(--border);
+  }
+
+  .learn-nav-heading:first-child {
+    display: none;
+  }
+
+  .learn-logout {
+    width: 46px;
+    align-self: center;
+  }
+
+  .learn-nav-link[aria-current='page']::before {
+    left: -12px;
   }
 }
 
@@ -5271,12 +5386,34 @@ a.rail-link:hover {
 
   .learn-nav-link {
     min-height: 44px;
-    padding: 6px;
+    padding: 3px;
   }
 
-  .learn-nav-link svg {
-    width: 26px;
-    height: 26px;
+  .learn-nav {
+    gap: 2px;
+  }
+
+  .learn-logo {
+    display: none;
+  }
+
+  .learn-nav-tile {
+    width: 33px;
+    height: 33px;
+    border-radius: 11px;
+  }
+
+  .learn-nav-tile svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .learn-nav-heading {
+    display: none;
+  }
+
+  .learn-nav-link[aria-current='page']::before {
+    display: none;
   }
 
   .learn-rail {

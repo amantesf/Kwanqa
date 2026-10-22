@@ -13,7 +13,9 @@ export type Answer =
   /** A phrase; close-enough matches count, so small slips don't fail the learner. */
   | { say: string }
   /** A shape with a blank, like ስሜ … ነው, for answers that include their own name or town. */
-  | { pattern: RegExp };
+  | { pattern: RegExp }
+  /** Any Amharic answer of at least this many words, for open questions in harder calls. */
+  | { open: number };
 
 export type Turn = {
   walia: Gendered<Line>;
@@ -26,11 +28,19 @@ export type Turn = {
   mistakes?: { say: string; tip: string }[];
 };
 
+export type Level = 'beginner' | 'intermediate' | 'advanced';
+
+export const LEVELS: { id: Level; label: string; blurb: string }[] = [
+  { id: 'beginner', label: 'Beginner', blurb: 'Short questions with one right kind of answer. Start here.' },
+  { id: 'intermediate', label: 'Intermediate', blurb: 'Everyday errands and the past tense. Walia says a little more.' },
+  { id: 'advanced', label: 'Advanced', blurb: 'Open questions about your life and roots. Answer in full sentences.' },
+];
+
 export type Conversation = {
   slug: string;
   title: string;
   amharicTitle: string;
-  level: 'beginner';
+  level: Level;
   blurb: string;
   turns: Turn[];
 };
@@ -291,6 +301,294 @@ export const conversations: Conversation[] = [
       },
     ],
   },
+  {
+    slug: 'directions',
+    title: 'Finding your way',
+    amharicTitle: 'አቅጣጫ',
+    level: 'intermediate',
+    blurb: 'You’re lost in Addis. Ask Walia where a place is, follow his directions, and thank him.',
+    turns: [
+      {
+        walia: {
+          m: { amharic: 'ሰላም! ምን ልርዳህ?', transliteration: 'selam! min lirdah?', english: 'Hi! How can I help you?' },
+          f: { amharic: 'ሰላም! ምን ልርዳሽ?', transliteration: 'selam! min lirdash?', english: 'Hi! How can I help you?' },
+        },
+        goal: 'Ask where a place is, like "ይቅርታ፣ ፖስታ ቤት የት ነው?" (Excuse me, where is the post office?). Any place is fine.',
+        answers: [{ pattern: /የት ነው/ }],
+        example: { amharic: 'ይቅርታ፣ ፖስታ ቤት የት ነው?', transliteration: 'yikirta, posta bet yet new?', english: 'Excuse me, where is the post office?' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ቀጥታ ሂድ፣ ከዚያ ወደ ቀኝ ታጠፍ።', transliteration: 'ket’ita hid, kezia wede kegn tatef.', english: 'Go straight, then turn right.' },
+          f: { amharic: 'ቀጥታ ሂጂ፣ ከዚያ ወደ ቀኝ ታጠፊ።', transliteration: 'ket’ita hiji, kezia wede kegn tatefi.', english: 'Go straight, then turn right.' },
+        },
+        goal: 'Repeat the directions back to check they understood: straight (ቀጥታ), then right (ወደ ቀኝ).',
+        answers: [{ pattern: /ቀኝ/ }],
+        example: { amharic: 'ቀጥታ፣ ከዚያ ወደ ቀኝ። እሺ።', transliteration: 'ket’ita, kezia wede kegn. ishi.', english: 'Straight, then right. Okay.' },
+        mistakes: [{ say: 'ግራ', tip: 'ግራ (gra) is left. Walia said ወደ ቀኝ (wede kegn), to the right.' }],
+      },
+      {
+        walia: {
+          m: { amharic: 'በእግር ትሄዳለህ ወይስ በታክሲ?', transliteration: 'be’igir tihedaleh weyis betaksi?', english: 'Are you walking or taking a taxi?' },
+          f: { amharic: 'በእግር ትሄጃለሽ ወይስ በታክሲ?', transliteration: 'be’igir tihejalesh weyis betaksi?', english: 'Are you walking or taking a taxi?' },
+        },
+        goal: 'Say how they’ll get there: on foot (በእግር), by taxi (በታክሲ) or bajaj (በባጃጅ).',
+        answers: [{ say: 'በእግር' }, { say: 'በታክሲ' }, { say: 'በባጃጅ' }],
+        example: { amharic: 'በእግር እሄዳለሁ።', transliteration: 'be’igir ihedalehu.', english: 'I’ll walk.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ጥሩ። አስር ደቂቃ ብቻ ነው። ሌላ ጥያቄ አለህ?', transliteration: 'tiru. asir dekika bicha new. lela t’iyake aleh?', english: 'Good. It’s only ten minutes. Any other questions?' },
+          f: { amharic: 'ጥሩ። አስር ደቂቃ ብቻ ነው። ሌላ ጥያቄ አለሽ?', transliteration: 'tiru. asir dekika bicha new. lela t’iyake alesh?', english: 'Good. It’s only ten minutes. Any other questions?' },
+        },
+        goal: 'Say they have no more questions and thank him, or ask one more question.',
+        answers: [{ say: 'የለኝም' }, { say: 'አመሰግናለሁ' }, { pattern: /የት ነው|ሩቅ ነው/ }, { say: 'አይ' }],
+        example: { amharic: 'የለኝም፣ በጣም አመሰግናለሁ።', transliteration: 'yelegnim, betam ameseginalehu.', english: 'No, thank you very much.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ምንም አይደለም! መንገድ ላይ ተጠንቀቅ።', transliteration: 'minim aydelem! menged lay tetenkek.', english: 'No problem! Be careful on the road.' },
+          f: { amharic: 'ምንም አይደለም! መንገድ ላይ ተጠንቀቂ።', transliteration: 'minim aydelem! menged lay tetenkeki.', english: 'No problem! Be careful on the road.' },
+        },
+        goal: 'Say okay or thanks, and goodbye (male form ደህና ሁን).',
+        answers: [{ say: 'እሺ' }, { say: 'አመሰግናለሁ' }, { say: 'ደህና ሁን' }, { say: 'ቻው' }],
+        example: { amharic: 'እሺ፣ አመሰግናለሁ። ደህና ሁን!', transliteration: 'ishi, ameseginalehu. dehna hun!', english: 'Okay, thanks. Goodbye!' },
+        mistakes: [{ say: 'ደህና ሁኚ', tip: 'Walia is a he, so say ደህና ሁን (dehna hun). ደህና ሁኚ is for a woman.' }],
+      },
+    ],
+  },
+  {
+    slug: 'weekend',
+    title: 'Your weekend',
+    amharicTitle: 'ቅዳሜና እሁድ',
+    level: 'intermediate',
+    blurb: 'Tell Walia what you did on the weekend and who with, then what you’re doing today. Practice the past tense.',
+    turns: [
+      {
+        walia: {
+          m: { amharic: 'ቅዳሜና እሁድ ምን አደረግህ?', transliteration: 'kidamena ihud min aderegih?', english: 'What did you do on the weekend?' },
+          f: { amharic: 'ቅዳሜና እሁድ ምን አደረግሽ?', transliteration: 'kidamena ihud min aderegish?', english: 'What did you do on the weekend?' },
+        },
+        goal: 'Say one thing they did, in the past tense (like ቡና ጠጣሁ, I had coffee).',
+        answers: [{ open: 2 }],
+        example: { amharic: 'ከቤተሰቤ ጋር ቡና ጠጣሁ።', transliteration: 'kebeteseb-e gar buna tetahu.', english: 'I had coffee with my family.' },
+      },
+      {
+        walia: { amharic: 'ከማን ጋር?', transliteration: 'keman gar?', english: 'With whom?' },
+        goal: 'Say who they were with (ከ… ጋር), or that they were alone (ብቻዬን).',
+        answers: [{ pattern: /ጋር/ }, { say: 'ብቻዬን' }],
+        example: { amharic: 'ከጓደኞቼ ጋር።', transliteration: 'kegwadegnoch-e gar.', english: 'With my friends.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ደስ አለህ?', transliteration: 'des aleh?', english: 'Did you have a good time?' },
+          f: { amharic: 'ደስ አለሽ?', transliteration: 'des alesh?', english: 'Did you have a good time?' },
+        },
+        goal: 'Say whether they enjoyed it (ደስ አለኝ).',
+        answers: [{ say: 'አዎ፣ በጣም ደስ አለኝ' }, { say: 'ደስ አለኝ' }, { say: 'አዎ' }, { say: 'አይ' }],
+        example: { amharic: 'አዎ፣ በጣም ደስ አለኝ።', transliteration: 'awo, betam des alegn.', english: 'Yes, I really enjoyed it.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ዛሬስ ምን ትሰራለህ?', transliteration: 'zares min tiseraleh?', english: 'And what are you doing today?' },
+          f: { amharic: 'ዛሬስ ምን ትሰሪያለሽ?', transliteration: 'zares min tiseriyalesh?', english: 'And what are you doing today?' },
+        },
+        goal: 'Say what they are doing today, in the present or future tense.',
+        answers: [{ open: 2 }],
+        example: { amharic: 'ዛሬ እሰራለሁ፣ ከዚያ አማርኛ እማራለሁ።', transliteration: 'zare iseralehu, kezia amarigna imaralehu.', english: 'Today I work, then I study Amharic.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ጎበዝ! መልካም ቀን ይሁንልህ!', transliteration: 'gobez! melkam ken yihunilih!', english: 'Nice! Have a good day!' },
+          f: { amharic: 'ጎበዝ! መልካም ቀን ይሁንልሽ!', transliteration: 'gobez! melkam ken yihunilish!', english: 'Nice! Have a good day!' },
+        },
+        goal: 'Thank him and wish him the same (to Walia: ላንተም, "you too").',
+        answers: [{ say: 'አመሰግናለሁ፣ ላንተም' }, { say: 'ላንተም' }, { say: 'አመሰግናለሁ' }, { say: 'ደህና ሁን' }],
+        example: { amharic: 'አመሰግናለሁ፣ ላንተም!', transliteration: 'ameseginalehu, lantem!', english: 'Thank you, you too!' },
+        mistakes: [
+          { say: 'ላንቺም', tip: 'Walia is a he, so say ላንተም (lantem). ላንቺም is for a woman.' },
+          { say: 'ደህና ሁኚ', tip: 'Walia is a he, so say ደህና ሁን (dehna hun). ደህና ሁኚ is for a woman.' },
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'restaurant',
+    title: 'At the restaurant',
+    amharicTitle: 'ምግብ ቤት',
+    level: 'intermediate',
+    blurb: 'Walia is your waiter. Order a dish and a drink, say how the food is, and ask for the bill.',
+    turns: [
+      {
+        walia: {
+          m: { amharic: 'እንኳን ደህና መጣህ! ምን ልታዘዝ?', transliteration: 'inkwan dehna metah! min litazez?', english: 'Welcome! What can I bring you?' },
+          f: { amharic: 'እንኳን ደህና መጣሽ! ምን ልታዘዝ?', transliteration: 'inkwan dehna metash! min litazez?', english: 'Welcome! What can I bring you?' },
+        },
+        goal: 'Order a dish, like ሽሮ እፈልጋለሁ (I’d like shiro) or ዶሮ ወጥ፣ እባክህ.',
+        answers: [{ pattern: /(እፈልጋለሁ|ስጠኝ|አምጣልኝ|እባክህ)/ }],
+        example: { amharic: 'ሽሮ እፈልጋለሁ።', transliteration: 'shiro ifeligalehu.', english: 'I’d like shiro.' },
+        mistakes: [{ say: 'እባክሽ', tip: 'Walia is a he, so say እባክህ (ibakih). እባክሽ is for a woman.' }],
+      },
+      {
+        walia: { amharic: 'በእንጀራ ወይስ በዳቦ?', transliteration: 'be’injera weyis bedabo?', english: 'With injera or with bread?' },
+        goal: 'Choose injera (በእንጀራ) or bread (በዳቦ).',
+        answers: [{ say: 'በእንጀራ' }, { say: 'በዳቦ' }],
+        example: { amharic: 'በእንጀራ፣ እባክህ።', transliteration: 'be’injera, ibakih.', english: 'With injera, please.' },
+        mistakes: [{ say: 'እባክሽ', tip: 'Walia is a he, so say እባክህ (ibakih). እባክሽ is for a woman.' }],
+      },
+      {
+        walia: {
+          m: { amharic: 'ምን ትጠጣለህ?', transliteration: 'min titetaleh?', english: 'What will you drink?' },
+          f: { amharic: 'ምን ትጠጫለሽ?', transliteration: 'min titechalesh?', english: 'What will you drink?' },
+        },
+        goal: 'Order a drink: water (ውሃ), tea (ሻይ), coffee (ቡና), a soda (ለስላሳ) or juice (ጭማቂ).',
+        answers: [{ pattern: /(ውሃ|ሻይ|ቡና|ለስላሳ|ጭማቂ|ኮካ)/ }],
+        example: { amharic: 'ውሃ፣ እባክህ።', transliteration: 'wuha, ibakih.', english: 'Water, please.' },
+        mistakes: [{ say: 'እባክሽ', tip: 'Walia is a he, so say እባክህ (ibakih). እባክሽ is for a woman.' }],
+      },
+      {
+        walia: { amharic: 'ምግቡ እንዴት ነው?', transliteration: 'migibu indet new?', english: 'How’s the food?' },
+        goal: 'Say how the food is (delicious, very tasty, a bit spicy…).',
+        answers: [{ say: 'በጣም ይጣፍጣል' }, { say: 'ጣፋጭ ነው' }, { say: 'ጥሩ ነው' }, { pattern: /ያቃጥላል|ቅመም/ }],
+        example: { amharic: 'በጣም ይጣፍጣል!', transliteration: 'betam yitafital!', english: 'It’s really tasty!' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ሌላ ነገር ልጨምርልህ?', transliteration: 'lela neger lichemirlih?', english: 'Can I get you anything else?' },
+          f: { amharic: 'ሌላ ነገር ልጨምርልሽ?', transliteration: 'lela neger lichemirlish?', english: 'Can I get you anything else?' },
+        },
+        goal: 'Say that’s enough and ask for the bill (ሂሳብ፣ እባክህ).',
+        answers: [{ pattern: /ሂሳብ/ }, { say: 'በቃኝ' }, { say: 'አይ፣ አመሰግናለሁ' }],
+        example: { amharic: 'አይ፣ በቃኝ። ሂሳብ፣ እባክህ።', transliteration: 'ay, bekagn. hisab, ibakih.', english: 'No, I’m full. The bill, please.' },
+        mistakes: [{ say: 'እባክሽ', tip: 'Walia is a he, so say እባክህ (ibakih). እባክሽ is for a woman.' }],
+      },
+    ],
+  },
+  {
+    slug: 'roots',
+    title: 'Your roots',
+    amharicTitle: 'ትውልድ',
+    level: 'advanced',
+    blurb: 'Walia asks about your family’s story, why you’re learning Amharic, and what an old proverb means. Answer in full sentences.',
+    turns: [
+      {
+        walia: {
+          m: { amharic: 'ስለ ቤተሰብህ ታሪክ ንገረኝ። ወላጆችህ ከየት ናቸው?', transliteration: 'sile beteseb-ih tarik negeregn. welajochih keyet nachew?', english: 'Tell me about your family’s story. Where are your parents from?' },
+          f: { amharic: 'ስለ ቤተሰብሽ ታሪክ ንገሪኝ። ወላጆችሽ ከየት ናቸው?', transliteration: 'sile beteseb-ish tarik negerign. welajochish keyet nachew?', english: 'Tell me about your family’s story. Where are your parents from?' },
+        },
+        goal: 'Say where their parents (or one parent) are from, in a full sentence.',
+        answers: [{ open: 3 }],
+        example: { amharic: 'አባቴ ከጎንደር ነው፣ እናቴ ደግሞ ከአዲስ አበባ ናት።', transliteration: 'abate kegondar new, inate degmo ke-addis abeba nat.', english: 'My dad is from Gondar, and my mom is from Addis Ababa.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ኢትዮጵያ ሄደህ ታውቃለህ?', transliteration: 'ityopya hedeh tawkaleh?', english: 'Have you ever been to Ethiopia?' },
+          f: { amharic: 'ኢትዮጵያ ሄደሽ ታውቂያለሽ?', transliteration: 'ityopya hedesh tawkiyalesh?', english: 'Have you ever been to Ethiopia?' },
+        },
+        goal: 'Say whether they have been to Ethiopia, and ideally when or for what.',
+        answers: [{ open: 2 }, { pattern: /ሄጄ/ }],
+        example: { amharic: 'አዎ፣ ባለፈው ዓመት ሄጄ ነበር።', transliteration: 'awo, balefew amet heje neber.', english: 'Yes, I went last year.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'አማርኛ ለምን መማር ፈለግህ?', transliteration: 'amarigna lemin memar felegih?', english: 'Why did you want to learn Amharic?' },
+          f: { amharic: 'አማርኛ ለምን መማር ፈለግሽ?', transliteration: 'amarigna lemin memar felegish?', english: 'Why did you want to learn Amharic?' },
+        },
+        goal: 'Give a reason in a full sentence (for example, to talk with grandparents).',
+        answers: [{ open: 3 }],
+        example: { amharic: 'ከአያቶቼ ጋር ማውራት ስለምፈልግ ነው።', transliteration: 'ke-ayatoch-e gar mawrat silemifelig new.', english: 'Because I want to talk with my grandparents.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'የምትወደው የኢትዮጵያ ምግብ ምንድን ነው?', transliteration: 'yemitiwedew ye’ityopya migib mindin new?', english: 'What’s your favorite Ethiopian food?' },
+          f: { amharic: 'የምትወጂው የኢትዮጵያ ምግብ ምንድን ነው?', transliteration: 'yemitiwejiw ye’ityopya migib mindin new?', english: 'What’s your favorite Ethiopian food?' },
+        },
+        goal: 'Name their favorite Ethiopian food, ideally with a reason.',
+        answers: [{ open: 2 }],
+        example: { amharic: 'የምወደው ምግብ ዶሮ ወጥ ነው።', transliteration: 'yemiwedew migib doro wet new.', english: 'My favorite food is doro wat.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'አንድ ምሳሌ ልንገርህ፦ ቀስ በቀስ እንቁላል በእግሩ ይሄዳል። ምን ማለት ይመስልሃል?', transliteration: 'and misale linigerih: kes bekes inkulal be’igru yihedal. min malet yimesilihal?', english: 'Here’s a proverb: little by little, an egg walks on its own legs. What do you think it means?' },
+          f: { amharic: 'አንድ ምሳሌ ልንገርሽ፦ ቀስ በቀስ እንቁላል በእግሩ ይሄዳል። ምን ማለት ይመስልሻል?', transliteration: 'and misale linigerish: kes bekes inkulal be’igru yihedal. min malet yimesilishal?', english: 'Here’s a proverb: little by little, an egg walks on its own legs. What do you think it means?' },
+        },
+        goal: 'Explain what the proverb means (patience, step by step, things grow with time), in simple Amharic.',
+        answers: [{ open: 2 }, { pattern: /ትዕግስት|ቀስ በቀስ/ }],
+        example: { amharic: 'በትዕግስት ሁሉም ነገር ይቻላል።', transliteration: 'bet’igist hulum neger yichalal.', english: 'With patience, everything is possible.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'በጣም ጎበዝ ነህ! በቅርቡ እንደገና እናውራ።', transliteration: 'betam gobez neh! bekirbu indegena inawra.', english: 'You’re really good! Let’s talk again soon.' },
+          f: { amharic: 'በጣም ጎበዝ ነሽ! በቅርቡ እንደገና እናውራ።', transliteration: 'betam gobez nesh! bekirbu indegena inawra.', english: 'You’re really good! Let’s talk again soon.' },
+        },
+        goal: 'Agree, thank him, and say goodbye (male form ደህና ሁን).',
+        answers: [{ say: 'እሺ' }, { say: 'አመሰግናለሁ' }, { say: 'በቅርቡ እንገናኝ' }, { say: 'ደህና ሁን' }],
+        example: { amharic: 'እሺ፣ በቅርቡ እንገናኝ። ደህና ሁን!', transliteration: 'ishi, bekirbu inigenagn. dehna hun!', english: 'Okay, see you soon. Goodbye!' },
+        mistakes: [{ say: 'ደህና ሁኚ', tip: 'Walia is a he, so say ደህና ሁን (dehna hun). ደህና ሁኚ is for a woman.' }],
+      },
+    ],
+  },
+  {
+    slug: 'daily-life',
+    title: 'A day in your life',
+    amharicTitle: 'የዕለት ኑሮ',
+    level: 'advanced',
+    blurb: 'Talk about your work, your mornings (on the Ethiopian clock), your evenings, and how life abroad compares with Ethiopia.',
+    turns: [
+      {
+        walia: {
+          m: { amharic: 'ምን ትሰራለህ?', transliteration: 'min tiseraleh?', english: 'What do you do (for work or school)?' },
+          f: { amharic: 'ምን ትሰሪያለሽ?', transliteration: 'min tiseriyalesh?', english: 'What do you do (for work or school)?' },
+        },
+        goal: 'Say what they do: their job, or that they are a student.',
+        answers: [{ open: 2 }, { pattern: /ነኝ$/ }],
+        example: { amharic: 'ተማሪ ነኝ።', transliteration: 'temari negn.', english: 'I’m a student.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ስራህን ትወደዋለህ?', transliteration: 'sirahin tiwedewaleh?', english: 'Do you like your work?' },
+          f: { amharic: 'ስራሽን ትወጂዋለሽ?', transliteration: 'sirashin tiwejiwalesh?', english: 'Do you like your work?' },
+        },
+        goal: 'Say whether they like it, with a reason or a "but" (ግን).',
+        answers: [{ open: 2 }],
+        example: { amharic: 'አዎ፣ እወደዋለሁ፣ ግን ብዙ ስራ አለ።', transliteration: 'awo, iwedewalehu, gin bizu sira alle.', english: 'Yes, I like it, but there’s a lot of work.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ጠዋት ስንት ሰዓት ትነሳለህ?', transliteration: 't’ewat sint se’at tinesaleh?', english: 'What time do you get up in the morning?' },
+          f: { amharic: 'ጠዋት ስንት ሰዓት ትነሻለሽ?', transliteration: 't’ewat sint se’at tineshalesh?', english: 'What time do you get up in the morning?' },
+        },
+        goal: 'Say what time they get up. Bonus for the Ethiopian clock, where 7 am is አንድ ሰዓት (one o’clock).',
+        answers: [{ pattern: /ሰዓት/ }],
+        example: { amharic: 'በአንድ ሰዓት እነሳለሁ።', transliteration: 'be’and se’at inesalehu.', english: 'I get up at one o’clock (7 am).' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ከስራ በኋላ ምን ታደርጋለህ?', transliteration: 'kesira behwala min tadergaleh?', english: 'What do you do after work?' },
+          f: { amharic: 'ከስራ በኋላ ምን ታደርጊያለሽ?', transliteration: 'kesira behwala min tadergiyalesh?', english: 'What do you do after work?' },
+        },
+        goal: 'Describe their evening, ideally two things joined with ከዚያ (then).',
+        answers: [{ open: 3 }],
+        example: { amharic: 'ቤተሰቤን እደውላለሁ፣ ከዚያ ፊልም አያለሁ።', transliteration: 'beteseben-e idewilalehu, kezia film ayalehu.', english: 'I call my family, then I watch a movie.' },
+      },
+      {
+        walia: { amharic: 'ኑሮ በውጭ አገርና በኢትዮጵያ እንዴት ይለያያል?', transliteration: 'nuro bewich agerna be’ityopya indet yilayayal?', english: 'How is life abroad different from life in Ethiopia?' },
+        goal: 'Give an opinion comparing life abroad and in Ethiopia, in a full sentence (ግን, "but", helps).',
+        answers: [{ open: 4 }],
+        example: { amharic: 'እዚህ ሁሉም ይቸኩላል፣ በኢትዮጵያ ግን ለሰው ጊዜ አለ።', transliteration: 'izih hulum yichekulal, be’ityopya gin lesew gize alle.', english: 'Here everyone rushes, but in Ethiopia there’s time for people.' },
+      },
+      {
+        walia: {
+          m: { amharic: 'ጥሩ ውይይት ነበር! ደህና ሁን።', transliteration: 'tiru wuyiyit neber! dehna hun.', english: 'That was a great conversation! Goodbye.' },
+          f: { amharic: 'ጥሩ ውይይት ነበር! ደህና ሁኚ።', transliteration: 'tiru wuyiyit neber! dehna hugn.', english: 'That was a great conversation! Goodbye.' },
+        },
+        goal: 'Thank him and say goodbye (male form ደህና ሁን).',
+        answers: [{ say: 'አመሰግናለሁ' }, { say: 'ደህና ሁን' }, { say: 'ቻው' }, { say: 'እኔም' }],
+        example: { amharic: 'እኔም ደስ ብሎኛል። ደህና ሁን!', transliteration: 'inem des bilognal. dehna hun!', english: 'I enjoyed it too. Goodbye!' },
+        mistakes: [{ say: 'ደህና ሁኚ', tip: 'Walia is a he, so say ደህና ሁን (dehna hun). ደህና ሁኚ is for a woman.' }],
+      },
+    ],
+  },
 ];
 
 export function waliaLine(turn: Turn, gender: Gender): Line {
@@ -349,9 +647,11 @@ export function check(turn: Turn, heard: string): Verdict {
   if (slip) return { kind: 'tip', tip: slip.tip };
 
   const ok = turn.answers.some(a =>
-    'pattern' in a
-      ? a.pattern.test(said)
-      : squash(said).includes(squash(a.say)) || distance(a.say, said) <= 0.34,
+    'open' in a
+      ? said.split(' ').filter(w => /[\u1200-\u137F]/.test(w)).length >= a.open
+      : 'pattern' in a
+        ? a.pattern.test(said)
+        : squash(said).includes(squash(a.say)) || distance(a.say, said) <= 0.34,
   );
   return ok ? { kind: 'right' } : { kind: 'unclear' };
 }

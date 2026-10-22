@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { waliaLine, type Conversation, type Gender, type Line } from '@/lib/conversations';
+import { waliaLine, type Conversation, type Gender, type Level, type Line } from '@/lib/conversations';
 
 // Walia's brain for Talk calls. The script in lib/conversations.ts still sets
 // the questions and their order; Claude decides whether the learner's answer
@@ -31,11 +31,20 @@ Decide one verdict:
 - "question": they asked you something instead of answering, in English or Amharic (for example how to say a word). Reply with the Amharic they need. In the note, explain briefly in English and invite them to answer your question.
 
 Rules for your reply:
-- Simple beginner Amharic in Ge'ez script, one short sentence, at most about eight words.
+- Amharic in Ge'ez script, pitched at the call's level (the app tells you the level and how to speak).
 - Address the learner with the right gender forms (the app says whether they are a man or a woman). You are male.
 - Stay on the topic of the call.
 - reply_transliteration is easy Latin letters for English speakers (like "selam, indet neh?"). reply_english is a natural English translation.
 - The note is plain English, warm and brief, never preachy. Leave it empty for "right" unless there's something genuinely useful to add.`;
+
+// How Walia talks, and how much he expects back, at each level.
+const LEVEL_STYLE: Record<Level, string> = {
+  beginner: 'Beginner: simple Amharic, one short sentence, at most about eight words. Accept short answers.',
+  intermediate:
+    'Intermediate: everyday Amharic, one or two short sentences; past and future tense are fine. Accept short answers that do what the goal asks.',
+  advanced:
+    'Advanced: natural, warm Amharic, up to two sentences, like a real conversation; an idiom now and then is welcome. Expect full-sentence answers: if they answer in one or two words, you can still mark it right, but use the note to encourage a longer sentence next time.',
+};
 
 const SCHEMA = {
   type: 'object',
@@ -70,7 +79,8 @@ export async function askWalia({
   const transcript = history.map(l => `${l.from === 'walia' ? 'Walia' : 'Learner'}: ${l.text}`).join('\n');
 
   const context = [
-    `Call topic: ${conversation.title} (${conversation.level}).`,
+    `Call topic: ${conversation.title}.`,
+    `Level: ${LEVEL_STYLE[conversation.level]}`,
     `The learner is a ${gender === 'm' ? 'man' : 'woman'}.`,
     `Your current question: ${asked.amharic} (${asked.english})`,
     `Goal for their answer: ${turn.goal}`,

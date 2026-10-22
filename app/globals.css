@@ -5926,7 +5926,7 @@ body:has(.practice-screen) {
 }
 
 .mood-thinking .w-question {
-  transform-origin: 206px 52px;
+  transform-origin: 196px 24px;
   animation: m-bob 1.6s ease-in-out infinite;
 }
 
@@ -5936,12 +5936,12 @@ body:has(.practice-screen) {
 }
 
 .mood-cheer .w-arm-r {
-  transform-origin: 170px 196px;
+  transform-origin: 160px 186px;
   animation: m-wave-r 0.45s ease-in-out infinite alternate;
 }
 
 .mood-cheer .w-arm-l {
-  transform-origin: 70px 196px;
+  transform-origin: 80px 186px;
   animation: m-wave-l 0.45s ease-in-out infinite alternate;
 }
 
@@ -5961,13 +5961,13 @@ body:has(.practice-screen) {
 }
 
 .mood-sad .w-ear-l {
-  transform-origin: 78px 110px;
+  transform-origin: 62px 110px;
   transform: rotate(-22deg);
   transition: transform 0.3s ease;
 }
 
 .mood-sad .w-ear-r {
-  transform-origin: 162px 110px;
+  transform-origin: 178px 110px;
   transform: rotate(22deg);
   transition: transform 0.3s ease;
 }
@@ -6112,7 +6112,7 @@ body:has(.practice-screen) {
 }
 
 .walia-live .w-eyes {
-  transform-origin: 120px 110px;
+  transform-origin: 120px 118px;
   animation: w-blink 4.6s infinite;
 }
 
@@ -6121,22 +6121,22 @@ body:has(.practice-screen) {
 }
 
 .walia-live .w-arm-r {
-  transform-origin: 170px 196px;
+  transform-origin: 160px 186px;
   animation: w-wave 12s ease-in-out infinite;
 }
 
 .walia-live .w-arm-l {
-  transform-origin: 70px 196px;
+  transform-origin: 80px 186px;
   animation: w-wave-l 12s ease-in-out infinite;
 }
 
 .walia-live .w-ear-l {
-  transform-origin: 78px 110px;
+  transform-origin: 62px 110px;
   animation: w-ear-l 12s ease-in-out infinite;
 }
 
 .walia-live .w-ear-r {
-  transform-origin: 162px 110px;
+  transform-origin: 178px 110px;
   animation: w-ear-r 12s ease-in-out infinite;
 }
 

@@ -8,7 +8,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Mascot, { type Mood } from '@/components/Mascot';
+import GrassIcon from '@/components/GrassIcon';
 import MountainScene from '@/components/MountainScene';
+import { completeCall } from '@/lib/climb';
 import { check, normalize, waliaLine, type Conversation, type Gender, type Line } from '@/lib/conversations';
 import { startRecording, type Recording } from '@/lib/recorder';
 import { supabase } from '@/lib/supabase';
@@ -143,6 +145,10 @@ export default function TalkCall({
   const [level, setLevel] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [onOwn, setOnOwn] = useState(0);
+  // for the daily log: every answer judged, and how many were right
+  const [answers, setAnswers] = useState(0);
+  const [correct, setCorrect] = useState(0);
+  const [earned, setEarned] = useState<number | null>(null);
 
   const recording = useRef<Recording | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
@@ -258,7 +264,9 @@ export default function TalkCall({
     ]);
     if (result.reply) void playReply(result.reply.amharic);
 
+    if (result.verdict !== 'question') setAnswers(n => n + 1);
     if (result.verdict === 'right') {
+      setCorrect(n => n + 1);
       effect('correct');
       if (misses === 0 && !showExample) setOnOwn(n => n + 1);
     } else if (result.verdict !== 'question') {
@@ -327,6 +335,9 @@ export default function TalkCall({
     setShowExample(false);
     if (last) {
       setPhase('done');
+      setEarned(
+        completeCall(conversation.slug, onOwn, conversation.turns.length, { answers, correct, seconds }),
+      );
     } else {
       setPhase('walia');
       setTurnIndex(i => i + 1);
@@ -335,6 +346,9 @@ export default function TalkCall({
 
   function callAgain() {
     setOnOwn(0);
+    setAnswers(0);
+    setCorrect(0);
+    setEarned(null);
     setSeconds(0);
     setAnswer(null);
     setHistory([]);
@@ -430,6 +444,11 @@ export default function TalkCall({
             {phase === 'done' ? (
               <div className="call-feedback call-finish">
                 <strong lang="am">ጎበዝ! Call finished</strong>
+                {earned !== null && (
+                  <span className="call-earned">
+                    <GrassIcon size={18} /> +{earned} grass
+                  </span>
+                )}
                 <span>
                   You answered {onOwn} of {conversation.turns.length} on your own.
                   {onOwn < conversation.turns.length ? ' Call again to get them all.' : ' Walia is impressed.'}

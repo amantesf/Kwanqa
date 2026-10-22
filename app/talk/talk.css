@@ -864,6 +864,10 @@
 }
 
 .talk-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 14px 10px;
   border: 2px solid var(--border);
   border-bottom-width: 4px;
@@ -1071,4 +1075,35 @@
     width: 54px;
     height: 54px;
   }
+}
+
+/* finished calls: a check and the best score */
+.talk-chip.done {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--green-soft);
+  border-color: #c8ecbf;
+  color: var(--green-dark);
+}
+
+/* shown once every call in a level is done */
+.talk-next {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--gold-soft);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.talk-next-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 900;
+  color: var(--primary-dark);
+  text-decoration: underline;
+  cursor: pointer;
 }

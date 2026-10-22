@@ -1659,6 +1659,142 @@ a.camp-banner:active {
   color: var(--text-faint);
 }
 
+/* "Which one of these is …?": a card per answer with its picture */
+.practice-screen .options.picture-options {
+  grid-template-columns: repeat(3, 192px);
+  gap: 10px;
+}
+
+.practice-screen .picture-options .option {
+  position: relative;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 14px 14px 16px;
+  border-bottom-width: 5px;
+  border-radius: 20px;
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    transform 0.12s ease;
+}
+
+.practice-screen .picture-options .option:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+.practice-screen .picture-options .option:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.picture-img {
+  width: 100%;
+  height: 128px;
+  object-fit: contain;
+  padding: 0;
+  transform: scale(1.12);
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.practice-screen .picture-options .option.selected .picture-img {
+  transform: scale(1.2) rotate(-2deg);
+}
+
+.practice-screen .picture-options .option.correct .picture-img {
+  animation: picture-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes picture-pop {
+  40% {
+    transform: scale(1.3) rotate(3deg);
+  }
+}
+
+.picture-word {
+  display: flex;
+  flex-direction: column;
+  min-height: 40px;
+  padding-right: 38px;
+  line-height: 1.2;
+}
+
+.practice-screen .picture-word > span {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.picture-word small {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+/* the harder version: words stay hidden until you answer */
+.picture-word-hidden {
+  margin-right: 0;
+  border-radius: 10px;
+  background: repeating-linear-gradient(-45deg, var(--bg-soft) 0 8px, #fff 8px 16px);
+  border: 2px dashed var(--border);
+}
+
+.practice-screen .picture-options .option-key {
+  position: absolute;
+  right: 12px;
+  bottom: 18px;
+}
+
+@media (max-width: 600px) {
+  .practice-screen .options.picture-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .practice-screen .picture-options .option {
+    min-height: 0;
+    padding: 10px 6px 12px;
+    gap: 6px;
+  }
+
+  .picture-word {
+    padding-right: 0;
+    align-items: center;
+    text-align: center;
+    min-height: 40px;
+  }
+
+  .practice-screen .picture-word > span {
+    font-size: 17px;
+  }
+
+  .picture-img {
+    height: 84px;
+    padding: 2px;
+  }
+
+  .picture-word small {
+    font-size: 12px;
+  }
+
+  .practice-screen .picture-options .option-key {
+    display: none;
+  }
+}
+
+/* a missed question coming back */
+.practice-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-shadow);
+}
+
 .match-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

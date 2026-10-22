@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import Mascot from '@/components/Mascot';
 import TalkCall from '@/components/TalkCall';
+import { callBest, useClimb } from '@/lib/climb';
 import { LEVELS, conversations, type Conversation, type Gender, type Level } from '@/lib/conversations';
 
 const GENDER_KEY = 'kwanqa-talk-gender';
@@ -199,7 +200,13 @@ export default function TalkPage() {
   const [gender, setGender] = useState<Gender | null>(null);
   const [calling, setCalling] = useState<Conversation | null>(null);
   // Calling before choosing ነህ / ነሽ asks right where the call was made.
-  const [level, setLevel] = useState<Level>('beginner');
+  const climb = useClimb();
+  // Until the learner picks a tab, open on the first level with a call they haven't finished.
+  const [picked, setPicked] = useState<Level | null>(null);
+  const levelDone = (id: Level) =>
+    conversations.filter(c => c.level === id).every(c => callBest(climb, c.slug) !== null);
+  const level = picked ?? LEVELS.find(l => !levelDone(l.id))?.id ?? 'advanced';
+  const nextLevel = LEVELS[LEVELS.findIndex(l => l.id === level) + 1];
   const [asking, setAsking] = useState<Conversation | null>(null);
   const [askingOnPhone, setAskingOnPhone] = useState(false);
 
@@ -374,8 +381,9 @@ export default function TalkPage() {
                     aria-selected={level === l.id}
                     aria-controls="talk-level-panel"
                     className={`talk-tab ${l.id}${level === l.id ? ' on' : ''}`}
-                    onClick={() => setLevel(l.id)}
+                    onClick={() => setPicked(l.id)}
                   >
+                    {levelDone(l.id) && <CheckIcon />}
                     {l.label}
                   </button>
                 ))}
@@ -383,6 +391,14 @@ export default function TalkPage() {
 
               <div id="talk-level-panel" role="tabpanel" aria-labelledby={`talk-tab-${level}`} className="talk-level">
                 <p className="talk-note">{LEVELS.find(l => l.id === level)?.blurb}</p>
+                {levelDone(level) && nextLevel && (
+                  <p className="talk-next">
+                    You’ve finished every {LEVELS.find(l => l.id === level)?.label} call.{' '}
+                    <button type="button" className="talk-next-btn" onClick={() => setPicked(nextLevel.id)}>
+                      Try {nextLevel.label}
+                    </button>
+                  </p>
+                )}
                 <div className="talk-list">
                   {conversations.filter(c => c.level === level).map(c => (
                     <article key={c.slug} className="talk-card">
@@ -396,6 +412,11 @@ export default function TalkPage() {
                         </h3>
                         <p>{c.blurb}</p>
                         <div className="talk-chips">
+                          {callBest(climb, c.slug) !== null && (
+                            <span className="talk-chip done">
+                              <CheckIcon /> Done · {callBest(climb, c.slug)}/{c.turns.length} on your own
+                            </span>
+                          )}
                           <span className="talk-chip">{c.turns.length} questions</span>
                           <span className="talk-chip">about {MINUTES[c.level]} min</span>
                         </div>

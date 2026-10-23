@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { phraseAudio } from '@/lib/phraseAudio';
+import { amharicAudio } from '@/lib/amharicAudio';
 import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
@@ -311,7 +311,7 @@ export default function Practice({
   function soundFor(text: string | null | undefined): Sound {
     if (!text) return null;
     if (track === 'english') return isSpeakableEnglish(text) ? { src: englishAudioUrl(text), say: text } : null;
-    const src = phraseAudio(text);
+    const src = amharicAudio(text);
     return src ? { src } : null;
   }
 

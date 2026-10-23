@@ -4687,6 +4687,138 @@ body:has(.learn-app) .site-footer {
   color: var(--text-muted);
 }
 
+/* ---------- one mountain, from the trailhead to the summit flag ---------- */
+
+.climb {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 36px;
+  border-radius: 32px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #9fd2f1 0%, #c4e5f7 50%, #e3f3fb 100%);
+}
+
+.climb-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.climb-art svg {
+  display: block;
+  max-width: none;
+}
+
+.climb > :not(.climb-art) {
+  position: relative;
+  z-index: 1;
+}
+
+.learn-app .climb .summit,
+.learn-app .climb .summit.zone-locked {
+  min-height: 0;
+  padding: 34px 20px 210px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  overflow: visible;
+  justify-content: center;
+  text-align: center;
+  filter: none;
+  opacity: 1;
+}
+
+.learn-app .climb .summit-text {
+  align-items: center;
+  margin-inline: auto;
+}
+
+.learn-app .climb .summit-text .kicker {
+  color: #2f5d7c;
+}
+
+.learn-app .climb .summit-text p {
+  color: #3f6178;
+}
+
+.learn-app .climb .summit-walia {
+  right: auto;
+  left: calc(50% - 150px);
+  bottom: 70px;
+}
+
+.learn-app .climb .camp-divider {
+  justify-content: center;
+  color: #4d5866;
+}
+
+.learn-app .climb .camp-divider::before,
+.learn-app .climb .camp-divider::after {
+  display: none;
+}
+
+.learn-app .climb .camp-divider span {
+  max-width: calc(100% - 32px);
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 3px 0 rgba(40, 60, 80, 0.12);
+  font-size: 12px;
+}
+
+/* a sandy footpath winding up the whole mountain */
+.learn-app .trail-line path.trail-sand-edge,
+.learn-app .trail-line path.trail-sand,
+.learn-app .trail-line path.trail-dots {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.learn-app .trail-line path.trail-sand-edge {
+  stroke: #cdb47a;
+  stroke-width: 34;
+  stroke-dasharray: none;
+  opacity: 0.45;
+}
+
+.learn-app .trail-line path.trail-sand {
+  stroke: #f0e3bf;
+  stroke-width: 26;
+  stroke-dasharray: none;
+}
+
+.learn-app .trail-line path.trail-dots {
+  stroke: #fff;
+  stroke-width: 8;
+  stroke-dasharray: 1 17;
+}
+
+.trail-joined .trail-line,
+.trail-joined .trail-stop {
+  z-index: 1;
+}
+
+.learn-app .climb .trailhead {
+  margin-top: 28px;
+  padding: 14px 18px;
+  max-width: 420px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 0 rgba(40, 80, 30, 0.18);
+}
+
+@media (max-width: 640px) {
+  .climb {
+    border-radius: 24px;
+  }
+}
+
 /* ---------- right rail ---------- */
 
 .learn-rail {
@@ -8973,4 +9105,9 @@ body:has(.practice-screen) {
   .tile {
     animation: none;
   }
+}
+
+.learn-app .climb .camp-divider {
+  position: relative;
+  z-index: 2;
 }

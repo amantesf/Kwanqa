@@ -308,12 +308,15 @@ export default function Trail({
   hornScale = 1,
   waliaSize = 74,
   scenery,
+  connect = false,
 }: {
   stops: TrailStop[];
   hornScale?: number;
   waliaSize?: number;
   /** Draws the camp as a mountain behind the trail. */
   scenery?: Scenery;
+  /** Draws a sandy footpath that runs on past the first and last stops, so camps join into one trail. */
+  connect?: boolean;
 }) {
   const height = stops.length * ROW;
   const rowOf = (i: number) => stops.length - 1 - i;
@@ -333,13 +336,33 @@ export default function Trail({
     }
   });
 
+  // Run the path on below the first stop and above the last, to meet the camps on either side.
+  const REACH = 120;
+  let joined = path;
+  if (connect && stops.length) {
+    const first = point(0);
+    const last = point(stops.length - 1);
+    joined =
+      `M ${WIDTH / 2} ${height + REACH} C ${WIDTH / 2} ${height + REACH / 2}, ${first.x} ${first.y + ROW / 2}, ${first.x} ${first.y}` +
+      path.replace(/^M [^ ]+ [^ ]+/, '') +
+      ` C ${last.x} ${last.y - ROW / 2}, ${WIDTH / 2} ${-REACH / 2}, ${WIDTH / 2} ${-REACH}`;
+  }
+
   return (
-    <div className={`trail${scenery ? ' trail-scenic' : ''}`} style={{ width: WIDTH, height }}>
+    <div className={`trail${scenery ? ' trail-scenic' : ''}${connect ? ' trail-joined' : ''}`} style={{ width: WIDTH, height }}>
       {scenery && stops.length > 0 && (
         <Mountain scenery={scenery} peakX={point(stops.length - 1).x} height={height} />
       )}
       <svg className="trail-line" width={WIDTH} height={height} aria-hidden>
-        <path d={path} />
+        {connect ? (
+          <>
+            <path className="trail-sand-edge" d={joined} />
+            <path className="trail-sand" d={joined} />
+            <path className="trail-dots" d={joined} />
+          </>
+        ) : (
+          <path d={path} />
+        )}
       </svg>
 
       {stops.map((stop, i) => {

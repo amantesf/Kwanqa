@@ -14,10 +14,176 @@ const enG = (english: string, man: string, woman: string) => ({ m: en(english, m
 const THANKS = [{ say: 'thank you' }, { say: 'thanks' }, { pattern: /\bthank/ }];
 const NAME = /\b(my name is|my name s|i am|i m|im|call me|it s|its|this is)\b \S+/;
 
+const BYE = /\b(bye|goodbye|see you|later|take care)\b/;
+const YOU_TOO = /\b(you too|same to you|bye)\b/;
+const NUMBER = /\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/;
+
 export const englishConversations: Conversation[] = [
+  // ---------------------------------------------------------------- Beginner
+  // Short questions with simple answers, for learners just starting English.
+  {
+    slug: 'en-hello',
+    lang: 'en',
+    title: 'Saying hello',
+    amharicTitle: 'ሰላምታ',
+    level: 'beginner',
+    blurb: 'Greet Walia in English, say how you are, and tell him your name and where you’re from.',
+    turns: [
+      {
+        walia: enG('Hi! How are you?', 'ሰላም! እንዴት ነህ?', 'ሰላም! እንዴት ነሽ?'),
+        goal: 'Say how you are, like “I’m fine, thank you.”',
+        answers: [{ pattern: /\b(fine|good|great|ok|okay|well|not bad)\b/ }],
+        example: en('I’m fine, thank you. And you?', 'ደህና ነኝ፣ አመሰግናለሁ። አንተስ?'),
+      },
+      {
+        walia: enG('I’m good, thanks! What’s your name?', 'ደህና ነኝ፣ አመሰግናለሁ! ስምህ ማን ነው?', 'ደህና ነኝ፣ አመሰግናለሁ! ስምሽ ማን ነው?'),
+        goal: 'Say your name, like “My name is Hana.”',
+        answers: [{ pattern: NAME }],
+        example: en('My name is Hana.', 'ስሜ ሃና ነው።'),
+      },
+      {
+        walia: enG('Nice to meet you! Where are you from?', 'ስለተዋወቅን ደስ ብሎኛል! ከየት ነህ?', 'ስለተዋወቅን ደስ ብሎኛል! ከየት ነሽ?'),
+        goal: 'Say where you are from, like “I’m from Ethiopia.”',
+        answers: [{ pattern: /\bfrom \S+/ }],
+        example: en('I’m from Ethiopia.', 'ከኢትዮጵያ ነኝ።'),
+      },
+      {
+        walia: enG('Do you speak English?', 'እንግሊዝኛ ትናገራለህ?', 'እንግሊዝኛ ትናገሪያለሽ?'),
+        goal: 'Say yes, no, or a little.',
+        answers: [{ pattern: /\b(yes|no|little|bit|some)\b/ }],
+        example: en('Yes, a little.', 'አዎ፣ ትንሽ።'),
+      },
+      {
+        walia: en('Great! See you later!', 'በጣም ጥሩ! በኋላ እንገናኝ!'),
+        goal: 'Say goodbye, like “Bye! See you later.”',
+        answers: [{ pattern: BYE }, ...THANKS],
+        example: en('Bye! See you later.', 'ደህና ሁን! በኋላ እንገናኝ።'),
+      },
+    ],
+  },
+  {
+    slug: 'en-family',
+    lang: 'en',
+    title: 'Your family',
+    amharicTitle: 'ቤተሰብ',
+    level: 'beginner',
+    blurb: 'Tell Walia about your brothers and sisters, your mom, and where your family lives.',
+    turns: [
+      {
+        walia: enG('Do you have brothers or sisters?', 'ወንድም ወይም እህት አለህ?', 'ወንድም ወይም እህት አለሽ?'),
+        goal: 'Say yes or no, and how many, like “Yes, I have two sisters.”',
+        answers: [{ pattern: /\b(yes|no|brother|brothers|sister|sisters)\b/ }],
+        example: en('Yes, I have two sisters.', 'አዎ፣ ሁለት እህቶች አሉኝ።'),
+      },
+      {
+        walia: enG('What is your mother’s name?', 'የእናትህ ስም ማን ነው?', 'የእናትሽ ስም ማን ነው?'),
+        goal: 'Say your mother’s name, like “Her name is Almaz.”',
+        answers: [{ pattern: /\b(name is|name s|she is|she s|it s|its)\b \S+/ }],
+        example: en('Her name is Almaz.', 'ስሟ አልማዝ ነው።'),
+      },
+      {
+        walia: enG('Where does your family live?', 'ቤተሰብህ የት ይኖራሉ?', 'ቤተሰብሽ የት ይኖራሉ?'),
+        goal: 'Say where your family lives, like “They live in Addis Ababa.”',
+        answers: [{ pattern: /\b(live|lives|living|in)\b \S+/ }],
+        example: en('They live in Addis Ababa.', 'አዲስ አበባ ይኖራሉ።'),
+      },
+      {
+        walia: enG('Do you have children?', 'ልጆች አሉህ?', 'ልጆች አሉሽ?'),
+        goal: 'Say yes or no, like “Yes, one son” or “No, not yet.”',
+        answers: [{ pattern: /\b(yes|no|son|sons|daughter|daughters|children|kids|not yet)\b/ }],
+        example: en('No, not yet.', 'የለኝም፣ ገና ነው።'),
+      },
+      {
+        walia: enG('That’s nice! Say hello to your family!', 'ደስ ይላል! ለቤተሰብህ ሰላም በልልኝ!', 'ደስ ይላል! ለቤተሰብሽ ሰላም በይልኝ!'),
+        goal: 'Say thank you, or “OK, I will!”',
+        answers: [...THANKS, { pattern: /\b(ok|okay|sure|i will|will do|bye)\b/ }],
+        example: en('Thank you, I will!', 'አመሰግናለሁ፣ እላለሁ!'),
+      },
+    ],
+  },
+  {
+    slug: 'en-shop',
+    lang: 'en',
+    title: 'At the shop',
+    amharicTitle: 'ሱቅ',
+    level: 'beginner',
+    blurb: 'Walia works at a small shop. Ask for what you want, say how many, and pay.',
+    turns: [
+      {
+        walia: enG('Hello! Can I help you?', 'ሰላም! ልርዳህ?', 'ሰላም! ልርዳሽ?'),
+        goal: 'Say what you want, like “Yes, I want bread, please.”',
+        answers: [{ pattern: /\b(i want|i need|i d like|i would like|can i have|do you have|please)\b/ }],
+        example: en('Yes, I want bread, please.', 'አዎ፣ ዳቦ እፈልጋለሁ፣ እባክህ።'),
+      },
+      {
+        walia: en('How many?', 'ስንት?'),
+        goal: 'Say a number, like “Two, please.”',
+        answers: [{ pattern: NUMBER }],
+        example: en('Two, please.', 'ሁለት፣ እባክህ።'),
+      },
+      {
+        walia: en('Anything else?', 'ሌላ ነገር?'),
+        goal: 'Say no, that’s all, or ask for one more thing.',
+        answers: [{ pattern: /\b(no|yes|that s all|that s it|nothing|and|i want|please)\b/ }],
+        example: en('No, that’s all. Thank you.', 'አይ፣ በቃ። አመሰግናለሁ።'),
+      },
+      {
+        walia: en('That’s five dollars.', 'አምስት ዶላር ነው።'),
+        goal: 'Pay, like “Here you go.”',
+        answers: [{ pattern: /\b(here|ok|okay|card|cash)\b/ }, ...THANKS],
+        example: en('Here you go.', 'እንካ።'),
+      },
+      {
+        walia: en('Thank you! Have a nice day!', 'አመሰግናለሁ! መልካም ቀን!'),
+        goal: 'Say thanks, or “You too!”',
+        answers: [...THANKS, { pattern: YOU_TOO }],
+        example: en('Thank you, you too!', 'አመሰግናለሁ፣ ላንተም!'),
+      },
+    ],
+  },
+  {
+    slug: 'en-day',
+    lang: 'en',
+    title: 'Your day',
+    amharicTitle: 'የዕለት ቀን',
+    level: 'beginner',
+    blurb: 'Good morning! Tell Walia how you slept, what time it is, and what you want for breakfast.',
+    turns: [
+      {
+        walia: enG('Good morning! Did you sleep well?', 'እንደምን አደርክ? በደንብ ተኛህ?', 'እንደምን አደርሽ? በደንብ ተኛሽ?'),
+        goal: 'Say yes or no, like “Yes, I slept well.”',
+        answers: [{ pattern: /\b(yes|no|well|good|fine|ok|okay|slept)\b/ }],
+        example: en('Yes, I slept well. Thank you.', 'አዎ፣ በደንብ ተኛሁ። አመሰግናለሁ።'),
+      },
+      {
+        walia: en('What time is it?', 'ስንት ሰዓት ነው?'),
+        goal: 'Say the time, like “It’s eight o’clock.”',
+        answers: [{ pattern: NUMBER }, { pattern: /\b(o clock|half|quarter|morning)\b/ }],
+        example: en('It’s eight o’clock.', 'ሁለት ሰዓት ነው።'),
+      },
+      {
+        walia: enG('Do you work today?', 'ዛሬ ትሠራለህ?', 'ዛሬ ትሠሪያለሽ?'),
+        goal: 'Say yes or no, like “Yes, I work today” or “No, I go to school.”',
+        answers: [{ pattern: /\b(yes|no|work|school|study|day off)\b/ }],
+        example: en('Yes, I work today.', 'አዎ፣ ዛሬ እሠራለሁ።'),
+      },
+      {
+        walia: enG('What do you want for breakfast?', 'ለቁርስ ምን ትፈልጋለህ?', 'ለቁርስ ምን ትፈልጊያለሽ?'),
+        goal: 'Say what you want to eat or drink, like “I want bread and tea.”',
+        answers: [{ pattern: /\b(i want|i d like|i would like|eggs|egg|bread|tea|coffee|milk|fruit|nothing)\b/ }],
+        example: en('I want bread and tea.', 'ዳቦና ሻይ እፈልጋለሁ።'),
+      },
+      {
+        walia: enG('Have a good day!', 'መልካም ቀን ይሁንልህ!', 'መልካም ቀን ይሁንልሽ!'),
+        goal: 'Say thanks, or “You too!”',
+        answers: [...THANKS, { pattern: YOU_TOO }],
+        example: en('Thanks, you too!', 'አመሰግናለሁ፣ ላንተም!'),
+      },
+    ],
+  },
+
   // ------------------------------------------------------------ Intermediate
-  // English learners already know the basics, so there are no Beginner calls:
-  // everything starts with real, everyday situations.
+  // Real, everyday situations.
   {
     slug: 'en-meeting',
     lang: 'en',

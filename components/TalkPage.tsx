@@ -100,7 +100,7 @@ function pageText(track: Track) {
       en ? (g === 'm' ? 'እንደ ወንድ አናግረኝ · Talk to me as a man' : 'እንደ ሴት አናግሪኝ · Talk to me as a woman') : g === 'm' ? 'Talk to me as a man' : 'Talk to me as a woman',
     pickTitle: both('Pick a call', 'ጥሪ ይምረጡ'),
     pickNote: en
-      ? 'እያንዳንዱ ጥሪ ጥቂት ደቂቃዎች ነው። ከጀማሪ ይጀምሩ። Each call is a few minutes long. Start with Beginner.'
+      ? 'እያንዳንዱ ጥሪ ጥቂት ደቂቃዎች ነው። ከመካከለኛ ይጀምሩ። Each call is a few minutes long. Start with Intermediate.'
       : 'Each call is a few minutes long. Start with Beginner and work your way up.',
     levelLabel: (id: Level, label: string) =>
       en ? `${{ beginner: 'ጀማሪ', intermediate: 'መካከለኛ', advanced: 'የላቀ' }[id]} · ${label}` : label,
@@ -108,7 +108,7 @@ function pageText(track: Track) {
       en
         ? {
             beginner: 'አጭር ጥያቄዎች፣ ቀላል መልሶች። Short questions with simple answers. Start here.',
-            intermediate: 'የዕለት ተዕለት ጉዳዮች፦ መንገድ፣ ገበያ፣ ስልክ። Everyday errands: directions, the market, phone calls.',
+            intermediate: 'የዕለት ተዕለት ሁኔታዎች፦ ሰው መተዋወቅ፣ ምግብ ቤት፣ አከራይ፣ መንገድ፣ ገበያ፣ ስልክ። Everyday situations: meeting people, restaurants, your landlord, directions, the market, phone calls.',
             advanced: 'ስለ ሕይወትዎ ክፍት ጥያቄዎች። በሙሉ ዓረፍተ ነገር ይመልሱ። Open questions about your life. Answer in full sentences.',
           }[id]
         : blurb,
@@ -284,8 +284,10 @@ export default function TalkPage() {
   const [picked, setPicked] = useState<Level | null>(null);
   const levelDone = (id: Level) =>
     conversations.filter(c => c.level === id).every(c => callBest(climb, c.slug) !== null);
-  const level = picked ?? LEVELS.find(l => !levelDone(l.id))?.id ?? 'advanced';
-  const nextLevel = LEVELS[LEVELS.findIndex(l => l.id === level) + 1];
+  // Only levels with calls get a tab (English learners start at Intermediate).
+  const levels = LEVELS.filter(l => conversations.some(c => c.level === l.id));
+  const level = picked ?? levels.find(l => !levelDone(l.id))?.id ?? levels[levels.length - 1]?.id ?? 'advanced';
+  const nextLevel = levels[levels.findIndex(l => l.id === level) + 1];
   const [asking, setAsking] = useState<Conversation | null>(null);
   const [askingOnPhone, setAskingOnPhone] = useState(false);
 
@@ -445,7 +447,7 @@ export default function TalkPage() {
               </div>
 
               <div className="talk-tabs" role="tablist" aria-label="Difficulty">
-                {LEVELS.map(l => (
+                {levels.map(l => (
                   <button
                     key={l.id}
                     type="button"

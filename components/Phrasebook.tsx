@@ -1,5 +1,6 @@
 'use client';
 
+import SayButton from '@/components/SayButton';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -90,8 +91,8 @@ export default function Phrasebook() {
                 const key = `${li}-${pi}`;
                 const hidden = quiz && !revealed.has(key);
                 return (
+                  <div key={key} className="phrasebook-row-wrap">
                   <button
-                    key={key}
                     type="button"
                     className="phrasebook-row"
                     onClick={() => reveal(key)}
@@ -103,6 +104,8 @@ export default function Phrasebook() {
                       {hidden ? 'Tap to reveal' : english ? phrase.amharic : phrase.english}
                     </span>
                   </button>
+                  <SayButton text={english ? phrase.english : phrase.amharic} track={track} className="say-corner" />
+                  </div>
                 );
               })}
             </div>
@@ -114,7 +117,8 @@ export default function Phrasebook() {
               {lesson.dialogue.map((line, di) => (
                 <div key={di} className={`phrasebook-line${line.speaker === 'B' ? ' b' : ''}`}>
                   <span className="phrasebook-speaker">{line.speaker}</span>
-                  <div>
+                  <div className="phrasebook-line-text">
+                    <SayButton text={english ? line.english : line.amharic} track={track} className="say-corner" />
                     <div className="phrasebook-am small-am">{english ? line.english : line.amharic}</div>
                     {!english && <div className="phrasebook-tr">{line.transliteration}</div>}
                     <div className="phrasebook-en">{english ? line.amharic : line.english}</div>

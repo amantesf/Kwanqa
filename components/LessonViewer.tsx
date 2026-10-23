@@ -1,5 +1,6 @@
 'use client';
 
+import SayButton from '@/components/SayButton';
 import { useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
@@ -49,13 +50,17 @@ function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolea
             </span>
           </>
         );
-        return quiz ? (
-          <button key={idx} type="button" className="phrase-card" onClick={() => reveal(idx)}>
-            {body}
-          </button>
-        ) : (
-          <div key={idx} className="phrase-card">
-            {body}
+        // The speaker sits beside the card, not inside it: a quiz card is itself a button.
+        return (
+          <div key={idx} className="phrase-card-wrap">
+            {quiz ? (
+              <button type="button" className="phrase-card" onClick={() => reveal(idx)}>
+                {body}
+              </button>
+            ) : (
+              <div className="phrase-card">{body}</div>
+            )}
+            <SayButton text={side.learn} track={track} className="say-corner" />
           </div>
         );
       })}
@@ -196,6 +201,7 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
                         <span className="person-dot">B</span>
                       )}
                       <div className="bubble">
+                        <SayButton text={sides(line, track).learn} track={track} className="say-corner" />
                         <span className="am">{sides(line, track).learn}</span>
                         {sides(line, track).say && <span className="tr">{sides(line, track).say}</span>}
                         <span className="en">{sides(line, track).meaning}</span>

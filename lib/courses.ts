@@ -112,47 +112,46 @@ export const courseContent: Record<string, Course> = {
           {
             amharic: 'እባክህ ስምህ?',
             transliteration: 'əbbakih, səmməh?',
-            english: 'Please, your name? (to a man, polite)',
+            english: 'Your name, please? (to a man)',
           },
           {
             amharic: 'እባክሽ ስምሽ?',
             transliteration: 'əbbakish, səmməsh?',
-            english: 'Please, your name? (to a woman, polite)',
+            english: 'Your name, please? (to a woman)',
+          },
+          {
+            amharic: 'ከአሜሪካ ነኝ።',
+            transliteration: 'kə Amerika neñ.',
+            english: 'I am from America.',
           },
           {
             amharic: 'ከአሜሪካ መጣሁ።',
             transliteration: 'kə Amerika metahu.',
-            english: 'I came from America / I am from America.',
+            english: 'I came from America.',
           },
           {
             amharic: 'ከኢትዮጵያ መጣሁ።',
             transliteration: 'kə Ityopya metahu.',
-            english: 'I came from Ethiopia / I am from Ethiopia.',
+            english: 'I came from Ethiopia.',
           },
         ],
         dialogue: [
           {
             speaker: 'A',
-            amharic: 'ሰላም፣ ስሜ ዳዊት ነው።',
-            transliteration: 'selam, səme Dawit new.',
-            english: 'Hello, my name is Dawit.',
+            amharic: 'ሰላም፣ ስሜ ዳዊት ነው። ስምህ ማን ነው?',
+            transliteration: 'selam, səme Dawit new. səmməh man new?',
+            english: 'Hello, my name is Dawit. What is your name?',
           },
           {
             speaker: 'B',
-            amharic: 'እባክህ ስምህ?',
-            transliteration: 'əbbakih, səmməh?',
-            english: 'Please, your name? (to a man, polite)',
+            amharic: 'ስሜ አሌክስ ነው። ከአሜሪካ መጣሁ።',
+            transliteration: 'səme Alex new. kə Amerika metahu.',
+            english: 'My name is Alex. I came from America.',
           },
           {
             speaker: 'A',
-            amharic: 'ስሜ አሌክስ ነው። ከአሜሪካ መጣሁ።',
-            transliteration: 'səme Alex new. kə Amerika metahu.',
-            english: 'My name is Alex. I am from America.',
-          },
-          {
-            speaker: 'B',
-            amharic: 'ደህና መጣህ፣ አሌክስ።',
-            transliteration: 'dehna metah, Alex.',
+            amharic: 'እንኳን ደህና መጣህ፣ አሌክስ።',
+            transliteration: 'ənkwan dehna metah, Alex.',
             english: 'Welcome, Alex.',
           },
         ],
@@ -168,14 +167,14 @@ export const courseContent: Record<string, Course> = {
             english: 'Thank you (formal / general)',
           },
           {
-            amharic: 'እጅግ አመሰግናለሁ',
-            transliteration: 'əjjəg amesegenallo',
+            amharic: 'በጣም አመሰግናለሁ',
+            transliteration: 'betam amesegenallo',
             english: 'Thank you very much.',
           },
           {
-            amharic: 'የለም፣ በደህና',
-            transliteration: 'yelem, bedehna',
-            english: 'You’re welcome / It’s nothing, be well.',
+            amharic: 'ምንም አይደለም',
+            transliteration: 'minim aydelem',
+            english: 'You’re welcome / It’s nothing.',
           },
           {
             amharic: 'ይቅርታ',
@@ -183,33 +182,33 @@ export const courseContent: Record<string, Course> = {
             english: 'Sorry / Excuse me',
           },
           {
-            amharic: 'እባክህ ይቅርታ',
-            transliteration: 'əbbakih, yiqirta',
-            english: 'Please, forgive me (to a man, polite)',
+            amharic: 'ይቅርታ አድርግልኝ',
+            transliteration: 'yiqirta adrigilliñ',
+            english: 'Please forgive me (to a man)',
           },
           {
-            amharic: 'እባክሽ ይቅርታ',
-            transliteration: 'əbbakish, yiqirta',
-            english: 'Please, forgive me (to a woman, polite)',
+            amharic: 'ይቅርታ አድርጊልኝ',
+            transliteration: 'yiqirta adrigiilliñ',
+            english: 'Please forgive me (to a woman)',
           },
         ],
         dialogue: [
           {
             speaker: 'A',
-            amharic: 'ይቅርታ፣ በመንገድህ ቆመሁ።',
-            transliteration: 'yiqirta, be-mengedih qomehu.',
-            english: 'Sorry, I stood in your way.',
+            amharic: 'ይቅርታ፣ መንገድህን ዘጋሁ።',
+            transliteration: 'yiqirta, mengedihin zegahu.',
+            english: 'Sorry, I was blocking your way.',
           },
           {
             speaker: 'B',
-            amharic: 'የለም፣ በደህና።',
-            transliteration: 'yelem, bedehna.',
-            english: 'No problem, be well.',
+            amharic: 'ምንም አይደለም።',
+            transliteration: 'minim aydelem.',
+            english: 'It’s nothing / no problem.',
           },
           {
             speaker: 'A',
-            amharic: 'እጅግ አመሰግናለሁ።',
-            transliteration: 'əjjəg amesegenallo.',
+            amharic: 'በጣም አመሰግናለሁ።',
+            transliteration: 'betam amesegenallo.',
             english: 'Thank you very much.',
           },
         ],
@@ -252,7 +251,7 @@ export const courseContent: Record<string, Course> = {
         phrases: [
           { amharic: 'ቻው', transliteration: 'chaw', english: 'bye (casual)' },
           { amharic: 'ደህና ሁን', transliteration: 'dehna hun', english: 'goodbye / stay well (to a man)' },
-          { amharic: 'ደህና ሁኚ', transliteration: 'dehna hugn', english: 'goodbye / stay well (to a woman)' },
+          { amharic: 'ደህና ሁኚ', transliteration: 'dehna hunyi', english: 'goodbye / stay well (to a woman)' },
           { amharic: 'ደህና ሁኑ', transliteration: 'dehna hunu', english: 'goodbye (to a group, or politely)' },
           { amharic: 'በኋላ እንገናኝ', transliteration: 'behwala inigenagn', english: 'see you later' },
           { amharic: 'ነገ እንገናኝ', transliteration: 'nege inigenagn', english: 'see you tomorrow' },
@@ -362,7 +361,7 @@ export const courseContent: Record<string, Course> = {
           {
             speaker: 'B',
             amharic:
-              'አንድ፣ ሁለት፣ ሶስት፣ አራት፣ አምስት፣ ስድስት፣ ሰባት፣ ስምንት፣ ዘጠኝ፣ አስር።',
+              'አንድ፣ ሁለት፣ ሦስት፣ አራት፣ አምስት፣ ስድስት፣ ሰባት፣ ስምንት፣ ዘጠኝ፣ አስር።',
             transliteration:
               'and, hulət, sost, arat, aməst, sɨdɨst, sebāt, səmənt, zäteny, asir.',
             english: 'One, two, three, four, five, six, seven, eight, nine, ten.',
@@ -395,8 +394,8 @@ export const courseContent: Record<string, Course> = {
           {
             speaker: 'B',
             amharic:
-              'አባቴና እናቴ በደህና ናቸው፣ እህቴም በደህና ናት።',
-            transliteration: 'abate-na ənnate bedehna nachəw, əhtem bedehna nat.',
+              'አባቴና እናቴ ደህና ናቸው፣ እህቴም ደህና ናት።',
+            transliteration: 'abate-na ənnate dehna nachəw, əhtem dehna nat.',
             english: 'My father and mother are well, my sister is also well.',
           },
         ],
@@ -419,7 +418,7 @@ export const courseContent: Record<string, Course> = {
           },
           {
             amharic: 'አሁን አልችልም',
-            transliteration: 'ahun alchilem',
+            transliteration: 'ahun alchilim',
             english: 'I can’t right now.',
           },
           {
@@ -430,15 +429,15 @@ export const courseContent: Record<string, Course> = {
           {
             amharic: 'ቀስ ብለህ ተናገር',
             transliteration: 'qes bileh tenager',
-            english: 'Speak slowly, please. (to a man)',
+            english: 'Speak slowly. (to a man)',
           },
         ],
         dialogue: [
           {
             speaker: 'A',
-            amharic: 'ጊዜ አለህ? ትንሽ ማነጋገር እፈልጋለሁ።',
-            transliteration: 'gize alleh? tɨnɨsh manəgager əfelləgaləhu.',
-            english: 'Do you have time? I would like to talk a little.',
+            amharic: 'ጊዜ አለህ? ትንሽ ላናግርህ እፈልጋለሁ።',
+            transliteration: 'gize alleh? tɨnɨsh lanagrih əfelləgalləhu.',
+            english: 'Do you have time? I’d like to talk with you a little.',
           },
           {
             speaker: 'B',
@@ -790,7 +789,7 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'እሁድ', transliteration: 'ihud', english: 'Sunday' },
           { amharic: 'ሰኞ', transliteration: 'segno', english: 'Monday' },
           { amharic: 'ማክሰኞ', transliteration: 'maksegno', english: 'Tuesday' },
-          { amharic: 'ረቡዕ', transliteration: 'rob', english: 'Wednesday' },
+          { amharic: 'ረቡዕ', transliteration: 'rebu', english: 'Wednesday' },
           { amharic: 'ሐሙስ', transliteration: 'hamus', english: 'Thursday' },
           { amharic: 'ዓርብ', transliteration: 'arb', english: 'Friday' },
           { amharic: 'ቅዳሜ', transliteration: 'qidame', english: 'Saturday' },

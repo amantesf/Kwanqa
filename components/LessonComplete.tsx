@@ -3,6 +3,7 @@
 // The "Lesson complete!" screen, like Duolingo's: Walia hops up the mountain
 // to the flag at the top, celebrates, and the lesson's results sit below.
 
+import type { Track } from '@/lib/courses';
 import Image from 'next/image';
 import GrassIcon from '@/components/GrassIcon';
 
@@ -15,13 +16,15 @@ type Props = {
   note?: string;
   finishLabel: string;
   onFinish: () => void;
+  /** English learners get Amharic first, with the English beside it. */
+  track?: Track;
 };
 
-function accuracyLabel(accuracy: number) {
-  if (accuracy === 100) return 'Amazing';
-  if (accuracy >= 80) return 'Great';
-  if (accuracy >= 60) return 'Good';
-  return 'Keep going';
+function accuracyLabel(accuracy: number, both: (en: string, am: string) => string) {
+  if (accuracy === 100) return both('Amazing', 'ድንቅ');
+  if (accuracy >= 80) return both('Great', 'በጣም ጥሩ');
+  if (accuracy >= 60) return both('Good', 'ጥሩ');
+  return both('Keep going', 'ቀጥል');
 }
 
 /** The little mountain Walia climbs: three stones on a footpath up to a flag. */
@@ -114,7 +117,9 @@ export default function LessonComplete({
   note,
   finishLabel,
   onFinish,
+  track,
 }: Props) {
+  const both = (en: string, am: string) => (track === 'english' ? `${am} · ${en}` : en);
   return (
     <div className="practice practice-screen lesson-complete">
       <div className="lc-body">
@@ -138,17 +143,17 @@ export default function LessonComplete({
           </div>
         </div>
 
-        <h2 className="lc-title">Lesson complete!</h2>
+        <h2 className="lc-title">{both('Lesson complete!', 'ትምህርቱ ተጠናቀቀ!')}</h2>
 
         <div className="lc-stats">
           <div className="lc-stat gold">
-            <span className="lc-stat-label">Grass</span>
+            <span className="lc-stat-label">{both('Grass', 'ሳር')}</span>
             <span className="lc-stat-value">
               <GrassIcon size={30} /> +{earned}
             </span>
           </div>
           <div className="lc-stat green">
-            <span className="lc-stat-label">{accuracyLabel(accuracy)}</span>
+            <span className="lc-stat-label">{accuracyLabel(accuracy, both)}</span>
             <span className="lc-stat-value">
               <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden>
                 <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="3" />
@@ -159,7 +164,7 @@ export default function LessonComplete({
             </span>
           </div>
           <div className="lc-stat terracotta">
-            <span className="lc-stat-label">Altitude</span>
+            <span className="lc-stat-label">{both('Altitude', 'ከፍታ')}</span>
             <span className="lc-stat-value">
               <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden>
                 <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill="currentColor" />
@@ -167,14 +172,14 @@ export default function LessonComplete({
               </svg>
               {altitude.toLocaleString()} m
             </span>
-            {altitudeGain > 0 && <span className="lc-stat-sub">+{altitudeGain} m today</span>}
+            {altitudeGain > 0 && <span className="lc-stat-sub">+{altitudeGain} m {both('today', 'ዛሬ')}</span>}
           </div>
         </div>
 
-        {hornsGrew && <p className="grew">Walia’s horns grew a new ridge!</p>}
+        {hornsGrew && <p className="grew">{both('Walia’s horns grew a new ridge!', 'የዋሊያ ቀንዶች አደጉ!')}</p>}
         {note && (
           <div className="lesson-note">
-            <span className="lesson-note-label">Did you know?</span>
+            <span className="lesson-note-label">{both('Did you know?', 'ያውቁ ኖሯል?')}</span>
             <p>{note}</p>
           </div>
         )}

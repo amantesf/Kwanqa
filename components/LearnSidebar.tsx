@@ -61,6 +61,15 @@ const ICONS: Record<string, ReactNode> = {
   ),
 };
 
+// The English alphabet's tile, for English learners.
+const ABC_ICON = (
+  <svg {...glyph}>
+    <text x="12" y="18.5" textAnchor="middle" fontSize="17" fontWeight="900" fill="#fff">
+      A
+    </text>
+  </svg>
+);
+
 type Item = {
   key: SidebarPage | 'talk' | 'proverbs' | 'holidays';
   href: string;
@@ -95,7 +104,10 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
   const learn: Item[] = [
     { key: 'learn', href: `/courses?track=${track}`, label: 'Learn', amharic: 'ትምህርት', color: 'var(--primary)', soft: 'var(--primary-soft)', edge: 'var(--primary-shadow)' },
     { key: 'phrasebook', href: `/phrasebook?track=${track}`, label: 'Phrasebook', amharic: 'ሐረጎች', color: 'var(--blue)', soft: 'var(--blue-soft)', edge: 'var(--blue-shadow)' },
-    { key: 'alphabet', href: '/fidel', label: 'Alphabet', amharic: 'ፊደል', color: 'var(--gold)', soft: 'var(--gold-soft)', edge: 'var(--gold-shadow)' },
+    // English learners already read ፊደል, so their alphabet is the English ABC.
+    track === 'english'
+      ? { key: 'alphabet', href: '/abc', label: 'Alphabet', amharic: 'ABC', color: 'var(--gold)', soft: 'var(--gold-soft)', edge: 'var(--gold-shadow)' }
+      : { key: 'alphabet', href: '/fidel', label: 'Alphabet', amharic: 'ፊደል', color: 'var(--gold)', soft: 'var(--gold-soft)', edge: 'var(--gold-shadow)' },
     { key: 'talk', href: '/talk', label: 'Talk', amharic: 'ጨዋታ', color: 'var(--green)', soft: 'var(--green-soft)', edge: 'var(--green-dark)' },
   ];
   const culture: Item[] = [
@@ -128,7 +140,12 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
       <nav className="learn-nav" aria-label="Learn">
         <span className="learn-nav-heading">Learn</span>
         {learn.map(item => (
-          <NavLink key={item.key} item={item} icon={ICONS[item.key]} current={active === item.key} />
+          <NavLink
+            key={item.key}
+            item={item}
+            icon={item.key === 'alphabet' && track === 'english' ? ABC_ICON : ICONS[item.key]}
+            current={active === item.key}
+          />
         ))}
         <span className="learn-nav-heading">Culture</span>
         {culture.map(item => (

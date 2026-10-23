@@ -3,6 +3,9 @@
 // Walia is a he, so learners address him with the male forms (አንተስ, ደህና ሁን).
 // Walia's own lines change with the learner: ነህ to a man, ነሽ to a woman.
 
+import { englishConversations } from '@/lib/conversations-english';
+import type { Track } from '@/lib/courses';
+
 export type Gender = 'm' | 'f';
 
 export type Line = { amharic: string; transliteration: string; english: string };
@@ -38,6 +41,12 @@ export const LEVELS: { id: Level; label: string; blurb: string }[] = [
 
 export type Conversation = {
   slug: string;
+  /**
+   * The language being practised: Amharic (the default), or English for
+   * Amharic speakers learning English. In English calls a Line's `english` is
+   * what's said and its `amharic` is the meaning (see conversations-english.ts).
+   */
+  lang?: 'en';
   title: string;
   amharicTitle: string;
   level: Level;
@@ -591,6 +600,19 @@ export const conversations: Conversation[] = [
   },
 ];
 
+/** Every call, in both languages. */
+export const allConversations: Conversation[] = [...conversations, ...englishConversations];
+
+/** The calls for a course: Amharic calls for Amharic learners, English calls for English learners. */
+export function conversationsFor(track: Track): Conversation[] {
+  return track === 'english' ? englishConversations : conversations;
+}
+
+/** What Walia actually says out loud on a line, in the call's language. */
+export function spokenText(line: Line, conversation: Conversation) {
+  return conversation.lang === 'en' ? line.english : line.amharic;
+}
+
 export function waliaLine(turn: Turn, gender: Gender): Line {
   return 'm' in turn.walia ? turn.walia[gender] : turn.walia;
 }
@@ -613,6 +635,7 @@ export function speakableLines(): Set<string> {
 export function normalize(text: string) {
   return text
     .normalize('NFC')
+    .toLowerCase()
     .replace(/[።፣፤፥፦፧፨?!.,;:'"“”‘’()\-…]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -648,7 +671,7 @@ export function check(turn: Turn, heard: string): Verdict {
 
   const ok = turn.answers.some(a =>
     'open' in a
-      ? said.split(' ').filter(w => /[\u1200-\u137F]/.test(w)).length >= a.open
+      ? said.split(' ').filter(w => /[\u1200-\u137Fa-z]/.test(w)).length >= a.open
       : 'pattern' in a
         ? a.pattern.test(said)
         : squash(said).includes(squash(a.say)) || distance(a.say, said) <= 0.34,

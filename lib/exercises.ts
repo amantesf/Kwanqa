@@ -1,5 +1,5 @@
 import type { LessonSection, Track } from '@/lib/courses';
-import { PICTURES, pictureFor } from '@/lib/pictures';
+import { PICTURES, pictureFor, type Picture } from '@/lib/pictures';
 
 // Practice questions generated from a lesson's phrases and dialogue. The Amharic
 // course quizzes Amharic; the English course quizzes English, with Amharic as
@@ -117,6 +117,77 @@ function spreadIn(exercises: Exercise[], extra: Exercise[]) {
 // Strip Ethiopic and Latin punctuation so words can be compared and blanked.
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
+/**
+ * "Which one of these is …?" for a word with a picture, plus a harder version
+ * with pictures only. The Amharic course asks in English and answers in
+ * Amharic; the English course asks in Amharic and answers in English.
+ */
+function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercise; read: ChoiceExercise } {
+  const others = shuffle(PICTURES.filter(p => p.amharic !== pictured.amharic)).slice(0, 2);
+  const cards = [pictured, ...others];
+  if (track === 'english') {
+    const pictures = Object.fromEntries(cards.map(p => [p.english, { src: p.src, transliteration: '' }]));
+    const explain = `“${pictured.english}” = ${pictured.amharic}`;
+    return {
+      see: {
+        kind: 'choice',
+        id: 'picture-see',
+        instruction: `“${pictured.amharic}” የትኛው ነው? · Which one is “${pictured.amharic}”?`,
+        prompt: pictured.amharic,
+        options: shuffle(cards.map(p => p.english)),
+        answer: pictured.english,
+        explain,
+        pictures,
+      },
+      read: {
+        kind: 'choice',
+        id: 'picture-read',
+        instruction: 'ለዚህ ቃል ስዕሉን ይንኩ · Tap the picture for this word',
+        prompt: pictured.english,
+        options: shuffle(cards.map(p => p.english)),
+        answer: pictured.english,
+        explain,
+        pictures,
+        hideWords: true,
+      },
+    };
+  }
+  const pictures = Object.fromEntries(cards.map(p => [p.amharic, { src: p.src, transliteration: p.transliteration }]));
+  const explain = `${pictured.amharic} (${pictured.transliteration}) means “${pictured.english}”.`;
+  return {
+    see: {
+      kind: 'choice',
+      id: 'picture-see',
+      instruction: `Which one of these is “${pictured.english}”?`,
+      prompt: pictured.english,
+      options: shuffle(cards.map(p => p.amharic)),
+      answer: pictured.amharic,
+      explain,
+      pictures,
+    },
+    read: {
+      kind: 'choice',
+      id: 'picture-read',
+      instruction: 'Tap the picture for this word',
+      prompt: pictured.amharic,
+      options: shuffle(cards.map(p => p.amharic)),
+      answer: pictured.amharic,
+      explain,
+      pictures,
+      hideWords: true,
+    },
+  };
+}
+
+/** The picture question opens the lesson; the harder one comes back fourth or last. */
+function addPictureExercises(exercises: Exercise[], pictured: Picture | undefined, track: Track) {
+  if (!pictured) return;
+  const { see, read } = pictureExercises(pictured, track);
+  exercises.unshift(see);
+  if (Math.random() < 0.5) exercises.splice(Math.min(3, exercises.length), 0, read);
+  else exercises.push(read);
+}
+
 export function buildExercises(
   lesson: LessonSection,
   courseLessons: LessonSection[],
@@ -124,7 +195,7 @@ export function buildExercises(
   /** The very first lesson of the course opens with a picture question, like Duolingo. */
   firstLesson = false,
 ): Exercise[] {
-  if (track === 'english') return buildEnglishExercises(lesson, courseLessons);
+  if (track === 'english') return buildEnglishExercises(lesson, courseLessons, firstLesson);
   const cards: Card[] = [
     ...(lesson.phrases ?? []),
     ...(lesson.dialogue ?? []).map(({ amharic, transliteration, english }) => ({
@@ -281,36 +352,7 @@ export function buildExercises(
     shuffle(uniqueCards)
       .map(c => pictureFor(c.amharic.replace(PUNCT, '').trim()))
       .find(Boolean) ?? (firstLesson ? shuffle(PICTURES)[0] : undefined);
-  if (pictured) {
-    const others = shuffle(PICTURES.filter(p => p.amharic !== pictured.amharic)).slice(0, 2);
-    const cards = [pictured, ...others];
-    const pictures = Object.fromEntries(cards.map(p => [p.amharic, { src: p.src, transliteration: p.transliteration }]));
-    const explain = `${pictured.amharic} (${pictured.transliteration}) means “${pictured.english}”.`;
-    exercises.unshift({
-      kind: 'choice',
-      id: 'picture-see',
-      instruction: `Which one of these is “${pictured.english}”?`,
-      prompt: pictured.english,
-      options: shuffle(cards.map(p => p.amharic)),
-      answer: pictured.amharic,
-      explain,
-      pictures,
-    });
-    // The harder one comes back fourth or last, so it's never in the same spot.
-    const read: ChoiceExercise = {
-      kind: 'choice',
-      id: 'picture-read',
-      instruction: 'Tap the picture for this word',
-      prompt: pictured.amharic,
-      options: shuffle(cards.map(p => p.amharic)),
-      answer: pictured.amharic,
-      explain,
-      pictures,
-      hideWords: true,
-    };
-    if (Math.random() < 0.5) exercises.splice(Math.min(3, exercises.length), 0, read);
-    else exercises.push(read);
-  }
+  addPictureExercises(exercises, pictured, 'amharic');
 
   // Match pairs as a final round.
   const meanings = new Set<string>();
@@ -382,7 +424,7 @@ function blankWord(text: string) {
   return { sentence, answer: w };
 }
 
-function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSection[]): Exercise[] {
+function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSection[], firstLesson = false): Exercise[] {
   const cards: Card[] = [...(lesson.phrases ?? []), ...(lesson.dialogue ?? [])];
   const seen = new Set<string>();
   const uniqueCards = cards.filter(card => !seen.has(card.english) && seen.add(card.english));
@@ -426,6 +468,7 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
             explain,
             card.amharic,
           );
+          if (ex) ex.revealAudio = card.english; // say the whole line once it's answered
         }
       }
       if (ex) exercises.push(ex);
@@ -444,6 +487,7 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
       `The full line is “${line.english}” (${line.amharic})`,
       line.amharic,
     );
+    if (ex) ex.revealAudio = line.english;
     if (ex) exercises.splice(Math.min(3, exercises.length), 0, ex);
   }
 
@@ -485,6 +529,13 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
       if (ex) enTiles.push(ex);
     });
   spreadIn(exercises, enTiles);
+
+  // Picture questions for a word with a picture that the lesson uses (coffee at
+  // the café, taxi on the bus lesson); the very first lesson gets one too.
+  const mentioned = shuffle(PICTURES).find(p =>
+    uniqueCards.some(c => new RegExp(`\\b${p.english}\\b`, 'i').test(c.english)),
+  );
+  addPictureExercises(exercises, mentioned ?? (firstLesson ? shuffle(PICTURES)[0] : undefined), 'english');
 
   const matchCards = shuffle(uniqueCards)
     .filter(c => c.english.length <= 40)

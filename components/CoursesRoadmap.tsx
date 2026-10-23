@@ -14,6 +14,19 @@ import AddisTaxi from '@/components/AddisTaxi';
 import Elder from '@/components/Elder';
 import GeezNumbers from '@/components/GeezNumbers';
 import Friends from '@/components/Friends';
+
+// Banner art for each camp, matched to what the camp is about.
+const CAMP_ART: Record<string, 'numbers' | 'cup' | 'taxi' | 'friends' | 'elder'> = {
+  'amharic-beginner-2': 'numbers', // Ge'ez numerals
+  'amharic-beginner-3': 'cup', // a sini of buna
+  'amharic-beginner-4': 'taxi', // a blue-and-white Addis taxi
+  'amharic-beginner-5': 'friends', // two friends catching up
+  'amharic-beginner-6': 'elder', // Ababa in his gabi
+  'english-from-amharic-1': 'friends', // hello: two friends greeting
+  'english-from-amharic-2': 'elder', // family
+  'english-from-amharic-3': 'cup', // café and food
+  'english-from-amharic-4': 'taxi', // buses and taxis
+};
 import Mascot from '@/components/Mascot';
 import MountainScene from '@/components/MountainScene';
 import TopStats from '@/components/TopStats';
@@ -257,25 +270,23 @@ export default function CoursesRoadmap() {
       >
         {shownCamp && (
           <div className={`camp-header camp-color-${shownIdx % 6}`}>
-            {/* each camp's own woven basket peeks in from the right */}
-            {shownCamp.slug === 'amharic-beginner-2' ? (
-              // the numbers camp gets a parchment card of Ge'ez numerals
-              <GeezNumbers key={`numbers-${shownIdx}`} className="camp-numbers" />
-            ) : shownCamp.slug === 'amharic-beginner-3' ? (
-              // the coffee camp gets a sini of buna instead of a basket
-              <SiniCup key={`cup-${shownIdx}`} className="camp-cup" />
-            ) : shownCamp.slug === 'amharic-beginner-4' ? (
-              // the directions-and-taxis camp gets a blue-and-white Addis taxi
-              <AddisTaxi key={`taxi-${shownIdx}`} className="camp-taxi" />
-            ) : shownCamp.slug === 'amharic-beginner-5' ? (
-              // the daily-life-and-feelings camp gets two friends catching up
-              <Friends key={`friends-${shownIdx}`} className="camp-friends" />
-            ) : shownCamp.slug === 'amharic-beginner-6' ? (
-              // the elders-and-blessings camp gets Ababa in his gabi
-              <Elder key={`elder-${shownIdx}`} className="camp-elder" />
-            ) : (
-              <MesobBasket key={`basket-${shownIdx}`} camp={shownIdx} className="camp-basket" />
-            )}
+            {/* each camp's own art peeks in from the right; camps without one get a woven basket */}
+            {(() => {
+              const art = CAMP_ART[shownCamp.slug];
+              if (art === 'numbers') return <GeezNumbers key={`numbers-${shownIdx}`} className="camp-numbers" />;
+              if (art === 'cup') return <SiniCup key={`cup-${shownIdx}`} className="camp-cup" />;
+              if (art === 'taxi') return <AddisTaxi key={`taxi-${shownIdx}`} className="camp-taxi" />;
+              if (art === 'friends')
+                return (
+                  <Friends
+                    key={`friends-${shownIdx}`}
+                    className="camp-friends"
+                    greeting={track === 'english' ? 'Hello!' : undefined}
+                  />
+                );
+              if (art === 'elder') return <Elder key={`elder-${shownIdx}`} className="camp-elder" />;
+              return <MesobBasket key={`basket-${shownIdx}`} camp={shownIdx} className="camp-basket" />;
+            })()}
             <div className="camp-header-text" key={shownIdx}>
               <span className="camp-header-kicker">
                 Camp {shownIdx + 1} ·{' '}

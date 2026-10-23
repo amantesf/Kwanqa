@@ -1,9 +1,11 @@
 import { speakableLines } from '@/lib/conversations';
 import { speakableEnglish } from '@/lib/englishAudio';
+import { speakableAmharic } from '@/lib/amharicAudio';
 import { speechReady, synthesize } from '@/lib/azureSpeech';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 
-// GET /api/speak?text=…&slow=1 reads one of Walia's scripted lines aloud.
+// GET /api/speak?text=…&slow=1 reads one of Walia's scripted lines, or any
+// line, word or answer from the Amharic lessons, aloud.
 // GET /api/speak?lang=en&text=… reads a line, word or picture name from the
 // English course in English, for Amharic speakers learning English.
 // Only lines from lib/conversations.ts are allowed, so anyone can play them
@@ -12,7 +14,7 @@ import { accountsOn, requestUser } from '@/lib/requestUser';
 // POST { text, slow, lang } reads one of Walia's own replies (written by his
 // brain during a call). Those are new every time, so this needs a signed-in learner.
 
-const allowed = speakableLines();
+const allowed = new Set([...speakableLines(), ...speakableAmharic()]);
 const allowedEnglish = speakableEnglish();
 const MAX_REPLY = 200;
 const ETHIOPIC = /[ሀ-፿]/;

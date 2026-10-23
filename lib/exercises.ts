@@ -63,11 +63,102 @@ function unique(values: string[]) {
   return [...new Set(values.filter(Boolean))];
 }
 
+// --- Keeping every question fair -------------------------------------------
+// A wrong option must really be wrong. These checks stop the builder from
+// offering two answers that both fit.
+
+/** English meanings that are different words for the same thing, so only one can be offered. */
+const SAME_MEANING: [RegExp, string][] = [
+  [/^your name please$/, 'what is your name'],
+  [/^i came from (.+)$/, 'i am from $1'],
+  [/^it's nothing no problem$/, "you're welcome it's nothing"],
+];
+
+/** An English meaning without notes like "(to a man)", so "I am fine, and you?" matches its variants. */
+function meaningKey(text: string) {
+  let key = text
+    .replace(/\([^)]*\)/g, '')
+    .toLowerCase()
+    .replace(/[’‘]/g, "'")
+    .replace(/[^a-z' ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  for (const [from, to] of SAME_MEANING) key = key.replace(from, to);
+  return key;
+}
+
+/**
+ * Words that are the same word said to a man, a woman, an elder or a group
+ * (ነህ / ነሽ / ኖት). When a question can't show who's being spoken to, these
+ * would all be right, so they never appear as each other's wrong options.
+ */
+const TWINS: string[][] = [
+  ['ነህ', 'ነሽ', 'ኖት', 'ነዎት', 'ናችሁ'],
+  ['አንተስ', 'አንቺስ', 'እርስዎስ', 'እናንተስ'],
+  ['አንተ', 'አንቺ', 'እርስዎ', 'እናንተ'],
+  ['ሁን', 'ሁኚ', 'ሁኑ', 'ይሁኑ'],
+  ['ስምህ', 'ስምሽ', 'ስምዎ'],
+  ['እባክህ', 'እባክሽ', 'እባክዎ', 'እባካችሁ'],
+  ['ግባ', 'ግቢ', 'ግቡ', 'ይግቡ'],
+  ['ተቀመጥ', 'ተቀመጪ', 'ተቀመጡ', 'ይቀመጡ'],
+  ['ብላ', 'ብዪ', 'ብሉ'],
+  ['መጣህ', 'መጣሽ', 'መጡ', 'መጣችሁ'],
+  ['ትወዳለህ', 'ትወጃለሽ', 'ይወዳሉ'],
+  ['አለህ', 'አለሽ', 'አሎት', 'አላችሁ'],
+  ['እደር', 'እደሪ', 'እደሩ'],
+  ['አደርክ', 'አደርሽ', 'አደሩ'],
+  ['አደረሰህ', 'አደረሰሽ', 'አደረሳችሁ'],
+  ['ትናገራለህ', 'ትናገሪያለሽ', 'ይናገራሉ'],
+  ['ሂድ', 'ሂጂ', 'ሂዱ'],
+  ['ተናገር', 'ተናገሪ', 'ተናገሩ'],
+  ['አቁም', 'አቁሚ', 'አቁሙ'],
+  ['ቆይ', 'ቆዪ', 'ቆዩ'],
+  ['ይሰማሃል', 'ይሰማሻል', 'ይሰማዎታል'],
+  ['ሆንክ', 'ሆንሽ', 'ሆኑ'],
+  ['አደረግህ', 'አደረግሽ'],
+  ['ቤትህ', 'ቤትሽ'],
+  ['ቀንስልኝ', 'ቀንሺልኝ'],
+  ['አድርግልኝ', 'አድርጊልኝ', 'ያድርጉልኝ'],
+  ['ብለህ', 'ብለሽ'],
+  ['የምትሄደው', 'የምትሄጂው'],
+  ['ወንድምህ', 'ወንድምሽ'],
+  ['ቤተሰቦችህ', 'ቤተሰቦችሽ'],
+];
+const TWIN_OF = new Map(TWINS.flatMap((group, i) => group.map(w => [w, i] as const)));
+const PUNCT_ALL = /[።፣፤፥፦፧?!.,]/g;
+
+/** A phrase with every man/woman/elder word replaced by its family, so twin phrases look alike. */
+function twinShape(text: string) {
+  return text
+    .split(/\s+/)
+    .map(w => w.replace(PUNCT_ALL, ''))
+    .filter(Boolean)
+    .map(w => (TWIN_OF.has(w) ? `#${TWIN_OF.get(w)}` : w))
+    .join(' ');
+}
+
+/** True when a wrong option would also be a right answer. */
+function clashes(answer: string, option: string) {
+  if (option === answer) return true;
+  const a = meaningKey(answer);
+  if (a && a === meaningKey(option)) return true;
+  return twinShape(answer) === twinShape(option);
+}
+
+/** People and places in example sentences: blanking them out tests nothing. */
+const NAMES = new Set(['አሌክስ', 'ዳዊት', 'ሃና', 'ፒያሳ', 'አሜሪካ', 'ከአሜሪካ', 'ኢትዮጵያ', 'ከኢትዮጵያ']);
+
 /** Picks up to `count` wrong options, preferring this lesson, then the wider pool. */
 function distractors(answer: string, local: string[], pool: string[], count = 3) {
-  const fromLesson = shuffle(unique(local).filter(v => v !== answer));
-  const fromPool = shuffle(unique(pool).filter(v => v !== answer && !fromLesson.includes(v)));
-  return [...fromLesson, ...fromPool].slice(0, count);
+  const fromLesson = shuffle(unique(local).filter(v => !clashes(answer, v)));
+  const fromPool = shuffle(unique(pool).filter(v => !clashes(answer, v) && !fromLesson.includes(v)));
+  // and no two options may clash with each other either
+  const picked: string[] = [];
+  for (const v of [...fromLesson, ...fromPool]) {
+    if (picked.length === count) break;
+    if (!picked.some(p => clashes(p, v))) picked.push(v);
+  }
+  return picked;
 }
 
 function choice(
@@ -205,9 +296,11 @@ export function buildExercises(
     })),
   ];
   const seen = new Set<string>();
+  // the same Amharic once, even when one copy ends in ። and the other doesn't
   const uniqueCards = cards.filter(card => {
-    if (seen.has(card.amharic)) return false;
-    seen.add(card.amharic);
+    const key = card.amharic.replace(PUNCT_ALL, '').trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 
@@ -246,8 +339,8 @@ export function buildExercises(
           card.amharic,
           distractors(
             card.amharic,
-            uniqueCards.filter(c => c.english !== card.english).map(c => c.amharic),
-            poolCards.filter(c => c.english !== card.english).map(c => c.amharic),
+            uniqueCards.filter(c => meaningKey(c.english) !== meaningKey(card.english)).map(c => c.amharic),
+            poolCards.filter(c => meaningKey(c.english) !== meaningKey(card.english)).map(c => c.amharic),
           ),
           explain,
         );
@@ -275,10 +368,12 @@ export function buildExercises(
       .filter(Boolean);
   const tilePool = unique(poolCards.flatMap(c => amWords(c.amharic))).filter(w => !w.includes('...'));
   const localWords = unique(uniqueCards.flatMap(c => amWords(c.amharic))).filter(w => !w.includes('...'));
+  // Wrong tiles: never one of the answer's words, or a man/woman/elder twin of one.
+  const fits = (answer: string[]) => (w: string) => !answer.some(a => clashes(a, w));
   const pickWrong = (answer: string[], count: number) =>
     [
-      ...shuffle(localWords.filter(w => !answer.includes(w))),
-      ...shuffle(tilePool.filter(w => !answer.includes(w) && !localWords.includes(w))),
+      ...shuffle(localWords.filter(fits(answer))),
+      ...shuffle(tilePool.filter(w => fits(answer)(w) && !localWords.includes(w))),
     ].slice(0, count);
   const tiles: Exercise[] = [];
   const single = shuffle(uniqueCards).find(c => amWords(c.amharic).length === 1 && !c.amharic.includes('...'));
@@ -323,7 +418,9 @@ export function buildExercises(
   const line = lines[0];
   if (line) {
     const words = line.amharic.split(/\s+/);
-    const blankIdx = Math.floor(Math.random() * words.length);
+    // blank a real word, never a name like አሌክስ
+    const blankable = words.map((w, i) => i).filter(i => !NAMES.has(words[i].replace(PUNCT, '')));
+    const blankIdx = blankable[Math.floor(Math.random() * blankable.length)] ?? 0;
     const answer = words[blankIdx].replace(PUNCT, '');
     const wordPool = unique(
       courseLessons
@@ -357,7 +454,7 @@ export function buildExercises(
   // Match pairs as a final round.
   const meanings = new Set<string>();
   const matchCards = shuffle(uniqueCards)
-    .filter(c => !meanings.has(c.english) && meanings.add(c.english))
+    .filter(c => !meanings.has(meaningKey(c.english)) && meanings.add(meaningKey(c.english)))
     .slice(0, 4);
   if (matchCards.length >= 3) {
     exercises.push({
@@ -537,8 +634,14 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
   );
   addPictureExercises(exercises, mentioned ?? (firstLesson ? shuffle(PICTURES)[0] : undefined), 'english');
 
+  // each Amharic meaning only once, so every pair has exactly one match
+  const seenAm = new Set<string>();
   const matchCards = shuffle(uniqueCards)
     .filter(c => c.english.length <= 40)
+    .filter(c => {
+      const am = twinShape(c.amharic);
+      return !seenAm.has(am) && seenAm.add(am);
+    })
     .slice(0, 4);
   if (matchCards.length >= 3) {
     exercises.push({

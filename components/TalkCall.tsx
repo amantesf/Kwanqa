@@ -11,6 +11,7 @@ import Mascot, { type Mood } from '@/components/Mascot';
 import GrassIcon from '@/components/GrassIcon';
 import MountainScene from '@/components/MountainScene';
 import { completeCall } from '@/lib/climb';
+import { createLipSync, type LipSync } from '@/lib/lipSync';
 import { check, normalize, spokenText, waliaLine, type Conversation, type Gender, type Line } from '@/lib/conversations';
 import { startRecording, type Recording } from '@/lib/recorder';
 import { supabase } from '@/lib/supabase';
@@ -209,6 +210,11 @@ export default function TalkCall({
 
   const recording = useRef<Recording | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
+  // Walia's mouth follows his voice; `speaking` is true while any clip of his plays.
+  const waliaRef = useRef<HTMLDivElement>(null);
+  const lip = useRef<LipSync | null>(null);
+  const [speaking, setSpeaking] = useState(false);
+  const [fakeLips, setFakeLips] = useState(false);
   const spoken = useRef(new Map<string, string>()); // reply text → object URL of its audio
   const stopRef = useRef<() => void>(() => {});
   const logRef = useRef<HTMLOListElement>(null);
@@ -234,6 +240,7 @@ export default function TalkCall({
     return () => {
       recording.current?.cancel();
       audio.current?.pause();
+      lip.current?.close();
       clips.forEach(url => URL.revokeObjectURL(url));
     };
   }, []);
@@ -263,9 +270,22 @@ export default function TalkCall({
     audio.current?.pause();
     const clip = new Audio(src);
     audio.current = clip;
-    clip.onended = () => done?.();
-    clip.onerror = () => done?.();
-    void clip.play().catch(() => done?.());
+    lip.current ??= createLipSync(() => waliaRef.current);
+    setFakeLips(!lip.current.attach(clip));
+    clip.onplaying = () => setSpeaking(true);
+    clip.onpause = () => setSpeaking(false);
+    clip.onended = () => {
+      setSpeaking(false);
+      done?.();
+    };
+    clip.onerror = () => {
+      setSpeaking(false);
+      done?.();
+    };
+    void clip.play().catch(() => {
+      setSpeaking(false);
+      done?.();
+    });
   }
 
   /** One of Walia's scripted lines: cached and open to everyone. */
@@ -453,8 +473,14 @@ export default function TalkCall({
       <div className="call-phone">
         <div className="call-video" aria-hidden>
           <MountainScene className="call-mountains" />
-          <div className={`call-walia${phase === 'walia' ? ' talking' : ''}`}>
-            <Mascot mood={mood} size={230} animated={!mood} />
+          <div ref={waliaRef} className={`call-walia${fakeLips ? ' fake-lips' : ''}`}>
+            <Mascot
+              mood={mood}
+              size={230}
+              animated={!mood}
+              talking={speaking}
+              listening={phase === 'listening'}
+            />
           </div>
         </div>
 

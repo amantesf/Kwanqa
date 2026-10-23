@@ -100,7 +100,7 @@ function pageText(track: Track) {
       en ? (g === 'm' ? 'እንደ ወንድ አናግረኝ · Talk to me as a man' : 'እንደ ሴት አናግሪኝ · Talk to me as a woman') : g === 'm' ? 'Talk to me as a man' : 'Talk to me as a woman',
     pickTitle: both('Pick a call', 'ጥሪ ይምረጡ'),
     pickNote: en
-      ? 'እያንዳንዱ ጥሪ ጥቂት ደቂቃዎች ነው። ከመካከለኛ ይጀምሩ። Each call is a few minutes long. Start with Intermediate.'
+      ? 'እያንዳንዱ ጥሪ ጥቂት ደቂቃዎች ነው። ከጀማሪ ጀምረው ወደ ላይ ይሂዱ። Each call is a few minutes long. Start with Beginner and work your way up.'
       : 'Each call is a few minutes long. Start with Beginner and work your way up.',
     levelLabel: (id: Level, label: string) =>
       en ? `${{ beginner: 'ጀማሪ', intermediate: 'መካከለኛ', advanced: 'የላቀ' }[id]} · ${label}` : label,
@@ -284,7 +284,7 @@ export default function TalkPage() {
   const [picked, setPicked] = useState<Level | null>(null);
   const levelDone = (id: Level) =>
     conversations.filter(c => c.level === id).every(c => callBest(climb, c.slug) !== null);
-  // Only levels with calls get a tab (English learners start at Intermediate).
+  // Only levels with calls get a tab.
   const levels = LEVELS.filter(l => conversations.some(c => c.level === l.id));
   const level = picked ?? levels.find(l => !levelDone(l.id))?.id ?? levels[levels.length - 1]?.id ?? 'advanced';
   const nextLevel = levels[levels.findIndex(l => l.id === level) + 1];

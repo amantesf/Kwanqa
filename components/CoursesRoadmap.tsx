@@ -27,7 +27,7 @@ const CAMP_ART: Record<string, 'numbers' | 'cup' | 'taxi' | 'friends' | 'elder'>
   'english-from-amharic-4': 'taxi', // travel and getting around
 };
 import Mascot from '@/components/Mascot';
-import MountainScene from '@/components/MountainScene';
+import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
 import Trail, { type TrailStop } from '@/components/Trail';
 import { courseContent, type Track } from '@/lib/courses';
@@ -303,9 +303,12 @@ export default function CoursesRoadmap() {
           </div>
         )}
 
+        {/* One mountain from the trailhead meadow to the summit flag */}
+        <div className="climb">
+        <ClimbMountain />
+
         {/* Summit */}
         <div className={`summit${next ? ' zone-locked' : ' reached'}`}>
-          <MountainScene className="summit-art" />
           <div className="summit-text">
             <span className="kicker">
               Summit · ራስ ዳሽን · {SUMMIT_ALTITUDE.toLocaleString()} m
@@ -372,6 +375,7 @@ export default function CoursesRoadmap() {
             <section
               key={course.slug}
               data-camp={campIdx}
+              data-locked={locked ? 'true' : 'false'}
               className={`zone zone-${zone.tone}${locked ? ' zone-locked' : ''}`}
               aria-label={`Camp ${campIdx + 1}: ${course.title}${locked ? ' (locked)' : ''}`}
             >
@@ -389,7 +393,7 @@ export default function CoursesRoadmap() {
                   stops={stops}
                   hornScale={horns.scale}
                   waliaSize={116}
-                  scenery={locked ? 'locked' : zone.tone}
+                  connect
                 />
               </div>
             </section>
@@ -403,6 +407,7 @@ export default function CoursesRoadmap() {
             Your climb starts here. Finish lessons to earn grass (ሳር). It grows Walia’s horns
             and gives you energy when the climb gets tough.
           </p>
+        </div>
         </div>
       </div>
 

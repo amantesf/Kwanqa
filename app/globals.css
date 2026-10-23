@@ -1472,6 +1472,111 @@ a.camp-banner:active {
   flex: 1;
 }
 
+/* "Wait, don't go!" before leaving a lesson */
+.leave-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(30, 24, 20, 0.55);
+  animation: leave-fade 0.18s ease-out;
+}
+
+.leave-dialog {
+  width: min(400px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 24px 18px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: leave-pop 0.28s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.leave-walia {
+  margin-bottom: -4px;
+}
+
+.leave-walia img {
+  display: block;
+  width: 140px;
+  height: auto;
+  user-select: none;
+  animation: leave-sniff 2.4s ease-in-out 0.3s infinite;
+  transform-origin: 50% 100%;
+}
+
+@keyframes leave-sniff {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-2deg) scale(1.01, 0.99); }
+  75% { transform: rotate(2deg) scale(1.01, 0.99); }
+}
+
+.leave-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-strong);
+  line-height: 1.25;
+}
+
+.leave-text {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.leave-keep {
+  width: 100%;
+  --btn-bg: var(--blue);
+  --btn-edge: var(--blue-shadow);
+}
+
+.leave-end {
+  padding: 12px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red-shadow);
+  cursor: pointer;
+}
+
+.leave-end:hover {
+  color: var(--red);
+}
+
+@keyframes leave-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes leave-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leave-backdrop,
+  .leave-dialog,
+  .leave-walia img {
+    animation: none;
+  }
+}
+
 .practice-meter span {
   background-color: var(--primary);
 }

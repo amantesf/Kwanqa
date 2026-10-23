@@ -28,6 +28,14 @@ type Props = {
    */
   animated?: boolean;
   mood?: Mood;
+  /**
+   * Walia is speaking: his mouth opens as wide as the CSS variable `--mouth`
+   * (0 closed to 1 wide open) on him or any parent, and his head moves a little.
+   * Talk with Walia sets `--mouth` from the loudness of his voice.
+   */
+  talking?: boolean;
+  /** Walia is listening: ears perked up, leaning in. */
+  listening?: boolean;
 };
 
 // Colors sampled from the Walia illustration.
@@ -89,6 +97,8 @@ export default function Mascot({
   hornScale = 1,
   animated = false,
   mood,
+  talking = false,
+  listening = false,
 }: Props) {
   const uid = useId().replace(/:/g, '');
   const leftArmUp = mood ? mood === 'cheer' : pose === 'cheer';
@@ -102,7 +112,17 @@ export default function Mascot({
       viewBox="0 -24 240 304"
       width={size}
       height={(size * 304) / 240}
-      className={[className, animated ? 'walia-live' : '', mood ? `walia-mood mood-${mood}` : ''].filter(Boolean).join(' ') || undefined}
+      className={
+        [
+          className,
+          animated ? 'walia-live' : '',
+          mood ? `walia-mood mood-${mood}` : '',
+          talking ? 'walia-talking' : '',
+          listening ? 'walia-listening' : '',
+        ]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
       role="img"
       aria-label={title}
     >
@@ -232,7 +252,16 @@ export default function Mascot({
             <path d="M120 124 C 137 124 147 134 147 147 C 147 161 135 170 120 170 C 105 170 93 161 93 147 C 93 134 103 124 120 124 Z" fill={C.cream} />
             <path d="M108 134 C 111 129 129 129 132 134 C 130 139 125 141 120 141 C 115 141 110 139 108 134 Z" fill={C.nose} />
             <path d="M120 140 V147" stroke={C.nose} strokeWidth="2.6" strokeLinecap="round" />
-            {mood === 'cheer' ? (
+            {talking ? (
+              // talking: a closed smile, with the open mouth growing over it as he speaks
+              <g className="w-mouth">
+                <path d="M108 149 Q 120 155 132 149" stroke={C.mouth} strokeWidth="4" strokeLinecap="round" fill="none" />
+                <g className="w-mouth-open">
+                  <path d="M107 148 Q 120 153 133 148 Q 130 167 120 167 Q 110 167 107 148 Z" fill={C.mouth} />
+                  <path d="M112 160 Q 120 155 128 160 Q 125 167 120 167 Q 115 167 112 160 Z" fill={C.tongue} />
+                </g>
+              </g>
+            ) : mood === 'cheer' ? (
               // a big open laugh
               <g>
                 <path d="M104 147 Q 120 153 136 147 Q 133 168 120 168 Q 107 168 104 147 Z" fill={C.mouth} />

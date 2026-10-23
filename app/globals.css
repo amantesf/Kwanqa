@@ -6668,6 +6668,73 @@ body:has(.practice-screen) {
   }
 }
 
+/* Walia talking and listening (Talk with Walia calls).
+   Talking: the open mouth grows with --mouth (0 to 1), set from the loudness of
+   his voice, and his head nods along. Listening: ears perk up and he leans in.
+   These come after the idle loop so they win over it. */
+.walia-talking .w-mouth-open {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: scaleY(var(--mouth, 0));
+  transition: transform 0.06s linear;
+}
+
+.walia-talking .w-head {
+  transform-box: view-box;
+  transform-origin: 120px 168px;
+  animation: w-talk 1.1s ease-in-out infinite alternate;
+}
+
+.walia-listening .w-head {
+  transform-box: view-box;
+  transform-origin: 120px 168px;
+  animation: w-listen 2.6s ease-in-out infinite;
+}
+
+.walia-listening .w-ear-l,
+.walia-listening .w-ear-r {
+  transform-box: view-box;
+  animation: none;
+  transition: transform 0.25s ease;
+}
+
+.walia-listening .w-ear-l {
+  transform-origin: 62px 110px;
+  transform: rotate(24deg);
+}
+
+.walia-listening .w-ear-r {
+  transform-origin: 178px 110px;
+  transform: rotate(-24deg);
+}
+
+/* no hopping or waving mid-conversation: he stays still and attentive */
+.walia-talking .w-hop,
+.walia-talking .w-shadow,
+.walia-listening .w-hop,
+.walia-listening .w-shadow,
+.walia-listening .w-arm-l,
+.walia-listening .w-arm-r {
+  animation: none;
+}
+
+@keyframes w-talk {
+  from { transform: rotate(-1.5deg); }
+  to { transform: rotate(1.5deg) translateY(-1px); }
+}
+
+@keyframes w-listen {
+  0%, 100% { transform: rotate(3deg); }
+  50% { transform: rotate(3deg) translateY(2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .walia-talking .w-head,
+  .walia-listening .w-head {
+    animation: none;
+  }
+}
+
 /* Culture or grammar tip for a lesson */
 .lesson-note {
   max-width: 460px;

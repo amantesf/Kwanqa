@@ -64,6 +64,10 @@ export function uiText(track: Track | undefined) {
         : 'Out of stamina on this ledge. Graze to recover, or review the phrases and try again.',
     eat: (n: number) => both(`Eat ${n} grass`, `${n} ሳር ብላ`),
     review: both('Review phrases', 'ሐረጎቹን ከልስ'),
+    leaveTitle: both('Wait, don’t go!', 'ቆይ፣ አትሂድ!'),
+    leaveText: both('You’ll lose your progress in this lesson if you quit now.', 'አሁን ካቆምክ የዚህ ትምህርት ሂደትህ ይጠፋል።'),
+    keepLearning: both('Keep learning', 'መማር ቀጥል'),
+    endSession: both('End session', 'ውጣ'),
   };
 }
 
@@ -282,6 +286,8 @@ export default function Practice({
   // Questions missed once: when they come back they're labelled "Previous mistake".
   const [missed, setMissed] = useState<Set<string>>(new Set());
   const [stamina, setStamina] = useState(MAX_STAMINA);
+  // "Wait, don't go!": asked before leaving a lesson that's under way.
+  const [leaving, setLeaving] = useState(false);
   const [streak, setStreak] = useState(0);
   const [combo, setCombo] = useState(0); // correct answers in a row; resets on any mistake
   const [mistakes, setMistakes] = useState(0);
@@ -469,6 +475,14 @@ export default function Practice({
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // While "Wait, don't go!" is open, Esc or Enter keeps learning; nothing else reacts.
+      if (leaving) {
+        if (e.key === 'Escape' || e.key === 'Enter') {
+          e.preventDefault();
+          setLeaving(false);
+        }
+        return;
+      }
       if (phase === 'done' && e.key === 'Enter') {
         e.preventDefault();
         onFinish();
@@ -567,8 +581,43 @@ export default function Practice({
 
   return (
     <div className="practice practice-screen">
+      {leaving && (
+        <div className="leave-backdrop" onClick={() => setLeaving(false)}>
+          <div
+            className="leave-dialog"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="leave-title"
+            aria-describedby="leave-text"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="leave-walia" aria-hidden>
+              {/* eslint-disable-next-line @next/next/no-img-element -- small local picture */}
+              <img src="/walia-cry.png" alt="" width={140} height={156} draggable={false} />
+            </div>
+            <h2 id="leave-title" className="leave-title">
+              {ui.leaveTitle}
+            </h2>
+            <p id="leave-text" className="leave-text">
+              {ui.leaveText}
+            </p>
+            <button type="button" className="btn leave-keep" onClick={() => setLeaving(false)} autoFocus>
+              {ui.keepLearning}
+            </button>
+            <button type="button" className="leave-end" onClick={onExit}>
+              {ui.endSession}
+            </button>
+          </div>
+        </div>
+      )}
       <div className="practice-top">
-        <button type="button" className="practice-close" onClick={onExit} aria-label="Leave practice">
+        <button
+          type="button"
+          className="practice-close"
+          // Nothing answered yet? Nothing to lose, so just leave.
+          onClick={() => (solved.size > 0 || mistakes > 0 ? setLeaving(true) : onExit())}
+          aria-label="Leave practice"
+        >
           ✕
         </button>
         <div className="meter practice-meter" aria-label={`${Math.round(progress * 100)}% complete`}>

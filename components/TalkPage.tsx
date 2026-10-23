@@ -10,7 +10,9 @@ import { useAuth } from '@/components/AuthProvider';
 import Mascot from '@/components/Mascot';
 import TalkCall from '@/components/TalkCall';
 import { callBest, useClimb } from '@/lib/climb';
-import { LEVELS, conversations, type Conversation, type Gender, type Level } from '@/lib/conversations';
+import { LEVELS, conversationsFor, type Conversation, type Gender, type Level } from '@/lib/conversations';
+import type { Track } from '@/lib/courses';
+import { useProfile } from '@/lib/profile';
 
 const GENDER_KEY = 'kwanqa-talk-gender';
 
@@ -47,10 +49,83 @@ function CheckIcon() {
   );
 }
 
-const STEPS = [
+/**
+ * The words on the page. English learners are Amharic speakers, so they get
+ * Amharic first with the English beside it, and calls in English.
+ */
+function pageText(track: Track) {
+  const en = track === 'english';
+  const both = (english: string, amharic: string) => (en ? `${amharic} · ${english}` : english);
+  return {
+    en,
+    both,
+    back: both('Back to the trail', 'ወደ መንገዱ ተመለስ'),
+    kicker: en ? 'ጨዋታ · English speaking practice' : 'Speaking practice',
+    lede: en
+      ? 'ለዋሊያ ይደውሉ። ቀላል ጥያቄዎችን በእንግሊዝኛ ይጠይቅዎታል፣ እርስዎም ጮክ ብለው በእንግሊዝኛ ይመልሳሉ። Give Walia a call: he asks simple questions in English, and you answer out loud.'
+      : 'Give Walia a call. He’ll ask you simple questions in Amharic, and you answer out loud, just like talking with family back home.',
+    steps: en
+      ? [
+          { title: 'ዋሊያ ይደውልልዎታል · Walia calls you', text: 'በእንግሊዝኛ ይናገራል፤ የአማርኛ ትርጉሙን ማየት ይችላሉ። He speaks English, with the Amharic meaning when you need it.' },
+          { title: 'ጮክ ብለው ይመልሱ · You answer out loud', text: 'ማይኩን ይንኩና በእንግሊዝኛ ይናገሩ። Tap the mic and speak English.' },
+          { title: 'ሲቸገሩ እርዳታ · Help when you’re stuck', text: 'በዝግታ ይስሙ፣ ምን ማለት እንደሚችሉ ይዩ፣ ወይም ይጻፉ። Hear it slowly, see what to say, or type.' },
+        ]
+      : [
+          { title: 'Walia calls you', text: 'He speaks real Amharic, with captions you can read along.' },
+          { title: 'You answer out loud', text: 'Tap the mic and talk, just like with family on the phone.' },
+          { title: 'Help when you’re stuck', text: 'Hear it slowly, see what you could say, or type instead.' },
+        ],
+    floats: en ? ['Hello!', 'How are you?', 'I’m fine, and you?'] : null,
+    incoming: both('Incoming call…', 'ጥሪ እየመጣ ነው…'),
+    missed: both('Missed call', 'ያመለጠ ጥሪ'),
+    decline: en ? 'አትቀበል' : 'Decline',
+    accept: en ? 'ተቀበል' : 'Answer',
+    callBack: en ? 'መልሰህ ደውል' : 'Call back',
+    talkToMe: both('Walia should talk to me', 'ዋሊያ እንዲያናግረኝ'),
+    asMan: both('As a man', 'እንደ ወንድ'),
+    asWoman: both('As a woman', 'እንደ ሴት'),
+    signUpTip: both('Sign up free to answer', 'ለመመለስ በነፃ ይመዝገቡ'),
+    gateTitle: both('Make a free account to call Walia', 'ለዋሊያ ለመደወል በነፃ ይመዝገቡ'),
+    gateText: en
+      ? 'ጥሪዎቹ እውነተኛ የድምፅ ማወቂያ ይጠቀማሉ፣ ስለዚህ መለያ ያስፈልጋል። ነፃ ነው። Calls use real speech recognition, so they’re for learners with an account. It’s free.'
+      : 'Calls use real speech recognition, so they’re for learners with an account. It’s free and takes a minute.',
+    signUp: both('Sign up', 'ይመዝገቡ'),
+    logIn: both('Log in', 'ይግቡ'),
+    loading: both('Getting Walia on the line…', 'ዋሊያን እየደወልን ነው…'),
+    genderTitle: en ? 'ዋሊያ በአማርኛ ሲያብራራ እንዴት ያናግርዎ? · How should Walia talk to you?' : 'How should Walia talk to you?',
+    genderNote: en
+      ? 'የአማርኛ ትርጉሞችና ማብራሪያዎች ለወንድና ለሴት ይለያያሉ። The Amharic help changes for a man or a woman.'
+      : 'Amharic changes with who you’re talking to, so Walia asks a man and a woman differently.',
+    genderLabel: (g: Gender) =>
+      en ? (g === 'm' ? 'እንደ ወንድ አናግረኝ · Talk to me as a man' : 'እንደ ሴት አናግሪኝ · Talk to me as a woman') : g === 'm' ? 'Talk to me as a man' : 'Talk to me as a woman',
+    pickTitle: both('Pick a call', 'ጥሪ ይምረጡ'),
+    pickNote: en
+      ? 'እያንዳንዱ ጥሪ ጥቂት ደቂቃዎች ነው። ከጀማሪ ይጀምሩ። Each call is a few minutes long. Start with Beginner.'
+      : 'Each call is a few minutes long. Start with Beginner and work your way up.',
+    levelLabel: (id: Level, label: string) =>
+      en ? `${{ beginner: 'ጀማሪ', intermediate: 'መካከለኛ', advanced: 'የላቀ' }[id]} · ${label}` : label,
+    levelBlurb: (id: Level, blurb: string) =>
+      en
+        ? {
+            beginner: 'አጭር ጥያቄዎች፣ ቀላል መልሶች። Short questions with simple answers. Start here.',
+            intermediate: 'የዕለት ተዕለት ጉዳዮች፦ መንገድ፣ ገበያ፣ ስልክ። Everyday errands: directions, the market, phone calls.',
+            advanced: 'ስለ ሕይወትዎ ክፍት ጥያቄዎች። በሙሉ ዓረፍተ ነገር ይመልሱ። Open questions about your life. Answer in full sentences.',
+          }[id]
+        : blurb,
+    finishedLevel: (label: string) => both(`You’ve finished every ${label} call.`, 'የዚህን ደረጃ ጥሪዎች በሙሉ ጨርሰዋል።'),
+    tryNext: (label: string) => both(`Try ${label}`, 'ቀጣዩን ይሞክሩ'),
+    done: (best: number, total: number) => both(`Done · ${best}/${total} on your own`, `ተጠናቋል · ${best}/${total}`),
+    questions: (n: number) => both(`${n} questions`, `${n} ጥያቄዎች`),
+    minutes: (n: number) => both(`about ${n} min`, `${n} ደቂቃ ያህል`),
+    call: en ? 'ደውል' : 'Call',
+  };
+}
+
+type PageText = ReturnType<typeof pageText>;
+
+// The icons beside the three steps.
+const STEP_ICONS = [
   {
-    title: 'Walia calls you',
-    text: 'He speaks real Amharic, with captions you can read along.',
     icon: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <path d="M4 9.5v5h3.5L12 19V5L7.5 9.5z" fill="currentColor" />
@@ -59,8 +134,6 @@ const STEPS = [
     ),
   },
   {
-    title: 'You answer out loud',
-    text: 'Tap the mic and talk, just like with family on the phone.',
     icon: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
@@ -69,8 +142,6 @@ const STEPS = [
     ),
   },
   {
-    title: 'Help when you’re stuck',
-    text: 'Hear it slowly, see what you could say, or type instead.',
     icon: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" />
@@ -86,7 +157,11 @@ function RingingPhone({
   asking,
   onPick,
   tip,
+  first,
+  t,
 }: {
+  first: Conversation;
+  t: PageText;
   gender: Gender | null;
   onAnswer: () => void;
   /** Answered before choosing ነህ / ነሽ: the screen asks how Walia should talk. */
@@ -96,20 +171,19 @@ function RingingPhone({
   tip: string | null;
 }) {
   const [declined, setDeclined] = useState(false);
-  const first = conversations[0];
   return (
     <div className="talk-stage">
       <div className="talk-stage-glow" aria-hidden />
 
       {/* bits of the conversation floating round the phone */}
-      <span className="talk-float talk-float-1" lang="am" aria-hidden>
-        ሰላም!
+      <span className="talk-float talk-float-1" lang={t.en ? 'en' : 'am'} aria-hidden>
+        {t.floats ? t.floats[0] : 'ሰላም!'}
       </span>
-      <span className="talk-float talk-float-2" lang="am" aria-hidden>
-        {gender === 'f' ? 'እንዴት ነሽ?' : 'እንዴት ነህ?'}
+      <span className="talk-float talk-float-2" lang={t.en ? 'en' : 'am'} aria-hidden>
+        {t.floats ? t.floats[1] : gender === 'f' ? 'እንዴት ነሽ?' : 'እንዴት ነህ?'}
       </span>
-      <span className="talk-float talk-float-3 you" lang="am" aria-hidden>
-        ደህና ነኝ፣ አንተስ?
+      <span className="talk-float talk-float-3 you" lang={t.en ? 'en' : 'am'} aria-hidden>
+        {t.floats ? t.floats[2] : 'ደህና ነኝ፣ አንተስ?'}
       </span>
 
       <div className={`talk-phone${declined ? ' quiet' : ''}`}>
@@ -128,7 +202,7 @@ function RingingPhone({
             </span>
           </div>
 
-          <p className="talk-incoming">{declined ? 'Missed call' : 'Incoming call…'}</p>
+          <p className="talk-incoming">{declined ? t.missed : t.incoming}</p>
 
           <div className="talk-avatar">
             {!declined && (
@@ -149,10 +223,10 @@ function RingingPhone({
 
           {asking ? (
             <div className="talk-screen-ask" role="group" aria-label="How should Walia talk to you?">
-              <span>Walia should talk to me</span>
+              <span>{t.talkToMe}</span>
               {(['m', 'f'] as Gender[]).map(g => (
                 <button key={g} type="button" onClick={() => onPick(g)}>
-                  {g === 'm' ? 'As a man' : 'As a woman'} <b lang="am">{g === 'm' ? 'ነህ' : 'ነሽ'}</b>
+                  {g === 'm' ? t.asMan : t.asWoman} <b lang="am">{g === 'm' ? 'ነህ' : 'ነሽ'}</b>
                 </button>
               ))}
             </div>
@@ -168,7 +242,7 @@ function RingingPhone({
               >
                 <HangUpIcon />
               </button>
-              <span>Decline</span>
+              <span>{t.decline}</span>
             </div>
             <div className="talk-answer">
               <button
@@ -182,7 +256,7 @@ function RingingPhone({
               >
                 <PhoneIcon size={28} />
               </button>
-              <span>{declined ? 'Call back' : 'Answer'}</span>
+              <span>{declined ? t.callBack : t.accept}</span>
             </div>
           </div>
           )}
@@ -197,6 +271,11 @@ function RingingPhone({
 
 export default function TalkPage() {
   const { enabled, loading, user } = useAuth();
+  // English learners call Walia in English; everyone else in Amharic.
+  const profile = useProfile();
+  const track: Track = profile?.track ?? 'amharic';
+  const conversations = conversationsFor(track);
+  const t = pageText(track);
   const [gender, setGender] = useState<Gender | null>(null);
   const [calling, setCalling] = useState<Conversation | null>(null);
   // Calling before choosing ነህ / ነሽ asks right where the call was made.
@@ -255,25 +334,22 @@ export default function TalkPage() {
   return (
     <main className="section talk-page">
       <div className="container talk-container">
-        <Link href="/courses" className="back-link">
-          ← Back to the trail
+        <Link href={`/courses?track=${track}`} className="back-link">
+          ← {t.back}
         </Link>
         <header className="talk-hero">
           <div className="talk-hero-text">
             <span className="talk-kicker">
-              <span lang="am">ጨዋታ</span> · Speaking practice
+              {t.en ? t.kicker : <><span lang="am">ጨዋታ</span> · {t.kicker}</>}
             </span>
             <h1 className="talk-title">
               Talk with <span>Walia</span>
             </h1>
-            <p className="talk-lede">
-              Give Walia a call. He’ll ask you simple questions in Amharic, and you answer out loud, just like talking with
-              family back home.
-            </p>
+            <p className="talk-lede">{t.lede}</p>
             <ol className="talk-steps">
-              {STEPS.map((s, i) => (
+              {t.steps.map((s, i) => (
                 <li key={s.title} className={`talk-step talk-step-${i + 1}`}>
-                  <span className="talk-step-icon">{s.icon}</span>
+                  <span className="talk-step-icon">{STEP_ICONS[i].icon}</span>
                   <span>
                     <strong>{s.title}</strong>
                     {s.text}
@@ -287,31 +363,30 @@ export default function TalkPage() {
             onAnswer={answer}
             asking={askingOnPhone && !gender && !signedOut}
             onPick={g => pickAndCall(g, conversations[0])}
-            tip={signedOut ? 'Sign up free to answer' : null}
+            tip={signedOut ? t.signUpTip : null}
+            first={conversations[0]}
+            t={t}
           />
         </header>
 
         {signedOut ? (
           <div className="talk-gate" id="talk-gate">
             {loading ? (
-              <p className="muted">Getting Walia on the line…</p>
+              <p className="muted">{t.loading}</p>
             ) : (
               <>
                 <div className="talk-gate-walia" aria-hidden>
                   <Mascot pose="cheer" size={90} animated />
                 </div>
                 <div className="talk-gate-text">
-                  <h2>Make a free account to call Walia</h2>
-                  <p>
-                    Calls use real speech recognition, so they’re for learners with an account. It’s free and takes a
-                    minute.
-                  </p>
+                  <h2>{t.gateTitle}</h2>
+                  <p>{t.gateText}</p>
                   <div className="talk-gate-actions">
                     <Link href="/signup?next=%2Ftalk" className="btn">
-                      Sign up
+                      {t.signUp}
                     </Link>
                     <Link href="/login?next=%2Ftalk" className="btn btn-secondary">
-                      Log in
+                      {t.logIn}
                     </Link>
                   </div>
                 </div>
@@ -325,9 +400,9 @@ export default function TalkPage() {
                 <span className="talk-num">1</span>
                 <div>
                   <h2 id="talk-gender" className="talk-h2">
-                    How should Walia talk to you?
+                    {t.genderTitle}
                   </h2>
-                  <p className="talk-note">Amharic changes with who you’re talking to, so Walia asks a man and a woman differently.</p>
+                  <p className="talk-note">{t.genderNote}</p>
                 </div>
               </div>
               <div className="talk-gender" role="radiogroup" aria-labelledby="talk-gender">
@@ -344,7 +419,7 @@ export default function TalkPage() {
                       {g === 'm' ? 'ነህ' : 'ነሽ'}
                     </span>
                     <span className="talk-gender-text">
-                      <strong>{g === 'm' ? 'Talk to me as a man' : 'Talk to me as a woman'}</strong>
+                      <strong>{t.genderLabel(g)}</strong>
                       <span>
                         Walia asks <b lang="am">{g === 'm' ? 'እንዴት ነህ?' : 'እንዴት ነሽ?'}</b>{' '}
                         <em>{g === 'm' ? 'indet neh?' : 'indet nesh?'}</em>
@@ -363,11 +438,9 @@ export default function TalkPage() {
                 <span className="talk-num">2</span>
                 <div>
                   <h2 id="talk-beginner" className="talk-h2">
-                    Pick a call
+                    {t.pickTitle}
                   </h2>
-                  <p className="talk-note">
-                    Each call is a few minutes long. Start with Beginner and work your way up.
-                  </p>
+                  <p className="talk-note">{t.pickNote}</p>
                 </div>
               </div>
 
@@ -384,18 +457,18 @@ export default function TalkPage() {
                     onClick={() => setPicked(l.id)}
                   >
                     {levelDone(l.id) && <CheckIcon />}
-                    {l.label}
+                    {t.levelLabel(l.id, l.label)}
                   </button>
                 ))}
               </div>
 
               <div id="talk-level-panel" role="tabpanel" aria-labelledby={`talk-tab-${level}`} className="talk-level">
-                <p className="talk-note">{LEVELS.find(l => l.id === level)?.blurb}</p>
+                <p className="talk-note">{t.levelBlurb(level, LEVELS.find(l => l.id === level)?.blurb ?? '')}</p>
                 {levelDone(level) && nextLevel && (
                   <p className="talk-next">
-                    You’ve finished every {LEVELS.find(l => l.id === level)?.label} call.{' '}
+                    {t.finishedLevel(LEVELS.find(l => l.id === level)?.label ?? '')}{' '}
                     <button type="button" className="talk-next-btn" onClick={() => setPicked(nextLevel.id)}>
-                      Try {nextLevel.label}
+                      {t.tryNext(nextLevel.label)}
                     </button>
                   </p>
                 )}
@@ -414,19 +487,19 @@ export default function TalkPage() {
                         <div className="talk-chips">
                           {callBest(climb, c.slug) !== null && (
                             <span className="talk-chip done">
-                              <CheckIcon /> Done · {callBest(climb, c.slug)}/{c.turns.length} on your own
+                              <CheckIcon /> {t.done(callBest(climb, c.slug) ?? 0, c.turns.length)}
                             </span>
                           )}
-                          <span className="talk-chip">{c.turns.length} questions</span>
-                          <span className="talk-chip">about {MINUTES[c.level]} min</span>
+                          <span className="talk-chip">{t.questions(c.turns.length)}</span>
+                          <span className="talk-chip">{t.minutes(MINUTES[c.level])}</span>
                         </div>
                       </div>
                       {asking === c && !gender ? (
                         <div className="talk-ask" role="group" aria-label="How should Walia talk to you?">
-                          <span>Walia should talk to me</span>
+                          <span>{t.talkToMe}</span>
                           {(['m', 'f'] as Gender[]).map(g => (
                             <button key={g} type="button" className="btn btn-sm btn-secondary" onClick={() => pickAndCall(g, c)}>
-                              {g === 'm' ? 'As a man' : 'As a woman'}
+                              {g === 'm' ? t.asMan : t.asWoman}
                             </button>
                           ))}
                         </div>
@@ -439,7 +512,7 @@ export default function TalkPage() {
                           <span className="talk-call-btn-circle">
                             <PhoneIcon size={24} />
                           </span>
-                          <span>Call</span>
+                          <span>{t.call}</span>
                         </button>
                       )}
                     </article>

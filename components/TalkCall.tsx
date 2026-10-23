@@ -11,7 +11,7 @@ import Mascot, { type Mood } from '@/components/Mascot';
 import GrassIcon from '@/components/GrassIcon';
 import MountainScene from '@/components/MountainScene';
 import { completeCall } from '@/lib/climb';
-import { check, normalize, waliaLine, type Conversation, type Gender, type Line } from '@/lib/conversations';
+import { check, normalize, spokenText, waliaLine, type Conversation, type Gender, type Line } from '@/lib/conversations';
 import { startRecording, type Recording } from '@/lib/recorder';
 import { supabase } from '@/lib/supabase';
 import type { CallLine, TutorReply, TutorVerdict } from '@/lib/tutor';
@@ -31,8 +31,8 @@ function effect(kind: 'correct' | 'wrong') {
   }
 }
 
-function speakUrl(text: string, slow = false) {
-  return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}`;
+function speakUrl(text: string, slow = false, lang?: 'en') {
+  return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}${lang ? `&lang=${lang}` : ''}`;
 }
 
 async function authHeaders(): Promise<Record<string, string>> {
@@ -42,26 +42,70 @@ async function authHeaders(): Promise<Record<string, string>> {
 
 type Answer = { verdict: TutorVerdict; reply: Line | null; note: string };
 
+/**
+ * The words on the call screen. English calls are for Amharic speakers, so
+ * they get Amharic first with the English beside it.
+ */
+function callText(english: boolean) {
+  const both = (en: string, am: string) => (english ? `${am} · ${en}` : en);
+  return {
+    titles: {
+      right: both('Nice footing!', 'ጎበዝ!'),
+      slip: both('Almost there', 'ልትደርስ ነው'),
+      retry: both('Let’s try that again', 'እንደገና እንሞክር'),
+      question: both('Good question', 'ጥሩ ጥያቄ'),
+    } as Record<TutorVerdict, string>,
+    silent: both('Walia didn’t catch anything. Hold the phone a little closer and try again.', 'ዋሊያ ምንም አልሰማም። ስልኩን ትንሽ አቅርበው እንደገና ይሞክሩ።'),
+    unclear: both(
+      'Hmm, that didn’t sound like an answer to Walia. Try again, or tap “What can I say?”.',
+      'ይህ ለዋሊያ ጥያቄ መልስ አይመስልም። እንደገና ይሞክሩ፣ ወይም “ምን ልበል?” የሚለውን ይንኩ።',
+    ),
+    youSaid: both('You said', 'ያሉት'),
+    asked: both('Walia asked:', 'ዋሊያ የጠየቀው፡'),
+    slowly: both('Say it slowly', 'በዝግታ'),
+    help: both('What can I say?', 'ምን ልበል?'),
+    hideHelp: both('Hide help', 'እርዳታውን ደብቅ'),
+    couldSay: both('You could say', 'እንዲህ ማለት ይችላሉ'),
+    finished: english ? 'ጎበዝ! · Call finished' : 'ጎበዝ! Call finished',
+    grass: both('grass', 'ሳር'),
+    onOwn: (n: number, total: number) =>
+      english
+        ? `ከ${total} ጥያቄዎች ${n}ን በራስዎ መለሱ። · You answered ${n} of ${total} on your own.`
+        : `You answered ${n} of ${total} on your own.`,
+    again: (all: boolean) =>
+      all ? both('Walia is impressed.', 'ዋሊያ ተደንቋል።') : both('Call again to get them all.', 'ሁሉንም ለመመለስ እንደገና ይደውሉ።'),
+    callAgain: both('Call again', 'እንደገና ደውል'),
+    hangUp: both('Hang up', 'ዝጋ'),
+    finish: both('Finish', 'ጨርስ'),
+    continue: both('Continue', 'ቀጥል'),
+    answer: both('Answer Walia', 'ለዋሊያ መልስ'),
+    tryAgain: both('Try again', 'እንደገና ሞክር'),
+    skip: both('Skip for now', 'ለአሁን ዝለል'),
+    send: both('Send', 'ላክ'),
+    typeHere: english ? 'Type your answer in English' : 'Type your answer in ፊደል',
+    mic: both('Walia needs your microphone. Allow it in your browser’s settings, or type your answer instead.', 'ዋሊያ ማይክሮፎንዎን ይፈልጋል። በብራውዘርዎ ይፍቀዱ፣ ወይም መልስዎን ይጻፉ።'),
+    listening: both('Listening. Take your time, tap again when you’re done.', 'እያዳመጠ ነው። ሲጨርሱ እንደገና ይንኩ።'),
+    checking: both('Walia is listening back…', 'ዋሊያ እያዳመጠ ነው…'),
+    tapMic: english
+      ? 'ማይኩን ይንኩና በእንግሊዝኛ ይመልሱ · Tap the mic and answer Walia in English'
+      : 'Tap the mic and answer Walia out loud',
+    you: english ? 'እርስዎ' : 'You',
+  };
+}
+
 // When Walia's brain can't be reached, the script's own checker decides.
-function scriptAnswer(verdict: ReturnType<typeof check>): Answer {
+function scriptAnswer(verdict: ReturnType<typeof check>, text: ReturnType<typeof callText>): Answer {
   switch (verdict.kind) {
     case 'right':
       return { verdict: 'right', reply: null, note: '' };
     case 'tip':
       return { verdict: 'slip', reply: null, note: verdict.tip };
     case 'silent':
-      return { verdict: 'retry', reply: null, note: 'Walia didn’t catch anything. Hold the phone a little closer and try again.' };
+      return { verdict: 'retry', reply: null, note: text.silent };
     default:
-      return { verdict: 'retry', reply: null, note: 'Hmm, that didn’t sound like an answer to Walia. Try again, or tap “What can I say?”.' };
+      return { verdict: 'retry', reply: null, note: text.unclear };
   }
 }
-
-const TITLES: Record<TutorVerdict, string> = {
-  right: 'Nice footing!',
-  slip: 'Almost there',
-  retry: 'Let’s try that again',
-  question: 'Good question',
-};
 
 function formatTime(total: number) {
   return `${Math.floor(total / 60)}:${(total % 60).toString().padStart(2, '0')}`;
@@ -112,12 +156,25 @@ function EndIcon() {
   );
 }
 
-function LineText({ line, english }: { line: Line; english: boolean }) {
+/**
+ * A line of the call: the language being practised big, with its meaning
+ * underneath when it's switched on (English for Amharic calls, Amharic for
+ * English calls).
+ */
+function LineText({ line, meaning, englishCall }: { line: Line; meaning: boolean; englishCall: boolean }) {
+  if (englishCall) {
+    return (
+      <>
+        <span className="call-am" lang="en">{line.english}</span>
+        {meaning && <span className="call-en" lang="am">{line.amharic}</span>}
+      </>
+    );
+  }
   return (
     <>
       <span className="call-am" lang="am">{line.amharic}</span>
       <span className="call-tr">{line.transliteration}</span>
-      {english && <span className="call-en">{line.english}</span>}
+      {meaning && <span className="call-en">{line.english}</span>}
     </>
   );
 }
@@ -157,6 +214,10 @@ export default function TalkCall({
   const logRef = useRef<HTMLOListElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const englishCall = conversation.lang === 'en';
+  const text = callText(englishCall);
+  const lang = englishCall ? ('en' as const) : undefined;
+  const say_ = (l: Line) => spokenText(l, conversation);
   const turn = conversation.turns[turnIndex];
   const line = waliaLine(turn, gender);
   const last = turnIndex === conversation.turns.length - 1;
@@ -179,8 +240,8 @@ export default function TalkCall({
 
   // Walia says his line at the start of every turn
   useEffect(() => {
-    setHistory(h => [...h, { from: 'walia', text: line.amharic }]);
-    play(line.amharic, false, () => setPhase(p => (p === 'walia' ? 'ready' : p)));
+    setHistory(h => [...h, { from: 'walia', text: say_(line) }]);
+    play(say_(line), false, () => setPhase(p => (p === 'walia' ? 'ready' : p)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnIndex]);
 
@@ -209,7 +270,7 @@ export default function TalkCall({
 
   /** One of Walia's scripted lines: cached and open to everyone. */
   function play(text: string, slow = false, done?: () => void) {
-    playSrc(speakUrl(text, slow), done);
+    playSrc(speakUrl(text, slow, lang), done);
   }
 
   /** A reply Walia's brain just wrote: spoken fresh, for signed-in learners. */
@@ -220,7 +281,7 @@ export default function TalkCall({
       const res = await fetch('/api/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-        body: JSON.stringify({ text, slow }),
+        body: JSON.stringify({ text, slow, lang }),
       });
       if (!res.ok) return; // the words are on screen either way
       url = URL.createObjectURL(await res.blob());
@@ -230,8 +291,8 @@ export default function TalkCall({
   }
 
   function say(shown: Line, slow = false) {
-    if (shown === line) play(shown.amharic, slow);
-    else void playReply(shown.amharic, slow);
+    if (shown === line) play(say_(shown), slow);
+    else void playReply(say_(shown), slow);
   }
 
   async function askBrain(text: string): Promise<Answer | null> {
@@ -243,26 +304,26 @@ export default function TalkCall({
       });
       if (!res.ok) return null;
       const data = (await res.json()) as TutorReply;
-      return { verdict: data.verdict, reply: data.reply.amharic ? data.reply : null, note: data.note };
+      return { verdict: data.verdict, reply: say_(data.reply) ? data.reply : null, note: data.note };
     } catch {
       return null;
     }
   }
 
-  async function judge(text: string) {
-    setHeard(text);
+  async function judge(heardText: string) {
+    setHeard(heardText);
     setPhase('checking');
-    const said = normalize(text);
-    const result = (said && (await askBrain(said))) || scriptAnswer(check(turn, text));
+    const said = normalize(heardText);
+    const result = (said && (await askBrain(said))) || scriptAnswer(check(turn, heardText), text);
 
     setAnswer(result);
     setPhase('verdict');
     setHistory(h => [
       ...h,
       ...(said ? [{ from: 'learner' as const, text: said }] : []),
-      ...(result.reply ? [{ from: 'walia' as const, text: result.reply.amharic }] : []),
+      ...(result.reply ? [{ from: 'walia' as const, text: say_(result.reply) }] : []),
     ]);
-    if (result.reply) void playReply(result.reply.amharic);
+    if (result.reply) void playReply(say_(result.reply));
 
     if (result.verdict !== 'question') setAnswers(n => n + 1);
     if (result.verdict === 'right') {
@@ -284,7 +345,7 @@ export default function TalkCall({
       recording.current = await startRecording(() => stopRef.current());
       setPhase('listening');
     } catch {
-      setProblem('Walia needs your microphone. Allow it in your browser’s settings, or type your answer instead.');
+      setProblem(text.mic);
       setPhase('ready');
     }
   }
@@ -296,7 +357,7 @@ export default function TalkCall({
     setPhase('checking');
     try {
       const wav = await rec.stop();
-      const res = await fetch('/api/listen', {
+      const res = await fetch(englishCall ? '/api/listen?lang=en' : '/api/listen', {
         method: 'POST',
         headers: { 'Content-Type': 'audio/wav', ...(await authHeaders()) },
         body: wav,
@@ -356,7 +417,7 @@ export default function TalkCall({
     setMisses(0);
     setShowExample(false);
     setPhase('walia');
-    if (turnIndex === 0) play(waliaLine(conversation.turns[0], gender).amharic, false, () => setPhase('ready'));
+    if (turnIndex === 0) play(say_(waliaLine(conversation.turns[0], gender)), false, () => setPhase('ready'));
     setTurnIndex(0);
   }
 
@@ -405,7 +466,7 @@ export default function TalkCall({
             </span>
           </div>
           <div className={`call-self${phase === 'listening' ? ' live' : ''}`} aria-hidden>
-            <span className="call-self-face">You</span>
+            <span className="call-self-face">{text.you}</span>
             {phase === 'listening' && (
               <span className="call-self-level">
                 {[0.6, 0.9, 1, 0.8, 0.5].map((k, i) => (
@@ -427,7 +488,7 @@ export default function TalkCall({
             <ol className="call-log" aria-label="The call so far" ref={logRef}>
               {earlier.map((l, i) => (
                 <li key={i} className={l.from}>
-                  <span lang="am">{l.text}</span>
+                  <span lang={englishCall ? 'en' : 'am'}>{l.text}</span>
                 </li>
               ))}
             </ol>
@@ -435,30 +496,29 @@ export default function TalkCall({
 
           {heard && phase === 'verdict' && (
             <div className="call-heard">
-              <span className="call-heard-label">You said</span>
-              <span lang="am">{heard}</span>
+              <span className="call-heard-label">{text.youSaid}</span>
+              <span lang={englishCall ? 'en' : 'am'}>{heard}</span>
             </div>
           )}
 
           <div className={`call-caption${tone}`} aria-live="polite">
             {phase === 'done' ? (
               <div className="call-feedback call-finish">
-                <strong lang="am">ጎበዝ! Call finished</strong>
+                <strong lang="am">{text.finished}</strong>
                 {earned !== null && (
                   <span className="call-earned">
-                    <GrassIcon size={18} /> +{earned} grass
+                    <GrassIcon size={18} /> +{earned} {text.grass}
                   </span>
                 )}
                 <span>
-                  You answered {onOwn} of {conversation.turns.length} on your own.
-                  {onOwn < conversation.turns.length ? ' Call again to get them all.' : ' Walia is impressed.'}
+                  {text.onOwn(onOwn, conversation.turns.length)} {text.again(onOwn >= conversation.turns.length)}
                 </span>
                 <div className="call-actions">
                   <button type="button" className="btn btn-sm" onClick={callAgain}>
-                    Call again
+                    {text.callAgain}
                   </button>
                   <button type="button" className="btn btn-sm btn-secondary" onClick={onEnd}>
-                    Hang up
+                    {text.hangUp}
                   </button>
                 </div>
               </div>
@@ -471,54 +531,54 @@ export default function TalkCall({
                     <span />
                   </span>
                 ) : (
-                  <LineText line={shown} english={english} />
+                  <LineText line={shown} meaning={english} englishCall={englishCall} />
                 )}
 
                 {shown !== line && verdict !== 'retry' && (
                   <span className="call-asked">
-                    Walia asked: <span lang="am">{line.amharic}</span>
+                    {text.asked} <span lang={englishCall ? 'en' : 'am'}>{say_(line)}</span>
                   </span>
                 )}
 
                 {phase !== 'checking' && (
                   <div className="call-caption-tools">
                     <button type="button" className="call-link" onClick={() => say(shown, true)}>
-                      Say it slowly
+                      {text.slowly}
                     </button>
                     <button type="button" className="call-link" onClick={() => setShowExample(s => !s)}>
-                      {showExample ? 'Hide help' : 'What can I say?'}
+                      {showExample ? text.hideHelp : text.help}
                     </button>
                   </div>
                 )}
 
                 {showExample && phase !== 'checking' && (
                   <div className="call-example">
-                    <span className="call-example-label">You could say</span>
-                    <LineText line={turn.example} english />
+                    <span className="call-example-label">{text.couldSay}</span>
+                    <LineText line={turn.example} meaning englishCall={englishCall} />
                   </div>
                 )}
 
                 {verdict && answer && (
                   <div className="call-feedback">
-                    <strong>{TITLES[verdict]}</strong>
+                    <strong>{text.titles[verdict]}</strong>
                     {answer.note && <span>{answer.note}</span>}
                     <div className="call-actions">
                       {right ? (
                         <button type="button" className="btn btn-sm" onClick={next} autoFocus>
-                          {last ? 'Finish' : 'Continue'}
+                          {last ? text.finish : text.continue}
                         </button>
                       ) : verdict === 'question' ? (
                         <button type="button" className="btn btn-sm" onClick={retry} autoFocus>
-                          Answer Walia
+                          {text.answer}
                         </button>
                       ) : (
                         <>
                           <button type="button" className="btn btn-sm btn-danger" onClick={retry} autoFocus>
-                            Try again
+                            {text.tryAgain}
                           </button>
                           {misses >= 2 && (
                             <button type="button" className="btn btn-sm btn-secondary" onClick={next}>
-                              Skip for now
+                              {text.skip}
                             </button>
                           )}
                         </>
@@ -541,13 +601,13 @@ export default function TalkCall({
               <input
                 value={typed}
                 onChange={e => setTyped(e.target.value)}
-                lang="am"
-                placeholder="Type your answer in ፊደል"
+                lang={englishCall ? 'en' : 'am'}
+                placeholder={text.typeHere}
                 aria-label="Your answer"
                 autoFocus
               />
               <button type="submit" className="btn btn-sm">
-                Send
+                {text.send}
               </button>
             </form>
           )}
@@ -555,11 +615,11 @@ export default function TalkCall({
           <p className="call-hint" aria-live="polite">
             {problem ||
               (phase === 'listening'
-                ? 'Listening. Take your time, tap again when you’re done.'
+                ? text.listening
                 : phase === 'checking'
-                  ? 'Walia is listening back…'
+                  ? text.checking
                   : phase === 'ready' || phase === 'walia'
-                    ? 'Tap the mic and answer Walia out loud'
+                    ? text.tapMic
                     : ' ')}
           </p>
 
@@ -569,9 +629,13 @@ export default function TalkCall({
               className={`call-btn${english ? ' on' : ''}`}
               onClick={() => setEnglish(e => !e)}
               aria-pressed={english}
-              aria-label={english ? 'Hide English' : 'Show English'}
+              aria-label={
+                englishCall ? (english ? 'Hide the Amharic meaning' : 'Show the Amharic meaning') : english ? 'Hide English' : 'Show English'
+              }
             >
-              <span className="call-btn-text">EN</span>
+              <span className="call-btn-text" lang={englishCall ? 'am' : undefined}>
+                {englishCall ? 'አማ' : 'EN'}
+              </span>
             </button>
             <button
               type="button"

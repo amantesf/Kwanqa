@@ -2,6 +2,7 @@ import { speechReady, transcribe } from '@/lib/azureSpeech';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 
 // POST a short WAV recording (16 kHz mono) and get back what Azure heard.
+// ?lang=en listens for English (English learners' calls); otherwise Amharic.
 // Only for signed-in learners, so strangers can't use up the Azure allowance.
 // Capped at about 30 seconds of audio, which is plenty for one answer.
 
@@ -31,7 +32,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    return Response.json({ text: await transcribe(audio) });
+    const lang = new URL(request.url).searchParams.get('lang') === 'en' ? 'en' : 'am';
+    return Response.json({ text: await transcribe(audio, lang) });
   } catch (error) {
     console.error(error);
     return Response.json({ error: 'Walia couldn’t hear that. Try again.' }, { status: 502 });

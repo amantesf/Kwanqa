@@ -1,4 +1,4 @@
-import { conversations, type Gender } from '@/lib/conversations';
+import { allConversations, type Gender } from '@/lib/conversations';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 import { askWalia, tutorReady, type CallLine } from '@/lib/tutor';
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
-  const conversation = conversations.find(c => c.slug === body?.slug);
+  const conversation = allConversations.find(c => c.slug === body?.slug);
   const turnIndex = Number(body?.turn);
   const gender = body?.gender;
   const heard = typeof body?.heard === 'string' ? body.heard.trim() : '';

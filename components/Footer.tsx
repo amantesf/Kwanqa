@@ -8,6 +8,7 @@ const FOOTER_COLUMNS = [
       { href: '/courses?track=amharic', label: 'Learn Amharic' },
       { href: '/courses?track=english', label: 'Learn English' },
       { href: '/fidel', label: 'The ፊደል alphabet' },
+      { href: '/abc', label: 'The English ABC' },
       { href: '/holidays', label: 'Ethiopian holidays' },
     ],
   },

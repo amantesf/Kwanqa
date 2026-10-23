@@ -142,7 +142,17 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
             courseLessons={lessons}
             onExit={() => (fromTrail ? router.push(trailHref) : setMode('learn'))}
             onFinish={finishLesson}
-            finishLabel={isLast || fromTrail ? backLabel : 'Next lesson'}
+            finishLabel={
+              track === 'english'
+                ? isLast || fromTrail
+                  ? backLabel === 'Back to the trail'
+                    ? 'ወደ መንገዱ ተመለስ · Back to the trail'
+                    : backLabel
+                  : 'ቀጣዩ ትምህርት · Next lesson'
+                : isLast || fromTrail
+                  ? backLabel
+                  : 'Next lesson'
+            }
             track={track}
           />
           )

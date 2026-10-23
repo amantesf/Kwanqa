@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { phraseAudio } from '@/lib/phraseAudio';
+import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
 import Mascot, { type Mood } from '@/components/Mascot';
@@ -31,6 +32,41 @@ const CHEERS: Record<number, { amharic: string; transliteration: string; english
   8: { amharic: 'ዋው!', transliteration: 'wow!', english: 'Super impressive. 8 in a row!' },
   12: { amharic: 'ጎበዝ ጎበዝ!', transliteration: 'gobez gobez!', english: 'Walia can’t keep up with you. 12 in a row!' },
 };
+// Streak cheers for English learners: the English is what they're learning,
+// with the Amharic underneath.
+const CHEERS_EN: Record<number, { big: string; sub: string }> = {
+  3: { big: 'Well done!', sub: 'ጎበዝ! · 3 in a row' },
+  5: { big: 'Very good!', sub: 'በጣም ጥሩ! · 5 in a row' },
+  8: { big: 'Wow!', sub: 'ዋው! · 8 in a row' },
+  12: { big: 'Amazing!', sub: 'ጎበዝ ጎበዝ! · 12 in a row' },
+};
+
+/**
+ * The words around the lesson. English learners are Amharic speakers who may
+ * not read English yet, so they get Amharic first with the English beside it.
+ */
+export function uiText(track: Track | undefined) {
+  const both = (en: string, am: string) => (track === 'english' ? `${am} · ${en}` : en);
+  return {
+    check: both('Check', 'አረጋግጥ'),
+    continue: both('Continue', 'ቀጥል'),
+    good: both('Nice footing!', 'ጎበዝ!'),
+    bad: both('Walia slipped!', 'ዋሊያ ተንሸራተተ!'),
+    correctAnswer: both('Correct answer:', 'ትክክለኛው መልስ፡'),
+    comeBack: both('This one will come back later.', 'ይህ ጥያቄ እንደገና ይመጣል።'),
+    previous: both('Previous mistake', 'ያለፈው ስህተት'),
+    inARow: (n: number, more: number) =>
+      track === 'english' ? `${n} በተከታታይ · ${n} in a row` : `${n} in a row. ${more} more to regain stamina`,
+    restTitle: both('Walia needs a rest', 'ዋሊያ ማረፍ ያስፈልገዋል'),
+    restText:
+      track === 'english'
+        ? 'ጉልበቱ አልቋል። ሳር በልቶ ይበርታ፣ ወይም ሐረጎቹን ይከልሱ። · Out of stamina. Graze to recover, or review the phrases.'
+        : 'Out of stamina on this ledge. Graze to recover, or review the phrases and try again.',
+    eat: (n: number) => both(`Eat ${n} grass`, `${n} ሳር ብላ`),
+    review: both('Review phrases', 'ሐረጎቹን ከልስ'),
+  };
+}
+
 type Reaction = { kind: 'slip' | 'hop'; n: number } | null;
 
 function Hoof({ filled }: { filled: boolean }) {
@@ -233,7 +269,12 @@ export default function Practice({
   const climb = useClimb();
   const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
   const [initial] = useState(() =>
-    buildExercises(lesson, courseLessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0),
+    buildExercises(
+      lesson,
+      courseLessons,
+      track,
+      (slug === 'amharic-beginner-1' || slug === 'english-from-amharic-1') && lessonIndex === 0,
+    ),
   );
   const [queue, setQueue] = useState<Exercise[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());
@@ -261,32 +302,51 @@ export default function Practice({
   const sounds = useAnswerSounds();
 
   const current = queue[0];
+  const ui = uiText(track);
 
-  // A recording of the Amharic in the question, when we have one: it plays by
-  // itself when the question appears (unless muted) and the speaker replays it.
-  // Fill-in-the-blank questions keep quiet until answered, then say the whole line.
+  // The language being learned is the one that's spoken: Amharic recordings in
+  // the Amharic course, an English voice in the English course (Amharic, the
+  // English learner's own language, stays quiet).
+  type Sound = { src: string; say?: string } | null;
+  function soundFor(text: string | null | undefined): Sound {
+    if (!text) return null;
+    if (track === 'english') return isSpeakableEnglish(text) ? { src: englishAudioUrl(text), say: text } : null;
+    const src = phraseAudio(text);
+    return src ? { src } : null;
+  }
+
+  // The question's sound plays by itself when the question appears (unless
+  // muted) and the speaker replays it. Fill-in-the-blank questions keep quiet
+  // until answered, then say the whole line.
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
   // While answering they play only the part you can see (if recorded), never the answer.
-  const promptAudio =
+  const promptAudio: Sound =
     !current || current.kind === 'match'
       ? null
       : reveal && phase === 'feedback'
-        ? (phraseAudio(reveal) ?? phraseAudio(current.prompt))
-        : phraseAudio(current.prompt);
+        ? (soundFor(reveal) ?? soundFor(current.prompt))
+        : soundFor(current.prompt);
   const voice = useRef<HTMLAudioElement | null>(null);
-  function playClip(src: string | null) {
-    if (!src) return;
+  function playClip(sound: Sound) {
+    if (!sound) return;
     voice.current?.pause();
-    const el = new Audio(src);
+    const el = new Audio(sound.src);
     voice.current = el;
-    el.play().catch(() => {});
+    // No English voice from the server (offline, or not set up)? The browser reads it.
+    const fallback = () => {
+      if (sound.say && voice.current === el) speakWithBrowser(sound.say);
+    };
+    el.onerror = fallback;
+    el.play().catch(err => {
+      if (err?.name !== 'NotAllowedError') fallback();
+    });
   }
   function playPrompt() {
     playClip(promptAudio);
   }
-  /** Say an Amharic word or answer out loud when it's tapped, if we have a recording. */
+  /** Say a word or answer out loud when it's tapped, in the language being learned. */
   function sayAloud(text: string) {
-    if (!sounds.muted) playClip(phraseAudio(text));
+    if (!sounds.muted) playClip(soundFor(text));
   }
   const promptKey = !promptAudio
     ? null
@@ -474,6 +534,7 @@ export default function Practice({
         note={lesson.note}
         finishLabel={finishLabel}
         onFinish={onFinish}
+        track={track}
       />
     );
   }
@@ -483,16 +544,16 @@ export default function Practice({
     return (
       <div className="practice practice-screen practice-done">
         <Mascot pose="happy" size={140} hornScale={horns.scale} />
-        <h2 className="h2">Walia needs a rest</h2>
+        <h2 className="h2">{ui.restTitle}</h2>
         <p className="lead" style={{ maxWidth: 460 }}>
-          Out of stamina on this ledge. Graze to recover, or review the phrases and try again.
+          {ui.restText}
         </p>
         <div className="row" style={{ justifyContent: 'center' }}>
           <button type="button" className="btn" onClick={rest} disabled={!canRest}>
-            Eat {REST_COST} grass
+            {ui.eat(REST_COST)}
           </button>
           <button type="button" className="btn btn-secondary" onClick={onExit}>
-            Review phrases
+            {ui.review}
           </button>
         </div>
         <p className="faint small">
@@ -535,11 +596,18 @@ export default function Practice({
             <div className="cheer-walia" aria-hidden>
               <Mascot pose="cheer" size={150} hornScale={horns.scale} animated />
             </div>
-            <div className="cheer-bubble">
-              <strong lang="am">{CHEERS[combo].amharic}</strong>
-              <span className="cheer-tr">{CHEERS[combo].transliteration}</span>
-              <span>{CHEERS[combo].english}</span>
-            </div>
+            {track === 'english' && CHEERS_EN[combo] ? (
+              <div className="cheer-bubble">
+                <strong>{CHEERS_EN[combo].big}</strong>
+                <span>{CHEERS_EN[combo].sub}</span>
+              </div>
+            ) : (
+              <div className="cheer-bubble">
+                <strong lang="am">{CHEERS[combo].amharic}</strong>
+                <span className="cheer-tr">{CHEERS[combo].transliteration}</span>
+                <span>{CHEERS[combo].english}</span>
+              </div>
+            )}
           </div>
         ) : (
         <div className="practice-question">
@@ -556,7 +624,7 @@ export default function Practice({
                   strokeLinejoin="round"
                 />
               </svg>
-              Previous mistake
+              {ui.previous}
             </span>
           )}
           <h2 className="practice-instruction">{current.instruction}</h2>
@@ -695,35 +763,35 @@ export default function Practice({
             <>
               <span />
               <button type="button" className="btn" onClick={() => setPhase('question')} autoFocus>
-                Continue
+                {ui.continue}
               </button>
             </>
           ) : phase === 'feedback' ? (
           <>
             <FeedbackIcon good={lastCorrect} />
             <div className="feedback-text">
-              <strong>{lastCorrect ? 'Nice footing!' : 'Walia slipped!'}</strong>
+              <strong>{lastCorrect ? ui.good : ui.bad}</strong>
               {current.kind !== 'match' && (
                 <span>
                   {lastCorrect
                     ? current.explain
-                    : `Correct answer: ${current.kind === 'build' ? current.answer.join(' ') : current.answer}. ${current.explain}`}
+                    : `${ui.correctAnswer} ${current.kind === 'build' ? current.answer.join(' ') : current.answer}. ${current.explain}`}
                 </span>
               )}
-              {!lastCorrect && <span className="faint small">This one will come back later.</span>}
+              {!lastCorrect && <span className="faint small">{ui.comeBack}</span>}
             </div>
             <button type="button" className={`btn${lastCorrect ? '' : ' btn-danger'}`} onClick={advance}>
-              Continue
+              {ui.continue}
             </button>
           </>
         ) : (
           <>
             <span className="faint small">
-              {streak > 0 ? `${streak} in a row. ${STREAK_TO_RECOVER - streak} more to regain stamina` : ' '}
+              {streak > 0 ? ui.inARow(streak, STREAK_TO_RECOVER - streak) : ' '}
             </span>
             {current.kind !== 'match' && (
               <button type="button" className="btn" onClick={check} disabled={!canCheck}>
-                Check
+                {ui.check}
               </button>
             )}
           </>

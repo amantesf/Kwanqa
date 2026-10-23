@@ -5,7 +5,7 @@ import { useId } from 'react';
 // bubbles pop up between them. For the daily-life-and-feelings camp.
 // An illustration, drawn from scratch, not anyone in particular.
 
-export default function Friends({ className }: { className?: string }) {
+export default function Friends({ className, greeting = 'ሰላም!' }: { className?: string; greeting?: string }) {
   const id = useId().replace(/:/g, '');
   return (
     <svg className={className} viewBox="0 0 140 112" aria-hidden focusable="false">
@@ -90,7 +90,7 @@ export default function Friends({ className }: { className?: string }) {
       <g className="friend-bubble friend-bubble-1">
         <path d="M44 4 H70 Q74 4 74 8 V15 Q74 19 70 19 H58 L52 24 L53 19 H48 Q44 19 44 15 V8 Q44 4 48 4 Z" fill="#fff" />
         <text x="59" y="15" textAnchor="middle" fontSize="8" fontWeight="800" fill="#241a14" className="geez-font">
-          ሰላም!
+          {greeting}
         </text>
       </g>
       <g className="friend-bubble friend-bubble-2">

@@ -141,14 +141,14 @@
   50% { transform: translateY(-6px); opacity: 1; }
 }
 
-/* Walia bobs gently while he talks (until the Rive version can move his mouth). */
-.call-walia.talking svg {
-  animation: call-talk 0.5s ease-in-out infinite alternate;
+/* If the browser can't measure his voice, his mouth just moves while he talks. */
+.call-walia.fake-lips .walia-talking .w-mouth-open {
+  animation: call-yap 0.2s ease-in-out infinite alternate;
 }
 
-@keyframes call-talk {
-  from { transform: translateY(0) rotate(-1deg); }
-  to { transform: translateY(-4px) rotate(1deg); }
+@keyframes call-yap {
+  from { transform: scaleY(0.15); }
+  to { transform: scaleY(0.8); }
 }
 
 /* one dot per question */
@@ -461,8 +461,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .call-dots span,
-  .call-walia.talking svg {
+  .call-dots span {
     animation: none;
   }
 }

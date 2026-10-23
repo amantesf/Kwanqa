@@ -273,7 +273,8 @@ export default function Practice({
       lesson,
       courseLessons,
       track,
-      (slug === 'amharic-beginner-1' || slug === 'english-from-amharic-1') && lessonIndex === 0,
+      // the English course starts at a medium level, so it skips the picture warm-up
+      slug === 'amharic-beginner-1' && lessonIndex === 0,
     ),
   );
   const [queue, setQueue] = useState<Exercise[]>(initial);

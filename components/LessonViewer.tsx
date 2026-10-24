@@ -61,6 +61,10 @@ function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolea
               <div className="phrase-card">{body}</div>
             )}
             <SayButton text={side.learn} track={track} className="say-corner" />
+            {/* English course: the Amharic meaning can be heard too */}
+            {track === 'english' && !hidden && (
+              <SayButton text={phrase.amharic} track="amharic" className="say-corner say-am" size={15} />
+            )}
           </div>
         );
       })}
@@ -204,7 +208,12 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
                         <SayButton text={sides(line, track).learn} track={track} className="say-corner" />
                         <span className="am">{sides(line, track).learn}</span>
                         {sides(line, track).say && <span className="tr">{sides(line, track).say}</span>}
-                        <span className="en">{sides(line, track).meaning}</span>
+                        <span className="en">
+                          {sides(line, track).meaning}
+                          {track === 'english' && (
+                            <SayButton text={line.amharic} track="amharic" className="say-inline say-am" size={14} />
+                          )}
+                        </span>
                       </div>
                     </div>
                   ))}

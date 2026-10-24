@@ -9469,3 +9469,51 @@ body:has(.practice-screen) {
     animation: none !important;
   }
 }
+
+/* Ethiopia's flag flutters on the summit */
+.climb-flag {
+  animation: climb-flag 3.2s ease-in-out infinite;
+}
+
+@keyframes climb-flag {
+  0%, 100% { transform: skewY(0deg) scaleX(1); }
+  50% { transform: skewY(-3deg) scaleX(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .climb-flag {
+    animation: none;
+  }
+}
+
+/* English course: small green speakers read the Amharic meaning in Walia's Amharic voice */
+.say-btn.say-am {
+  color: #1f8a4c;
+}
+
+.say-btn.say-am:hover {
+  background: #e8f6ee;
+}
+
+.say-btn.say-inline {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  margin-left: 8px;
+  border-radius: 9px;
+  vertical-align: middle;
+}
+
+.phrase-card-wrap .say-corner.say-am {
+  top: auto;
+  bottom: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.phrasebook-row-wrap .say-corner.say-am-row {
+  right: 52px;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+}

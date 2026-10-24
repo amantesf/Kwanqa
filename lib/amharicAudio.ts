@@ -12,7 +12,11 @@ const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 /** Lines with a gap in them (ስሜ ... ነው) are patterns, not something to say. */
 const hasGap = (text: string) => text.includes('...') || text.includes('…') || text.includes('__');
 
-/** Every Amharic phrase, dialogue line, word tile, answer and picture word in the Amharic course. */
+/**
+ * Every Amharic phrase, dialogue line, word tile, answer and picture word in the
+ * Amharic course, plus the Amharic meaning of every line in the English course
+ * (so Amharic speakers can hear those too).
+ */
 export function speakableAmharic(): Set<string> {
   const lines: string[] = [];
   for (const [slug, course] of Object.entries(courseContent)) {
@@ -23,7 +27,16 @@ export function speakableAmharic(): Set<string> {
     }
   }
   const words = lines.flatMap(line => line.split(/\s+/).map(w => w.replace(PUNCT, '')));
-  return new Set([...lines, ...words, ...PICTURES.map(p => p.amharic)].filter(t => t && !hasGap(t)));
+  const meanings: string[] = [];
+  for (const [slug, course] of Object.entries(courseContent)) {
+    if (!slug.startsWith('english-')) continue;
+    for (const lesson of course.sections) {
+      for (const card of [...(lesson.phrases ?? []), ...(lesson.dialogue ?? [])]) meanings.push(card.amharic);
+    }
+  }
+  return new Set(
+    [...lines, ...words, ...meanings, ...PICTURES.map(p => p.amharic)].map(t => t?.trim()).filter(t => t && !hasGap(t)),
+  );
 }
 
 let allowed: Set<string> | null = null;

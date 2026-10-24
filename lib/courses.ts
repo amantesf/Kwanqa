@@ -1006,9 +1006,9 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
-  // Amharic Camp 6 – The Summit: Culture & Respect
+  // Amharic Camp 6 – Culture & Respect
   'amharic-beginner-6': {
-    title: 'Amharic Camp 6 – The Summit: Culture & Respect',
+    title: 'Amharic Camp 6 – Culture & Respect',
     intro:
       'Speak respectfully to elders, celebrate the holidays, give blessings, read the Ethiopian calendar, and finish a proverb.',
     sections: [
@@ -1135,7 +1135,7 @@ export const courseContent: Record<string, Course> = {
       {
         title: 'Lesson 5 – Proverbs',
         description:
-          'Reach the summit with five famous ተረት (proverbs) that elders love to hear.',
+          'Finish the camp with five famous ተረት (proverbs) that elders love to hear.',
         phrases: [
           { amharic: 'ተረት', transliteration: 'teret', english: 'proverb / saying' },
           { amharic: 'ቀስ በቀስ እንቁላል በእግሩ ይሄዳል', transliteration: 'qes beqes inqulal be\'igru yihedal', english: 'Little by little, an egg walks on its own legs. (be patient)' },
@@ -1159,7 +1159,221 @@ export const courseContent: Record<string, Course> = {
           },
         ],
         note:
-          'Elders love it when young people finish their proverbs. ቀስ በቀስ... is the perfect way to end the climb!',
+          'Elders love it when young people finish their proverbs. ቀስ በቀስ... is the perfect way to finish a camp!',
+      },
+    ],
+  },
+
+  // Amharic Camp 7 – The Summit: Dates & Time
+  'amharic-beginner-7': {
+    title: 'Amharic Camp 7 – The Summit: Dates & Time',
+    intro:
+      'Learn all thirteen Ethiopian months, talk about last week and next week, say dates and birthdays, and read the Ethiopian clock.',
+    sections: [
+      {
+        title: 'Lesson 1 – The Months: Meskerem to Yekatit',
+        description:
+          'The first six months of the Ethiopian year, and the holidays that fall in them.',
+        phrases: [
+          { amharic: 'መስከረም', transliteration: 'meskerem', english: 'Meskerem (Sep–Oct)' },
+          { amharic: 'ጥቅምት', transliteration: 'tiqimt', english: 'Tikimt (Oct–Nov)' },
+          { amharic: 'ኅዳር', transliteration: 'hidar', english: 'Hidar (Nov–Dec)' },
+          { amharic: 'ታኅሣሥ', transliteration: 'tahsas', english: 'Tahsas (Dec–Jan)' },
+          { amharic: 'ጥር', transliteration: 'tir', english: 'Tir (Jan–Feb)' },
+          { amharic: 'የካቲት', transliteration: 'yekatit', english: 'Yekatit (Feb–Mar)' },
+          { amharic: 'በየትኛው ወር?', transliteration: 'beyetignaw wer?', english: 'In which month?' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'መስቀል በየትኛው ወር ነው?',
+            transliteration: 'meskel beyetignaw wer new?',
+            english: 'Which month is Meskel in?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'በመስከረም ነው።',
+            transliteration: 'bemeskerem new.',
+            english: 'It\'s in Meskerem.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ገናስ?',
+            transliteration: 'gennas?',
+            english: 'And Genna?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ገና በታኅሣሥ ነው።',
+            transliteration: 'genna betahsas new.',
+            english: 'Genna is in Tahsas.',
+          },
+        ],
+        note:
+          'To say “in Meskerem,” add በ- to the month: በመስከረም. Each month starts around the 10th of a Western month, so Meskerem runs from September 11 to October 10.',
+      },
+      {
+        title: 'Lesson 2 – The Months: Megabit to Pagume',
+        description:
+          'The last seven months, the rainy season, and why there are thirteen.',
+        phrases: [
+          { amharic: 'መጋቢት', transliteration: 'megabit', english: 'Megabit (Mar–Apr)' },
+          { amharic: 'ሚያዝያ', transliteration: 'miyazya', english: 'Miyazya (Apr–May)' },
+          { amharic: 'ግንቦት', transliteration: 'ginbot', english: 'Ginbot (May–Jun)' },
+          { amharic: 'ሰኔ', transliteration: 'sene', english: 'Sene (Jun–Jul)' },
+          { amharic: 'ሐምሌ', transliteration: 'hamle', english: 'Hamle (Jul–Aug)' },
+          { amharic: 'ነሐሴ', transliteration: 'nehase', english: 'Nehase (Aug–Sep)' },
+          { amharic: 'ጳጉሜ', transliteration: 'pagume', english: 'Pagume (the 13th month)' },
+          { amharic: 'ክረምት', transliteration: 'kiremt', english: 'the rainy season (Jun–Sep)' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ስንት ወራት አሉ?',
+            transliteration: 'sint werat alu?',
+            english: 'How many months are there?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አስራ ሦስት ወራት።',
+            transliteration: 'asra sost werat.',
+            english: 'Thirteen months.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ጳጉሜ ስንት ቀን ነው?',
+            transliteration: 'pagume sint qen new?',
+            english: 'How many days is Pagume?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አምስት ቀን፣ አንዳንዴ ስድስት።',
+            transliteration: 'amist qen, andande sidist.',
+            english: 'Five days, sometimes six.',
+          },
+        ],
+        note:
+          'Twelve months have 30 days each. Pagume has 5, or 6 in a leap year, and comes just before the New Year. That’s why Ethiopia is called the land of “thirteen months of sunshine.”',
+      },
+      {
+        title: 'Lesson 3 – Last Week & Next Week',
+        description:
+          'Look back and look ahead: the day after tomorrow, last week, next month, and the weekend.',
+        phrases: [
+          { amharic: 'ከነገ ወዲያ', transliteration: 'kenege wediya', english: 'the day after tomorrow' },
+          { amharic: 'ከትናንት ወዲያ', transliteration: 'ketinant wediya', english: 'the day before yesterday' },
+          { amharic: 'ባለፈው ሳምንት', transliteration: 'balefew samint', english: 'last week' },
+          { amharic: 'በሚቀጥለው ሳምንት', transliteration: 'bemiqetilew samint', english: 'next week' },
+          { amharic: 'በሚቀጥለው ወር', transliteration: 'bemiqetilew wer', english: 'next month' },
+          { amharic: 'ቅዳሜና እሁድ', transliteration: 'qidamena ihud', english: 'the weekend (Saturday and Sunday)' },
+          { amharic: 'ዓርብ እንገናኝ', transliteration: 'arb ingenagn', english: 'See you on Friday.' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ነገ ትመጣለህ?',
+            transliteration: 'nege timetaleh?',
+            english: 'Will you come tomorrow?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ነገ አልችልም። ከነገ ወዲያ እመጣለሁ።',
+            transliteration: 'nege alchilim. kenege wediya imetalehu.',
+            english: 'I can\'t tomorrow. I\'ll come the day after tomorrow.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እሺ፣ ከነገ ወዲያ እንገናኝ!',
+            transliteration: 'ishi, kenege wediya ingenagn!',
+            english: 'Okay, see you the day after tomorrow!',
+          },
+        ],
+        respect: [
+          { english: 'Will you come tomorrow?', man: 'ነገ ትመጣለህ?', woman: 'ነገ ትመጫለሽ?', elder: 'ነገ ይመጣሉ?' },
+        ],
+        note:
+          'To say “on Friday,” just use the day: ዓርብ እመጣለሁ means “I’ll come on Friday.” ወዲያ means “beyond,” so ከነገ ወዲያ is literally “beyond tomorrow.”',
+      },
+      {
+        title: 'Lesson 4 – Dates & Birthdays',
+        description:
+          'Say today’s date, ask about birthdays, and talk about the Ethiopian year.',
+        phrases: [
+          { amharic: 'ዛሬ ጥቅምት አስራ ሦስት ነው።', transliteration: 'zare tiqimt asra sost new.', english: 'Today is Tikimt 13.' },
+          { amharic: 'ልደት', transliteration: 'lidet', english: 'birthday / birth' },
+          { amharic: 'ልደትህ መቼ ነው?', transliteration: 'lidetih meche new?', english: 'When is your birthday? (to a man)' },
+          { amharic: 'ልደትሽ መቼ ነው?', transliteration: 'lidetish meche new?', english: 'When is your birthday? (to a woman)' },
+          { amharic: 'ልደቴ ግንቦት አምስት ነው።', transliteration: 'lidete ginbot amist new.', english: 'My birthday is Ginbot 5.' },
+          { amharic: 'ሁለት ሺህ አስራ ዘጠኝ', transliteration: 'hulet shih asra zetegn', english: '2019 (the Ethiopian year that began in September 2026)' },
+          { amharic: 'በፈረንጆች አቆጣጠር', transliteration: 'beferenjoch aqotater', english: 'in the Western calendar' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ልደትሽ መቼ ነው?',
+            transliteration: 'lidetish meche new?',
+            english: 'When is your birthday?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'የእኔ ግንቦት አምስት ነው። አንተስ?',
+            transliteration: 'ye\'ine ginbot amist new. antes?',
+            english: 'Mine is Ginbot 5. And you?',
+          },
+          {
+            speaker: 'A',
+            amharic: 'የእኔ መስከረም ሃያ ነው።',
+            transliteration: 'ye\'ine meskerem haya new.',
+            english: 'Mine is Meskerem 20.',
+          },
+        ],
+        respect: [
+          { english: 'When is your birthday?', man: 'ልደትህ መቼ ነው?', woman: 'ልደትሽ መቼ ነው?', elder: 'ልደትዎ መቼ ነው?' },
+        ],
+        note:
+          'Say the month first, then the day: ጥቅምት አስራ ሦስት. The Ethiopian year is 7 years behind the Western year from September to December, and 8 years behind from January to early September.',
+      },
+      {
+        title: 'Lesson 5 – Ethiopian Time',
+        description:
+          'Read the Ethiopian clock, morning to night, and never miss a meeting.',
+        phrases: [
+          { amharic: 'ከጠዋቱ አንድ ሰዓት', transliteration: 'ketewatu and se\'at', english: '7 a.m. (1 o\'clock in the morning)' },
+          { amharic: 'ከቀኑ ስድስት ሰዓት', transliteration: 'keqenu sidist se\'at', english: '12 noon (6 o\'clock in the day)' },
+          { amharic: 'ከቀኑ ሰባት ሰዓት', transliteration: 'keqenu sebat se\'at', english: '1 p.m. (7 o\'clock in the day)' },
+          { amharic: 'ከምሽቱ አንድ ሰዓት', transliteration: 'kemshitu and se\'at', english: '7 p.m. (1 o\'clock in the evening)' },
+          { amharic: 'ከሌሊቱ ስድስት ሰዓት', transliteration: 'kelelitu sidist se\'at', english: 'midnight (6 o\'clock at night)' },
+          { amharic: 'ሁለት ሰዓት ተኩል', transliteration: 'hulet se\'at tekul', english: '8:30 a.m. (half past two)' },
+          { amharic: 'በኢትዮጵያ ሰዓት', transliteration: 'be\'ityopya se\'at', english: 'in Ethiopian time' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ነገ ስንት ሰዓት እንገናኝ?',
+            transliteration: 'nege sint se\'at ingenagn?',
+            english: 'What time shall we meet tomorrow?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ከጠዋቱ ሦስት ሰዓት።',
+            transliteration: 'ketewatu sost se\'at.',
+            english: 'Three o\'clock in the morning.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'በኢትዮጵያ ሰዓት? ዘጠኝ ሰዓት ማለት ነው?',
+            transliteration: 'be\'ityopya se\'at? zetegn se\'at malet new?',
+            english: 'In Ethiopian time? You mean nine o\'clock?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ፣ ልክ ነህ!',
+            transliteration: 'awo, lik neh!',
+            english: 'Yes, you\'re right!',
+          },
+        ],
+        note:
+          'The Ethiopian day starts at sunrise, so 6 a.m. is 12 o\'clock and 7 a.m. is 1 o\'clock. Add six hours to get Western time. When you make plans, ask: በኢትዮጵያ ሰዓት? You\'ve reached the summit. እንኳን ደስ አላችሁ!',
       },
     ],
   },
@@ -1222,11 +1436,19 @@ export const courseCatalog: CourseSummary[] = [
   },
   {
     slug: 'amharic-beginner-6',
-    title: 'Amharic Camp 6 – The Summit: Culture & Respect',
+    title: 'Amharic Camp 6 – Culture & Respect',
     description: 'Elders, holidays, blessings, the calendar, and proverbs.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',
     part: 6,
+  },
+  {
+    slug: 'amharic-beginner-7',
+    title: 'Amharic Camp 7 – The Summit: Dates & Time',
+    description: 'All 13 months, last week and next week, dates, birthdays, and Ethiopian time.',
+    audience: 'Non‑Amharic speakers learning Amharic',
+    track: 'amharic',
+    part: 7,
   },
   ...englishCatalog,
 ];

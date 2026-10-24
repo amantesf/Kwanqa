@@ -123,6 +123,8 @@ const TWINS: string[][] = [
   ['የምትሄደው', 'የምትሄጂው'],
   ['ወንድምህ', 'ወንድምሽ'],
   ['ቤተሰቦችህ', 'ቤተሰቦችሽ'],
+  ['ልደትህ', 'ልደትሽ', 'ልደትዎ'],
+  ['ትመጣለህ', 'ትመጫለሽ', 'ይመጣሉ'],
 ];
 const TWIN_OF = new Map(TWINS.flatMap((group, i) => group.map(w => [w, i] as const)));
 const PUNCT_ALL = /[።፣፤፥፦፧?!.,]/g;

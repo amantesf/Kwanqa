@@ -22,6 +22,7 @@ const CAMP_ART: Record<string, 'numbers' | 'cup' | 'taxi' | 'friends' | 'elder'>
   'amharic-beginner-4': 'taxi', // a blue-and-white Addis taxi
   'amharic-beginner-5': 'friends', // two friends catching up
   'amharic-beginner-6': 'elder', // Ababa in his gabi
+  'amharic-beginner-7': 'numbers', // dates written in Ge'ez numerals
   'english-from-amharic-1': 'friends', // getting to know people
   'english-from-amharic-3': 'cup', // restaurants and food
   'english-from-amharic-4': 'taxi', // travel and getting around

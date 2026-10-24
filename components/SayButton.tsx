@@ -45,6 +45,7 @@ export default function SayButton({
   size = 18,
 }: {
   text: string;
+  /** Which voice reads it: 'amharic' for Walia's Amharic voice, 'english' for the English one. */
   track: Track;
   className?: string;
   size?: number;
@@ -59,7 +60,7 @@ export default function SayButton({
         say(text, track);
       }}
       aria-label={`Hear “${text}”`}
-      title="Hear it"
+      title={track === 'amharic' ? 'Hear it in Amharic' : 'Hear it'}
     >
       <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
         <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />

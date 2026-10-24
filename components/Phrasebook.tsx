@@ -105,6 +105,9 @@ export default function Phrasebook() {
                     </span>
                   </button>
                   <SayButton text={english ? phrase.english : phrase.amharic} track={track} className="say-corner" />
+                  {english && !hidden && (
+                    <SayButton text={phrase.amharic} track="amharic" className="say-corner say-am say-am-row" size={15} />
+                  )}
                   </div>
                 );
               })}
@@ -121,7 +124,10 @@ export default function Phrasebook() {
                     <SayButton text={english ? line.english : line.amharic} track={track} className="say-corner" />
                     <div className="phrasebook-am small-am">{english ? line.english : line.amharic}</div>
                     {!english && <div className="phrasebook-tr">{line.transliteration}</div>}
-                    <div className="phrasebook-en">{english ? line.amharic : line.english}</div>
+                    <div className="phrasebook-en">
+                      {english ? line.amharic : line.english}
+                      {english && <SayButton text={line.amharic} track="amharic" className="say-inline say-am" size={14} />}
+                    </div>
                   </div>
                 </div>
               ))}

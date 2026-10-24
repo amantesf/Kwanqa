@@ -2,7 +2,8 @@
 
 // One tall mountain drawn behind the whole learn trail, from the meadow at the
 // trailhead (Camp 1) up through every camp to the flag on the summit. Green
-// ledges, pines and grey cliffs low down; bare rock and snow near the top;
+// ledges, pines and grey cliffs low down; bare brown summit rock near the top
+// (the Simien Mountains have no snow), with Ethiopia's flag on the peak;
 // clouds drifting past, distant blue ranges and lakes off to the sides.
 // Camps you haven't reached yet sit under a layer of cloud.
 //
@@ -20,7 +21,7 @@ const C = {
   skyBottom: '#e3f3fb',
   far: '#c5dbee',
   farer: '#dbe9f5',
-  farSnow: '#f4f8fc',
+  farRock: '#aebfd2',
   lake: '#9fd3ee',
   rock: '#cfcbc6',
   rockShade: '#ada9a5',
@@ -30,8 +31,9 @@ const C = {
   grassShade: '#5f9c39',
   pine: '#2f7d4f',
   pineLight: '#3f9a5f',
-  snow: '#f7fafd',
-  snowShade: '#dde6f0',
+  summit: '#a68d79',
+  summitShade: '#8a7260',
+  summitLine: '#755e4e',
   meadow: '#93cf58',
   meadowFront: '#7cbf45',
   path: '#efe1bb',
@@ -113,14 +115,29 @@ function draw({ w, h, peakY, camps }: Layout) {
   }
   const shade = poly([[cx, peakY], ...right, [w + 80, baseY + 40], ...spine.slice().reverse()]);
 
-  // Snow on the summit, with a ragged lower edge.
-  const snowLine: Pt[] = [];
-  for (let x = cx - 260; x <= cx + 260; x += 26) {
+  // Bare brown summit rock, like Ras Dashen's crags, with a broken lower edge.
+  const rockLine: Pt[] = [];
+  for (let x = cx - 260; x <= cx + 260; x += 22) {
     const dist = Math.abs(x - cx);
-    snowLine.push([x, peakY + 150 + dist * 0.25 + (r() * 40 - 10) + (x > cx ? 20 : 0)]);
+    // a stepped edge: flat runs and sudden drops, like layered basalt
+    rockLine.push([x, peakY + 150 + dist * 0.25 + (r() < 0.5 ? 0 : 22) + (x > cx ? 16 : 0)]);
   }
-  const snow = poly([[cx - 300, peakY - 40], [cx + 300, peakY - 40], ...snowLine.reverse()]);
-  const snowShade = poly([[cx, peakY], [cx + 300, peakY + 40], [cx + 300, peakY + 260], ...spine.filter(p => p[1] < peakY + 260).reverse()]);
+  const summitRock = poly([[cx - 300, peakY - 40], [cx + 300, peakY - 40], ...rockLine.slice().reverse()]);
+  const summitShade = poly([[cx, peakY], [cx + 300, peakY + 40], [cx + 300, peakY + 260], ...spine.filter(p => p[1] < peakY + 260).reverse()]);
+  // Cracks and layered steps across the summit rock.
+  const cracks: string[] = [];
+  for (let k = 0; k < 7; k++) {
+    const y = peakY + 40 + k * 22 + r() * 10;
+    const hw = halfWidth(y);
+    if (hw < 30) continue;
+    const x0 = cx - hw * (0.2 + r() * 0.7);
+    const len = 20 + r() * hw * 0.6;
+    cracks.push(`M${x0.toFixed(1)} ${y.toFixed(1)} l${(len * 0.5).toFixed(1)} ${(r() * 6 - 3).toFixed(1)} l${(len * 0.5).toFixed(1)} ${(r() * 8).toFixed(1)}`);
+  }
+  // A few loose boulders where the rock meets the cliffs.
+  const boulders = rockLine
+    .filter((_, i) => i % 3 === 1)
+    .map(([x, y]) => ({ x, y: y - 4, rx: 9 + r() * 8, ry: 6 + r() * 4 }));
 
   // Grassy ledges: soft mounds of grass that drape over the cliffs in rounded
   // lobes, some sweeping right across the mountain, some only partway.
@@ -244,7 +261,7 @@ function draw({ w, h, peakY, camps }: Layout) {
       {[...ranges].reverse().map((m, i) => (
         <g key={i}>
           <path d={m.d} fill={m.color} />
-          <path d={m.snow} fill={C.farSnow} />
+          <path d={m.snow} fill={C.farRock} />
         </g>
       ))}
       <ellipse cx={-20} cy={baseY - 40} rx={180} ry={26} fill={C.lake} />
@@ -264,8 +281,17 @@ function draw({ w, h, peakY, camps }: Layout) {
         {streaks.map((d, i) => (
           <path key={i} d={d} stroke={C.rockLine} strokeWidth="5" strokeLinecap="round" opacity="0.7" />
         ))}
-        <path d={snow} fill={C.snow} />
-        <path d={snowShade} fill={C.snowShade} opacity="0.7" clipPath="url(#climb-body)" />
+        <path d={summitRock} fill={C.summit} />
+        <path d={summitShade} fill={C.summitShade} opacity="0.75" clipPath="url(#climb-body)" />
+        {cracks.map((d, i) => (
+          <path key={i} d={d} stroke={C.summitLine} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+        ))}
+        {boulders.map((b, i) => (
+          <g key={i}>
+            <ellipse cx={b.x} cy={b.y + 3} rx={b.rx} ry={b.ry} fill={C.summitLine} opacity="0.5" />
+            <ellipse cx={b.x} cy={b.y} rx={b.rx} ry={b.ry} fill={C.summit} />
+          </g>
+        ))}
         {ledges.map((l, i) => (
           <g key={i}>
             <path d={l.shadow} fill={C.grassShade} opacity="0.55" />
@@ -284,14 +310,30 @@ function draw({ w, h, peakY, camps }: Layout) {
         <Pine key={i} {...p} />
       ))}
 
-      {/* the flag on the summit */}
+      {/* Ethiopia's flag on the summit: green, yellow and red with the blue emblem */}
       <g>
-        <rect x={cx - 2} y={peakY - 62} width="4" height="66" rx="2" fill="#7a5233" />
-        <path d={`M${cx + 2} ${peakY - 60} L${cx + 44} ${peakY - 50} L${cx + 2} ${peakY - 38} Z`} fill="#e8483b" />
-        <path
-          d={`M${cx + 16} ${peakY - 55} l2 4.2 4.6.5-3.4 3.1 1 4.6-4.2-2.4-4.2 2.4 1-4.6-3.4-3.1 4.6-.5z`}
-          fill="#ffd34d"
-        />
+        <rect x={cx - 2} y={peakY - 74} width="4" height="78" rx="2" fill="#6b4a2e" />
+        <circle cx={cx} cy={peakY - 75} r="3.5" fill="#f2c94c" />
+        <g className="climb-flag" style={{ transformOrigin: `${cx + 2}px ${peakY - 56}px` }}>
+          <clipPath id="climb-flag-cloth">
+            <path
+              d={`M${cx + 2} ${peakY - 71} Q ${cx + 15} ${peakY - 76} ${cx + 27} ${peakY - 71} T ${cx + 52} ${peakY - 71} L ${cx + 52} ${peakY - 41} Q ${cx + 39} ${peakY - 46} ${cx + 27} ${peakY - 41} T ${cx + 2} ${peakY - 41} Z`}
+            />
+          </clipPath>
+          <g clipPath="url(#climb-flag-cloth)">
+            <rect x={cx + 2} y={peakY - 78} width="50" height="17" fill="#078930" />
+            <rect x={cx + 2} y={peakY - 61} width="50" height="10" fill="#fcdd09" />
+            <rect x={cx + 2} y={peakY - 51} width="50" height="14" fill="#da121a" />
+            <circle cx={cx + 27} cy={peakY - 56} r="7.5" fill="#0f47af" />
+            <path
+              d={`M${cx + 27} ${peakY - 62} L${cx + 30.5} ${peakY - 51.2} L${cx + 21.3} ${peakY - 57.9} L${cx + 32.7} ${peakY - 57.9} L${cx + 23.5} ${peakY - 51.2} Z`}
+              fill="none"
+              stroke="#fcdd09"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+          </g>
+        </g>
       </g>
 
       {/* the meadow at the trailhead */}

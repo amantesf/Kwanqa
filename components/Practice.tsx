@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { amharicAudio } from '@/lib/amharicAudio';
+import SayButton from '@/components/SayButton';
 import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
@@ -826,6 +827,10 @@ export default function Practice({
                   {lastCorrect
                     ? current.explain
                     : `${ui.correctAnswer} ${current.kind === 'build' ? current.answer.join(' ') : current.answer}. ${current.explain}`}
+                  {/* English course: an Amharic answer can be heard once you've answered */}
+                  {track === 'english' && current.kind === 'choice' && /[ሀ-፿]/.test(current.answer) && (
+                    <SayButton text={current.answer} track="amharic" className="say-inline say-am" size={14} />
+                  )}
                 </span>
               )}
               {!lastCorrect && <span className="faint small">{ui.comeBack}</span>}

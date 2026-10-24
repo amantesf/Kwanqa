@@ -27,6 +27,12 @@ type Props = {
    * The drawing itself never changes; only its parts move.
    */
   animated?: boolean;
+  /**
+   * Walia dances እስክስታ (eskista), the Ethiopian shoulder dance, wearing a
+   * netela shawl: shoulder shrugs, neck slides and chest pops on the beat, then
+   * a short rest. Use with `animated`.
+   */
+  dancing?: boolean;
   mood?: Mood;
   /**
    * Walia is speaking: his mouth opens as wide as the CSS variable `--mouth`
@@ -96,6 +102,7 @@ export default function Mascot({
   title = 'Walia the ibex',
   hornScale = 1,
   animated = false,
+  dancing = false,
   mood,
   talking = false,
   listening = false,
@@ -116,6 +123,7 @@ export default function Mascot({
         [
           className,
           animated ? 'walia-live' : '',
+          dancing ? 'walia-eskista' : '',
           mood ? `walia-mood mood-${mood}` : '',
           talking ? 'walia-talking' : '',
           listening ? 'walia-listening' : '',
@@ -180,6 +188,25 @@ export default function Mascot({
             <g className="w-arm-r">
               <path d="M162 184 C 176 196, 182 210, 182 224" stroke={C.fur} strokeWidth="21" strokeLinecap="round" fill="none" />
               <circle cx="182" cy="229" r="11" fill={C.hoof} />
+            </g>
+          )}
+
+          {dancing && (
+            // a white netela shawl with a woven tibeb border, over the shoulders
+            <g className="w-netela">
+              <path
+                d="M68 186 C 90 170, 150 170, 172 186 C 175 194, 171 201, 166 204 C 144 192, 96 192, 74 204 C 69 201, 65 194, 68 186 Z"
+                fill="#fbf8ef"
+                stroke="#e6dfcc"
+                strokeWidth="1.5"
+              />
+              <path d="M75 200 C 97 189, 143 189, 165 200" stroke="#1f8a4c" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M76 196 C 98 185.5, 142 185.5, 164 196" stroke="#f2b705" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+              <path d="M77 192.5 C 99 182.5, 141 182.5, 163 192.5" stroke="#d93b2b" strokeWidth="2" fill="none" strokeLinecap="round" />
+              {/* the end thrown over the left shoulder */}
+              <path d="M72 192 C 64 208, 64 224, 70 238 L 84 236 C 80 222, 80 208, 86 196 Z" fill="#fbf8ef" stroke="#e6dfcc" strokeWidth="1.5" />
+              <path d="M70.5 231 L 83 229 M71 235 L 83.5 233" stroke="#1f8a4c" strokeWidth="2.2" />
+              <path d="M70.5 227 L 82.5 225" stroke="#d93b2b" strokeWidth="2" />
             </g>
           )}
 

@@ -309,6 +309,7 @@ export default function Trail({
   waliaSize = 74,
   scenery,
   connect = false,
+  dance = false,
 }: {
   stops: TrailStop[];
   hornScale?: number;
@@ -317,6 +318,8 @@ export default function Trail({
   scenery?: Scenery;
   /** Draws a sandy footpath that runs on past the first and last stops, so camps join into one trail. */
   connect?: boolean;
+  /** Walia dances eskista while he waits at the current stone. */
+  dance?: boolean;
 }) {
   const height = stops.length * ROW;
   const rowOf = (i: number) => stops.length - 1 - i;
@@ -451,7 +454,7 @@ export default function Trail({
 
             {stop.state === 'current' && (
               <div className={`trail-walia ${side}`} style={{ width: waliaSize }} aria-hidden>
-                <Mascot pose="wave" size={waliaSize} hornScale={hornScale} animated />
+                <Mascot pose={dance ? 'happy' : 'wave'} size={waliaSize} hornScale={hornScale} animated dancing={dance} />
               </div>
             )}
           </div>

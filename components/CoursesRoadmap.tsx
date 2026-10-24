@@ -395,6 +395,7 @@ export default function CoursesRoadmap() {
                   hornScale={horns.scale}
                   waliaSize={116}
                   connect
+                  dance
                 />
               </div>
             </section>

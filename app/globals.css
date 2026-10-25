@@ -9517,3 +9517,35 @@ body:has(.practice-screen) {
   height: 30px;
   margin-top: -15px;
 }
+
+/* ---------- review stone: missed questions, asked again before the trophy ---------- */
+.learn-app .stone.review,
+.stone.review {
+  --stone: #8e5cc4;
+  --stone-edge: #6b3f9e;
+  --stone-fg: #fff;
+}
+
+.learn-app .stone.review.current,
+.stone.review.current {
+  outline-color: #e9ddf6;
+}
+
+.review-count {
+  position: absolute;
+  z-index: 2;
+  top: -6px;
+  left: 18px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 3px solid #fff;
+  background: #e0457b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  pointer-events: none;
+}

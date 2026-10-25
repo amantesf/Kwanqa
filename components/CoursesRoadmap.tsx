@@ -32,6 +32,7 @@ import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
 import Trail, { type TrailStop } from '@/components/Trail';
 import { courseContent, type Track } from '@/lib/courses';
+import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import {
   BASE_ALTITUDE,
@@ -119,7 +120,22 @@ export default function CoursesRoadmap() {
   const season = useHolidaySeason();
   const courses = trackCourses(track);
   const horns = hornLevel(climb.grass);
-  const nextKey = next ? `${next.slug}:${next.lesson}` : 'summit';
+  // Questions missed in a camp are asked again before the next camp opens:
+  // once every lesson in a camp is done, its review stone comes before the trophy.
+  const mistakeStore = useMistakes();
+  const pendingIn = (slug: string) => (hydrated ? (mistakeStore[slug]?.length ?? 0) : 0);
+  const campDoneAt = (idx: number) => {
+    const slug = courses[idx]?.slug;
+    const lessons = slug ? (courseContent[slug]?.sections ?? []) : [];
+    return !!slug && lessons.length > 0 && lessons.every((_, i) => isDone(climb, slug, i));
+  };
+  const lastCampIdx = next ? courses.findIndex(c => c.slug === next.slug) - 1 : courses.length - 1;
+  const blocking =
+    lastCampIdx >= 0 && campDoneAt(lastCampIdx) && pendingIn(courses[lastCampIdx].slug) > 0
+      ? courses[lastCampIdx]
+      : null;
+  const reviewHref = (slug: string) => `/courses/${slug}?review=1`;
+  const nextKey = blocking ? `${blocking.slug}:review` : next ? `${next.slug}:${next.lesson}` : 'summit';
   // Camps above the one you're on stay locked under the clouds.
   const currentCamp = next ? courses.findIndex(c => c.slug === next.slug) : courses.length;
 
@@ -309,19 +325,19 @@ export default function CoursesRoadmap() {
         <ClimbMountain />
 
         {/* Summit */}
-        <div className={`summit${next ? ' zone-locked' : ' reached'}`}>
+        <div className={`summit${next || blocking ? ' zone-locked' : ' reached'}`}>
           <div className="summit-text">
             <span className="kicker">
               Summit · ራስ ዳሽን · {SUMMIT_ALTITUDE.toLocaleString()} m
             </span>
             <h2 className="h3" style={{ fontSize: 22 }}>
-              {next ? 'Finish every lesson to reach the summit' : 'You made it to the top!'}
+              {next || blocking ? 'Finish every lesson to reach the summit' : 'You made it to the top!'}
             </h2>
             <p className="muted small">
               Ras Dashen is the highest peak of the Simien Mountains and home of the Walia ibex.
             </p>
           </div>
-          {!next && (
+          {!next && !blocking && (
             <div className="summit-walia">
               <Mascot pose="cheer" size={110} hornScale={horns.scale} />
             </div>
@@ -345,11 +361,16 @@ export default function CoursesRoadmap() {
             state: isDone(climb, course.slug, i)
               ? 'done'
               : next?.slug === course.slug && next.lesson === i
-                ? 'current'
+                ? blocking
+                  ? 'locked' // waits for the review of the camp below
+                  : 'current'
                 : campIdx < start && campIdx !== currentCamp
                   ? 'todo'
                   : 'locked',
-            href: `/courses/${course.slug}?lesson=${i}&practice=1`,
+            href:
+              blocking && next?.slug === course.slug && next.lesson === i
+                ? reviewHref(blocking.slug)
+                : `/courses/${course.slug}?lesson=${i}&practice=1`,
             id: `${course.slug}:${i}`,
           }));
 
@@ -365,11 +386,24 @@ export default function CoursesRoadmap() {
             });
           }
 
+          // Missed questions come back before the trophy.
+          const pending = campDone ? pendingIn(course.slug) : 0;
+          if (pending > 0) {
+            stops.push({
+              title: `Review your mistakes from Camp ${campIdx + 1}`,
+              kind: 'review',
+              count: Math.min(pending, REVIEW_SIZE),
+              state: blocking?.slug === course.slug ? 'current' : 'todo',
+              href: reviewHref(course.slug),
+              id: `${course.slug}:review`,
+            });
+          }
+
           // A trophy marks the top of every camp.
           stops.push({
             title: `Camp ${campIdx + 1} trophy`,
             kind: 'trophy',
-            state: campDone ? 'done' : 'locked',
+            state: campDone && pending === 0 ? 'done' : 'locked',
           });
 
           return (
@@ -436,7 +470,27 @@ export default function CoursesRoadmap() {
           </div>
         )}
 
-        {next && nextTitle && nextHref && (
+        {blocking && (
+          <div className="rail-card rail-extra rail-promo">
+            <div className="rail-promo-text">
+              <span className="rail-badge">Review</span>
+              <h3 className="rail-title">Fix your mistakes</h3>
+              <p className="small">
+                You missed {pendingIn(blocking.slug)} question{pendingIn(blocking.slug) === 1 ? '' : 's'} in Camp{' '}
+                {courses.indexOf(blocking) + 1}. Get them right to win the trophy
+                {next ? ` and open Camp ${courses.indexOf(blocking) + 2}` : ''}.
+              </p>
+            </div>
+            <div className="rail-promo-art" aria-hidden>
+              <Mascot pose="wave" size={92} hornScale={horns.scale} animated />
+            </div>
+            <Link href={reviewHref(blocking.slug)} className="btn btn-block">
+              Review now
+            </Link>
+          </div>
+        )}
+
+        {!blocking && next && nextTitle && nextHref && (
           <div className="rail-card rail-extra rail-promo">
             <div className="rail-promo-text">
               <span className="rail-badge">Up next</span>
@@ -504,7 +558,7 @@ export default function CoursesRoadmap() {
         </div>
       </aside>
 
-      {!waliaVisible && next && (
+      {!waliaVisible && (next || blocking) && (
         <button type="button" className="jump-walia" onClick={() => scrollToWalia('smooth')}>
           <Mascot pose="wave" size={30} hornScale={horns.scale} title="Walia" />
           Jump to Walia

@@ -9,8 +9,10 @@ export type StoneState = 'done' | 'current' | 'todo' | 'locked';
 export type TrailStop = {
   title: string;
   state: StoneState;
-  /** 'reward' draws a mesob basket instead of a lesson stone. */
-  kind?: 'lesson' | 'reward' | 'trophy';
+  /** 'reward' draws a mesob basket; 'review' a stone for asking missed questions again. */
+  kind?: 'lesson' | 'reward' | 'trophy' | 'review';
+  /** Review stones: how many questions are waiting. */
+  count?: number;
   /** Lesson number shown on the stone (defaults to its position). */
   number?: number;
   href?: string;
@@ -68,6 +70,16 @@ function MesobIcon({ open }: { open: boolean }) {
       <path d="M20 31 L23 52 M32 31 V56 M44 31 L41 52" stroke={open ? '#b07c00' : '#bdbdbd'} strokeWidth="2.5" strokeLinecap="round" />
       <rect x="7" y="25" width="50" height="8" rx="4" fill={open ? '#ffc233' : '#e5e5e5'} />
       {!open && <path d="M9 27 Q32 18 55 27" stroke="#bdbdbd" strokeWidth="3" fill="none" />}
+    </svg>
+  );
+}
+
+/** Two arrows going round: try the missed ones again. */
+function RetryIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5.5 11a6.6 6.6 0 0 1 11.6-3.6M18.5 13a6.6 6.6 0 0 1-11.6 3.6" />
+      <path d="M17.6 3.6v4.3h-4.3M6.4 20.4v-4.3h4.3" />
     </svg>
   );
 }
@@ -389,9 +401,9 @@ export default function Trail({
             </div>
           );
         }
-        const content =
-          stop.state === 'done' ? <CheckIcon /> : <StarIcon />;
-        const className = `stone ${stop.state}`;
+        const review = stop.kind === 'review';
+        const content = stop.state === 'done' ? <CheckIcon /> : review ? <RetryIcon /> : <StarIcon />;
+        const className = `stone ${stop.state}${review ? ' review' : ''}`;
 
         if (reward) {
           return (
@@ -419,7 +431,12 @@ export default function Trail({
           >
             {stop.state === 'current' && (
               <span className="start-bubble" aria-hidden>
-                Start
+                {review ? 'Review' : 'Start'}
+              </span>
+            )}
+            {review && !!stop.count && (
+              <span className="review-count" aria-hidden>
+                {stop.count}
               </span>
             )}
             {stop.state === 'locked' && !stop.href ? (

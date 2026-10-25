@@ -18,6 +18,8 @@ type Props = {
   onFinish: () => void;
   /** English learners get Amharic first, with the English beside it. */
   track?: Track;
+  /** A mistakes review rather than a lesson: says "Mistakes fixed!" instead. */
+  review?: boolean;
 };
 
 function accuracyLabel(accuracy: number, both: (en: string, am: string) => string) {
@@ -118,6 +120,7 @@ export default function LessonComplete({
   finishLabel,
   onFinish,
   track,
+  review = false,
 }: Props) {
   const both = (en: string, am: string) => (track === 'english' ? `${am} · ${en}` : en);
   return (
@@ -143,7 +146,7 @@ export default function LessonComplete({
           </div>
         </div>
 
-        <h2 className="lc-title">{both('Lesson complete!', 'ትምህርቱ ተጠናቀቀ!')}</h2>
+        <h2 className="lc-title">{review ? both('Mistakes fixed!', 'ስህተቶቹ ተስተካከሉ!') : both('Lesson complete!', 'ትምህርቱ ተጠናቀቀ!')}</h2>
 
         <div className="lc-stats">
           <div className="lc-stat gold">

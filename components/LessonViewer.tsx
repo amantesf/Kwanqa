@@ -7,6 +7,7 @@ import Mascot from '@/components/Mascot';
 import Practice from '@/components/Practice';
 import Trail from '@/components/Trail';
 import { hornLevel, isDone, useClimb } from '@/lib/climb';
+import { reviewSession, useMistakes } from '@/lib/mistakes';
 import type { LessonSection, Track } from '@/lib/courses';
 
 type Props = {
@@ -91,6 +92,13 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
   // return to the trail when the learner exits or finishes, like Duolingo.
   const [fromTrail, setFromTrail] = useState(params.get('practice') === '1');
   const [mode, setMode] = useState<'learn' | 'practice'>(fromTrail ? 'practice' : 'learn');
+  // Opened from the review stone (?review=1): ask the camp's missed questions again.
+  const wantsReview = params.get('review') === '1';
+  const mistakes = useMistakes()[slug] ?? [];
+  const [review, setReview] = useState<ReturnType<typeof reviewSession> | null>(null);
+  // Pick the questions once, when the saved mistakes first load, and keep them
+  // for the whole session (finishing clears them from storage).
+  if (wantsReview && !review && mistakes.length > 0) setReview(reviewSession(mistakes));
   const [quiz, setQuiz] = useState(false);
   const [session, setSession] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -139,7 +147,15 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
       </nav>
 
       <div ref={panelRef} className="lesson-panel">
-        {mode === 'practice' ? (
+        {wantsReview && hydrated && (review || mistakes.length > 0) ? (
+          <ReviewPractice
+            slug={slug}
+            track={track}
+            lessons={lessons}
+            review={review ?? reviewSession(mistakes)}
+            onDone={() => router.push(trailHref)}
+          />
+        ) : mode === 'practice' ? (
           !hydrated ? (
             <div className="practice practice-screen" aria-busy="true" />
           ) : (
@@ -241,5 +257,43 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
         )}
       </div>
     </div>
+  );
+}
+
+/** A mistakes review: the camp's missed questions, asked again in one session. */
+function ReviewPractice({
+  slug,
+  track,
+  lessons,
+  review,
+  onDone,
+}: {
+  slug: string;
+  track: Track;
+  lessons: LessonSection[];
+  review: ReturnType<typeof reviewSession>;
+  onDone: () => void;
+}) {
+  const reviewLesson: LessonSection = {
+    title: 'Review your mistakes',
+    description: '',
+    note:
+      track === 'english'
+        ? 'ስህተቶችህን አስተካከልክ! · You fixed your mistakes. Keep climbing!'
+        : 'You fixed your mistakes. ጎበዝ! Keep climbing.',
+  };
+  return (
+    <Practice
+      key={review.keys.join('|')}
+      slug={slug}
+      lessonIndex={0}
+      lesson={reviewLesson}
+      courseLessons={lessons}
+      onExit={onDone}
+      onFinish={onDone}
+      finishLabel={track === 'english' ? 'ወደ መንገዱ ተመለስ · Back to the trail' : 'Back to the trail'}
+      track={track}
+      review={review}
+    />
   );
 }

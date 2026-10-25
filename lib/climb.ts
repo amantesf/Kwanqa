@@ -157,6 +157,17 @@ export function completeLesson(slug: string, lesson: number, mistakes: number, w
   return earned;
 }
 
+export const REVIEW_GRASS = 5;
+
+/** A finished mistakes review: a little grass, and it counts toward today's work and streak. */
+export function completeReview(work: LessonWork) {
+  const climb = parse(readRaw());
+  climb.grass += REVIEW_GRASS;
+  if (work.answers > 0) logToday(climb, work);
+  write(climb);
+  return REVIEW_GRASS;
+}
+
 /** Adds one finished lesson or call to today's log and the climb streak. */
 function logToday(climb: Climb, work: LessonWork) {
   const today = dateKey();

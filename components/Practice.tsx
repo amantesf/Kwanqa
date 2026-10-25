@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { amharicAudio } from '@/lib/amharicAudio';
 import SayButton from '@/components/SayButton';
+import { clearMistakes, recordMistake } from '@/lib/mistakes';
 import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
@@ -10,6 +11,7 @@ import Mascot, { type Mood } from '@/components/Mascot';
 import {
   altitudeFor,
   completeLesson,
+  completeReview,
   hornLevel,
   REST_COST,
   spendGrass,
@@ -260,6 +262,7 @@ export default function Practice({
   onFinish,
   finishLabel,
   track: trackProp,
+  review,
 }: {
   slug: string;
   lessonIndex: number;
@@ -270,11 +273,16 @@ export default function Practice({
   finishLabel: string;
   /** Which course this is; looked up from the catalog when not given. */
   track?: Track;
+  /**
+   * A mistakes review: these saved questions instead of the lesson's own.
+   * Finishing forgets them (`keys`) and doesn't mark any lesson done.
+   */
+  review?: { exercises: Exercise[]; keys: string[] };
 }) {
   const climb = useClimb();
   const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
   const [initial] = useState(() =>
-    buildExercises(
+    review ? review.exercises : buildExercises(
       lesson,
       courseLessons,
       track,
@@ -423,6 +431,8 @@ export default function Practice({
       gainStreak();
     } else {
       loseStamina();
+      // remember it, so it's asked again before the next camp
+      if (!review) recordMistake(slug, lessonIndex, current);
     }
     setPhase('feedback');
   }
@@ -453,7 +463,12 @@ export default function Practice({
     if (nextQueue.length === 0) {
       // Every question was answered correctly once, plus each wrong try along the way.
       const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
-      setEarned(completeLesson(slug, lessonIndex, mistakes, work));
+      if (review) {
+        clearMistakes(slug, review.keys);
+        setEarned(completeReview(work));
+      } else {
+        setEarned(completeLesson(slug, lessonIndex, mistakes, work));
+      }
       sounds.play('complete');
       setPhase('done');
     } else if (stamina === 0) {
@@ -551,6 +566,7 @@ export default function Practice({
         finishLabel={finishLabel}
         onFinish={onFinish}
         track={track}
+        review={!!review}
       />
     );
   }
@@ -662,7 +678,7 @@ export default function Practice({
           </div>
         ) : (
         <div className="practice-question">
-          {missed.has(current.id) && (
+          {(review || missed.has(current.id)) && (
             <span className="practice-retry">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
                 <circle cx="12" cy="12" r="11" fill="currentColor" />

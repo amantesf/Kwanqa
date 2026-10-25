@@ -1,0 +1,206 @@
+/* The alphabet page's tabs, and the Write tab. */
+
+.fidel-tabs {
+  display: inline-flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  border: 2px solid var(--border);
+}
+
+.fidel-tab {
+  padding: 8px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-weight: 800;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.fidel-tab.on {
+  background: #fff;
+  color: var(--primary-dark);
+  box-shadow: 0 2px 0 var(--border);
+}
+
+/* ---------- Write ---------- */
+
+.fw {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+  gap: 28px;
+  align-items: start;
+}
+
+.fw-letters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+}
+
+.fw-letter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px 6px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius);
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.fw-letter span {
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.fw-letter small {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-faint);
+}
+
+.fw-letter.on {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.fw-letter.done::after {
+  content: '✓';
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--green-dark);
+}
+
+.fw-card {
+  position: sticky;
+  top: calc(var(--header-h) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.fw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fw-head h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--text-strong);
+}
+
+.fw-head p {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.fw-speak {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--blue);
+  box-shadow: 0 4px 0 var(--blue-shadow);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* copybook paper: faint centre guides behind the letter */
+.fw-paper {
+  border-radius: var(--radius);
+  background:
+    linear-gradient(to right, transparent calc(50% - 1px), #f0e6dc calc(50% - 1px), #f0e6dc calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(to bottom, transparent calc(50% - 1px), #f0e6dc calc(50% - 1px), #f0e6dc calc(50% + 1px), transparent calc(50% + 1px)),
+    #fffaf5;
+  border: 2px dashed #ecd9c8;
+}
+
+.fw-box {
+  width: 100%;
+  aspect-ratio: 1;
+  touch-action: none; /* let a finger draw instead of scrolling the page */
+  cursor: crosshair;
+}
+
+.fw-message {
+  min-height: 24px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+
+.fw-message strong {
+  color: var(--green-dark);
+}
+
+.fw-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.fw-mode {
+  padding: 8px 14px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius);
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.fw-mode.on {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue-shadow);
+}
+
+.fw-next {
+  margin-left: auto;
+}
+
+@media (max-width: 860px) {
+  .fw {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fw-card {
+    position: static;
+    order: -1;
+  }
+
+  .fw-letters {
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  }
+}
+

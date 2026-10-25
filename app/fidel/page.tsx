@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import FidelChart from '@/components/FidelChart';
+import FidelTabs from '@/components/FidelTabs';
 import { PageHero } from '@/components/sections';
+import './fidel.css';
 
 export const metadata: Metadata = { title: 'The ፊደል alphabet' };
 
@@ -16,7 +19,9 @@ export default function FidelPage() {
       />
       <section className="section" style={{ paddingTop: 40 }}>
         <div className="container">
-          <FidelChart />
+          <Suspense fallback={<FidelChart />}>
+            <FidelTabs />
+          </Suspense>
         </div>
       </section>
     </main>

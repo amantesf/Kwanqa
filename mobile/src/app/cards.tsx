@@ -7,7 +7,8 @@ import { amharicAudio } from '@/lib/amharicAudio';
 import { DECKS, putBack, shuffle, type Card } from '@/lib/flashcards';
 import Speaker from '@/components/speaker';
 import { play } from '@/components/sound';
-import { colors, tabBarTop } from '@/theme';
+import Walia from '@/components/walia';
+import { colors, fonts, tabBarTop } from '@/theme';
 
 // Flashcards from each Amharic camp's phrases, the same decks as the website.
 // Flip a card to check yourself, then sort it: "Got it" takes it out of the
@@ -164,11 +165,12 @@ export default function Cards() {
           </>
         ) : (
           <View style={styles.done}>
+            <Walia mood="cheer" size={130} />
             <Text style={styles.doneBig}>ጎበዝ!</Text>
             <Text style={styles.hint}>
               You know all {total} cards in Camp {deck.part}.
             </Text>
-            <View style={styles.actions}>
+            <View style={[styles.actions, styles.doneActions]}>
               <Pressable onPress={() => start(deckIndex)} style={[styles.button, styles.secondary]}>
                 <Text style={styles.secondaryText}>Go again</Text>
               </Pressable>
@@ -188,28 +190,31 @@ export default function Cards() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg, paddingTop: tabBarTop },
   page: { padding: 16, gap: 14 },
-  heading: { fontSize: 34, fontWeight: '800', color: colors.ink },
-  decks: { gap: 8 },
-  deck: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderColor: colors.line },
-  deckOn: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
-  deckName: { fontWeight: '800', color: colors.ink },
+  heading: { fontFamily: fonts.black, fontSize: 32, color: colors.ink },
+  decks: { gap: 8, paddingBottom: 4 },
+  deck: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
+  deckOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
+  deckName: { fontFamily: fonts.heavy, fontSize: 15, color: colors.ink },
   deckNameOn: { color: colors.primary },
-  deckCount: { fontSize: 12, color: colors.muted },
-  deckTitle: { fontSize: 15, color: colors.muted },
+  deckCount: { fontFamily: fonts.bold, fontSize: 12, color: colors.muted },
+  deckTitle: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted },
   direction: { flexDirection: 'row', gap: 8 },
-  dirButton: { flex: 1, paddingVertical: 8, borderRadius: 10, borderWidth: 2, borderColor: colors.line, alignItems: 'center' },
-  dirOn: { borderColor: colors.blue, backgroundColor: '#e6eefb' },
-  dirText: { fontWeight: '700', color: colors.muted, fontSize: 13 },
+  dirButton: { flex: 1, paddingVertical: 9, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, alignItems: 'center' },
+  dirOn: { borderColor: '#b9cdf2', backgroundColor: '#e6eefb' },
+  dirText: { fontFamily: fonts.heavy, color: colors.muted, fontSize: 14 },
   dirTextOn: { color: colors.blue },
-  progress: { height: 10, borderRadius: 5, backgroundColor: colors.bgSoft, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: colors.green, borderRadius: 5 },
-  cardWrap: { height: 280 },
+  progress: { height: 14, borderRadius: 7, backgroundColor: colors.line, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: colors.green, borderRadius: 7 },
+  cardWrap: { height: 290 },
   face: {
     position: 'absolute',
-    inset: 0,
-    borderRadius: 20,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: 22,
     borderWidth: 2,
-    borderBottomWidth: 5,
+    borderBottomWidth: 6,
     borderColor: colors.line,
     backgroundColor: colors.bg,
     alignItems: 'center',
@@ -218,18 +223,19 @@ const styles = StyleSheet.create({
     gap: 10,
     backfaceVisibility: 'hidden',
   },
-  back: { backgroundColor: '#fffdfb', borderColor: colors.primaryBorder },
-  big: { fontSize: 34, fontWeight: '700', color: colors.ink, textAlign: 'center' },
-  bigEn: { fontSize: 26, fontWeight: '700', color: colors.ink, textAlign: 'center' },
-  small: { fontSize: 18, color: colors.ink, textAlign: 'center' },
-  roman: { fontSize: 16, color: colors.primary, textAlign: 'center' },
-  hint: { fontSize: 15, color: colors.muted, textAlign: 'center' },
+  back: { backgroundColor: '#fffaf7', borderColor: colors.primaryBorder },
+  big: { fontFamily: fonts.amharicBold, fontSize: 34, lineHeight: 50, color: colors.ink, textAlign: 'center' },
+  bigEn: { fontFamily: fonts.black, fontSize: 26, lineHeight: 32, color: colors.ink, textAlign: 'center' },
+  small: { fontFamily: fonts.amharic, fontSize: 18, lineHeight: 26, color: colors.ink, textAlign: 'center' },
+  roman: { fontFamily: fonts.heavy, fontSize: 17, color: colors.primary, textAlign: 'center' },
+  hint: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted, textAlign: 'center' },
   actions: { flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center' },
-  button: { flex: 1, paddingVertical: 14, borderRadius: 14, backgroundColor: colors.primary, borderBottomWidth: 4, borderBottomColor: colors.primaryShadow, alignItems: 'center' },
-  buttonText: { color: '#ffffff', fontWeight: '800', fontSize: 16 },
-  secondary: { backgroundColor: colors.bg, borderWidth: 2, borderColor: colors.line, borderBottomColor: colors.line },
-  secondaryText: { color: colors.ink, fontWeight: '800', fontSize: 16 },
-  count: { textAlign: 'center', color: colors.muted },
-  done: { alignItems: 'center', gap: 12, paddingVertical: 30 },
-  doneBig: { fontSize: 40, fontWeight: '800', color: colors.primary },
+  button: { flex: 1, paddingVertical: 14, borderRadius: 16, backgroundColor: colors.primary, borderBottomWidth: 5, borderBottomColor: colors.primaryShadow, alignItems: 'center' },
+  buttonText: { fontFamily: fonts.black, color: '#ffffff', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 },
+  secondary: { backgroundColor: colors.bg, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, borderBottomColor: colors.line },
+  secondaryText: { fontFamily: fonts.black, color: colors.muted, fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.5 },
+  count: { fontFamily: fonts.bold, textAlign: 'center', color: colors.muted },
+  done: { alignItems: 'center', gap: 12, paddingVertical: 20 },
+  doneActions: { alignSelf: 'stretch' },
+  doneBig: { fontFamily: fonts.amharicBold, fontSize: 40, lineHeight: 56, color: colors.primary },
 });

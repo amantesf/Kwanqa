@@ -445,3 +445,60 @@
     transition: none;
   }
 }
+
+/* Write: the seven forms of the chosen family, and progress on each family */
+.fw-forms {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.fw-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 2px 4px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.fw-form span {
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.fw-form small {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-faint);
+}
+
+.fw-form.on {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.fw-form.done::after {
+  content: '✓';
+  position: absolute;
+  top: 0;
+  right: 3px;
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--green-dark);
+}
+
+.fw-part {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--green-dark);
+}

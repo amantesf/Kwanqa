@@ -1,11 +1,12 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { Noto_Sans_Ethiopic, Nunito } from 'next/font/google';
 import AuthProvider from '@/components/AuthProvider';
 import Header from '@/components/Header';
 import Toaster from '@/components/Toaster';
 import Footer from '@/components/Footer';
+import SiteAnalytics from '@/components/SiteAnalytics';
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -55,6 +56,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Footer />
           <Toaster />
         </AuthProvider>
+        <Suspense fallback={null}>
+          <SiteAnalytics />
+        </Suspense>
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { amharicAudio } from '@/lib/amharicAudio';
 import { courseCatalog, courseContent, type LessonSection } from '@/lib/courses';
 import { play } from '@/components/sound';
@@ -61,20 +62,38 @@ export default function Camp() {
   const shown = one !== null && course.sections[one] ? [one] : course.sections.map((_, i) => i);
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.page}>
-      <Stack.Screen options={{ title: `Camp ${camp.part}` }} />
-      <View style={[styles.banner, { backgroundColor: look.color, borderBottomColor: look.shadow }]}>
-        <Text style={styles.bannerKicker}>{one !== null ? `Camp ${camp.part}` : `Camp ${camp.part} · Phrases`}</Text>
-        <Text style={styles.bannerTitle}>{camp.description}</Text>
-      </View>
-      {shown.map(i => (
-        <Lesson key={i} lesson={course.sections[i]} number={i + 1} />
-      ))}
-    </ScrollView>
+    <View style={styles.screen}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.page}>
+        <Stack.Screen options={{ title: `Camp ${camp.part}` }} />
+        <View style={[styles.banner, { backgroundColor: look.color, borderBottomColor: look.shadow }]}>
+          <Text style={styles.bannerKicker}>{one !== null ? `Camp ${camp.part}` : `Camp ${camp.part} · Phrases`}</Text>
+          <Text style={styles.bannerTitle}>{camp.description}</Text>
+        </View>
+        {shown.map(i => (
+          <Lesson key={i} lesson={course.sections[i]} number={i + 1} />
+        ))}
+      </ScrollView>
+      {one !== null ? (
+        <SafeAreaView edges={['bottom']} style={styles.footer}>
+          <Pressable
+            onPress={() => router.push({ pathname: '/practice', params: { slug, lesson: String(one) } })}
+            style={({ pressed }) => [styles.start, pressed && styles.startDown]}
+            accessibilityRole="button"
+          >
+            <Text style={styles.startText}>Start practice</Text>
+          </Pressable>
+        </SafeAreaView>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.bg },
+  footer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12, borderTopWidth: 2, borderTopColor: colors.line, backgroundColor: colors.bg },
+  start: { minHeight: 52, borderRadius: 16, borderBottomWidth: 5, borderBottomColor: colors.primaryShadow, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  startDown: { borderBottomWidth: 0, marginTop: 5 },
+  startText: { fontFamily: fonts.black, fontSize: 16, color: '#ffffff', textTransform: 'uppercase', letterSpacing: 0.8 },
   page: { padding: 16, gap: 24, paddingBottom: 48 },
   banner: { borderRadius: 18, borderBottomWidth: 5, padding: 16, gap: 4 },
   bannerKicker: { fontFamily: fonts.heavy, fontSize: 13, color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: 0.4 },

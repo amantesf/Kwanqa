@@ -7,41 +7,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { amharicAudio } from '@/lib/amharicAudio';
-import { courseCatalog, courseContent } from '@/lib/courses';
+import { DECKS, putBack, shuffle, type Card } from '@/lib/flashcards';
 
-type Card = { amharic: string; transliteration: string; english: string };
 type Direction = 'am-en' | 'en-am';
 
 const DECK_KEY = 'kwanqa-flashcards-deck';
-const GAP = /\.\.\.|…|__/;
-
-// one deck per Amharic camp: its lessons' phrases, without repeats or fill-in-the-gap patterns
-const DECKS = courseCatalog
-  .filter(c => c.track === 'amharic')
-  .sort((a, b) => a.part - b.part)
-  .map(c => {
-    const seen = new Set<string>();
-    const cards: Card[] = [];
-    for (const section of courseContent[c.slug]?.sections ?? []) {
-      for (const p of section.phrases ?? []) {
-        const key = p.amharic.trim();
-        if (GAP.test(key) || seen.has(key)) continue;
-        seen.add(key);
-        cards.push({ amharic: key, transliteration: p.transliteration, english: p.english });
-      }
-    }
-    return { slug: c.slug, part: c.part, title: c.description, cards };
-  })
-  .filter(d => d.cards.length > 0);
-
-function shuffle<T>(list: T[]) {
-  const out = [...list];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
 
 function SpeakerIcon() {
   return (
@@ -104,12 +74,7 @@ export default function Flashcards() {
         setKnown(k => k + 1);
         setPile(p => p.slice(1));
       } else {
-        // back into the pile a few cards later
-        setPile(p => {
-          const rest = p.slice(1);
-          const at = Math.min(rest.length, 3 + Math.floor(Math.random() * 3));
-          return [...rest.slice(0, at), card, ...rest.slice(at)];
-        });
+        setPile(putBack);
       }
     },
     [card],

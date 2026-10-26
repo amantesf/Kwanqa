@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'reac
 import { amharicAudio } from '@/lib/amharicAudio';
 import SayButton from '@/components/SayButton';
 import { clearMistakes, recordMistake } from '@/lib/mistakes';
+import { countFinished } from '@/components/SiteAnalytics';
 import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
@@ -469,6 +470,7 @@ export default function Practice({
       } else {
         setEarned(completeLesson(slug, lessonIndex, mistakes, work));
       }
+      countFinished(slug, review ? 'review' : lessonIndex);
       sounds.play('complete');
       setPhase('done');
     } else if (stamina === 0) {

@@ -2,10 +2,11 @@ import { NotoSansEthiopic_600SemiBold, NotoSansEthiopic_700Bold } from '@expo-go
 import { Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black, useFonts } from '@expo-google-fonts/nunito';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { loadProgress } from '@/progress';
 import { colors } from '@/theme';
 
-// keep the splash screen up until the fonts are ready
+// keep the splash screen up until the fonts and saved progress are ready
 SplashScreen.preventAutoHideAsync();
 
 // The tabs, with practice opening over them full screen.
@@ -19,11 +20,18 @@ export default function RootLayout() {
     NotoSansEthiopic_700Bold,
   });
 
-  useEffect(() => {
-    if (loaded || failed) SplashScreen.hideAsync();
-  }, [loaded, failed]);
+  const [progressReady, setProgressReady] = useState(false);
+  const ready = (loaded || !!failed) && progressReady;
 
-  if (!loaded && !failed) return null;
+  useEffect(() => {
+    loadProgress().then(() => setProgressReady(true));
+  }, []);
+
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  if (!ready) return null;
 
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>

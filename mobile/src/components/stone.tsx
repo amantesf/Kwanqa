@@ -7,7 +7,7 @@ import { colors } from '@/theme';
 // with a thick bottom edge that presses down when tapped.
 
 export type StoneState = 'done' | 'current' | 'todo' | 'locked';
-export type StoneKind = 'lesson' | 'reward' | 'trophy';
+export type StoneKind = 'lesson' | 'reward' | 'trophy' | 'review';
 
 const SIZE = 72;
 const EDGE = 9;
@@ -18,6 +18,8 @@ const LOOK: Record<StoneState, { face: string; edge: string; fg: string }> = {
   todo: { face: colors.stone, edge: colors.stoneEdge, fg: colors.stoneText },
   locked: { face: colors.stone, edge: colors.stoneEdge, fg: '#b3a998' },
 };
+
+const REVIEW = { face: '#8e5cc4', edge: '#6b3f9e', fg: '#ffffff' };
 
 function Star({ color }: { color: string }) {
   return (
@@ -47,6 +49,22 @@ function Trophy({ won }: { won: boolean }) {
   );
 }
 
+/** Two arrows going round: try the missed ones again. */
+function Retry({ color }: { color: string }) {
+  return (
+    <Svg width={30} height={30} viewBox="0 0 24 24">
+      <Path
+        d="M5.5 11a6.6 6.6 0 0 1 11.6-3.6M18.5 13a6.6 6.6 0 0 1-11.6 3.6M17.6 3.6v4.3h-4.3M6.4 20.4v-4.3h4.3"
+        stroke={color}
+        strokeWidth={2.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </Svg>
+  );
+}
+
 /** A woven mesob basket, full of grass once you reach it. */
 export function Mesob({ open }: { open: boolean }) {
   return (
@@ -70,7 +88,8 @@ type Props = { state: StoneState; kind?: StoneKind; label: string; onPress?: () 
 
 export default function Stone({ state, kind = 'lesson', label, onPress }: Props) {
   const [down, setDown] = useState(false);
-  const look = LOOK[state];
+  // review stones are purple whenever they're open
+  const look = kind === 'review' && state !== 'locked' ? REVIEW : LOOK[state];
   const pressable = !!onPress && state !== 'locked';
 
   if (kind === 'reward') {
@@ -82,7 +101,7 @@ export default function Stone({ state, kind = 'lesson', label, onPress }: Props)
   }
 
   return (
-    <View style={state === 'current' && styles.ring}>
+    <View style={state === 'current' && [styles.ring, kind === 'review' && styles.ringReview]}>
       <Pressable
         onPress={pressable ? onPress : undefined}
         onPressIn={() => pressable && setDown(true)}
@@ -95,7 +114,7 @@ export default function Stone({ state, kind = 'lesson', label, onPress }: Props)
         <View style={[styles.edge, { backgroundColor: look.edge }]} />
         <View style={[styles.face, { backgroundColor: look.face, top: down ? EDGE : 0 }]}>
           <View style={styles.shine} />
-          {kind === 'trophy' ? <Trophy won={state === 'done'} /> : state === 'done' ? <Check color={look.fg} /> : <Star color={look.fg} />}
+          {kind === 'trophy' ? <Trophy won={state === 'done'} /> : kind === 'review' ? <Retry color={look.fg} /> : state === 'done' ? <Check color={look.fg} /> : <Star color={look.fg} />}
         </View>
       </Pressable>
     </View>
@@ -104,6 +123,7 @@ export default function Stone({ state, kind = 'lesson', label, onPress }: Props)
 
 const styles = StyleSheet.create({
   ring: { padding: 6, borderRadius: SIZE, borderWidth: 6, borderColor: colors.primarySoft, margin: -12 },
+  ringReview: { borderColor: '#e9ddf6' },
   stone: { width: SIZE, height: SIZE + EDGE },
   edge: { position: 'absolute', top: EDGE, width: SIZE, height: SIZE, borderRadius: SIZE / 2 },
   face: { position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },

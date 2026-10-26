@@ -5,10 +5,13 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { amharicAudio } from '@/lib/amharicAudio';
+import { completeLesson, completeReview, REST_COST, spendGrass, useClimb } from '@/lib/climb';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
+import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
 import { play, playEffect } from '@/components/sound';
+import { Grass } from '@/components/icons';
 import Speaker from '@/components/speaker';
 import Walia, { type Mood } from '@/components/walia';
 import { siteUrl } from '@/site';
@@ -17,8 +20,9 @@ import { colors, fonts } from '@/theme';
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
 // back at the end; a mistake costs a hoof of stamina and three right answers in
-// a row win one back. Grass, saved progress and the mistakes review arrive
-// with sign-in.
+// a row win one back. Finishing earns grass and marks the stone done, and
+// wrong answers are saved for the camp's review (lib/climb.ts, lib/mistakes.ts),
+// all the same as on the website. With review=1 it asks those saved questions.
 
 const MAX_STAMINA = 5;
 const STREAK_TO_RECOVER = 3;
@@ -45,14 +49,18 @@ function uiText(track: Track) {
     previous: both('Previous mistake', 'ያለፈው ስህተት'),
     inARow: (n: number, more: number) => (track === 'english' ? `${n} በተከታታይ · ${n} in a row` : `${n} in a row. ${more} more to regain stamina`),
     restTitle: both('Walia needs a rest', 'ዋሊያ ማረፍ ያስፈልገዋል'),
-    restText: both('Out of stamina on this ledge. Rest, or review the phrases and try again.', 'ጉልበቱ አልቋል። ያርፍ፣ ወይም ሐረጎቹን ይከልሱ።'),
-    rest: both('Rest', 'እረፍ'),
+    restText:
+      track === 'english'
+        ? 'ጉልበቱ አልቋል። ሳር በልቶ ይበርታ፣ ወይም ሐረጎቹን ይከልሱ። · Out of stamina. Graze to recover, or review the phrases.'
+        : 'Out of stamina on this ledge. Graze to recover, or review the phrases and try again.',
+    eat: (n: number) => both(`Eat ${n} grass`, `${n} ሳር ብላ`),
     review: both('Review phrases', 'ሐረጎቹን ከልስ'),
     leaveTitle: both('Wait, don’t go!', 'ቆይ፣ አትሂድ!'),
     leaveText: both('You’ll lose your progress in this lesson if you quit now.', 'አሁን ካቆምክ የዚህ ትምህርት ሂደትህ ይጠፋል።'),
     keepLearning: both('Keep learning', 'መማር ቀጥል'),
     endSession: both('End session', 'ውጣ'),
     complete: both('Lesson complete!', 'ትምህርቱ ተጠናቀቀ!'),
+    fixed: both('Mistakes fixed!', 'ስህተቶቹ ተስተካከሉ!'),
   };
 }
 
@@ -176,16 +184,24 @@ function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchE
 }
 
 export default function Practice() {
-  const { slug, lesson: lessonParam } = useLocalSearchParams<{ slug: string; lesson: string }>();
+  const { slug, lesson: lessonParam, review: reviewParam } = useLocalSearchParams<{ slug: string; lesson?: string; review?: string }>();
+  const review = reviewParam === '1';
   const lessonIndex = Number(lessonParam ?? 0);
   const course = courseContent[slug];
   const lesson = course?.sections[lessonIndex];
   const track: Track = courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
   const ui = uiText(track);
 
-  const [initial] = useState<Exercise[]>(() =>
-    lesson ? buildExercises(lesson, course.sections, track, slug === 'amharic-beginner-1' && lessonIndex === 0) : [],
+  // a review asks the camp's saved mistakes instead of a lesson's own questions
+  const [session] = useState(() =>
+    review
+      ? reviewSession(readMistakes()[slug] ?? [])
+      : { exercises: lesson ? buildExercises(lesson, course.sections, track, slug === 'amharic-beginner-1' && lessonIndex === 0) : [], keys: [] },
   );
+  const initial = session.exercises;
+  const climb = useClimb();
+  const [earned, setEarned] = useState(0);
+  const [startedAt] = useState(() => Date.now()); // for the daily log's time spent
   const [queue, setQueue] = useState<Exercise[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());
   const [missed, setMissed] = useState<Set<string>>(new Set());
@@ -258,8 +274,23 @@ export default function Practice() {
     setLastCorrect(correct);
     playEffect(correct ? 'correct' : 'wrong');
     if (correct) gainStreak();
-    else loseStamina();
+    else {
+      loseStamina();
+      // remember it, so it's asked again before the next camp
+      if (!review) recordMistake(slug, lessonIndex, current);
+    }
     setPhase('feedback');
+  }
+
+  /** Saves the finished lesson (or review) and returns the grass it earned. */
+  function finish() {
+    // every question was answered correctly once, plus each wrong try along the way
+    const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
+    if (review) {
+      clearMistakes(slug, session.keys);
+      return completeReview(work);
+    }
+    return completeLesson(slug, lessonIndex, mistakes, work);
   }
 
   function solveMatch() {
@@ -285,6 +316,7 @@ export default function Practice() {
     setReaction(null);
 
     if (nextQueue.length === 0) {
+      setEarned(finish());
       playEffect('complete');
       setPhase('done');
     } else if (stamina === 0) setPhase('rest');
@@ -292,30 +324,56 @@ export default function Practice() {
     else setPhase('question');
   }
 
-  const exit = () => router.back();
+  // back to the lesson, or to the trail when practice was opened from a link
+  const exit = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
-  if (!lesson) return null;
+  if (!lesson && !review) return null;
 
-  if (initial.length === 0 || phase === 'done') {
+  // A lesson without phrases has nothing to quiz; it can be marked done straight away.
+  if (initial.length === 0 && phase !== 'done') {
+    return (
+      <SafeAreaView style={[styles.safe, styles.center]}>
+        <Walia mood="thinking" size={150} />
+        <Text style={styles.restText}>{review ? 'Nothing to review here right now.' : 'This lesson has no practice yet.'}</Text>
+        <View style={styles.doneButton}>
+          {review ? null : (
+            <Button
+              label="Mark complete"
+              onPress={() => {
+                setEarned(completeLesson(slug, lessonIndex, 0));
+                setPhase('done');
+              }}
+            />
+          )}
+          <Button label={ui.continue} tone={review ? 'primary' : 'plain'} onPress={exit} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (phase === 'done') {
     const answers = initial.length + mistakes;
     const accuracy = answers ? Math.round((initial.length / answers) * 100) : 100;
     return (
       <SafeAreaView style={[styles.safe, styles.center]}>
         <Walia mood="cheer" size={170} />
-        <Text style={styles.doneTitle}>{ui.complete}</Text>
+        <Text style={styles.doneTitle}>{review ? ui.fixed : ui.complete}</Text>
         {initial.length ? (
           <View style={styles.stats}>
             <View style={[styles.stat, { borderColor: colors.green }]}>
               <Text style={[styles.statHead, { backgroundColor: colors.green }]}>{accuracyLabel(accuracy)}</Text>
               <Text style={[styles.statValue, { color: '#3a9a28' }]}>{accuracy}%</Text>
             </View>
-            <View style={[styles.stat, { borderColor: colors.gold }]}>
-              <Text style={[styles.statHead, { backgroundColor: colors.gold }]}>Answers</Text>
-              <Text style={[styles.statValue, { color: colors.goldShadow }]}>{answers}</Text>
+            <View style={[styles.stat, { borderColor: '#5fb84a' }]}>
+              <Text style={[styles.statHead, { backgroundColor: '#5fb84a' }]}>Grass</Text>
+              <View style={styles.statRow}>
+                <Grass size={26} />
+                <Text style={[styles.statValue, { color: '#3a9a28' }]}>+{earned}</Text>
+              </View>
             </View>
           </View>
         ) : null}
-        {lesson.note ? <Text style={styles.doneNote}>{lesson.note}</Text> : null}
+        {lesson?.note && !review ? <Text style={styles.doneNote}>{lesson.note}</Text> : null}
         <View style={styles.doneButton}>
           <Button label={ui.continue} onPress={exit} />
         </View>
@@ -331,13 +389,22 @@ export default function Practice() {
         <Text style={styles.restText}>{ui.restText}</Text>
         <View style={styles.doneButton}>
           <Button
-            label={ui.rest}
+            label={ui.eat(REST_COST)}
+            disabled={climb.grass < REST_COST}
             onPress={() => {
-              setStamina(MAX_STAMINA);
-              setPhase('question');
+              if (spendGrass(REST_COST)) {
+                setStamina(MAX_STAMINA);
+                setPhase('question');
+              }
             }}
           />
           <Button label={ui.review} tone="plain" onPress={exit} />
+        </View>
+        <View style={styles.statRow}>
+          <Grass size={18} />
+          <Text style={styles.grassLeft}>
+            You have {climb.grass} grass{climb.grass >= REST_COST ? '' : '. Finish lessons to earn more'}.
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -591,6 +658,8 @@ const styles = StyleSheet.create({
   stats: { flexDirection: 'row', gap: 12 },
   stat: { width: 130, borderRadius: 16, borderWidth: 2, overflow: 'hidden', alignItems: 'center' },
   statHead: { alignSelf: 'stretch', textAlign: 'center', paddingVertical: 4, fontFamily: fonts.black, fontSize: 13, color: '#ffffff', textTransform: 'uppercase' },
+  statRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  grassLeft: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
   statValue: { fontFamily: fonts.black, fontSize: 24, paddingVertical: 10 },
   doneNote: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: colors.ink, backgroundColor: colors.primarySoft, padding: 14, borderRadius: 16, overflow: 'hidden', maxWidth: 420 },
   doneButton: { alignSelf: 'stretch', gap: 10, maxWidth: 420, width: '100%', marginTop: 8 },

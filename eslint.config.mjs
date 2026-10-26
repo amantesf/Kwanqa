@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Python tools for scripts/fidel_audio.py
     ".venv-audio/**",
+    // The phone app has its own lint settings
+    "mobile/**",
   ]),
 ]);
 

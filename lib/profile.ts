@@ -1,5 +1,6 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import type { Track } from '@/lib/courses';
+import { onOtherTab, storage } from '@/lib/storage';
 
 // Answers from the "Get started" survey. Kept in this browser for guests and
 // copied to the account (user metadata) once they sign up or log in.
@@ -23,7 +24,7 @@ const listeners = new Set<() => void>();
 
 function readRaw(): string {
   try {
-    return window.localStorage.getItem(KEY) ?? '';
+    return storage().getItem(KEY) ?? '';
   } catch {
     return '';
   }
@@ -71,10 +72,10 @@ export function normalizeProfile(value: Record<string, unknown>): Profile {
 
 function subscribe(callback: () => void) {
   listeners.add(callback);
-  window.addEventListener('storage', callback);
+  const stop = onOtherTab(() => callback());
   return () => {
     listeners.delete(callback);
-    window.removeEventListener('storage', callback);
+    stop();
   };
 }
 
@@ -88,7 +89,7 @@ export function readProfile(): Profile | null {
 
 export function saveProfile(profile: Profile) {
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(profile));
+    storage().setItem(KEY, JSON.stringify(profile));
   } catch {
     // storage unavailable; the survey just won't be remembered
   }
@@ -97,7 +98,7 @@ export function saveProfile(profile: Profile) {
 
 export function clearProfile() {
   try {
-    window.localStorage.removeItem(KEY);
+    storage().removeItem(KEY);
   } catch {
     // nothing to clear
   }

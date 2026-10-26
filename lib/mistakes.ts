@@ -1,5 +1,6 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import { shuffle, type Exercise } from '@/lib/exercises';
+import { onOtherTab, storage } from '@/lib/storage';
 
 // The questions each learner got wrong, kept per camp so they can be asked
 // again before the learner moves on to the next camp. The exact question is
@@ -19,7 +20,7 @@ const listeners = new Set<() => void>();
 
 function readRaw(): string {
   try {
-    return window.localStorage.getItem(KEY) ?? '{}';
+    return storage().getItem(KEY) ?? '{}';
   } catch {
     return '{}';
   }
@@ -41,7 +42,7 @@ function parse(raw: string): Store {
 
 function write(store: Store) {
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(store));
+    storage().setItem(KEY, JSON.stringify(store));
   } catch {
     // storage full or blocked: the review just won't happen
   }
@@ -50,13 +51,12 @@ function write(store: Store) {
 
 function subscribe(callback: () => void) {
   listeners.add(callback);
-  const onStorage = (e: StorageEvent) => {
-    if (e.key === KEY) callback();
-  };
-  window.addEventListener('storage', onStorage);
+  const stop = onOtherTab(key => {
+    if (key === KEY) callback();
+  });
   return () => {
     listeners.delete(callback);
-    window.removeEventListener('storage', onStorage);
+    stop();
   };
 }
 
@@ -86,6 +86,11 @@ export function clearMistakes(slug: string, keys: string[]) {
   if (left.length) store[slug] = left;
   else delete store[slug];
   write(store);
+}
+
+/** Saved mistakes for every camp, as they are right now. */
+export function readMistakes(): Store {
+  return parse(readRaw());
 }
 
 /** Saved mistakes for every camp, kept up to date. */

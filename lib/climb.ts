@@ -1,6 +1,7 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 import type { Level } from '@/lib/profile';
+import { onOtherTab, storage } from '@/lib/storage';
 
 // The learner's climb lives in this browser's localStorage (there are no accounts yet).
 export type Climb = {
@@ -31,10 +32,10 @@ const listeners = new Set<() => void>();
 
 function readRaw(): string {
   try {
-    const raw = window.localStorage.getItem(KEY);
+    const raw = storage().getItem(KEY);
     if (raw) return raw;
     // Carry over lesson progress saved before grass existed.
-    const legacy = window.localStorage.getItem(LEGACY_KEY);
+    const legacy = storage().getItem(LEGACY_KEY);
     return legacy ? JSON.stringify({ completed: JSON.parse(legacy), grass: 0, days: [], log: {} }) : EMPTY;
   } catch {
     return EMPTY;
@@ -57,7 +58,7 @@ function parse(raw: string): Climb {
 
 function write(climb: Climb) {
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(climb));
+    storage().setItem(KEY, JSON.stringify(climb));
   } catch {
     // storage unavailable; the climb just won't persist
   }
@@ -66,10 +67,10 @@ function write(climb: Climb) {
 
 function subscribe(callback: () => void) {
   listeners.add(callback);
-  window.addEventListener('storage', callback);
+  const stop = onOtherTab(() => callback());
   return () => {
     listeners.delete(callback);
-    window.removeEventListener('storage', callback);
+    stop();
   };
 }
 
@@ -91,8 +92,8 @@ export function replaceClimb(climb: Climb) {
 
 export function clearClimb() {
   try {
-    window.localStorage.removeItem(KEY);
-    window.localStorage.removeItem(LEGACY_KEY);
+    storage().removeItem(KEY);
+    storage().removeItem(LEGACY_KEY);
   } catch {
     // nothing to clear
   }

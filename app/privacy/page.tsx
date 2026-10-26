@@ -4,7 +4,7 @@ import { PageHero } from '@/components/sections';
 export const metadata: Metadata = { title: 'Privacy policy' };
 
 const CONTACT = 'kwanqa.team@gmail.com';
-const UPDATED = 'October 16, 2026';
+const UPDATED = 'October 25, 2026';
 
 // Plain-language privacy policy. Keep it in step with what the site actually
 // collects, and have it reviewed by a lawyer before a public launch.
@@ -49,6 +49,12 @@ export default function PrivacyPage() {
                 keeps basic logs (such as IP address and browser type) to keep the site secure and
                 working.
               </li>
+              <li>
+                <strong>Visitor numbers:</strong> Vercel Web Analytics counts which pages are visited
+                and which lessons are finished, with the visitor’s country, device type, browser,
+                and the site they came from. It uses no cookies and doesn’t identify you, and we only
+                see totals.
+              </li>
             </ul>
 
             <h2>Information stored on your device</h2>
@@ -83,7 +89,7 @@ export default function PrivacyPage() {
             </p>
             <ul>
               <li><strong>Supabase:</strong> accounts, login, and saving your progress (hosted in the United States).</li>
-              <li><strong>Vercel:</strong> hosts the kwanqa website.</li>
+              <li><strong>Vercel:</strong> hosts the kwanqa website and counts anonymous page visits.</li>
               <li><strong>Resend:</strong> sends our account and reminder emails.</li>
               <li><strong>Google:</strong> only if you choose “Continue with Google”.</li>
               <li><strong>Cloudflare:</strong> manages our domain name.</li>

@@ -9579,3 +9579,11 @@ body:has(.practice-screen) {
 .prompt-slow:hover {
   background: var(--blue-soft);
 }
+
+.prompt-tag {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}

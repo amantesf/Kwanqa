@@ -61,6 +61,7 @@ export function uiText(track: Track | undefined) {
     previous: both('Previous mistake', 'ያለፈው ስህተት'),
     listenCue: both('Listen, then tap what you heard', 'ያዳምጡ፣ ከዚያ የሰሙትን ይንኩ'),
     slower: both('Slower', 'በዝግታ'),
+    waliaSays: both('Walia says', 'ዋሊያ እንዲህ ይላል'),
     inARow: (n: number, more: number) =>
       track === 'english' ? `${n} በተከታታይ · ${n} in a row` : `${n} in a row. ${more} more to regain stamina`,
     restTitle: both('Walia needs a rest', 'ዋሊያ ማረፍ ያስፈልገዋል'),
@@ -755,6 +756,7 @@ export default function Practice({
                     </>
                   ) : (
                     <>
+                      {current.id === 'reply' && <span className="prompt-tag">{ui.waliaSays}</span>}
                       <span className="prompt-main">{current.prompt}</span>
                       {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
                     </>

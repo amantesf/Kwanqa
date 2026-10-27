@@ -289,6 +289,11 @@ export default function Practice({
       track,
       // the English course starts at a medium level, so it skips the picture warm-up
       slug === 'amharic-beginner-1' && lessonIndex === 0,
+      {
+        // "Tap what you hear", only for lines that can be played
+        listening: true,
+        canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
+      },
     ),
   );
   const [queue, setQueue] = useState<Exercise[]>(initial);

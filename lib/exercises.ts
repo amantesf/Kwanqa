@@ -355,8 +355,9 @@ export function buildExercises(
   ];
   const seen = new Set<string>();
   // the same Amharic once, even when one copy ends in ። and the other doesn't
+  const bareAm = (text: string) => text.replace(PUNCT_ALL, '').trim();
   const uniqueCards = cards.filter(card => {
-    const key = card.amharic.replace(PUNCT_ALL, '').trim();
+    const key = bareAm(card.amharic);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -369,56 +370,69 @@ export function buildExercises(
   const pool = {
     english: poolCards.map(c => c.english),
   };
+  const used = usage<Card>(c => bareAm(c.amharic));
+  const cardFor = (amharic: string) => uniqueCards.find(c => bareAm(c.amharic) === bareAm(amharic));
+  const canHear = (text: string) => !text.includes('...') && (options.canHear ? options.canHear(text) : true);
 
   const exercises: Exercise[] = [];
   const picked = shuffle(uniqueCards).slice(0, 5);
+  // A mix of question types, so no two in a row feel the same.
+  const kinds = ['meaning', 'say', 'listen', 'say', 'meaning'] as const;
 
   picked.forEach((card, i) => {
     const explain = `${card.amharic} (${card.transliteration}) means “${card.english}”.`;
+    const otherMeanings = (list: Card[]) => list.filter(c => meaningKey(c.english) !== meaningKey(card.english));
+    let kind: (typeof kinds)[number] = kinds[i % kinds.length];
+    if (kind === 'listen' && !(options.listening && canHear(card.amharic))) kind = 'meaning';
     let ex: ChoiceExercise | null;
-    switch (i % 3) {
-      case 0:
-        ex = choice(
-          `meaning-${i}`,
-          'What does this mean?',
+    if (kind === 'meaning') {
+      ex = choice(
+        `meaning-${i}`,
+        'What does this mean?',
+        card.amharic,
+        card.english,
+        distractors(card.english, local.english, pool.english),
+        explain,
+        card.transliteration,
+      );
+    } else if (kind === 'say') {
+      // Skip options that share this meaning, so only one answer is right.
+      ex = choice(
+        `say-${i}`,
+        'How do you say this?',
+        card.english,
+        card.amharic,
+        distractors(
           card.amharic,
-          card.english,
-          distractors(card.english, local.english, pool.english),
-          explain,
-          card.transliteration,
-        );
-        break;
-      case 1:
-        // Skip options that share this meaning, so only one answer is right.
-        ex = choice(
-          `say-${i}`,
-          'How do you say this?',
-          card.english,
+          otherMeanings(uniqueCards).map(c => c.amharic),
+          otherMeanings(poolCards).map(c => c.amharic),
+        ),
+        explain,
+      );
+    } else {
+      // Tap what you hear: Walia says it, the learner picks the line they heard.
+      ex = choice(
+        `listen-${i}`,
+        'Tap what you hear',
+        card.amharic,
+        card.amharic,
+        distractors(
           card.amharic,
-          distractors(
-            card.amharic,
-            uniqueCards.filter(c => meaningKey(c.english) !== meaningKey(card.english)).map(c => c.amharic),
-            poolCards.filter(c => meaningKey(c.english) !== meaningKey(card.english)).map(c => c.amharic),
-          ),
-          explain,
-        );
-        break;
-      default:
-        // Answers in English, with the transliteration shown as a hint under the Amharic.
-        ex = choice(
-          `read-${i}`,
-          'What does this mean?',
-          card.amharic,
-          card.english,
-          distractors(card.english, local.english, pool.english),
-          explain,
-          card.transliteration,
-        );
+          otherMeanings(uniqueCards).filter(c => canHear(c.amharic)).map(c => c.amharic),
+          otherMeanings(poolCards).filter(c => canHear(c.amharic)).map(c => c.amharic),
+        ),
+        explain,
+      );
+      if (ex) ex.listen = true;
     }
-    if (ex) exercises.push(ex);
+    if (ex) {
+      ex.answerAudio = card.amharic;
+      exercises.push(ex);
+      used.use(card);
+    }
   });
 
-  // Word tiles in the middle of the lesson: tap the Amharic word, then build sentences.
+  // Word tiles in the middle of the lesson: tap the Amharic word, then build a sentence.
   const amWords = (text: string) =>
     text
       .split(/\s+/)
@@ -444,14 +458,19 @@ export function buildExercises(
       pickWrong(amWords(single.amharic), 4),
       `${single.amharic} (${single.transliteration}) means “${single.english}”.`,
     );
-    if (ex) tiles.push(ex);
+    if (ex) {
+      ex.answerAudio = single.amharic;
+      tiles.push(ex);
+      used.use(single);
+    }
   }
-  shuffle(
-    uniqueCards.filter(c => {
-      const n = amWords(c.amharic).length;
-      return n >= 2 && n <= 7 && !c.amharic.includes('...');
-    }),
-  )
+
+  // One or two sentences to build, short enough to be fun.
+  const buildable = uniqueCards.filter(c => {
+    const n = amWords(c.amharic).length;
+    return n >= 2 && n <= 7 && !c.amharic.includes('...');
+  });
+  shuffle(buildable)
     .slice(0, 2)
     .forEach((card, i) => {
       const answer = amWords(card.amharic);
@@ -463,7 +482,11 @@ export function buildExercises(
         pickWrong(answer, 3),
         `${card.amharic} (${card.transliteration}) means “${card.english}”.`,
       );
-      if (ex) tiles.push(ex);
+      if (ex) {
+        ex.answerAudio = card.amharic;
+        tiles.push(ex);
+        used.use(card);
+      }
     });
   spreadIn(exercises, tiles);
 
@@ -471,9 +494,9 @@ export function buildExercises(
   const respect = respectExercises(lesson);
   respect.forEach((ex, i) => exercises.splice(Math.min(1 + i * 3, exercises.length), 0, ex));
 
-  // Fill in the missing word of a dialogue line.
-  const lines = shuffle(lesson.dialogue ?? []).filter(l => l.amharic.split(/\s+/).length >= 2);
-  const line = lines[0];
+  // Fill in the missing word of a dialogue line (the one used least so far).
+  const lines = (lesson.dialogue ?? []).filter(l => l.amharic.split(/\s+/).length >= 2);
+  const line = shuffle(lines)[0];
   if (line) {
     const words = line.amharic.split(/\s+/);
     // blank a real word, never a name like አሌክስ
@@ -497,7 +520,11 @@ export function buildExercises(
       line.english,
     );
     if (ex) ex.revealAudio = line.amharic;
-    if (ex && answer) exercises.splice(Math.min(3, exercises.length), 0, ex);
+    if (ex && answer) {
+      exercises.splice(Math.min(3, exercises.length), 0, ex);
+      const card = cardFor(line.amharic);
+      if (card) used.use(card);
+    }
   }
 
   // Picture questions for a word with a picture: "Which one of these is “coffee”?"
@@ -509,7 +536,7 @@ export function buildExercises(
       .find(Boolean) ?? (firstLesson ? shuffle(PICTURES)[0] : undefined);
   addPictureExercises(exercises, pictured, 'amharic');
 
-  // Match pairs as a final round.
+  // Match pairs as a final round, with the phrases seen least.
   const meanings = new Set<string>();
   const matchCards = shuffle(uniqueCards)
     .filter(c => !meanings.has(meaningKey(c.english)) && meanings.add(meaningKey(c.english)))

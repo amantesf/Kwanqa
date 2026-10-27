@@ -2,13 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { amharicAudio } from '@/lib/amharicAudio';
 import { DECKS, putBack, shuffle, type Card } from '@/lib/flashcards';
 import Speaker from '@/components/speaker';
 import { play } from '@/components/sound';
 import Walia from '@/components/walia';
-import { colors, fonts, tabBarTop } from '@/theme';
+import { colors, fonts } from '@/theme';
 
 // Flashcards from each Amharic camp's phrases, the same decks as the website.
 // Flip a card to check yourself, then sort it: "Got it" takes it out of the
@@ -75,9 +74,8 @@ export default function Cards() {
   if (!deck) return null;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <View style={styles.safe}>
       <ScrollView contentContainerStyle={styles.page}>
-        <Text style={styles.heading}>Flashcards</Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.decks}>
           {DECKS.map((d, i) => (
@@ -183,14 +181,13 @@ export default function Cards() {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg, paddingTop: tabBarTop },
+  safe: { flex: 1, backgroundColor: colors.bg },
   page: { padding: 16, gap: 14 },
-  heading: { fontFamily: fonts.black, fontSize: 32, color: colors.ink },
   decks: { gap: 8, paddingBottom: 4 },
   deck: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
   deckOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },

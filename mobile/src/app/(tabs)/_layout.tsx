@@ -12,9 +12,9 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Label>Alphabet</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'character.book.closed', selected: 'character.book.closed.fill' }} md="translate" />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="cards">
-        <NativeTabs.Trigger.Label>Cards</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf={{ default: 'rectangle.on.rectangle.angled', selected: 'rectangle.fill.on.rectangle.angled.fill' }} md="style" />
+      <NativeTabs.Trigger name="explore">
+        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'safari', selected: 'safari.fill' }} md="explore" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>

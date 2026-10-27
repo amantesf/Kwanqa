@@ -1224,7 +1224,7 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ሐምሌ', transliteration: 'hamle', english: 'Hamle (Jul–Aug)' },
           { amharic: 'ነሐሴ', transliteration: 'nehase', english: 'Nehase (Aug–Sep)' },
           { amharic: 'ጳጉሜ', transliteration: 'pagume', english: 'Pagume (the 13th month)' },
-          { amharic: 'ክረምት', transliteration: 'kiremt', english: 'the rainy season (Jun–Sep)' },
+          { amharic: 'ክረምት', transliteration: 'kiremt', english: 'the rainy season (Jun–Aug)' },
         ],
         dialogue: [
           {

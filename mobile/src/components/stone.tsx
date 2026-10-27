@@ -15,8 +15,9 @@ const EDGE = 9;
 const LOOK: Record<StoneState, { face: string; edge: string; fg: string }> = {
   done: { face: colors.gold, edge: colors.goldShadow, fg: '#ffffff' },
   current: { face: colors.primary, edge: colors.primaryShadow, fg: '#ffffff' },
-  todo: { face: colors.stone, edge: colors.stoneEdge, fg: colors.stoneText },
-  locked: { face: colors.stone, edge: colors.stoneEdge, fg: '#b3a998' },
+  // grey until reached, as on the website's trail
+  todo: { face: '#e5e5e5', edge: '#cecece', fg: '#afafaf' },
+  locked: { face: '#e5e5e5', edge: '#cecece', fg: '#afafaf' },
 };
 
 const REVIEW = { face: '#8e5cc4', edge: '#6b3f9e', fg: '#ffffff' };
@@ -38,7 +39,7 @@ function Check({ color }: { color: string }) {
 }
 
 function Trophy({ won }: { won: boolean }) {
-  const cup = won ? colors.gold : '#b3a998';
+  const cup = won ? colors.gold : '#afafaf';
   return (
     <Svg width={34} height={34} viewBox="0 0 32 32">
       <Path d="M9 4h14v7a7 7 0 0 1-14 0z" fill={cup} />

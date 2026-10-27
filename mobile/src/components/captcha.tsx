@@ -18,6 +18,13 @@ export default function Captcha({ onToken }: { onToken: (token: string) => void 
         source={{ uri: siteUrl('/app-captcha') }}
         onMessage={e => onToken(e.nativeEvent.data)}
         onError={() => onToken('')}
+        // Turnstile needs storage and cookies, and runs its check in frames from Cloudflare
+        originWhitelist={['*']}
+        javaScriptEnabled
+        domStorageEnabled
+        sharedCookiesEnabled
+        thirdPartyCookiesEnabled
+        setSupportMultipleWindows={false}
         scrollEnabled={false}
         style={styles.web}
         containerStyle={styles.web}

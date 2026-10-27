@@ -241,6 +241,7 @@ function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercis
         answer: pictured.english,
         explain,
         pictures,
+        answerAudio: pictured.english,
       },
       read: {
         kind: 'choice',
@@ -252,6 +253,7 @@ function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercis
         explain,
         pictures,
         hideWords: true,
+        answerAudio: pictured.english,
       },
     };
   }
@@ -267,6 +269,7 @@ function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercis
       answer: pictured.amharic,
       explain,
       pictures,
+      answerAudio: pictured.amharic,
     },
     read: {
       kind: 'choice',
@@ -278,6 +281,7 @@ function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercis
       explain,
       pictures,
       hideWords: true,
+      answerAudio: pictured.amharic,
     },
   };
 }
@@ -553,6 +557,7 @@ function respectExercises(lesson: LessonSection): ChoiceExercise[] {
       options: shuffle([set.man, set.woman, set.elder]),
       answer,
       explain,
+      answerAudio: answer,
     };
   });
 }

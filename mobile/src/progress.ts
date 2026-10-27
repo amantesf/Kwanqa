@@ -2,11 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setStorage } from '@/lib/storage';
 
 // The app keeps progress the same way the website does (lib/climb.ts,
-// lib/mistakes.ts, lib/profile.ts), just in the phone's storage instead of the
-// browser's. Those files read and write synchronously, so everything is loaded
-// into memory once at start and each change is saved in the background.
+// lib/mistakes.ts, lib/profile.ts, and the letters written in Write), just in
+// the phone's storage instead of the browser's. Those files read and write
+// synchronously, so everything is loaded into memory once at start and each
+// change is saved in the background.
 
-const KEYS = ['kwanqa-climb-v1', 'kwanqa-mistakes-v1', 'kwanqa-profile-v1'];
+const KEYS = ['kwanqa-climb-v1', 'kwanqa-mistakes-v1', 'kwanqa-profile-v1', 'kwanqa-fidel-written'];
 const memory = new Map<string, string>();
 
 setStorage({

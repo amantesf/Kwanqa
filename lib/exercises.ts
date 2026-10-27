@@ -767,6 +767,51 @@ function buildEnglishExercises(
     }
   }
 
+  // "What would you say back?" with a line from the dialogue.
+  // Only real answers: replies that are questions themselves have too many good alternatives.
+  const pairs = replyPairs(lesson.dialogue ?? []).filter(
+    p => !p.reply.english.includes('...') && !/\?\s*$/.test(p.reply.english.trim()),
+  );
+  const otherReplies = unique(
+    courseLessons
+      .filter(l => l !== lesson)
+      .flatMap(l => replyPairs(l.dialogue ?? []).map(p => p.reply.english))
+      .filter(r => !r.includes('?')),
+  );
+  const pair = shuffle(pairs).sort(
+    (a, b) => used.count(cardFor(a.reply.english) ?? a.reply) - used.count(cardFor(b.reply.english) ?? b.reply),
+  )[0];
+  let replyEx: ChoiceExercise | null = null;
+  if (pair) {
+    const content = (t: string) => words(t).map(w => bare(w).toLowerCase()).filter(w => w.length >= 4);
+    const replyWords = new Set(content(pair.reply.english));
+    const wrong = shuffle(otherReplies).filter(
+      r =>
+        r !== pair.reply.english &&
+        r !== pair.said.english &&
+        r.length <= 70 &&
+        !GENERIC_EN.test(r) &&
+        !content(r).some(w => replyWords.has(w)) &&
+        !r.includes('...'),
+    );
+    replyEx = choice(
+      'reply',
+      'ምን ብለው ይመልሳሉ? · What would you say back?',
+      pair.said.english,
+      pair.reply.english,
+      wrong.slice(0, 2),
+      `“${pair.reply.english}” (${pair.reply.amharic}) is a good reply to “${pair.said.english}”`,
+      pair.said.amharic,
+    );
+    if (replyEx && wrong.length >= 2) {
+      replyEx.answerAudio = pair.reply.english;
+      const card = cardFor(pair.reply.english);
+      if (card) used.use(card);
+    } else {
+      replyEx = null;
+    }
+  }
+
   // Word tiles in the middle of the lesson: tap the English word, then build a sentence.
   const enWords = (text: string) => words(text).map(w => w.replace(/[.,!?;:“”"…]/g, '')).filter(Boolean);
   const usable = (c: Card) => !/[/()…]|\.\.\./.test(c.english);
@@ -797,7 +842,7 @@ function buildEnglishExercises(
   // Sentences of up to six words, with a couple of extra tiles: a puzzle, not a wall.
   used
     .least(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= 6))
-    .slice(0, 2)
+    .slice(0, replyEx ? 1 : 2)
     .forEach((card, i) => {
       const answer = enWords(card.english);
       const ex = build(
@@ -815,6 +860,7 @@ function buildEnglishExercises(
       }
     });
   spreadIn(exercises, enTiles);
+  if (replyEx) exercises.splice(Math.ceil(exercises.length / 2), 0, replyEx);
 
   // Picture questions for a word with a picture that the lesson uses (coffee at
   // the café, taxi on the bus lesson); the very first lesson gets one too.

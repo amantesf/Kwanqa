@@ -1164,9 +1164,9 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
-  // Amharic Camp 7 – The Summit: Dates & Time
+  // Amharic Camp 7 – Dates & Time
   'amharic-beginner-7': {
-    title: 'Amharic Camp 7 – The Summit: Dates & Time',
+    title: 'Amharic Camp 7 – Dates & Time',
     intro:
       'Learn all thirteen Ethiopian months, talk about last week and next week, say dates and birthdays, and read the Ethiopian clock.',
     sections: [
@@ -1373,7 +1373,7 @@ export const courseContent: Record<string, Course> = {
           },
         ],
         note:
-          'The Ethiopian day starts at sunrise, so 6 a.m. is 12 o\'clock and 7 a.m. is 1 o\'clock. Add six hours to get Western time. When you make plans, ask: በኢትዮጵያ ሰዓት? You\'ve reached the summit. እንኳን ደስ አላችሁ!',
+          'The Ethiopian day starts at sunrise, so 6 a.m. is 12 o\'clock and 7 a.m. is 1 o\'clock. Add six hours to get Western time. When you make plans, ask: በኢትዮጵያ ሰዓት?',
       },
     ],
   },
@@ -1444,7 +1444,7 @@ export const courseCatalog: CourseSummary[] = [
   },
   {
     slug: 'amharic-beginner-7',
-    title: 'Amharic Camp 7 – The Summit: Dates & Time',
+    title: 'Amharic Camp 7 – Dates & Time',
     description: 'All 13 months, last week and next week, dates, birthdays, and Ethiopian time.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',

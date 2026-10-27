@@ -26,6 +26,10 @@ export type ChoiceExercise = {
   pictures?: Record<string, { src: string; transliteration: string }>;
   /** Harder picture questions: the cards show only pictures until answered. */
   hideWords?: boolean;
+  /** "Tap what you hear": the prompt is only heard, not shown, until answered. */
+  listen?: boolean;
+  /** The line in the language being learned, said aloud once the question is answered. */
+  answerAudio?: string;
 };
 
 export type MatchExercise = {
@@ -46,6 +50,8 @@ export type BuildExercise = {
   tiles: string[];
   answer: string[];
   explain: string;
+  /** The whole line, said aloud once the question is answered. */
+  answerAudio?: string;
 };
 
 export type Exercise = ChoiceExercise | MatchExercise | BuildExercise;

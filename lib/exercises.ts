@@ -465,14 +465,62 @@ export function buildExercises(
     }
   }
 
-  // One or two sentences to build, short enough to be fun.
+  // "What would you say back?": Walia says a line from the dialogue and the
+  // learner picks the reply. Wrong options are replies from other conversations
+  // (answers to different questions), never all-purpose ones like "Yes" or "Thanks".
+  // Only real answers count: a reply that's itself a question ("And Genna?")
+  // has too many other good follow-ups, so those pairs are left out.
+  const isQuestion = (t: string) => /[?፧]\s*$/.test(t.trim());
+  const pairs = replyPairs(lesson.dialogue ?? []).filter(
+    p => !p.reply.amharic.includes('...') && !isQuestion(p.reply.amharic),
+  );
+  const otherReplies = unique(
+    courseLessons
+      .filter(l => l !== lesson)
+      .flatMap(l => replyPairs(l.dialogue ?? []).map(p => p.reply.amharic))
+      .filter(r => !/[?፧]/.test(r)),
+  );
+  const pair = shuffle(pairs).sort(
+    (a, b) => used.count(cardFor(a.reply.amharic) ?? a.reply) - used.count(cardFor(b.reply.amharic) ?? b.reply),
+  )[0];
+  let replyEx: ChoiceExercise | null = null;
+  if (pair) {
+    const replyWords = new Set(amWords(pair.reply.amharic));
+    const wrong = shuffle(otherReplies).filter(
+      r =>
+        !clashes(pair.reply.amharic, r) &&
+        bareAm(r) !== bareAm(pair.said.amharic) &&
+        !GENERIC_AM.test(r) &&
+        // sharing a word ("ደህና ነኝ" / "ደህና ነው") could make it right too
+        !amWords(r).some(w => replyWords.has(w)) &&
+        !r.includes('...'),
+    );
+    replyEx = choice(
+      'reply',
+      'What would you say back?',
+      pair.said.amharic,
+      pair.reply.amharic,
+      wrong.slice(0, 2),
+      `${pair.reply.amharic} (${pair.reply.transliteration}) means “${pair.reply.english}”: a good reply to “${pair.said.english}”`,
+      pair.said.english,
+    );
+    if (replyEx && wrong.length >= 2) {
+      replyEx.answerAudio = pair.reply.amharic;
+      const reply = cardFor(pair.reply.amharic);
+      if (reply) used.use(reply);
+    } else {
+      replyEx = null;
+    }
+  }
+
+  // One sentence to build (two when there's no reply question), short enough to be fun.
   const buildable = uniqueCards.filter(c => {
     const n = amWords(c.amharic).length;
     return n >= 2 && n <= 6 && !c.amharic.includes('...');
   });
   used
     .least(buildable)
-    .slice(0, 2)
+    .slice(0, replyEx ? 1 : 2)
     .forEach((card, i) => {
       const answer = amWords(card.amharic);
       const ex = build(
@@ -490,6 +538,7 @@ export function buildExercises(
       }
     });
   spreadIn(exercises, tiles);
+  if (replyEx) exercises.splice(Math.ceil(exercises.length / 2), 0, replyEx);
 
   // "Who are you talking to?": pick the right form for a friend, a girl or an elder.
   const respect = respectExercises(lesson);

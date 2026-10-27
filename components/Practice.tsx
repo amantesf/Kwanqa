@@ -59,6 +59,8 @@ export function uiText(track: Track | undefined) {
     correctAnswer: both('Correct answer:', 'ትክክለኛው መልስ፡'),
     comeBack: both('This one will come back later.', 'ይህ ጥያቄ እንደገና ይመጣል።'),
     previous: both('Previous mistake', 'ያለፈው ስህተት'),
+    listenCue: both('Listen, then tap what you heard', 'ያዳምጡ፣ ከዚያ የሰሙትን ይንኩ'),
+    slower: both('Slower', 'በዝግታ'),
     inARow: (n: number, more: number) =>
       track === 'english' ? `${n} በተከታታይ · ${n} in a row` : `${n} in a row. ${more} more to regain stamina`,
     restTitle: both('Walia needs a rest', 'ዋሊያ ማረፍ ያስፈልገዋል'),
@@ -366,6 +368,12 @@ export default function Practice({
   function playPrompt() {
     playClip(promptAudio);
   }
+  /** The question's line again, slowly (Walia's voice only; recordings play as they are). */
+  function playSlow() {
+    if (!promptAudio) return;
+    const slow = promptAudio.src.startsWith('/api/speak') ? `${promptAudio.src}&slow=1` : promptAudio.src;
+    playClip({ ...promptAudio, src: slow });
+  }
   /** Say a word or answer out loud when it's tapped, in the language being learned. */
   function sayAloud(text: string) {
     if (!sounds.muted) playClip(soundFor(text));
@@ -396,6 +404,8 @@ export default function Practice({
     // play once per answer
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answerKey]);
+  // "Tap what you hear": the line stays hidden until it's answered.
+  const listening = current?.kind === 'choice' && !!current.listen && phase !== 'feedback';
   const progress = initial.length ? solved.size / initial.length : 1;
   const horns = hornLevel(climb.grass);
   // Walia's face: puzzling over the question, then cheering or disappointed.
@@ -732,8 +742,23 @@ export default function Practice({
                       </svg>
                     </button>
                   )}
-                  <span className="prompt-main">{current.prompt}</span>
-                  {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
+                  {listening ? (
+                    <>
+                      <span className="prompt-main listen-cue">{ui.listenCue}</span>
+                      <button type="button" className="prompt-slow" onClick={playSlow}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
+                          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+                          <path d="M16 9.5a3.6 3.6 0 0 1 0 5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                        </svg>
+                        {ui.slower}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="prompt-main">{current.prompt}</span>
+                      {current.promptHint && <span className="prompt-hint">{current.promptHint}</span>}
+                    </>
+                  )}
                 </div>
               )}
             </div>

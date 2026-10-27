@@ -1,25 +1,51 @@
-import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 import { siteUrl } from '@/site';
 
-// Two players: one for voices (tapping a new line stops the last one) and one
-// for the answer chimes, so a chime never cuts off a word.
-let voice: AudioPlayer | null = null;
-let chime: AudioPlayer | null = null;
+// Recordings and Walia's voice come from kwanqa.com. Each sound gets a fresh
+// player that starts once the file has loaded (starting before that is
+// unreliable on iPhones), and is released when it ends or another sound of the
+// same kind replaces it: a new word stops the last one, while answer chimes
+// have their own channel so they never cut off a word.
 
-function playOn(player: AudioPlayer | null, path: string, volume = 1) {
-  const source = { uri: siteUrl(path) };
-  if (!player) player = createAudioPlayer(source);
-  else player.replace(source);
+// Play even with the ring/silent switch on silent: the learner asked to hear it.
+void setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'mixWithOthers' }).catch(() => {});
+
+const channels: Record<'voice' | 'chime', AudioPlayer | null> = { voice: null, chime: null };
+
+function stop(channel: 'voice' | 'chime') {
+  const player = channels[channel];
+  channels[channel] = null;
+  if (!player) return;
+  try {
+    player.pause();
+    player.remove();
+  } catch {
+    // already released
+  }
+}
+
+function playOn(channel: 'voice' | 'chime', path: string, volume = 1) {
+  stop(channel);
+  const player = createAudioPlayer({ uri: siteUrl(path) });
+  channels[channel] = player;
   player.volume = volume;
-  player.play();
-  return player;
+  let started = false;
+  player.addListener('playbackStatusUpdate', status => {
+    if (channels[channel] !== player) return;
+    if (status.isLoaded && !started) {
+      started = true;
+      player.play();
+    } else if (status.didJustFinish) {
+      stop(channel);
+    }
+  });
 }
 
 export function play(path: string) {
-  voice = playOn(voice, path);
+  playOn('voice', path);
 }
 
 // the website's answer sounds (public/sounds/)
 export function playEffect(kind: 'correct' | 'wrong' | 'complete') {
-  chime = playOn(chime, `/sounds/${kind}.mp3`, 0.6);
+  playOn('chime', `/sounds/${kind}.mp3`, 0.6);
 }

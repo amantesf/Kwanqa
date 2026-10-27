@@ -16,6 +16,10 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Label>Cards</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'rectangle.on.rectangle.angled', selected: 'rectangle.fill.on.rectangle.angled.fill' }} md="style" />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profile">
+        <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }} md="person" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

@@ -282,7 +282,9 @@ export function zoneForCamp(campIdx: number, campCount: number): Zone {
   const from = Math.round(BASE_ALTITUDE + span * campIdx);
   const to = Math.round(BASE_ALTITUDE + span * (campIdx + 1));
   const zone = ZONES.find(z => (from + to) / 2 < z.below)!;
-  return { name: zone.name, tone: zone.tone, from, to };
+  // The last camp is the summit itself.
+  const name = campIdx === campCount - 1 && campCount > 1 ? 'Ras Dashen summit' : zone.name;
+  return { name, tone: zone.tone, from, to };
 }
 
 // Walia's horns grow a new ridge as grass is collected, like a real ibex's.

@@ -64,12 +64,17 @@ const CONSONANTS: Consonant[] = [
 /** `audio` is the recording of this sound (shared by letters that sound the same). */
 export type FidelCell = { char: string; roman: string; vowel: FidelVowel; audio: string };
 
-// Recordings live in public/sounds/fidel/, named by code point (e.g. 1200.mp3 for ሀ).
-// They were made with Microsoft's Amharic voice "Ameha" (via crikk.com) and cut
-// into one file per letter. scripts/fidel_audio.py can make a free fallback set
-// with Meta's MMS voice. Any file can be swapped for a native speaker's recording.
-// Letters that sound the same as another (sameAs) reuse that letter's recordings.
-const audioFor = (code: number) => `/sounds/fidel/${code.toString(16)}.mp3`;
+// Each letter is read by Walia's Microsoft Azure voice (Ameha) through /api/speak,
+// a little slower than normal so a single sound is clear. It's made the first
+// time anyone taps the letter and cached for a year after that.
+// Letters that sound the same as another (sameAs) share that letter's sound.
+// (The older recordings cut from a long clip are still in public/sounds/fidel/.)
+const audioFor = (code: number) => `/api/speak?text=${encodeURIComponent(String.fromCodePoint(code))}&slow=1`;
+
+/** Every letter that has its own sound, for the list of lines /api/speak may read. */
+export function fidelSounds(): string[] {
+  return CONSONANTS.filter(c => !c.sameAs).flatMap(c => VOWELS.map((_, i) => String.fromCodePoint(c.code + i)));
+}
 export type FidelRow = { base: string; roman: string; name: string; sameAs?: string; cells: FidelCell[] };
 
 export const FIDEL: FidelRow[] = CONSONANTS.map(c => ({

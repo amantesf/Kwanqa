@@ -6,6 +6,7 @@
 import { courseContent } from '@/lib/courses';
 import { PICTURES } from '@/lib/pictures';
 import { phraseAudio } from '@/lib/phraseAudio';
+import { fidelSounds } from '@/lib/fidel';
 
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -35,7 +36,9 @@ export function speakableAmharic(): Set<string> {
     }
   }
   return new Set(
-    [...lines, ...words, ...meanings, ...PICTURES.map(p => p.amharic)].map(t => t?.trim()).filter(t => t && !hasGap(t)),
+    [...lines, ...words, ...meanings, ...PICTURES.map(p => p.amharic), ...fidelSounds()]
+      .map(t => t?.trim())
+      .filter(t => t && !hasGap(t)),
   );
 }
 

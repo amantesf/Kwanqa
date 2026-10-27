@@ -287,12 +287,54 @@ function addPictureExercises(exercises: Exercise[], pictured: Picture | undefine
   else exercises.push(read);
 }
 
+/** Extra question types a screen can turn on once it knows how to show them. */
+export type BuildOptions = {
+  /** "Tap what you hear" questions: the prompt must be played, not shown. */
+  listening?: boolean;
+  /** Says whether a line can be heard, so listening questions only use lines with audio. */
+  canHear?: (text: string) => boolean;
+};
+
+// Keeping a lesson fresh: no phrase should come up more than about three times
+// in one session, so each part of the lesson picks the phrases used least so far.
+function usage<T>(keyOf: (item: T) => string) {
+  const counts = new Map<string, number>();
+  return {
+    use(item: T) {
+      counts.set(keyOf(item), (counts.get(keyOf(item)) ?? 0) + 1);
+    },
+    count(item: T) {
+      return counts.get(keyOf(item)) ?? 0;
+    },
+    /** The items used least so far, ties in random order. */
+    least(items: T[]) {
+      return shuffle(items).sort((a, b) => (counts.get(keyOf(a)) ?? 0) - (counts.get(keyOf(b)) ?? 0));
+    },
+  };
+}
+
+// Short replies that fit after almost anything ("Yes!", "Thank you", "Okay"):
+// never offered as a wrong answer in "What would you say back?".
+const GENERIC_AM = /(^|\s)(አዎ|አይ|አይደለም|እሺ|አመሰግናለሁ|ይቅርታ|ጥሩ|ደህና|ሰላም|እግዚአብሔር|ይመስገን|በጣም|እውነት|ልክ|ችግር|ምንም)/;
+const GENERIC_EN =
+  /\b(yes|no|not yet|okay|ok|sure|thanks|thank|sorry|fine|good|great|hello|hi|of course|please|really|nice|i think so|that's true|that’s true|up to you|no worries|no problem|a good point)\b/i;
+
+/** Lines that answer each other in a dialogue: what one person says, then the reply. */
+function replyPairs<T extends { speaker: 'A' | 'B' }>(dialogue: T[]) {
+  const pairs: { said: T; reply: T }[] = [];
+  for (let i = 0; i + 1 < dialogue.length; i++) {
+    if (dialogue[i].speaker !== dialogue[i + 1].speaker) pairs.push({ said: dialogue[i], reply: dialogue[i + 1] });
+  }
+  return pairs;
+}
+
 export function buildExercises(
   lesson: LessonSection,
   courseLessons: LessonSection[],
   track: Track = 'amharic',
   /** The very first lesson of the course opens with a picture question, like Duolingo. */
   firstLesson = false,
+  options: BuildOptions = {},
 ): Exercise[] {
   if (track === 'english') return buildEnglishExercises(lesson, courseLessons, firstLesson);
   const cards: Card[] = [

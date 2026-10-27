@@ -35,7 +35,12 @@
           "imageWidth": 150
         }
       ],
-      "expo-audio"
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Walia listens to your answers when you talk with him, so he can tell you how you did."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

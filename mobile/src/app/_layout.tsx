@@ -41,6 +41,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="practice" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
         <Stack.Screen name="account" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="call" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
       </Stack>
     </AuthProvider>
   );

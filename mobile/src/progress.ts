@@ -7,7 +7,7 @@ import { setStorage } from '@/lib/storage';
 // synchronously, so everything is loaded into memory once at start and each
 // change is saved in the background.
 
-const KEYS = ['kwanqa-climb-v1', 'kwanqa-mistakes-v1', 'kwanqa-profile-v1', 'kwanqa-fidel-written'];
+const KEYS = ['kwanqa-climb-v1', 'kwanqa-mistakes-v1', 'kwanqa-profile-v1', 'kwanqa-fidel-written', 'kwanqa-talk-gender'];
 const memory = new Map<string, string>();
 
 setStorage({

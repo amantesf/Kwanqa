@@ -745,7 +745,9 @@ function buildEnglishExercises(
   });
 
   // Complete a line from the dialogue (the one used least so far).
-  const line = shuffle(lesson.dialogue ?? []).find(l => blankWord(l.english));
+  const line = shuffle(lesson.dialogue ?? [])
+    .filter(l => blankWord(l.english))
+    .sort((a, b) => used.count(cardFor(a.english) ?? a) - used.count(cardFor(b.english) ?? b))[0];
   const blank = line && blankWord(line.english);
   if (line && blank) {
     const ex = choice(
@@ -776,14 +778,14 @@ function buildEnglishExercises(
     return [...shuffle(enLocal.filter(ok)), ...shuffle(enPool.filter(w => ok(w) && !enLocal.includes(w)))].slice(0, count);
   };
   const enTiles: Exercise[] = [];
-  const oneWord = shuffle(uniqueCards).find(c => usable(c) && enWords(c.english).length === 1);
+  const oneWord = used.least(uniqueCards).find(c => usable(c) && enWords(c.english).length === 1);
   if (oneWord) {
     const ex = build(
       'tap-word',
       'ቃሉን ይንኩ · Tap the English word',
       oneWord.amharic,
       enWords(oneWord.english),
-      wrongEn(enWords(oneWord.english), 4),
+      wrongEn(enWords(oneWord.english), 3),
       `“${oneWord.english}” = ${oneWord.amharic}`,
     );
     if (ex) {
@@ -792,7 +794,9 @@ function buildEnglishExercises(
       used.use(oneWord);
     }
   }
-  shuffle(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= 8))
+  // Sentences of up to six words, with a couple of extra tiles: a puzzle, not a wall.
+  used
+    .least(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= 6))
     .slice(0, 2)
     .forEach((card, i) => {
       const answer = enWords(card.english);
@@ -801,7 +805,7 @@ function buildEnglishExercises(
         'ዓረፍተ ነገሩን ይገንቡ · Build the sentence',
         card.amharic,
         answer,
-        wrongEn(answer, 3),
+        wrongEn(answer, answer.length >= 5 ? 2 : 3),
         `“${card.english}” = ${card.amharic}`,
       );
       if (ex) {
@@ -821,7 +825,8 @@ function buildEnglishExercises(
 
   // each Amharic meaning only once, so every pair has exactly one match
   const seenAm = new Set<string>();
-  const matchCards = shuffle(uniqueCards)
+  const matchCards = used
+    .least(uniqueCards)
     .filter(c => c.english.length <= 40)
     .filter(c => {
       const am = twinShape(c.amharic);

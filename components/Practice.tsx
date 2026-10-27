@@ -383,6 +383,19 @@ export default function Practice({
     // play once per question, not on every re-render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [promptKey]);
+
+  // Once a question is answered, Walia says the right answer (the whole line,
+  // in the language being learned), just after the right/wrong sound.
+  const answerLine =
+    phase === 'feedback' && current && current.kind !== 'match' && !reveal ? (current.answerAudio ?? null) : null;
+  const answerKey = answerLine ? `${current.id}:${queue.length}:answer` : null;
+  useEffect(() => {
+    if (!answerKey || !answerLine || sounds.muted) return;
+    const timer = window.setTimeout(() => playClip(soundFor(answerLine)), 450);
+    return () => window.clearTimeout(timer);
+    // play once per answer
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answerKey]);
   const progress = initial.length ? solved.size / initial.length : 1;
   const horns = hornLevel(climb.grass);
   // Walia's face: puzzling over the question, then cheering or disappointed.

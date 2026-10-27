@@ -1,5 +1,6 @@
 import { IOSOutputFormat, AudioQuality, requestRecordingPermissionsAsync, setAudioModeAsync, useAudioRecorder, useAudioRecorderState, type RecordingOptions } from 'expo-audio';
 import { File, Paths } from 'expo-file-system';
+import { FileSystemUploadType, uploadAsync } from 'expo-file-system/legacy';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type ScrollViewInstance } from 'react-native';
@@ -105,6 +106,23 @@ function scriptAnswer(verdict: ReturnType<typeof check>, text: ReturnType<typeof
 /** A fresh file in the cache for one of Walia's spoken replies. */
 let clips = 0;
 const clipFile = () => new File(Paths.cache, `walia-${Date.now()}-${clips++}.mp3`);
+
+/** Gives up on a step that takes too long, so a call never hangs silently. */
+function withTimeout<T>(work: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    work.then(
+      value => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      error => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
 
 const formatTime = (total: number) => `${Math.floor(total / 60)}:${(total % 60).toString().padStart(2, '0')}`;
 
@@ -258,15 +276,20 @@ export default function Call() {
 
   async function askBrain(heardText: string): Promise<Answer | null> {
     try {
-      const res = await fetch(`${SITE}/api/tutor`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-        body: JSON.stringify({ slug: conversation.slug, turn: turnIndex, gender, heard: heardText, history }),
-      });
+      const res = await withTimeout(
+        fetch(`${SITE}/api/tutor`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+          body: JSON.stringify({ slug: conversation.slug, turn: turnIndex, gender, heard: heardText, history }),
+        }),
+        20000,
+        'Walia’s brain took too long',
+      );
       if (!res.ok) return null;
       const data = (await res.json()) as TutorReply;
       return { verdict: data.verdict, reply: say_(data.reply) ? data.reply : null, note: data.note };
-    } catch {
+    } catch (error) {
+      console.warn('Kwanqa: Walia’s brain could not answer, the script checks instead', error);
       return null;
     }
   }
@@ -319,20 +342,31 @@ export default function Call() {
   async function stopTalking() {
     setPhase('checking');
     try {
-      await recorder.stop();
+      await withTimeout(recorder.stop(), 5000, 'The recording didn’t finish. Try again.');
       // back to the loudspeaker for Walia's voice
-      await setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true });
-      if (!recorder.uri) throw new Error('Walia couldn’t hear that. Try again.');
-      const wav = await (await fetch(recorder.uri)).blob();
-      const res = await fetch(`${SITE}/api/listen${englishCall ? '?lang=en' : ''}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'audio/wav', ...(await authHeaders()) },
-        body: wav,
-      });
-      const data = (await res.json()) as { text?: string; error?: string };
-      if (!res.ok) throw new Error(data.error ?? 'Something went wrong');
+      await setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true }).catch(() => {});
+      const uri = recorder.uri;
+      if (!uri) throw new Error('Walia couldn’t hear that. Try again.');
+      // the recording goes straight from its file to /api/listen
+      const res = await withTimeout(
+        uploadAsync(`${SITE}/api/listen${englishCall ? '?lang=en' : ''}`, uri, {
+          httpMethod: 'POST',
+          uploadType: FileSystemUploadType.BINARY_CONTENT,
+          headers: { 'Content-Type': 'audio/wav', ...(await authHeaders()) },
+        }),
+        25000,
+        'Walia couldn’t be reached. Check your connection and try again.',
+      );
+      let data: { text?: string; error?: string } = {};
+      try {
+        data = JSON.parse(res.body);
+      } catch {
+        // not JSON: an error page; the status says what happened
+      }
+      if (res.status !== 200) throw new Error(data.error ?? `Walia couldn’t hear that (error ${res.status}). Try again.`);
       await judge(data.text ?? '');
     } catch (error) {
+      console.warn('Kwanqa: listening failed', error);
       setProblem(error instanceof Error ? error.message : 'Something went wrong. Try again.');
       setPhase('ready');
     }

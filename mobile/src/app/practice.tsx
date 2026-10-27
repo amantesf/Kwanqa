@@ -48,6 +48,9 @@ function uiText(track: Track) {
     correctAnswer: both('Correct answer:', 'ትክክለኛው መልስ፡'),
     comeBack: both('This one will come back later.', 'ይህ ጥያቄ እንደገና ይመጣል።'),
     previous: both('Previous mistake', 'ያለፈው ስህተት'),
+    listenCue: both('Listen, then tap what you heard', 'ያዳምጡ፣ ከዚያ የሰሙትን ይንኩ'),
+    slower: both('Slower', 'በዝግታ'),
+    waliaSays: both('Walia says', 'ዋሊያ እንዲህ ይላል'),
     inARow: (n: number, more: number) => (track === 'english' ? `${n} በተከታታይ · ${n} in a row` : `${n} in a row. ${more} more to regain stamina`),
     restTitle: both('Walia needs a rest', 'ዋሊያ ማረፍ ያስፈልገዋል'),
     restText:
@@ -201,7 +204,16 @@ export default function Practice() {
   const [session] = useState(() =>
     review
       ? reviewSession(readMistakes()[slug] ?? [])
-      : { exercises: lesson ? buildExercises(lesson, lessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0) : [], keys: [] },
+      : {
+          exercises: lesson
+            ? buildExercises(lesson, lessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0, {
+                // "Tap what you hear", only for lines that can be played
+                listening: true,
+                canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
+              })
+            : [],
+          keys: [],
+        },
   );
   const initial = session.exercises;
   const climb = useClimb();
@@ -244,6 +256,24 @@ export default function Practice() {
     const src = soundFor(text);
     if (src) play(src);
   }
+
+  /** The question's line again, slowly (Walia's voice only; recordings play as they are). */
+  function playSlow() {
+    if (promptAudio) play(promptAudio.startsWith('/api/speak') ? `${promptAudio}&slow=1` : promptAudio);
+  }
+
+  // Once a question is answered, Walia says the right answer (the whole line,
+  // in the language being learned), just after the right/wrong sound.
+  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && !reveal ? (current.answerAudio ?? null) : null;
+  const answerKey = answerLine ? `${current.id}:${queue.length}:answer` : null;
+  useEffect(() => {
+    if (!answerKey || !answerLine) return;
+    const timer = setTimeout(() => sayAloud(answerLine), 450);
+    return () => clearTimeout(timer);
+  }, [answerKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // "Tap what you hear": the line stays hidden until it's answered.
+  const listening = current?.kind === 'choice' && !!current.listen && phase !== 'feedback';
 
   const progress = initial.length ? solved.size / initial.length : 1;
   const mood: Mood = phase === 'feedback' ? (lastCorrect ? 'cheer' : 'sad') : current?.kind === 'match' && reaction ? (reaction === 'hop' ? 'cheer' : 'sad') : 'thinking';
@@ -472,10 +502,20 @@ export default function Practice() {
                 {current.kind !== 'match' && (
                   <View style={styles.bubble}>
                     {promptAudio ? <Speaker onPress={() => play(promptAudio)} label="Play it again" /> : null}
-                    <View style={styles.bubbleText}>
-                      <Text style={[styles.prompt, ETHIOPIC.test(current.prompt) && styles.promptAmharic]}>{current.prompt}</Text>
-                      {current.promptHint ? <Text style={styles.promptHint}>{current.promptHint}</Text> : null}
-                    </View>
+                    {listening ? (
+                      <View style={styles.bubbleText}>
+                        <Text style={styles.listenCue}>{ui.listenCue}</Text>
+                        <Pressable onPress={playSlow} hitSlop={6} style={styles.slower}>
+                          <Text style={styles.slowerText}>{ui.slower}</Text>
+                        </Pressable>
+                      </View>
+                    ) : (
+                      <View style={styles.bubbleText}>
+                        {current.id === 'reply' ? <Text style={styles.tag}>{ui.waliaSays}</Text> : null}
+                        <Text style={[styles.prompt, ETHIOPIC.test(current.prompt) && styles.promptAmharic]}>{current.prompt}</Text>
+                        {current.promptHint ? <Text style={styles.promptHint}>{current.promptHint}</Text> : null}
+                      </View>
+                    )}
                   </View>
                 )}
               </View>
@@ -616,6 +656,10 @@ const styles = StyleSheet.create({
   bubbleText: { flex: 1, gap: 2 },
   prompt: { fontFamily: fonts.heavy, fontSize: 19, lineHeight: 25, color: colors.ink },
   promptAmharic: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32 },
+  listenCue: { fontFamily: fonts.heavy, fontSize: 17, lineHeight: 23, color: colors.ink },
+  slower: { alignSelf: 'flex-start', marginTop: 6, paddingVertical: 4, paddingHorizontal: 10, borderRadius: 10, backgroundColor: '#e6eefb' },
+  slowerText: { fontFamily: fonts.heavy, fontSize: 13, color: colors.blue },
+  tag: { fontFamily: fonts.heavy, fontSize: 11, color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.5 },
   promptHint: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
   options: { gap: 10 },
   option: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },

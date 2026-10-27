@@ -344,7 +344,7 @@ export function buildExercises(
   firstLesson = false,
   options: BuildOptions = {},
 ): Exercise[] {
-  if (track === 'english') return buildEnglishExercises(lesson, courseLessons, firstLesson);
+  if (track === 'english') return buildEnglishExercises(lesson, courseLessons, firstLesson, options);
   const cards: Card[] = [
     ...(lesson.phrases ?? []),
     ...(lesson.dialogue ?? []).map(({ amharic, transliteration, english }) => ({
@@ -660,57 +660,91 @@ function blankWord(text: string) {
   return { sentence, answer: w };
 }
 
-function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSection[], firstLesson = false): Exercise[] {
+function buildEnglishExercises(
+  lesson: LessonSection,
+  courseLessons: LessonSection[],
+  firstLesson = false,
+  options: BuildOptions = {},
+): Exercise[] {
   const cards: Card[] = [...(lesson.phrases ?? []), ...(lesson.dialogue ?? [])];
   const seen = new Set<string>();
   const uniqueCards = cards.filter(card => !seen.has(card.english) && seen.add(card.english));
   const poolCards = courseLessons.flatMap(l => [...(l.phrases ?? []), ...(l.dialogue ?? [])]);
   const wordPool = unique(poolCards.flatMap(c => words(c.english).map(bare)).filter(w => w.length >= 3));
+  const used = usage<Card>(c => c.english);
+  const cardFor = (english: string) => uniqueCards.find(c => c.english === english);
+  const canHear = (text: string) => !text.includes('...') && (options.canHear ? options.canHear(text) : true);
+  // Very long lines make for tiring multiple choice; keep those for reading.
+  const short = (c: Card) => c.english.length <= 60;
 
   const exercises: Exercise[] = [];
-  shuffle(uniqueCards)
-    .slice(0, 5)
-    .forEach((card, i) => {
-      const explain = `“${card.english}” = ${card.amharic}`;
-      const others = (list: Card[]) => list.filter(c => c.english !== card.english && c.amharic !== card.amharic);
-      let ex: ChoiceExercise | null = null;
-      if (i % 3 === 0) {
-        ex = choice(
-          `meaning-${i}`,
-          'ይህ ምን ማለት ነው? · What does this mean?',
+  const kinds = ['meaning', 'say', 'listen', 'word', 'meaning'] as const;
+  const picked = [...shuffle(uniqueCards.filter(short)), ...shuffle(uniqueCards.filter(c => !short(c)))].slice(0, 5);
+  shuffle(picked).forEach((card, i) => {
+    const explain = `“${card.english}” = ${card.amharic}`;
+    const others = (list: Card[]) => list.filter(c => c.english !== card.english && c.amharic !== card.amharic);
+    let kind: (typeof kinds)[number] = kinds[i % kinds.length];
+    if (kind === 'listen' && !(options.listening && canHear(card.english))) kind = 'meaning';
+    let ex: ChoiceExercise | null = null;
+    if (kind === 'meaning') {
+      ex = choice(
+        `meaning-${i}`,
+        'ይህ ምን ማለት ነው? · What does this mean?',
+        card.english,
+        card.amharic,
+        distractors(card.amharic, others(uniqueCards).map(c => c.amharic), others(poolCards).map(c => c.amharic)),
+        explain,
+      );
+    } else if (kind === 'say') {
+      ex = choice(
+        `say-${i}`,
+        'በእንግሊዝኛ እንዴት ይባላል? · How do you say this in English?',
+        card.amharic,
+        card.english,
+        distractors(
           card.english,
-          card.amharic,
-          distractors(card.amharic, others(uniqueCards).map(c => c.amharic), others(poolCards).map(c => c.amharic)),
-          explain,
-        );
-      } else if (i % 3 === 1) {
-        ex = choice(
-          `say-${i}`,
-          'በእንግሊዝኛ እንዴት ይባላል? · How do you say this in English?',
-          card.amharic,
+          others(uniqueCards).filter(short).map(c => c.english),
+          others(poolCards).filter(short).map(c => c.english),
+        ),
+        explain,
+      );
+    } else if (kind === 'listen') {
+      ex = choice(
+        `listen-${i}`,
+        'የሰሙትን ይንኩ · Tap what you hear',
+        card.english,
+        card.english,
+        distractors(
           card.english,
-          distractors(card.english, others(uniqueCards).map(c => c.english), others(poolCards).map(c => c.english)),
+          others(uniqueCards).filter(c => short(c) && canHear(c.english)).map(c => c.english),
+          others(poolCards).filter(c => short(c) && canHear(c.english)).map(c => c.english),
+        ),
+        explain,
+      );
+      if (ex) ex.listen = true;
+    } else {
+      const blank = blankWord(card.english);
+      if (blank) {
+        ex = choice(
+          `word-${i}`,
+          'የጎደለውን ቃል ይምረጡ · Choose the missing word',
+          blank.sentence,
+          blank.answer,
+          distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
           explain,
+          card.amharic,
         );
-      } else {
-        const blank = blankWord(card.english);
-        if (blank) {
-          ex = choice(
-            `word-${i}`,
-            'የጎደለውን ቃል ይምረጡ · Choose the missing word',
-            blank.sentence,
-            blank.answer,
-            distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
-            explain,
-            card.amharic,
-          );
-          if (ex) ex.revealAudio = card.english; // say the whole line once it's answered
-        }
+        if (ex) ex.revealAudio = card.english; // say the whole line once it's answered
       }
-      if (ex) exercises.push(ex);
-    });
+    }
+    if (ex) {
+      if (!ex.revealAudio) ex.answerAudio = card.english;
+      exercises.push(ex);
+      used.use(card);
+    }
+  });
 
-  // Complete a line from the dialogue.
+  // Complete a line from the dialogue (the one used least so far).
   const line = shuffle(lesson.dialogue ?? []).find(l => blankWord(l.english));
   const blank = line && blankWord(line.english);
   if (line && blank) {
@@ -723,11 +757,15 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
       `The full line is “${line.english}” (${line.amharic})`,
       line.amharic,
     );
-    if (ex) ex.revealAudio = line.english;
-    if (ex) exercises.splice(Math.min(3, exercises.length), 0, ex);
+    if (ex) {
+      ex.revealAudio = line.english;
+      exercises.splice(Math.min(3, exercises.length), 0, ex);
+      const card = cardFor(line.english);
+      if (card) used.use(card);
+    }
   }
 
-  // Word tiles in the middle of the lesson: tap the English word, then build sentences.
+  // Word tiles in the middle of the lesson: tap the English word, then build a sentence.
   const enWords = (text: string) => words(text).map(w => w.replace(/[.,!?;:“”"…]/g, '')).filter(Boolean);
   const usable = (c: Card) => !/[/()…]|\.\.\./.test(c.english);
   const enPool = unique(poolCards.filter(usable).flatMap(c => enWords(c.english)));
@@ -748,7 +786,11 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
       wrongEn(enWords(oneWord.english), 4),
       `“${oneWord.english}” = ${oneWord.amharic}`,
     );
-    if (ex) enTiles.push(ex);
+    if (ex) {
+      ex.answerAudio = oneWord.english;
+      enTiles.push(ex);
+      used.use(oneWord);
+    }
   }
   shuffle(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= 8))
     .slice(0, 2)
@@ -762,7 +804,11 @@ function buildEnglishExercises(lesson: LessonSection, courseLessons: LessonSecti
         wrongEn(answer, 3),
         `“${card.english}” = ${card.amharic}`,
       );
-      if (ex) enTiles.push(ex);
+      if (ex) {
+        ex.answerAudio = card.english;
+        enTiles.push(ex);
+        used.use(card);
+      }
     });
   spreadIn(exercises, enTiles);
 

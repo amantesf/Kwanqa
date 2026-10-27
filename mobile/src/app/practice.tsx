@@ -7,6 +7,7 @@ import Svg, { Path } from 'react-native-svg';
 import { amharicAudio } from '@/lib/amharicAudio';
 import { completeLesson, completeReview, REST_COST, spendGrass, useClimb } from '@/lib/climb';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
+import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
@@ -184,19 +185,23 @@ function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchE
 }
 
 export default function Practice() {
-  const { slug, lesson: lessonParam, review: reviewParam } = useLocalSearchParams<{ slug: string; lesson?: string; review?: string }>();
-  const review = reviewParam === '1';
-  const lessonIndex = Number(lessonParam ?? 0);
-  const course = courseContent[slug];
-  const lesson = course?.sections[lessonIndex];
-  const track: Track = courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
+  const params = useLocalSearchParams<{ slug?: string; lesson?: string; review?: string; holiday?: string; track?: Track }>();
+  const review = params.review === '1';
+  // A holiday's lesson is saved as "holiday-<id>-<track>", as on the website.
+  const holiday = params.holiday ? holidayById(params.holiday) : null;
+  const holidayTrack: Track = params.track === 'english' ? 'english' : 'amharic';
+  const slug = holiday ? `holiday-${holiday.id}-${holidayTrack}` : (params.slug ?? '');
+  const lessonIndex = holiday ? 0 : Number(params.lesson ?? 0);
+  const lessons = holiday ? [holiday.lessons[holidayTrack]] : (courseContent[slug]?.sections ?? []);
+  const lesson = lessons[lessonIndex];
+  const track: Track = holiday ? holidayTrack : (courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic');
   const ui = uiText(track);
 
   // a review asks the camp's saved mistakes instead of a lesson's own questions
   const [session] = useState(() =>
     review
       ? reviewSession(readMistakes()[slug] ?? [])
-      : { exercises: lesson ? buildExercises(lesson, course.sections, track, slug === 'amharic-beginner-1' && lessonIndex === 0) : [], keys: [] },
+      : { exercises: lesson ? buildExercises(lesson, lessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0) : [], keys: [] },
   );
   const initial = session.exercises;
   const climb = useClimb();

@@ -3,12 +3,14 @@ import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path, Rect } from 'react-native-svg';
+import { upcomingHolidays } from '@/lib/holidays';
 import { proverbOfTheDay } from '@/lib/proverbs';
+import { countdown, DateTile } from '@/components/holiday';
 import Walia from '@/components/walia';
 import { colors, fonts } from '@/theme';
 
 // Everything beyond the trail, like the website's menu: the phrasebook,
-// proverbs and flashcards.
+// proverbs, holidays and flashcards.
 
 function Book() {
   return (
@@ -42,7 +44,9 @@ function Row({ title, text, art, href, tint }: { title: string; text: string; ar
 }
 
 export default function Explore() {
-  const today = proverbOfTheDay(new Date());
+  const now = new Date();
+  const today = proverbOfTheDay(now);
+  const soon = upcomingHolidays(now)[0];
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.page}>
@@ -60,6 +64,13 @@ export default function Explore() {
 
         <Row title="Phrasebook" text="Every phrase from a camp on one page, with a quiz mode." art={<Book />} href="/explore/phrasebook" tint="#e6eefb" />
         <Row title="Proverbs" text="ተረትና ምሳሌ: crack their meaning, word by word." art={<Walia pose="happy" size={40} />} href="/explore/proverbs" tint="#fff6dc" />
+        <Row
+          title="Holidays"
+          text={`The Ethiopian calendar, greetings to send, and a lesson for each holiday. Next: ${soon.holiday.name}, ${countdown(soon.days)}.`}
+          art={<DateTile date={soon.date} color={soon.holiday.color} />}
+          href="/explore/holidays"
+          tint="#fbf5ec"
+        />
         <Row title="Flashcards" text="Flip through each camp’s phrases until you know them all." art={<Stack />} href="/explore/cards" tint={colors.primarySoft} />
       </ScrollView>
     </SafeAreaView>

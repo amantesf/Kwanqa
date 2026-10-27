@@ -1378,6 +1378,214 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
+  // Amharic Camp 8 – The Summit: Visiting Family
+  'amharic-beginner-8': {
+    title: 'Amharic Camp 8 – The Summit: Visiting Family',
+    intro:
+      'Visit family in Addis: ask who, what and why, meet the whole family, say how much you missed them, talk about the weather, and look after someone who’s sick.',
+    sections: [
+      {
+        title: 'Lesson 1 – Who, What, Why?',
+        description:
+          'The question words you need in every conversation.',
+        phrases: [
+          { amharic: 'ማን?', transliteration: 'man?', english: 'Who?' },
+          { amharic: 'ምን?', transliteration: 'min?', english: 'What?' },
+          { amharic: 'መቼ?', transliteration: 'meche?', english: 'When?' },
+          { amharic: 'ለምን?', transliteration: 'lemin?', english: 'Why?' },
+          { amharic: 'እንዴት?', transliteration: 'indet?', english: 'How?' },
+          { amharic: 'የትኛው?', transliteration: 'yetignaw?', english: 'Which one?' },
+          { amharic: 'ይህ ምንድን ነው?', transliteration: 'yih mindin new?', english: 'What is this?' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ይህ ምንድን ነው?',
+            transliteration: 'yih mindin new?',
+            english: 'What is this?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ይህ ጀበና ነው። ቡና የምናፈላበት ነው።',
+            transliteration: 'yih jebena new. buna yeminafelabet new.',
+            english: 'This is a jebena. It’s what we make coffee in.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እንዴት ነው የሚሠራው?',
+            transliteration: 'indet new yemiserraw?',
+            english: 'How does it work?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ና፣ አሳይሃለሁ!',
+            transliteration: 'na, asayihalehu!',
+            english: 'Come, I’ll show you!',
+          },
+        ],
+        note:
+          'Question words usually sit near the end, just before the verb: ስምህ ማን ነው? is literally “your name who is?” You already know two more: የት (where) and ስንት (how many).',
+      },
+      {
+        title: 'Lesson 2 – The Whole Family',
+        description:
+          'Aunts, uncles, cousins, husbands, wives and children: meet everyone at the family table.',
+        phrases: [
+          { amharic: 'አክስቴ', transliteration: 'akiste', english: 'my aunt' },
+          { amharic: 'አጎቴ', transliteration: 'agote', english: 'my uncle' },
+          { amharic: 'የአጎቴ ልጅ', transliteration: 'ye\'agote lij', english: 'my cousin (my uncle’s child)' },
+          { amharic: 'ባለቤቴ', transliteration: 'balebete', english: 'my husband / my wife (polite)' },
+          { amharic: 'ልጆቼ', transliteration: 'lijoche', english: 'my children' },
+          { amharic: 'ታላቅ ወንድሜ', transliteration: 'talaq wendime', english: 'my older brother' },
+          { amharic: 'ታናሽ እህቴ', transliteration: 'tanash ihite', english: 'my younger sister' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ይህ ማን ነው?',
+            transliteration: 'yih man new?',
+            english: 'Who is this?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አጎቴ ነው። ከባለቤቱና ከልጆቹ ጋር።',
+            transliteration: 'agote new. kebalebetuna kelijochu gar.',
+            english: 'That’s my uncle, with his wife and children.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ልጆቹ ስንት ናቸው?',
+            transliteration: 'lijochu sint nachew?',
+            english: 'How many children are there?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ሦስት ናቸው።',
+            transliteration: 'sost nachew.',
+            english: 'There are three.',
+          },
+        ],
+        note:
+          'ባለቤቴ (literally “the owner of my house”) is the polite way to say “my husband” or “my wife.” Many Ethiopians call their cousins “brother” or “sister,” because family is close.',
+      },
+      {
+        title: 'Lesson 3 – I Missed You!',
+        description:
+          'Arrive, hug, and catch up: say how much you missed someone and ask what’s new.',
+        phrases: [
+          { amharic: 'እንኳን በሰላም መጣህ', transliteration: 'inkwan beselam metah', english: 'Welcome, glad you arrived safely (to a man)' },
+          { amharic: 'ናፍቀኸኛል', transliteration: 'nafqehegnal', english: 'I missed you (to a man)' },
+          { amharic: 'ናፍቀሽኛል', transliteration: 'nafqeshignal', english: 'I missed you (to a woman)' },
+          { amharic: 'መቼ ደረስክ?', transliteration: 'meche deresk?', english: 'When did you arrive? (to a man)' },
+          { amharic: 'ትናንት ማታ ደረስኩ', transliteration: 'tinant mata deresku', english: 'I arrived last night' },
+          { amharic: 'ምን አዲስ ነገር አለ?', transliteration: 'min addis neger alle?', english: 'What’s new?' },
+          { amharic: 'ሁሉም ደህና ናቸው', transliteration: 'hulum dehna nachew', english: 'Everyone is well' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'እንኳን በሰላም መጣህ! በጣም ናፍቀኸኛል።',
+            transliteration: 'inkwan beselam metah! betam nafqehegnal.',
+            english: 'Welcome! I missed you so much.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'እኔም ናፍቀሽኛል!',
+            transliteration: 'ineme nafqeshignal!',
+            english: 'I missed you too!',
+          },
+          {
+            speaker: 'A',
+            amharic: 'መቼ ደረስክ?',
+            transliteration: 'meche deresk?',
+            english: 'When did you arrive?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ትናንት ማታ ደረስኩ።',
+            transliteration: 'tinant mata deresku.',
+            english: 'I arrived last night.',
+          },
+        ],
+        respect: [
+          { english: 'I missed you', man: 'ናፍቀኸኛል', woman: 'ናፍቀሽኛል', elder: 'ናፍቀውኛል' },
+        ],
+        note:
+          'ናፍቀኸኛል is literally “you have made me long for you.” To an elder, say ናፍቀውኛል. The reply is እኔም ናፍቀኸኛል / ናፍቀሽኛል: “I missed you too.”',
+      },
+      {
+        title: 'Lesson 4 – How’s the Weather?',
+        description:
+          'Rain, sun and cold: the small talk of every family phone call.',
+        phrases: [
+          { amharic: 'አየሩ እንዴት ነው?', transliteration: 'ayeru indet new?', english: 'How’s the weather?' },
+          { amharic: 'ዝናብ እየዘነበ ነው', transliteration: 'zinab iyezenebe new', english: 'It’s raining' },
+          { amharic: 'ዛሬ ይበርዳል', transliteration: 'zare yiberdal', english: 'It’s cold today' },
+          { amharic: 'ዛሬ ይሞቃል', transliteration: 'zare yimoqal', english: 'It’s hot today' },
+          { amharic: 'ፀሐይ', transliteration: 'tsehay', english: 'sun' },
+          { amharic: 'ደመና', transliteration: 'demena', english: 'cloud' },
+          { amharic: 'ጃንጥላ', transliteration: 'jantila', english: 'umbrella' },
+          { amharic: 'በጋ', transliteration: 'bega', english: 'the dry season (Dec–Feb)' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'አየሩ እንዴት ነው?',
+            transliteration: 'ayeru indet new?',
+            english: 'How’s the weather?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ዝናብ እየዘነበ ነው። ጃንጥላ ያዝ!',
+            transliteration: 'zinab iyezenebe new. jantila yaz!',
+            english: 'It’s raining. Take an umbrella! (to a man)',
+          },
+        ],
+        note:
+          'Addis Ababa sits at about 2,350 m, so mornings and evenings are cool even when the sun is strong. In ክረምት, the rainy season (June to August), afternoon rain is almost daily.',
+      },
+      {
+        title: 'Lesson 5 – Feeling Better?',
+        description:
+          'Say what hurts, ask if someone is better, and wish them well.',
+        phrases: [
+          { amharic: 'ራሴን ያመኛል', transliteration: 'rasen yamegnal', english: 'My head hurts' },
+          { amharic: 'ሆዴን ያመኛል', transliteration: 'hoden yamegnal', english: 'My stomach hurts' },
+          { amharic: 'ሐኪም', transliteration: 'hakim', english: 'doctor' },
+          { amharic: 'መድኃኒት', transliteration: 'medhanit', english: 'medicine' },
+          { amharic: 'ተሻለህ?', transliteration: 'teshaleh?', english: 'Are you feeling better? (to a man)' },
+          { amharic: 'ትንሽ ተሽሎኛል', transliteration: 'tinish teshlognal', english: 'I’m a little better' },
+          { amharic: 'እግዚአብሔር ይማርህ', transliteration: 'igziabher yimarih', english: 'Get well soon (to a man; literally “may God heal you”)' },
+        ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ተሻለህ?',
+            transliteration: 'teshaleh?',
+            english: 'Are you feeling better?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ትንሽ ተሽሎኛል፣ ግን ራሴን ያመኛል።',
+            transliteration: 'tinish teshlognal, gin rasen yamegnal.',
+            english: 'I’m a little better, but my head hurts.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'መድኃኒት ውሰድ። እግዚአብሔር ይማርህ!',
+            transliteration: 'medhanit wised. igziabher yimarih!',
+            english: 'Take some medicine. Get well soon!',
+          },
+        ],
+        respect: [
+          { english: 'Get well soon', man: 'እግዚአብሔር ይማርህ', woman: 'እግዚአብሔር ይማርሽ', elder: 'እግዚአብሔር ይማርዎት' },
+        ],
+        note:
+          'Like the feelings in Camp 5, these end in -ኛል: ያመኛል is “it hurts me,” ተሽሎኛል is “it has got better for me.” You’ve reached the summit: እንኳን ደስ አላችሁ!',
+      },
+    ],
+  },
+
   // The English course lives in its own file.
   ...englishCourses,
 };
@@ -1449,6 +1657,14 @@ export const courseCatalog: CourseSummary[] = [
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',
     part: 7,
+  },
+  {
+    slug: 'amharic-beginner-8',
+    title: 'Amharic Camp 8 – The Summit: Visiting Family',
+    description: 'Question words, the whole family, “I missed you,” the weather, and getting well.',
+    audience: 'Non‑Amharic speakers learning Amharic',
+    track: 'amharic',
+    part: 8,
   },
   ...englishCatalog,
 ];

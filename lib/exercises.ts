@@ -448,14 +448,14 @@ export function buildExercises(
       ...shuffle(tilePool.filter(w => fits(answer)(w) && !localWords.includes(w))),
     ].slice(0, count);
   const tiles: Exercise[] = [];
-  const single = shuffle(uniqueCards).find(c => amWords(c.amharic).length === 1 && !c.amharic.includes('...'));
+  const single = used.least(uniqueCards).find(c => amWords(c.amharic).length === 1 && !c.amharic.includes('...'));
   if (single) {
     const ex = build(
       'tap-word',
       'Tap the Amharic word',
       single.english,
       amWords(single.amharic),
-      pickWrong(amWords(single.amharic), 4),
+      pickWrong(amWords(single.amharic), 3),
       `${single.amharic} (${single.transliteration}) means “${single.english}”.`,
     );
     if (ex) {
@@ -468,9 +468,10 @@ export function buildExercises(
   // One or two sentences to build, short enough to be fun.
   const buildable = uniqueCards.filter(c => {
     const n = amWords(c.amharic).length;
-    return n >= 2 && n <= 7 && !c.amharic.includes('...');
+    return n >= 2 && n <= 6 && !c.amharic.includes('...');
   });
-  shuffle(buildable)
+  used
+    .least(buildable)
     .slice(0, 2)
     .forEach((card, i) => {
       const answer = amWords(card.amharic);
@@ -479,7 +480,7 @@ export function buildExercises(
         'Build the sentence',
         card.english,
         answer,
-        pickWrong(answer, 3),
+        pickWrong(answer, answer.length >= 5 ? 2 : 3),
         `${card.amharic} (${card.transliteration}) means “${card.english}”.`,
       );
       if (ex) {
@@ -496,7 +497,9 @@ export function buildExercises(
 
   // Fill in the missing word of a dialogue line (the one used least so far).
   const lines = (lesson.dialogue ?? []).filter(l => l.amharic.split(/\s+/).length >= 2);
-  const line = shuffle(lines)[0];
+  const line = shuffle(lines).sort(
+    (a, b) => used.count(cardFor(a.amharic) ?? a) - used.count(cardFor(b.amharic) ?? b),
+  )[0];
   if (line) {
     const words = line.amharic.split(/\s+/);
     // blank a real word, never a name like አሌክስ
@@ -538,7 +541,8 @@ export function buildExercises(
 
   // Match pairs as a final round, with the phrases seen least.
   const meanings = new Set<string>();
-  const matchCards = shuffle(uniqueCards)
+  const matchCards = used
+    .least(uniqueCards)
     .filter(c => !meanings.has(meaningKey(c.english)) && meanings.add(meaningKey(c.english)))
     .slice(0, 4);
   if (matchCards.length >= 3) {

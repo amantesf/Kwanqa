@@ -889,7 +889,11 @@ export default function Practice({
                 <span>
                   {lastCorrect
                     ? current.explain
-                    : `${ui.correctAnswer} ${current.kind === 'build' ? current.answer.join(' ') : current.answer}. ${current.explain}`}
+                    : `${ui.correctAnswer} ${(() => {
+                        const shown = current.kind === 'build' ? current.answer.join(' ') : current.answer;
+                        // no "!." when the answer already ends with its own punctuation
+                        return /[.!?።፧]$/.test(shown) ? shown : `${shown}.`;
+                      })()} ${current.explain}`}
                   {/* English course: an Amharic answer can be heard once you've answered */}
                   {track === 'english' && current.kind === 'choice' && /[ሀ-፿]/.test(current.answer) && (
                     <SayButton text={current.answer} track="amharic" className="say-inline say-am" size={14} />

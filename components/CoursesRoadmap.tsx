@@ -29,6 +29,7 @@ const CAMP_ART: Record<string, 'numbers' | 'cup' | 'taxi' | 'friends' | 'elder'>
   'english-from-amharic-4': 'taxi', // travel and getting around
 };
 import Mascot from '@/components/Mascot';
+import { PassportRailCard } from '@/components/Passport';
 import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
 import Trail, { type TrailStop } from '@/components/Trail';
@@ -509,6 +510,8 @@ export default function CoursesRoadmap() {
             </Link>
           </div>
         )}
+
+        <PassportRailCard track={track} />
 
         <div className="rail-card rail-extra">
           <div className="rail-card-head">

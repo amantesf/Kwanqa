@@ -10138,6 +10138,18 @@ body:has(.practice-screen) {
   color: var(--text-faint);
 }
 
+/* side rail */
+.passport-rail-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.passport-rail-row svg {
+  max-width: none;
+}
+
 /* "New stamp!" on the trail */
 .stamp-backdrop {
   position: fixed;

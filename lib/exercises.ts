@@ -630,6 +630,33 @@ export function buildExercises(
         used.use(card);
       }
     });
+  // Confident speakers: Walia says a sentence and they build it from the tiles
+  // without seeing it, like writing down what you hear.
+  if (d.listenBuild && options.listening) {
+    const heard = used
+      .least(uniqueCards.filter(c => canHear(c.amharic)))
+      .find(c => {
+        const n = amWords(c.amharic).length;
+        return n >= 3 && n <= 8 && !c.amharic.includes('...');
+      });
+    if (heard) {
+      const answer = amWords(heard.amharic);
+      const ex = build(
+        'listen-build',
+        'Build what you hear',
+        heard.amharic,
+        answer,
+        pickWrong(answer, 3),
+        `${heard.amharic} (${heard.transliteration}) means “${heard.english}”.`,
+      );
+      if (ex) {
+        ex.listen = true;
+        ex.answerAudio = heard.amharic;
+        tiles.push(ex);
+        used.use(heard);
+      }
+    }
+  }
   spreadIn(exercises, tiles);
   if (replyEx) exercises.splice(Math.ceil(exercises.length / 2), 0, replyEx);
 

@@ -1,9 +1,14 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import Flag from '@/components/Flag';
+import SayButton from '@/components/SayButton';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import { PageHero } from '@/components/sections';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
+import { zoneForCamp } from '@/lib/climb';
 
 // What logged-out visitors see at /courses: what kwanqa offers, and a way in.
 // Once they log in, /courses shows the learn dashboard instead.
@@ -22,6 +27,79 @@ const TRACKS: { id: Track; title: string; blurb: string }[] = [
 ];
 
 const startTrack = (track: Track) => `/welcome?track=${track}`;
+
+/** "Amharic Camp 3 – Buna & Food" → "Buna & Food"; the summit camp is marked separately. */
+function campName(title: string) {
+  return title
+    .replace(/^(Amharic|English) Camp \d+ – /, '')
+    .replace(/^Amharic for Absolute Beginners – Part (\d)/, 'Absolute Beginners, Part $1')
+    .replace(/^The Summit: /, '');
+}
+
+/** One course as a climb: a stone per camp up the trail, from the foothills to the summit. */
+function TrackTrail({ track }: { track: Track }) {
+  const courses = courseCatalog.filter(c => c.track === track).sort((a, b) => a.part - b.part);
+  return (
+    <ol className="climb-list">
+      {courses.map((course, idx) => {
+        const lessons = courseContent[course.slug]?.sections ?? [];
+        // A short sentence reads better than a lone word as the camp's taste.
+        const phrases = lessons.flatMap(l => l.phrases ?? []).filter(p => !p.amharic.includes('...'));
+        const sample = phrases.find(p => p.amharic.trim().includes(' ')) ?? phrases[0];
+        const zone = zoneForCamp(idx, courses.length);
+        const summit = idx === courses.length - 1;
+        const said = sample ? (track === 'english' ? sample.english : sample.amharic) : '';
+        return (
+          <li key={course.slug} className={`climb-camp tone-${zone.tone}${summit ? ' is-summit' : ''}`}>
+            <span className="climb-stone" aria-hidden>
+              {summit ? (
+                <svg width="22" height="22" viewBox="0 0 24 24">
+                  <path d="M6 21V3" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                  <path d="M7 4h11l-3 4 3 4H7z" fill="currentColor" />
+                </svg>
+              ) : (
+                course.part
+              )}
+            </span>
+            <article className="climb-card">
+              <div className="climb-card-top">
+                <span className="climb-zone">
+                  Camp {course.part} · {zone.name} · {zone.from.toLocaleString()}–{zone.to.toLocaleString()} m
+                </span>
+                {course.part === 1 && <span className="badge badge-primary">Start here</span>}
+                {summit && <span className="badge climb-summit-badge">Summit</span>}
+              </div>
+              <h3 className="climb-title">{campName(course.title)}</h3>
+              <p className="muted small">{course.description}</p>
+
+              {sample && (
+                <div className="climb-sample">
+                  <SayButton text={said} track={track} className="climb-say" />
+                  <div>
+                    <span className="climb-sample-line" lang={track === 'english' ? 'en' : 'am'}>
+                      {said}
+                    </span>
+                    {track === 'amharic' && <span className="climb-sample-tr">{sample.transliteration}</span>}
+                    <span className="climb-sample-meaning">{track === 'english' ? sample.amharic : sample.english}</span>
+                  </div>
+                </div>
+              )}
+
+              <ul className="climb-lessons" aria-label={`${lessons.length} lessons`}>
+                {lessons.map((lesson, i) => (
+                  <li key={lesson.title}>
+                    <span>{i + 1}</span>
+                    {lesson.title.replace(/^Lesson \d+ – /, '')}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
 
 function StoneIcon() {
   return (
@@ -50,6 +128,7 @@ const HOW_IT_WORKS = [
 ];
 
 export default function CourseCatalog() {
+  const [track, setTrack] = useState<Track>('amharic');
   return (
     <>
       <PageHero
@@ -68,64 +147,55 @@ export default function CourseCatalog() {
         </div>
       </PageHero>
 
-      {TRACKS.map(track => {
-        const courses = courseCatalog.filter(c => c.track === track.id).sort((a, b) => a.part - b.part);
-        return (
-          <section key={track.id} className="section catalog-track">
-            <div className="container">
-              <div className="catalog-track-head">
-                <Flag name={track.id === 'amharic' ? 'ethiopia' : 'usa'} className="course-flag" />
-                <div>
-                  <h2 className="h3" style={{ fontSize: 28 }}>
-                    {track.title}
-                  </h2>
-                  <p className="muted">{track.blurb}</p>
-                </div>
-              </div>
+      <section className="section catalog-climb">
+        <div className="container">
+          <div className="section-head center">
+            <span className="kicker">Pick your language</span>
+            <h2 className="h2">Every camp is a course. Every stone is a lesson.</h2>
+          </div>
+          <div className="climb-tabs" role="tablist" aria-label="Courses">
+            {TRACKS.map(t => {
+              const camps = courseCatalog.filter(c => c.track === t.id);
+              const lessons = camps.reduce((n, c) => n + (courseContent[c.slug]?.sections.length ?? 0), 0);
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={track === t.id}
+                  className={`climb-tab${track === t.id ? ' active' : ''}`}
+                  onClick={() => setTrack(t.id)}
+                >
+                  <Flag name={t.id === 'amharic' ? 'ethiopia' : 'usa'} className="climb-tab-flag" />
+                  <span>
+                    <strong>{t.title}</strong>
+                    <small>
+                      {camps.length} camps · {lessons} lessons
+                    </small>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <p className="muted climb-blurb">{TRACKS.find(t => t.id === track)?.blurb}</p>
 
-              <div className="grid-2">
-                {courses.map(course => {
-                  const lessons = courseContent[course.slug]?.sections ?? [];
-                  // Show a short sentence rather than a lone word, so the sample reads clearly.
-                  const phrases = lessons.flatMap(l => l.phrases ?? []);
-                  const sample = phrases.find(p => p.amharic.trim().includes(' ')) ?? phrases[0];
-                  return (
-                    <article key={course.slug} className="card catalog-card">
-                      <div className="row" style={{ gap: 8 }}>
-                        <span className={`badge ${track.id === 'amharic' ? 'badge-primary' : 'badge-blue'}`}>
-                          Camp {course.part}
-                        </span>
-                        <span className="badge">{lessons.length} lessons</span>
-                        {course.part === 1 && <span className="badge">Start here</span>}
-                      </div>
-                      <h3 className="h3">{course.title}</h3>
-                      <p className="muted small">{course.description}</p>
+          <TrackTrail key={track} track={track} />
 
-                      {sample && (
-                        <div className="catalog-sample">
-                          <span className="catalog-sample-am">{track.id === 'english' ? sample.english : sample.amharic}</span>
-                          {track.id !== 'english' && <span className="catalog-sample-tr">{sample.transliteration}</span>}
-                          <span className="catalog-sample-en">{track.id === 'english' ? sample.amharic : sample.english}</span>
-                        </div>
-                      )}
-
-                      <ol className="catalog-lessons">
-                        {lessons.map(lesson => (
-                          <li key={lesson.title}>{lesson.title.replace(/^Lesson \d+ – /, '')}</li>
-                        ))}
-                      </ol>
-
-                      <Link href={startTrack(track.id)} className="btn btn-block">
-                        Start this course
-                      </Link>
-                    </article>
-                  );
-                })}
-              </div>
+          <div className="climb-cta">
+            <Mascot pose="cheer" size={72} />
+            <div>
+              <strong>Start at Camp 1, or skip ahead.</strong>
+              <span className="muted small">
+                Tell us what you already know and we’ll start you at the right camp, with lessons
+                as easy or as challenging as you need.
+              </span>
             </div>
-          </section>
-        );
-      })}
+            <Link href={startTrack(track)} className="btn">
+              {track === 'english' ? 'Start learning English' : 'Start learning Amharic'}
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">

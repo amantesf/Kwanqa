@@ -1,7 +1,9 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
+import { Platform } from 'react-native';
 import { supabase } from '@/supabase';
 
 // Continue with Apple and Continue with Google: the same Supabase accounts as
@@ -38,11 +40,47 @@ export async function signInWithApple(): Promise<string | null> {
   }
 }
 
+// Expo Go (and the browser preview) can't run Google's native sign-in, so
+// they use the browser sheet; the real app uses the phone's own account picker.
+const nativeGoogle = Platform.OS !== 'web' && Constants.executionEnvironment !== ExecutionEnvironment.StoreClient;
+
+/** Continue with Google: the native account picker in the app, the browser sheet in Expo Go. */
+export function signInWithGoogle(): Promise<string | null> {
+  return nativeGoogle ? signInWithGoogleNative() : signInWithGoogleBrowser();
+}
+
 /**
- * Google opens in a secure browser sheet and comes back to the app with the
- * session in the link (in Expo Go the link starts exp://, in the app kwanqa://).
+ * Like the website (components/GoogleButton.tsx): Google hands the app a
+ * sign-in token, and Supabase checks it. Google shows "Kwanqa", never Supabase.
  */
-export async function signInWithGoogle(): Promise<string | null> {
+async function signInWithGoogleNative(): Promise<string | null> {
+  if (!supabase) return 'Accounts aren’t available right now.';
+  // loaded only here, since Expo Go doesn't include this native module
+  const { GoogleSignin, isCancelledResponse, isErrorWithCode, statusCodes } = await import('@react-native-google-signin/google-signin');
+  try {
+    GoogleSignin.configure({
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+      iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+    });
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    const response = await GoogleSignin.signIn();
+    if (isCancelledResponse(response)) return null;
+    const token = response.data.idToken;
+    if (!token) return 'Google sign-in didn’t work. Please try again.';
+    const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token });
+    return error ? 'Google sign-in didn’t work. Please try again.' : null;
+  } catch (error) {
+    if (isErrorWithCode(error) && error.code === statusCodes.IN_PROGRESS) return null;
+    if (isErrorWithCode(error) && error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) return 'Google sign-in needs Google Play services on this phone.';
+    return 'Google sign-in didn’t work. Please try again.';
+  }
+}
+
+/**
+ * In Expo Go: Google opens in a secure browser sheet and comes back to the app
+ * with the session in the link (exp://…). Google shows Supabase's address here.
+ */
+async function signInWithGoogleBrowser(): Promise<string | null> {
   if (!supabase) return 'Accounts aren’t available right now.';
   try {
     const redirectTo = Linking.createURL('auth-callback');
@@ -58,5 +96,16 @@ export async function signInWithGoogle(): Promise<string | null> {
     return sessionError ? 'Google sign-in didn’t work. Please try again.' : null;
   } catch {
     return 'Google sign-in didn’t work. Please try again.';
+  }
+}
+
+/** Forgets the Google account on this phone, so the next sign-in shows the picker again. */
+export async function signOutOfGoogle() {
+  if (!nativeGoogle) return;
+  try {
+    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+    await GoogleSignin.signOut();
+  } catch {
+    // not signed in with Google
   }
 }

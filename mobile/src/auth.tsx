@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { AppState } from 'react-native';
 import { clearClimb, mergeClimbs, readClimb, replaceClimb, subscribeClimb, type Climb } from '@/lib/climb';
 import { clearProfile, normalizeProfile, readProfile, saveProfile, subscribeProfile } from '@/lib/profile';
+import { signOutOfGoogle } from '@/social';
 import { accountsEnabled, supabase } from '@/supabase';
 
 // Accounts in the app, and keeping the phone's climb in step with the account's
@@ -216,6 +217,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signingOut.current = true;
     startSync(null);
     await supabase?.auth.signOut();
+    await signOutOfGoogle();
     clearClimb(); // the account keeps the progress; this phone forgets it
     clearProfile();
     signingOut.current = false;

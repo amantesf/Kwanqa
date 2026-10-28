@@ -18,9 +18,11 @@ type AuthState = {
   loading: boolean;
   enabled: boolean;
   signOut: () => Promise<void>;
+  /** Deletes the account and everything saved in it. Returns an error message, or null. */
+  deleteAccount: () => Promise<string | null>;
 };
 
-const AuthContext = createContext<AuthState>({ user: null, loading: false, enabled: false, signOut: async () => {} });
+const AuthContext = createContext<AuthState>({ user: null, loading: false, enabled: false, signOut: async () => {}, deleteAccount: async () => null });
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -223,5 +225,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signingOut.current = false;
   }
 
-  return <AuthContext.Provider value={{ user, loading, enabled: accountsEnabled, signOut }}>{children}</AuthContext.Provider>;
+  // Like the website: the database function deletes the login, and the account's
+  // progress goes with it. Apple requires apps with accounts to offer this.
+  async function deleteAccount() {
+    if (!supabase) return 'Accounts aren’t available right now.';
+    signingOut.current = true; // stop saving to an account that's about to go
+    const { error } = await supabase.rpc('delete_account');
+    if (error) {
+      signingOut.current = false;
+      return 'Couldn’t delete your account. Please try again, or email us.';
+    }
+    startSync(null);
+    await supabase.auth.signOut({ scope: 'local' }); // the account is gone, so just forget it here
+    await signOutOfGoogle();
+    clearClimb();
+    clearProfile();
+    signingOut.current = false;
+    return null;
+  }
+
+  return <AuthContext.Provider value={{ user, loading, enabled: accountsEnabled, signOut, deleteAccount }}>{children}</AuthContext.Provider>;
 }

@@ -15,7 +15,7 @@ import { colors, fonts } from '@/theme';
 // Sign up or log in with Apple, Google, or email and password, like the
 // website's forms (components/AuthForm.tsx): same account, same progress.
 
-type Mode = 'signup' | 'login';
+type Mode = 'signup' | 'login' | 'forgot';
 
 // Turns Supabase's error messages into friendlier ones (as on the website).
 function friendly(message: string) {
@@ -50,7 +50,9 @@ export default function Account() {
   const [sentTo, setSentTo] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
+  const [resetSentTo, setResetSentTo] = useState('');
   const isSignup = mode === 'signup';
+  const forgot = mode === 'forgot';
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
   async function submit() {
@@ -62,7 +64,13 @@ export default function Account() {
     setCaptchaToken('');
     setCaptchaKey(k => k + 1);
 
-    if (isSignup) {
+    if (forgot) {
+      // the link opens the website's reset page, like the website's own form
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${SITE}/reset-password`, captchaToken: token });
+      setBusy(false);
+      if (error) return setError(friendly(error.message));
+      setResetSentTo(email.trim());
+    } else if (isSignup) {
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -85,7 +93,7 @@ export default function Account() {
     }
   }
 
-  const ready = email.trim() && password && (!isSignup || name.trim()) && !busy;
+  const ready = email.trim() && (forgot || password) && (!isSignup || name.trim()) && !busy;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -111,6 +119,20 @@ export default function Account() {
               <Text style={styles.lead}>{user.email}</Text>
               <Button label="Continue climbing" onPress={close} />
             </View>
+          ) : resetSentTo ? (
+            <View style={styles.center}>
+              <Walia pose="wave" size={110} />
+              <Text style={styles.title}>Check your email</Text>
+              <Text style={styles.lead}>We sent a link to {resetSentTo}. Open it to choose a new password, then log in here with it.</Text>
+              <Button
+                label="Log in"
+                onPress={() => {
+                  setResetSentTo('');
+                  setPassword('');
+                  setMode('login');
+                }}
+              />
+            </View>
           ) : sentTo ? (
             <View style={styles.center}>
               <Walia mood="cheer" size={120} />
@@ -128,12 +150,16 @@ export default function Account() {
             <>
               <View style={styles.center}>
                 <Walia pose="wave" size={96} />
-                <Text style={styles.title}>{isSignup ? 'Save your climb' : 'Welcome back'}</Text>
+                <Text style={styles.title}>{forgot ? 'Forgot your password?' : isSignup ? 'Save your climb' : 'Welcome back'}</Text>
                 <Text style={styles.lead}>
-                  {isSignup ? 'Make a free account to keep your progress on any phone and on kwanqa.com.' : 'Log in to pick up where you left off.'}
+                  {forgot
+                    ? 'Enter your email and we’ll send you a link to choose a new one.'
+                    : isSignup
+                      ? 'Make a free account to keep your progress on any phone and on kwanqa.com.'
+                      : 'Log in to pick up where you left off.'}
                 </Text>
               </View>
-              <SocialButtons signup={isSignup} onError={setError} />
+              {forgot ? null : <SocialButtons signup={isSignup} onError={setError} />}
               {isSignup && <Field label="Name" value={name} onChangeText={setName} placeholder="Your first name" autoComplete="given-name" textContentType="givenName" />}
               <Field
                 label="Email"
@@ -145,26 +171,40 @@ export default function Account() {
                 keyboardType="email-address"
                 textContentType="emailAddress"
               />
-              <Field
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                placeholder={isSignup ? 'At least 6 characters' : 'Your password'}
-                secureTextEntry
-                autoComplete={isSignup ? 'new-password' : 'current-password'}
-                textContentType={isSignup ? 'newPassword' : 'password'}
-              />
+              {forgot ? null : (
+                <Field
+                  label="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={isSignup ? 'At least 6 characters' : 'Your password'}
+                  secureTextEntry
+                  autoComplete={isSignup ? 'new-password' : 'current-password'}
+                  textContentType={isSignup ? 'newPassword' : 'password'}
+                />
+              )}
+              {mode === 'login' ? (
+                <Pressable
+                  onPress={() => {
+                    setError('');
+                    setMode('forgot');
+                  }}
+                  hitSlop={6}
+                  style={styles.forgot}
+                >
+                  <Text style={styles.forgotText}>Forgot password?</Text>
+                </Pressable>
+              ) : null}
               <Captcha key={captchaKey} onToken={setCaptchaToken} />
               {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Button label={busy ? 'One moment…' : isSignup ? 'Create account' : 'Log in'} onPress={submit} disabled={!ready} />
+              <Button label={busy ? 'One moment…' : forgot ? 'Send reset link' : isSignup ? 'Create account' : 'Log in'} onPress={submit} disabled={!ready} />
               <Pressable
                 onPress={() => {
                   setError('');
-                  setMode(isSignup ? 'login' : 'signup');
+                  setMode(isSignup ? 'login' : forgot ? 'login' : 'signup');
                 }}
                 style={styles.switch}
               >
-                <Text style={styles.switchText}>{isSignup ? 'Already have an account? Log in' : 'New here? Make an account'}</Text>
+                <Text style={styles.switchText}>{isSignup ? 'Already have an account? Log in' : forgot ? 'Back to log in' : 'New here? Make an account'}</Text>
               </Pressable>
             </>
           )}
@@ -204,6 +244,8 @@ const styles = StyleSheet.create({
   buttonDown: { borderBottomWidth: 0, marginTop: 5 },
   buttonText: { fontFamily: fonts.black, fontSize: 16, color: '#ffffff', textTransform: 'uppercase', letterSpacing: 0.8 },
   buttonTextOff: { color: '#afafaf' },
+  forgot: { alignSelf: 'flex-end', marginTop: -4 },
+  forgotText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.blue },
   switch: { paddingVertical: 10, alignItems: 'center' },
   switchText: { fontFamily: fonts.black, fontSize: 15, color: colors.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
 });

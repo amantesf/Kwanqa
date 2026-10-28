@@ -9,6 +9,7 @@ import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
 import Mountain, { type MountainCamp } from '@/components/mountain';
+import { StampCelebration } from '@/components/passport';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
 import Walia from '@/components/walia';
 import { campColors, colors, fonts } from '@/theme';
@@ -149,6 +150,8 @@ export default function Trail() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      {/* "New stamp!" when a camp is finished */}
+      <StampCelebration track={track} />
       <View style={styles.top}>
         <View style={styles.tracks}>
           {TRACKS.map(t => (

@@ -6,11 +6,14 @@ import Svg, { Path, Rect } from 'react-native-svg';
 import { upcomingHolidays } from '@/lib/holidays';
 import { proverbOfTheDay } from '@/lib/proverbs';
 import { countdown, DateTile } from '@/components/holiday';
+import { usePassport } from '@/components/passport';
+import PassportStamp from '@/components/passport-stamp';
+import { useProfile } from '@/lib/profile';
 import Walia from '@/components/walia';
 import { colors, fonts } from '@/theme';
 
 // Everything beyond the trail, like the website's menu: the phrasebook,
-// proverbs, holidays and flashcards.
+// passport, proverbs, holidays and flashcards.
 
 function Book() {
   return (
@@ -47,6 +50,9 @@ export default function Explore() {
   const now = new Date();
   const today = proverbOfTheDay(now);
   const soon = upcomingHolidays(now)[0];
+  const stamps = usePassport(useProfile()?.track ?? 'amharic');
+  const got = stamps.filter(e => e.earned);
+  const nextStamp = stamps.find(e => !e.earned);
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.page}>
@@ -62,6 +68,13 @@ export default function Explore() {
           </View>
         </Pressable>
 
+        <Row
+          title="Your passport"
+          text={`${got.length} of ${stamps.length} stamps. ${nextStamp ? `Finish Camp ${nextStamp.camp} to stamp ${nextStamp.stamp.name}.` : 'Every stamp collected. ጎበዝ!'}`}
+          art={<PassportStamp stamp={(got[got.length - 1] ?? nextStamp ?? stamps[0]).stamp} earned={got.length > 0} size={56} tilt={-6} />}
+          href="/explore/passport"
+          tint="#eef3f8"
+        />
         <Row title="Phrasebook" text="Every phrase from a camp on one page, with a quiz mode." art={<Book />} href="/explore/phrasebook" tint="#e6eefb" />
         <Row title="Proverbs" text="ተረትና ምሳሌ: crack their meaning, word by word." art={<Walia pose="happy" size={40} />} href="/explore/proverbs" tint="#fff6dc" />
         <Row

@@ -3,14 +3,23 @@ import { Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, Ellipse, Path, Rect } from 'react-native-svg';
 import { THEMES, meaningChoices, proverbOfTheDay, proverbs, themeOf, type Proverb, type Theme } from '@/lib/proverbs';
+import { amharicAudio } from '@/lib/amharicAudio';
 import Button from '@/components/button';
-import { playEffect } from '@/components/sound';
+import { play, playEffect } from '@/components/sound';
+import Speaker from '@/components/speaker';
 import Walia from '@/components/walia';
 import { colors, fonts } from '@/theme';
 
 // ተረትና ምሳሌ, like the website's Proverbs page (components/ProverbsPage.tsx):
 // Walia hosts "crack the proverb" (tap words for hints, pick the meaning), then
-// every proverb as a flip card, sorted into five colourful themes.
+// every proverb as a flip card, sorted into five colourful themes. Every
+// proverb, and each of its words, can be heard in Walia's voice.
+
+/** Says a proverb or one of its words aloud. */
+function say(text: string) {
+  const audio = amharicAudio(text);
+  if (audio) play(audio);
+}
 
 /** A small icon for each theme (the website's). */
 function ThemeIcon({ theme, size = 22 }: { theme: Theme; size?: number }) {
@@ -104,12 +113,21 @@ function Game({ first }: { first: Proverb }) {
 
       <View style={styles.words}>
         {proverb.words.map((w, i) => (
-          <Pressable key={`${proverb.id}-${i}`} onPress={() => setWord(word === i ? null : i)} style={[styles.word, word === i && { borderColor: t.color, backgroundColor: t.soft }]}>
+          <Pressable
+            key={`${proverb.id}-${i}`}
+            onPress={() => {
+              setWord(word === i ? null : i);
+              say(w.am);
+            }}
+            style={[styles.word, word === i && { borderColor: t.color, backgroundColor: t.soft }]}>
             <Text style={styles.wordText}>{w.am}</Text>
           </Pressable>
         ))}
       </View>
-      <Text style={styles.translit}>{proverb.transliteration}</Text>
+      <View style={styles.listen}>
+        <Speaker onPress={() => say(proverb.amharic)} label="Hear the proverb" />
+        <Text style={[styles.translit, styles.flex]}>{proverb.transliteration}</Text>
+      </View>
       <Text style={styles.hint}>
         {word !== null ? (
           <>
@@ -167,25 +185,31 @@ function FlipCard({ proverb }: { proverb: Proverb }) {
   const back = useAnimatedStyle(() => ({ transform: [{ perspective: 1000 }, { rotateY: `${interpolate(turn.get(), [0, 1], [180, 360])}deg` }] }));
 
   return (
-    <Pressable
-      onPress={() => {
-        turn.set(withTiming(flipped ? 0 : 1, { duration: 350 }));
-        setFlipped(!flipped);
-      }}
-      accessibilityLabel={flipped ? `${proverb.amharic}: ${proverb.meaning}` : `${proverb.amharic}. Tap to see what it means.`}
-      style={styles.flip}
-    >
-      <Animated.View style={[styles.face, { borderTopColor: t.color }, front]}>
-        <ThemeIcon theme={theme} />
-        <Text style={styles.faceAm}>{proverb.amharic}</Text>
-        <Text style={styles.faceTr}>{proverb.transliteration}</Text>
-        <Text style={styles.faceTap}>Tap to flip</Text>
-      </Animated.View>
-      <Animated.View style={[styles.face, { borderTopColor: t.color, backgroundColor: t.soft }, back]}>
-        <Text style={styles.faceLit}>“{proverb.literal}”</Text>
-        <Text style={styles.faceMean}>{proverb.meaning}</Text>
-      </Animated.View>
-    </Pressable>
+    <View>
+      <Pressable
+        onPress={() => {
+          turn.set(withTiming(flipped ? 0 : 1, { duration: 350 }));
+          setFlipped(!flipped);
+        }}
+        accessibilityLabel={flipped ? `${proverb.amharic}: ${proverb.meaning}` : `${proverb.amharic}. Tap to see what it means.`}
+        style={styles.flip}
+      >
+        <Animated.View style={[styles.face, { borderTopColor: t.color }, front]}>
+          <ThemeIcon theme={theme} />
+          <Text style={styles.faceAm}>{proverb.amharic}</Text>
+          <Text style={styles.faceTr}>{proverb.transliteration}</Text>
+          <Text style={styles.faceTap}>Tap to flip</Text>
+        </Animated.View>
+        <Animated.View style={[styles.face, { borderTopColor: t.color, backgroundColor: t.soft }, back]}>
+          <Text style={styles.faceLit}>“{proverb.literal}”</Text>
+          <Text style={styles.faceMean}>{proverb.meaning}</Text>
+        </Animated.View>
+      </Pressable>
+      {/* beside the card, not inside it: the card itself flips when tapped */}
+      <View style={styles.flipSay}>
+        <Speaker onPress={() => say(proverb.amharic)} label={`Hear ${proverb.transliteration}`} />
+      </View>
+    </View>
   );
 }
 
@@ -238,6 +262,9 @@ const styles = StyleSheet.create({
   words: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   word: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
   wordText: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: colors.ink },
+  flex: { flex: 1 },
+  listen: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  flipSay: { position: 'absolute', right: 10, bottom: 12 },
   translit: { fontFamily: fonts.bold, fontSize: 15, color: colors.primary },
   hint: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted },
   hintAm: { fontFamily: fonts.amharicBold, color: colors.ink },

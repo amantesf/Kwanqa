@@ -11,6 +11,7 @@ import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
+import { useProfile } from '@/lib/profile';
 import { play, playEffect } from '@/components/sound';
 import { Grass } from '@/components/icons';
 import Speaker from '@/components/speaker';
@@ -199,6 +200,8 @@ export default function Practice() {
   const lesson = lessons[lessonIndex];
   const track: Track = holiday ? holidayTrack : (courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic');
   const ui = uiText(track);
+  // What the learner said they know in the survey sets how hard the questions are.
+  const level = useProfile()?.levels[track];
 
   // a review asks the camp's saved mistakes instead of a lesson's own questions
   const [session] = useState(() =>
@@ -209,6 +212,7 @@ export default function Practice() {
             ? buildExercises(lesson, lessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0, {
                 // "Tap what you hear", only for lines that can be played
                 listening: true,
+                level,
                 canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
               })
             : [],
@@ -273,7 +277,7 @@ export default function Practice() {
   }, [answerKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // "Tap what you hear": the line stays hidden until it's answered.
-  const listening = current?.kind === 'choice' && !!current.listen && phase !== 'feedback';
+  const listening = !!current && current.kind !== 'match' && !!current.listen && phase !== 'feedback';
 
   const progress = initial.length ? solved.size / initial.length : 1;
   const mood: Mood = phase === 'feedback' ? (lastCorrect ? 'cheer' : 'sad') : current?.kind === 'match' && reaction ? (reaction === 'hop' ? 'cheer' : 'sad') : 'thinking';
@@ -559,7 +563,10 @@ export default function Practice() {
                           <View style={styles.key}>
                             <Text style={styles.keyText}>{i + 1}</Text>
                           </View>
-                          <Text style={[styles.optionText, ETHIOPIC.test(option) && styles.amharic]}>{option}</Text>
+                          <View style={styles.optionBody}>
+                            <Text style={[styles.optionText, styles.optionLabel, ETHIOPIC.test(option) && styles.amharic]}>{option}</Text>
+                            {current.optionHints?.[option] ? <Text style={styles.optionHint}>{current.optionHints[option]}</Text> : null}
+                          </View>
                         </>
                       )}
                     </Pressable>
@@ -572,6 +579,7 @@ export default function Practice() {
                   {picked.map(i => (
                     <Pressable key={i} disabled={feedback} onPress={() => setPicked(p => p.filter(x => x !== i))} style={styles.tile}>
                       <Text style={[styles.tileText, track === 'amharic' && styles.amharic]}>{current.tiles[i]}</Text>
+                      {current.tileHints?.[current.tiles[i]] ? <Text style={styles.hint}>{current.tileHints[current.tiles[i]]}</Text> : null}
                     </Pressable>
                   ))}
                 </View>
@@ -589,6 +597,7 @@ export default function Practice() {
                         style={[styles.tile, used && styles.tileUsed]}
                       >
                         <Text style={[styles.tileText, track === 'amharic' && styles.amharic, used && styles.tileTextUsed]}>{tile}</Text>
+                        {current.tileHints?.[tile] && !used ? <Text style={styles.hint}>{current.tileHints[tile]}</Text> : null}
                       </Pressable>
                     );
                   })}
@@ -666,6 +675,10 @@ const styles = StyleSheet.create({
   optionSelected: { borderColor: colors.blue, backgroundColor: '#e6eefb' },
   optionMatched: { borderColor: '#a5ed6e', backgroundColor: '#e9f8e4' },
   optionWrong: { borderColor: '#ffb3ad', backgroundColor: '#ffe9e7' },
+  optionBody: { flex: 1, gap: 1 },
+  hint: { fontFamily: fonts.bold, fontSize: 12, color: colors.muted, textAlign: 'center' },
+  optionLabel: { flex: 0 },
+  optionHint: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
   optionText: { flex: 1, fontFamily: fonts.bold, fontSize: 17, color: colors.ink },
   amharic: { fontFamily: fonts.amharicBold, fontSize: 19, lineHeight: 28 },
   key: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },

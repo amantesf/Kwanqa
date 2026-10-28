@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { BASE_ALTITUDE, climbStreak, hornLevel, isDone, nextLesson, SUMMIT_ALTITUDE, trackCourses, useClimb, zoneForCamp } from '@/lib/climb';
+import { BASE_ALTITUDE, climbStreak, hornLevel, isDone, nextLesson, startCamp, SUMMIT_ALTITUDE, trackCourses, useClimb, zoneForCamp } from '@/lib/climb';
 import { courseContent, type Track } from '@/lib/courses';
 import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
+import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
 import Mountain, { type MountainCamp } from '@/components/mountain';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
@@ -35,12 +36,17 @@ type Stop = { key: string; kind: StoneKind; state: StoneState; label: string; op
 type Box = { top: number; bottom: number };
 
 export default function Trail() {
-  const [track, setTrack] = useState<Track>('amharic');
+  const profile = useProfile();
+  const [guestTrack, setGuestTrack] = useState<Track>('amharic');
+  // the course comes from the learner's own choice in the survey
+  const track: Track = profile?.track ?? guestTrack;
+  // learners who already know some of the language start at a higher camp
+  const start = startCamp(track, profile?.levels[track]);
   const { width, height: screenH } = useWindowDimensions();
   const climb = useClimb();
   const mistakes = useMistakes();
   const camps = trackCourses(track);
-  const next = nextLesson(climb, track);
+  const next = nextLesson(climb, track, start);
   const horns = hornLevel(climb.grass);
   const streak = climbStreak(climb.days);
   const bend = Math.min(1, (Math.min(width, 520) - 32 - 90) / 2 / 96); // keep the widest bends inside narrow phones
@@ -61,7 +67,10 @@ export default function Trail() {
   const currentCamp = next ? camps.findIndex(c => c.slug === next.slug) : camps.length;
   const lastCamp = camps[currentCamp - 1];
   const blocking = lastCamp && campDone(lastCamp.slug) && pendingIn(lastCamp.slug) > 0 ? lastCamp : null;
-  const lockedAt = (idx: number) => idx > currentCamp && !lessonsOf(camps[idx].slug).some((_, i) => isDone(climb, camps[idx].slug, i));
+  const startedAt = (idx: number) => lessonsOf(camps[idx].slug).some((_, i) => isDone(climb, camps[idx].slug, i));
+  const lockedAt = (idx: number) => idx > currentCamp && idx >= start && !startedAt(idx);
+  // camps below the starting camp were skipped for the learner's level: they stay open for review
+  const skippedAt = (idx: number) => idx < start && idx !== currentCamp && !startedAt(idx);
 
   const openLesson = (slug: string, lesson: number) => router.push({ pathname: '/[slug]', params: { slug, lesson: String(lesson) } });
   const openReview = (slug: string) => router.push({ pathname: '/practice', params: { slug, review: '1' } });
@@ -71,7 +80,7 @@ export default function Trail() {
     const lessons = lessonsOf(camp.slug);
     const stops: Stop[] = lessons.map((lesson, i) => {
       const isNext = next?.slug === camp.slug && next.lesson === i;
-      const state: StoneState = isDone(climb, camp.slug, i) ? 'done' : isNext ? (blocking ? 'locked' : 'current') : 'locked';
+      const state: StoneState = isDone(climb, camp.slug, i) ? 'done' : isNext ? (blocking ? 'locked' : 'current') : campIdx < start && campIdx !== currentCamp ? 'todo' : 'locked';
       return { key: `${camp.slug}:${i}`, kind: 'lesson', state, label: lesson.title.replace(/^Lesson \d+ – /, ''), open: () => openLesson(camp.slug, i) };
     });
     // a mesob of grass waits halfway through each camp
@@ -146,7 +155,8 @@ export default function Trail() {
             <Pressable
               key={t.id}
               onPress={() => {
-                setTrack(t.id);
+                if (profile) switchTrack(t.id);
+                else setGuestTrack(t.id);
                 setBoxes({});
                 setScrollY(null);
               }}
@@ -220,7 +230,11 @@ export default function Trail() {
               >
                 <View style={styles.divider}>
                   <Text style={styles.dividerText}>
-                    {locked ? `Camp ${campIdx + 1} · Finish Camp ${campIdx} to unlock` : `Camp ${campIdx + 1} · ${zone.name} · ${zone.from.toLocaleString()}–${zone.to.toLocaleString()} m`}
+                    {locked
+                      ? `Camp ${campIdx + 1} · Finish Camp ${campIdx} to unlock`
+                      : skippedAt(campIdx)
+                        ? `Camp ${campIdx + 1} · ${zone.name} · Skipped for your level, open anytime`
+                        : `Camp ${campIdx + 1} · ${zone.name} · ${zone.from.toLocaleString()}–${zone.to.toLocaleString()} m`}
                   </Text>
                 </View>
                 <View style={{ height: blockH }}>

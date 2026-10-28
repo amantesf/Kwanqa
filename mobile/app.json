@@ -9,7 +9,8 @@
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "com.kwanqa.app",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,13 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.kwanqa.app"
+      "package": "com.kwanqa.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
     },
     "web": {
       "output": "single",
@@ -40,11 +47,22 @@
         {
           "microphonePermission": "Walia listens to your answers when you talk with him, so he can tell you how you did."
         }
-      ]
+      ],
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "8800e0b7-db84-4e5a-a776-7f2070b91a06"
+      }
     }
   }
 }

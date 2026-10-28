@@ -6,13 +6,14 @@ import Svg, { Path } from 'react-native-svg';
 import { readProfile } from '@/lib/profile';
 import { useAuth } from '@/auth';
 import Captcha from '@/components/captcha';
+import SocialButtons from '@/components/social-buttons';
 import Walia from '@/components/walia';
 import { SITE } from '@/site';
 import { supabase } from '@/supabase';
 import { colors, fonts } from '@/theme';
 
-// Sign up or log in with email and password, like the website's forms
-// (components/AuthForm.tsx): same account, same progress.
+// Sign up or log in with Apple, Google, or email and password, like the
+// website's forms (components/AuthForm.tsx): same account, same progress.
 
 type Mode = 'signup' | 'login';
 
@@ -132,6 +133,7 @@ export default function Account() {
                   {isSignup ? 'Make a free account to keep your progress on any phone and on kwanqa.com.' : 'Log in to pick up where you left off.'}
                 </Text>
               </View>
+              <SocialButtons signup={isSignup} onError={setError} />
               {isSignup && <Field label="Name" value={name} onChangeText={setName} placeholder="Your first name" autoComplete="given-name" textContentType="givenName" />}
               <Field
                 label="Email"

@@ -20,6 +20,7 @@ import {
   useClimb,
 } from '@/lib/climb';
 import { courseCatalog } from '@/lib/courses';
+import { useProfile } from '@/lib/profile';
 import type { LessonSection, Track } from '@/lib/courses';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 
@@ -285,6 +286,8 @@ export default function Practice({
 }) {
   const climb = useClimb();
   const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
+  // What the learner said they know in the survey sets how hard the questions are.
+  const level = useProfile()?.levels[track];
   const [initial] = useState(() =>
     review ? review.exercises : buildExercises(
       lesson,
@@ -295,6 +298,7 @@ export default function Practice({
       {
         // "Tap what you hear", only for lines that can be played
         listening: true,
+        level,
         canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
       },
     ),
@@ -406,7 +410,7 @@ export default function Practice({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answerKey]);
   // "Tap what you hear": the line stays hidden until it's answered.
-  const listening = current?.kind === 'choice' && !!current.listen && phase !== 'feedback';
+  const listening = !!current && current.kind !== 'match' && !!current.listen && phase !== 'feedback';
   const progress = initial.length ? solved.size / initial.length : 1;
   const horns = hornLevel(climb.grass);
   // Walia's face: puzzling over the question, then cheering or disappointed.

@@ -1,24 +1,30 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AbcChart from '@/components/abc-chart';
 import FidelChart from '@/components/fidel-chart';
 import FidelWrite from '@/components/fidel-write';
 import { colors, fonts, tabBarTop } from '@/theme';
 
-// The alphabet, like the website's /fidel: the chart, and writing practice.
+// The alphabets, like the website's /fidel and /abc: the ፊደል chart, writing
+// practice, and the English ABC for Amharic speakers learning English.
+
+const TABS = ['chart', 'write', 'abc'] as const;
+type Tab = (typeof TABS)[number];
+const LABELS: Record<Tab, string> = { chart: 'ፊደል', write: 'Write', abc: 'ABC' };
 
 export default function Alphabet() {
-  const [tab, setTab] = useState<'chart' | 'write'>('chart');
+  const [tab, setTab] = useState<Tab>('chart');
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.tabs}>
-        {(['chart', 'write'] as const).map(t => (
+        {TABS.map(t => (
           <Pressable key={t} onPress={() => setTab(t)} style={[styles.tab, tab === t && styles.tabOn]} accessibilityState={{ selected: tab === t }}>
-            <Text style={[styles.tabText, tab === t && styles.tabTextOn]}>{t === 'chart' ? 'Chart' : 'Write'}</Text>
+            <Text style={[styles.tabText, tab === t && styles.tabTextOn]}>{LABELS[t]}</Text>
           </Pressable>
         ))}
       </View>
-      <View style={styles.flex}>{tab === 'chart' ? <FidelChart /> : <FidelWrite />}</View>
+      <View style={styles.flex}>{tab === 'chart' ? <FidelChart /> : tab === 'write' ? <FidelWrite /> : <AbcChart />}</View>
     </SafeAreaView>
   );
 }

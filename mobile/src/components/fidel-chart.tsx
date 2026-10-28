@@ -15,6 +15,9 @@ export default function FidelChart() {
   const [row, setRow] = useState<FidelRow>(FIDEL[0]);
   const [cell, setCell] = useState<FidelCell>(FIDEL[0].cells[0]);
   const [hideDuplicates, setHideDuplicates] = useState(false);
+  // Quiz me: the sounds hide until each letter is tapped, as on the website
+  const [quiz, setQuiz] = useState(false);
+  const [revealed, setRevealed] = useState<Set<string>>(new Set());
   const carrier = row.roman === '';
   const rows = hideDuplicates ? FIDEL.filter(r => !r.sameAs) : FIDEL;
 
@@ -22,6 +25,7 @@ export default function FidelChart() {
     setRow(r);
     setCell(c);
     play(c.audio);
+    if (quiz) setRevealed(prev => new Set(prev).add(c.char));
   }
 
   return (
@@ -67,6 +71,18 @@ export default function FidelChart() {
           <Text style={styles.toggleText}>Hide duplicate sounds</Text>
           <Switch value={hideDuplicates} onValueChange={setHideDuplicates} trackColor={{ true: colors.primary, false: colors.line }} thumbColor="#ffffff" />
         </View>
+        <View style={styles.toggle}>
+          <Text style={styles.toggleText}>Quiz me</Text>
+          <Switch
+            value={quiz}
+            onValueChange={on => {
+              setQuiz(on);
+              setRevealed(new Set());
+            }}
+            trackColor={{ true: colors.primary, false: colors.line }}
+            thumbColor="#ffffff"
+          />
+        </View>
         <View style={styles.row}>
           {VOWELS.map(v => (
             <View key={v.order} style={styles.head}>
@@ -82,7 +98,7 @@ export default function FidelChart() {
               return (
                 <Pressable key={c.char} onPress={() => pick(r, c)} style={[styles.cell, on && styles.cellOn]} accessibilityLabel={`${c.char}, ${sound(c)}`}>
                   <Text style={styles.char}>{c.char}</Text>
-                  <Text style={styles.cellSound}>{sound(c)}</Text>
+                  <Text style={styles.cellSound}>{quiz && !revealed.has(c.char) ? '?' : sound(c)}</Text>
                 </Pressable>
               );
             })}

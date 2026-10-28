@@ -823,6 +823,8 @@ function buildEnglishExercises(
   const uniqueCards = cards.filter(card => !seen.has(card.english) && seen.add(card.english));
   const poolCards = courseLessons.flatMap(l => [...(l.phrases ?? []), ...(l.dialogue ?? [])]);
   const wordPool = unique(poolCards.flatMap(c => words(c.english).map(bare)).filter(w => w.length >= 3));
+  const d = difficultyFor(options.level);
+  const wrongCount = d.options - 1;
   const used = usage<Card>(c => c.english);
   const cardFor = (english: string) => uniqueCards.find(c => c.english === english);
   const canHear = (text: string) => !text.includes('...') && (options.canHear ? options.canHear(text) : true);
@@ -830,12 +832,12 @@ function buildEnglishExercises(
   const short = (c: Card) => c.english.length <= 60;
 
   const exercises: Exercise[] = [];
-  const kinds = ['meaning', 'say', 'listen', 'word', 'meaning'] as const;
+  const kinds = d.kindsEn;
   const picked = [...shuffle(uniqueCards.filter(short)), ...shuffle(uniqueCards.filter(c => !short(c)))].slice(0, 5);
   shuffle(picked).forEach((card, i) => {
     const explain = `“${card.english}” = ${card.amharic}`;
     const others = (list: Card[]) => list.filter(c => c.english !== card.english && c.amharic !== card.amharic);
-    let kind: (typeof kinds)[number] = kinds[i % kinds.length];
+    let kind: MainKind = kinds[i % kinds.length];
     if (kind === 'listen' && !(options.listening && canHear(card.english))) kind = 'meaning';
     let ex: ChoiceExercise | null = null;
     if (kind === 'meaning') {
@@ -844,7 +846,7 @@ function buildEnglishExercises(
         'ይህ ምን ማለት ነው? · What does this mean?',
         card.english,
         card.amharic,
-        distractors(card.amharic, others(uniqueCards).map(c => c.amharic), others(poolCards).map(c => c.amharic)),
+        distractors(card.amharic, others(uniqueCards).map(c => c.amharic), others(poolCards).map(c => c.amharic), wrongCount),
         explain,
       );
     } else if (kind === 'say') {
@@ -857,6 +859,7 @@ function buildEnglishExercises(
           card.english,
           others(uniqueCards).filter(short).map(c => c.english),
           others(poolCards).filter(short).map(c => c.english),
+          wrongCount,
         ),
         explain,
       );
@@ -870,6 +873,7 @@ function buildEnglishExercises(
           card.english,
           others(uniqueCards).filter(c => short(c) && canHear(c.english)).map(c => c.english),
           others(poolCards).filter(c => short(c) && canHear(c.english)).map(c => c.english),
+          wrongCount,
         ),
         explain,
       );
@@ -882,7 +886,7 @@ function buildEnglishExercises(
           'የጎደለውን ቃል ይምረጡ · Choose the missing word',
           blank.sentence,
           blank.answer,
-          distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
+          distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase()), wrongCount),
           explain,
           card.amharic,
         );
@@ -907,7 +911,7 @@ function buildEnglishExercises(
       'ውይይቱን ያጠናቅቁ · Complete the conversation',
       blank.sentence,
       blank.answer,
-      distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase())),
+      distractors(blank.answer, [], wordPool.filter(w => w.toLowerCase() !== blank.answer.toLowerCase()), wrongCount),
       `The full line is “${line.english}” (${line.amharic})`,
       line.amharic,
     );
@@ -951,11 +955,11 @@ function buildEnglishExercises(
       'ምን ብለው ይመልሳሉ? · What would you say back?',
       pair.said.english,
       pair.reply.english,
-      wrong.slice(0, 2),
+      wrong.slice(0, d.replyWrong),
       `“${pair.reply.english}” (${pair.reply.amharic}) is a good reply to “${pair.said.english}”`,
-      pair.said.amharic,
+      d.promptHelp ? pair.said.amharic : undefined,
     );
-    if (replyEx && wrong.length >= 2) {
+    if (replyEx && wrong.length >= d.replyWrong) {
       replyEx.answerAudio = pair.reply.english;
       const card = cardFor(pair.reply.english);
       if (card) used.use(card);
@@ -982,7 +986,7 @@ function buildEnglishExercises(
       'ቃሉን ይንኩ · Tap the English word',
       oneWord.amharic,
       enWords(oneWord.english),
-      wrongEn(enWords(oneWord.english), 3),
+      wrongEn(enWords(oneWord.english), d.wrongTiles),
       `“${oneWord.english}” = ${oneWord.amharic}`,
     );
     if (ex) {
@@ -991,9 +995,9 @@ function buildEnglishExercises(
       used.use(oneWord);
     }
   }
-  // Sentences of up to six words, with a couple of extra tiles: a puzzle, not a wall.
+  // Short sentences with a couple of extra tiles: a puzzle, not a wall (longer for confident learners).
   used
-    .least(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= 6))
+    .least(uniqueCards.filter(c => usable(c) && enWords(c.english).length >= 2 && enWords(c.english).length <= d.buildMax))
     .slice(0, replyEx ? 1 : 2)
     .forEach((card, i) => {
       const answer = enWords(card.english);
@@ -1002,7 +1006,7 @@ function buildEnglishExercises(
         'ዓረፍተ ነገሩን ይገንቡ · Build the sentence',
         card.amharic,
         answer,
-        wrongEn(answer, answer.length >= 5 ? 2 : 3),
+        wrongEn(answer, answer.length >= 5 ? Math.min(2, d.wrongTiles) : d.wrongTiles),
         `“${card.english}” = ${card.amharic}`,
       );
       if (ex) {
@@ -1011,6 +1015,29 @@ function buildEnglishExercises(
         used.use(card);
       }
     });
+  // Confident learners: hear an English sentence and build it without seeing it.
+  if (d.listenBuild && options.listening) {
+    const heard = used
+      .least(uniqueCards.filter(c => usable(c) && canHear(c.english)))
+      .find(c => enWords(c.english).length >= 3 && enWords(c.english).length <= 8);
+    if (heard) {
+      const answer = enWords(heard.english);
+      const ex = build(
+        'listen-build',
+        'የሰሙትን ይገንቡ · Build what you hear',
+        heard.english,
+        answer,
+        wrongEn(answer, 3),
+        `“${heard.english}” = ${heard.amharic}`,
+      );
+      if (ex) {
+        ex.listen = true;
+        ex.answerAudio = heard.english;
+        enTiles.push(ex);
+        used.use(heard);
+      }
+    }
+  }
   spreadIn(exercises, enTiles);
   if (replyEx) exercises.splice(Math.ceil(exercises.length / 2), 0, replyEx);
 

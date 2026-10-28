@@ -458,19 +458,22 @@ export function buildExercises(
   const pool = {
     english: poolCards.map(c => c.english),
   };
+  const d = difficultyFor(options.level);
+  const wrongCount = d.options - 1;
   const used = usage<Card>(c => bareAm(c.amharic));
   const cardFor = (amharic: string) => uniqueCards.find(c => bareAm(c.amharic) === bareAm(amharic));
   const canHear = (text: string) => !text.includes('...') && (options.canHear ? options.canHear(text) : true);
 
   const exercises: Exercise[] = [];
   const picked = shuffle(uniqueCards).slice(0, 5);
-  // A mix of question types, so no two in a row feel the same.
-  const kinds = ['meaning', 'say', 'listen', 'say', 'meaning'] as const;
+  // A mix of question types, so no two in a row feel the same; how hard the mix
+  // is depends on what the learner already knows.
+  const kinds = d.kinds;
 
   picked.forEach((card, i) => {
     const explain = `${card.amharic} (${card.transliteration}) means “${card.english}”.`;
     const otherMeanings = (list: Card[]) => list.filter(c => meaningKey(c.english) !== meaningKey(card.english));
-    let kind: (typeof kinds)[number] = kinds[i % kinds.length];
+    let kind: MainKind = kinds[i % kinds.length];
     if (kind === 'listen' && !(options.listening && canHear(card.amharic))) kind = 'meaning';
     let ex: ChoiceExercise | null;
     if (kind === 'meaning') {
@@ -479,9 +482,9 @@ export function buildExercises(
         'What does this mean?',
         card.amharic,
         card.english,
-        distractors(card.english, local.english, pool.english),
+        distractors(card.english, local.english, pool.english, wrongCount),
         explain,
-        card.transliteration,
+        d.promptHelp ? card.transliteration : undefined,
       );
     } else if (kind === 'say') {
       // Skip options that share this meaning, so only one answer is right.
@@ -494,6 +497,7 @@ export function buildExercises(
           card.amharic,
           otherMeanings(uniqueCards).map(c => c.amharic),
           otherMeanings(poolCards).map(c => c.amharic),
+          wrongCount,
         ),
         explain,
       );
@@ -508,6 +512,7 @@ export function buildExercises(
           card.amharic,
           otherMeanings(uniqueCards).filter(c => canHear(c.amharic)).map(c => c.amharic),
           otherMeanings(poolCards).filter(c => canHear(c.amharic)).map(c => c.amharic),
+          wrongCount,
         ),
         explain,
       );
@@ -543,7 +548,7 @@ export function buildExercises(
       'Tap the Amharic word',
       single.english,
       amWords(single.amharic),
-      pickWrong(amWords(single.amharic), 3),
+      pickWrong(amWords(single.amharic), d.wrongTiles),
       `${single.amharic} (${single.transliteration}) means “${single.english}”.`,
     );
     if (ex) {
@@ -588,11 +593,11 @@ export function buildExercises(
       'What would you say back?',
       pair.said.amharic,
       pair.reply.amharic,
-      wrong.slice(0, 2),
+      wrong.slice(0, d.replyWrong),
       `${pair.reply.amharic} (${pair.reply.transliteration}) means “${pair.reply.english}”: a good reply to “${pair.said.english}”`,
-      pair.said.english,
+      d.promptHelp ? pair.said.english : undefined,
     );
-    if (replyEx && wrong.length >= 2) {
+    if (replyEx && wrong.length >= d.replyWrong) {
       replyEx.answerAudio = pair.reply.amharic;
       const reply = cardFor(pair.reply.amharic);
       if (reply) used.use(reply);
@@ -604,7 +609,7 @@ export function buildExercises(
   // One sentence to build (two when there's no reply question), short enough to be fun.
   const buildable = uniqueCards.filter(c => {
     const n = amWords(c.amharic).length;
-    return n >= 2 && n <= 6 && !c.amharic.includes('...');
+    return n >= 2 && n <= d.buildMax && !c.amharic.includes('...');
   });
   used
     .least(buildable)
@@ -616,7 +621,7 @@ export function buildExercises(
         'Build the sentence',
         card.english,
         answer,
-        pickWrong(answer, answer.length >= 5 ? 2 : 3),
+        pickWrong(answer, answer.length >= 5 ? Math.min(2, d.wrongTiles) : d.wrongTiles),
         `${card.amharic} (${card.transliteration}) means “${card.english}”.`,
       );
       if (ex) {
@@ -655,7 +660,7 @@ export function buildExercises(
       'Fill in the missing word',
       sentence,
       answer,
-      distractors(answer, [], wordPool),
+      distractors(answer, [], wordPool, wrongCount),
       `The full line is ${line.amharic} (“${line.english}”).`,
       line.english,
     );

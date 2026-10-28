@@ -723,7 +723,39 @@ export function buildExercises(
     });
   }
 
+  if (d.readingHelp) addReadingHelp(exercises, poolCards);
   return exercises;
+}
+
+/**
+ * Beginners can't read Ge'ez yet, so every Amharic option and tile gets its
+ * transliteration underneath (ሰላም → selam). Words get theirs from lines whose
+ * Amharic and transliteration have the same number of words.
+ */
+function addReadingHelp(exercises: Exercise[], cards: Card[]) {
+  const strip = (t: string) => t.replace(PUNCT_ALL, '').trim();
+  const lines = new Map<string, string>();
+  const words = new Map<string, string>();
+  for (const c of [...cards, ...PICTURES]) {
+    if (!c.transliteration) continue;
+    lines.set(strip(c.amharic), c.transliteration.replace(/[.,!?]+$/, ''));
+    const am = strip(c.amharic).split(/\s+/);
+    const tr = c.transliteration.replace(/[.,!?;:]/g, '').split(/\s+/).filter(Boolean);
+    if (am.length === tr.length) am.forEach((w, i) => !words.has(w) && words.set(w, tr[i]));
+  }
+  const hintFor = (text: string) => lines.get(strip(text)) ?? words.get(strip(text));
+  const ethiopic = /[ሀ-፿]/;
+  for (const ex of exercises) {
+    if (ex.kind === 'choice' && !ex.pictures) {
+      const hints = Object.fromEntries(
+        ex.options.filter(o => ethiopic.test(o)).flatMap(o => (hintFor(o) ? [[o, hintFor(o)!]] : [])),
+      );
+      if (Object.keys(hints).length) ex.optionHints = hints;
+    } else if (ex.kind === 'build') {
+      const hints = Object.fromEntries(ex.tiles.flatMap(t => (words.get(strip(t)) ? [[t, words.get(strip(t))!]] : [])));
+      if (Object.keys(hints).length) ex.tileHints = hints;
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

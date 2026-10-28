@@ -10615,3 +10615,66 @@ body:has(.practice-screen) {
   animation: reveal-rise 0.4s cubic-bezier(0.2, 1.2, 0.4, 1) both;
 }
 
+@media (min-width: 900px) and (min-height: 820px) {
+  .reveal-content {
+    width: 600px;
+  }
+
+  .reveal-stage {
+    height: 380px;
+  }
+
+  .reveal-stamp-shine svg {
+    width: 236px;
+    height: 236px;
+  }
+}
+
+@media (max-width: 520px) {
+  .reveal-stage {
+    height: 290px;
+  }
+
+  .reveal-stamp-shine svg {
+    width: 168px;
+    height: 168px;
+  }
+
+  .reveal-am {
+    font-size: 19px;
+  }
+
+  .reveal-fact {
+    font-size: 15px;
+  }
+}
+
+@media (max-height: 700px) {
+  .reveal-stage {
+    height: 220px;
+  }
+
+  .reveal-stamp-shine svg {
+    width: 150px;
+    height: 150px;
+  }
+
+  .reveal-fact {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal *,
+  .reveal::before,
+  .reveal::after {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+  }
+
+  .reveal-confetti,
+  .reveal-ring {
+    display: none;
+  }
+}

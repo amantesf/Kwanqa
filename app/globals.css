@@ -9956,4 +9956,180 @@ body:has(.practice-screen) {
   z-index: 2;
   top: 12px;
   right: 12px;
+}/* the quick lesson about a stamp's place */
+.place-lesson {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
 }
+
+.place-lesson-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.place-lesson-head svg {
+  flex: none;
+}
+
+.place-lesson-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.place-lesson-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.place-lesson-title span {
+  font-size: 17px;
+  color: var(--text-faint);
+}
+
+.place-lesson-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.place-lesson-dots span {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: #ece3d3;
+  transition: background 0.25s ease;
+}
+
+.place-lesson-dots span.on {
+  background: var(--ink);
+}
+
+.place-lesson-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: place-card-in 0.3s ease both;
+}
+
+@keyframes place-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}
+
+.place-lesson-text,
+.place-lesson-q {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--text-strong);
+}
+
+.place-lesson-q {
+  font-weight: 800;
+}
+
+.place-lesson-word {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 2px solid color-mix(in srgb, var(--ink) 30%, #fff);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ink) 7%, #fff);
+}
+
+.place-lesson-word .say-btn {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+}
+
+.place-lesson-word-am {
+  grid-column: 2;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.place-lesson-word-tr,
+.place-lesson-word-en {
+  grid-column: 2;
+  font-size: 14px;
+  color: var(--text-faint);
+}
+
+.place-lesson-word-tr {
+  font-style: italic;
+}
+
+.place-lesson-word-en {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.place-lesson-next {
+  align-self: stretch;
+}
+
+.place-lesson-options {
+  display: grid;
+  gap: 8px;
+}
+
+.place-lesson-option {
+  padding: 12px 14px;
+  border: 2px solid #e6dcc9;
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.place-lesson-option:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.place-lesson-option.right {
+  border-color: #3a9d4f;
+  background: #e8f6ea;
+}
+
+.place-lesson-option.wrong {
+  border-color: #d04a3a;
+  background: #fdecea;
+}
+
+.place-lesson-option.dim {
+  opacity: 0.55;
+}
+
+.place-lesson-option:disabled {
+  cursor: default;
+}
+
+.place-lesson-why {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fdecea;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.place-lesson-why.right {
+  background: #e8f6ea;
+}
+

@@ -1,4 +1,5 @@
 import type { LessonSection, Track } from '@/lib/courses';
+import type { Level } from '@/lib/profile';
 import { PICTURES, pictureFor, type Picture } from '@/lib/pictures';
 
 // Practice questions generated from a lesson's phrases and dialogue. The Amharic
@@ -30,6 +31,8 @@ export type ChoiceExercise = {
   listen?: boolean;
   /** The line in the language being learned, said aloud once the question is answered. */
   answerAudio?: string;
+  /** For beginners: how to read each Amharic option, shown small underneath it. */
+  optionHints?: Record<string, string>;
 };
 
 export type MatchExercise = {
@@ -52,6 +55,10 @@ export type BuildExercise = {
   explain: string;
   /** The whole line, said aloud once the question is answered. */
   answerAudio?: string;
+  /** "Build what you hear": the sentence is only heard, not shown, until answered. */
+  listen?: boolean;
+  /** For beginners: how to read each Amharic tile, shown small underneath it. */
+  tileHints?: Record<string, string>;
 };
 
 export type Exercise = ChoiceExercise | MatchExercise | BuildExercise;
@@ -301,7 +308,88 @@ export type BuildOptions = {
   listening?: boolean;
   /** Says whether a line can be heard, so listening questions only use lines with audio. */
   canHear?: (text: string) => boolean;
+  /** How much the learner already knows, from the survey: lessons get easier or harder to match. */
+  level?: Level;
 };
+
+type MainKind = 'meaning' | 'say' | 'listen' | 'word';
+
+/**
+ * How hard a lesson's questions are, by what the learner said they know.
+ * New learners get three options instead of four, reading help under every
+ * Amharic answer, mostly "what does this mean?" and short sentences to build.
+ * Confident speakers get no reading help, more speaking-style questions, longer
+ * sentences, an extra wrong reply and "build what you hear" from Walia's voice.
+ */
+type Difficulty = {
+  /** Answers to choose from in multiple choice. */
+  options: number;
+  /** Reading help (transliteration) under Amharic options and tiles. */
+  readingHelp: boolean;
+  /** Transliteration or meaning shown under the question's own line. */
+  promptHelp: boolean;
+  /** Longest sentence to build, in words, and how many wrong tiles to add. */
+  buildMax: number;
+  wrongTiles: number;
+  /** "Build what you hear": the sentence is only heard. */
+  listenBuild: boolean;
+  /** Wrong replies in "What would you say back?". */
+  replyWrong: number;
+  /** The mix of the five main questions, in order. */
+  kinds: readonly MainKind[];
+  /** The English course's mix (its third kind is a missing-word question). */
+  kindsEn: readonly MainKind[];
+};
+
+const DIFFICULTY: Record<Level, Difficulty> = {
+  new: {
+    options: 3,
+    readingHelp: true,
+    promptHelp: true,
+    buildMax: 4,
+    wrongTiles: 2,
+    listenBuild: false,
+    replyWrong: 2,
+    kinds: ['meaning', 'meaning', 'say', 'listen', 'meaning'],
+    kindsEn: ['meaning', 'meaning', 'say', 'word', 'meaning'],
+  },
+  'some-words': {
+    options: 4,
+    readingHelp: true,
+    promptHelp: true,
+    buildMax: 5,
+    wrongTiles: 2,
+    listenBuild: false,
+    replyWrong: 2,
+    kinds: ['meaning', 'say', 'listen', 'meaning', 'say'],
+    kindsEn: ['meaning', 'say', 'listen', 'word', 'meaning'],
+  },
+  basic: {
+    options: 4,
+    readingHelp: false,
+    promptHelp: true,
+    buildMax: 6,
+    wrongTiles: 3,
+    listenBuild: false,
+    replyWrong: 2,
+    kinds: ['meaning', 'say', 'listen', 'say', 'meaning'],
+    kindsEn: ['meaning', 'say', 'listen', 'word', 'meaning'],
+  },
+  conversational: {
+    options: 4,
+    readingHelp: false,
+    promptHelp: false,
+    buildMax: 8,
+    wrongTiles: 3,
+    listenBuild: true,
+    replyWrong: 3,
+    kinds: ['say', 'listen', 'say', 'meaning', 'listen'],
+    kindsEn: ['say', 'listen', 'word', 'say', 'listen'],
+  },
+};
+
+/** No level from the survey (or an older app): the middle setting, as before. */
+const difficultyFor = (level?: Level) => DIFFICULTY[level ?? 'basic'];
 
 // Keeping a lesson fresh: no phrase should come up more than about three times
 // in one session, so each part of the lesson picks the phrases used least so far.

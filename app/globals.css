@@ -9956,7 +9956,260 @@ body:has(.practice-screen) {
   z-index: 2;
   top: 12px;
   right: 12px;
-}/* the quick lesson about a stamp's place */
+}
+
+/* ---------- Kwanqa passport: a stamp from a real place for every camp ---------- */
+.passport-main {
+  gap: 22px;
+}
+
+.passport-cover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 26px 28px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255, 214, 107, 0.18), transparent 45%),
+    linear-gradient(135deg, #0f6b4f 0%, #0a4d39 100%);
+  box-shadow: 0 6px 0 #073a2b;
+  color: #fff;
+  overflow: hidden;
+}
+
+.passport-cover::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 2px solid rgba(255, 214, 107, 0.45);
+  border-radius: 18px;
+  pointer-events: none;
+}
+
+.passport-cover-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.passport-cover-kicker {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffd66b;
+}
+
+.passport-cover-title {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 900;
+  color: #fff;
+}
+
+.passport-cover-sub {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+
+.passport-meter {
+  width: min(320px, 100%);
+  height: 12px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.passport-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #ffd66b;
+}
+
+.passport-cover-walia {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.passport-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.passport-tab {
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  border-bottom-width: 3px;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.passport-tab.active {
+  border-color: #0f6b4f;
+  background: #e2f3ec;
+  color: #0a4d39;
+}
+
+.passport-pages {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passport-page {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 18px 22px;
+  border: 2px dashed #e3dccf;
+  border-radius: 20px;
+  background: #fffdf8;
+}
+
+.passport-page.earned {
+  border-style: solid;
+  border-color: #eadfca;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 22px, rgba(15, 107, 79, 0.04) 22px 23px),
+    #fffaf0;
+}
+
+.passport-page svg {
+  flex-shrink: 0;
+  max-width: none;
+}
+
+.passport-page-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.passport-page-camp {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.passport-page-name {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.passport-page-name span {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.passport-page-fact {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.passport-page-locked {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+
+/* "New stamp!" on the trail */
+.stamp-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(20, 30, 25, 0.55);
+  animation: leave-fade 0.2s ease-out;
+}
+
+.stamp-dialog {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 24px 20px;
+  border-radius: 26px;
+  background: #fffaf0;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.stamp-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0f6b4f;
+}
+
+.stamp-drop svg {
+  max-width: none;
+  animation: stamp-press 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) 0.15s both;
+}
+
+@keyframes stamp-press {
+  0% { transform: scale(2.2) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(0.92) rotate(-6deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-6deg); opacity: 1; }
+}
+
+.stamp-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.stamp-title span {
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.stamp-fact {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.stamp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* the quick lesson about a stamp's place */
 .place-lesson {
   width: 100%;
   display: flex;
@@ -10131,6 +10384,40 @@ body:has(.practice-screen) {
 
 .place-lesson-why.right {
   background: #e8f6ea;
+}
+
+.passport-page-lesson {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f6b4f;
+  cursor: pointer;
+}
+
+.passport-page-lesson:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 520px) {
+  .passport-cover-walia {
+    display: none;
+  }
+
+  .passport-page {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-drop svg {
+    animation: none;
+  }
 }
 
 /* ===== The new-stamp celebration: rays, a stamp slam, confetti, Walia in orbit ===== */
@@ -10613,6 +10900,19 @@ body:has(.practice-screen) {
   color: var(--text-strong);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
   animation: reveal-rise 0.4s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+/* tap an earned stamp on the passport page to replay its celebration */
+.passport-page-replay {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.passport-page-replay:hover {
+  transform: scale(1.05) rotate(-2deg);
 }
 
 @media (min-width: 900px) and (min-height: 820px) {

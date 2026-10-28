@@ -48,6 +48,14 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M4 17 c0-5 1.5-8.5 6-10 l0.8 2 c-2.4 1-3.4 2.6-3.5 4.5 h2.7 v3.5 z M13.5 17 c0-5 1.5-8.5 6-10 l0.8 2 c-2.4 1-3.4 2.6-3.5 4.5 h2.7 v3.5 z" fill="#fff" />
     </svg>
   ),
+  // a passport book with a round stamp
+  passport: (
+    <svg {...glyph}>
+      <rect x="5" y="3" width="14" height="18" rx="2.5" fill="#fff" />
+      <circle cx="12" cy="11" r="3.6" fill="none" stroke="var(--c)" strokeWidth="1.8" />
+      <path d="M8.5 17 h7" stroke="var(--c)" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  ),
   // a calendar page with ፲
   holidays: (
     <svg {...glyph}>
@@ -80,7 +88,7 @@ type Item = {
   edge: string;
 };
 
-export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'profile';
+export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'passport' | 'profile';
 
 function NavLink({ item, current, icon }: { item: Item; current?: boolean; icon: ReactNode }) {
   const style = { '--c': item.color, '--c-soft': item.soft, '--c-edge': item.edge } as CSSProperties;
@@ -114,6 +122,15 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
     { key: 'proverbs', href: '/proverbs', label: 'Proverbs', amharic: 'ምሳሌዎች', color: '#e8345a', soft: '#fde8ed', edge: '#b8203f' },
     { key: 'holidays', href: '/holidays', label: 'Holidays', amharic: 'በዓላት', color: '#13a39b', soft: '#e1f6f4', edge: '#0c7a74' },
   ];
+  const passport: Item = {
+    key: 'passport',
+    href: `/passport?track=${track}`,
+    label: 'Passport',
+    amharic: 'ፓስፖርት',
+    color: '#0f6b4f',
+    soft: '#e2f3ec',
+    edge: '#0a4d39',
+  };
   const profile: Item = {
     key: 'profile',
     href: '/profile',
@@ -152,6 +169,7 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
           <NavLink key={item.key} item={item} icon={ICONS[item.key]} />
         ))}
         <span className="learn-nav-heading">You</span>
+        <NavLink item={passport} icon={ICONS.passport} current={active === 'passport'} />
         <NavLink item={profile} icon={profileIcon} current={active === 'profile'} />
       </nav>
       {user && (

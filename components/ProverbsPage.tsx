@@ -6,6 +6,7 @@
 import { useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import Mascot from '@/components/Mascot';
+import SayButton, { say } from '@/components/SayButton';
 import { useNow } from '@/components/HolidayCards';
 import { showToast } from '@/components/Toaster';
 import { THEMES, meaningChoices, proverbOfTheDay, proverbs, themeOf, type Proverb, type Theme } from '@/lib/proverbs';
@@ -137,13 +138,19 @@ function ProverbGame({ first }: { first: Proverb }) {
             type="button"
             className={`pv-word${word === i ? ' active' : ''}`}
             aria-pressed={word === i}
-            onClick={() => setWord(word === i ? null : i)}
+            onClick={() => {
+              setWord(word === i ? null : i);
+              say(w.am, 'amharic');
+            }}
           >
             {w.am}
           </button>
         ))}
       </div>
-      <p className="pv-translit">{proverb.transliteration}</p>
+      <div className="pv-listen">
+        <SayButton text={proverb.amharic} track="amharic" className="pv-say" size={22} />
+        <p className="pv-translit">{proverb.transliteration}</p>
+      </div>
       <p className="pv-hint" aria-live="polite">
         {word !== null ? (
           <>
@@ -227,6 +234,8 @@ function FlipCard({ proverb }: { proverb: Proverb }) {
           </span>
         </span>
       </button>
+      {/* beside the card, not inside it: the card itself is a button */}
+      <SayButton text={proverb.amharic} track="amharic" className="pv-flip-say" />
     </li>
   );
 }

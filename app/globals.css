@@ -9923,3 +9923,37 @@ body:has(.practice-screen) {
     width: 100%;
   }
 }
+
+/* ---------- proverbs: hear every proverb in Walia's voice ---------- */
+.pv-listen,
+.proverb-listen {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pv-listen .pv-translit,
+.proverb-listen .proverb-translit {
+  margin: 0;
+}
+
+.pv-say {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+.proverb-say {
+  flex-shrink: 0;
+}
+
+.pv-grid > li {
+  position: relative;
+}
+
+.pv-flip-say {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+}

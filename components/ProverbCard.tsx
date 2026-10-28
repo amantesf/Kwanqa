@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import SayButton, { say } from '@/components/SayButton';
 import { useNow } from '@/components/HolidayCards';
 import { showToast } from '@/components/Toaster';
 import { meaningChoices, proverbOfTheDay } from '@/lib/proverbs';
@@ -58,13 +59,19 @@ export default function ProverbCard({ className = 'rail-extra' }: { className?: 
               type="button"
               className={`proverb-word${word === i ? ' active' : ''}`}
               aria-pressed={word === i}
-              onClick={() => setWord(word === i ? null : i)}
+              onClick={() => {
+                setWord(word === i ? null : i);
+                say(w.am, 'amharic');
+              }}
             >
               {w.am}
             </button>
           ))}
         </p>
-        <p className="proverb-translit">{proverb.transliteration}</p>
+        <div className="proverb-listen">
+          <SayButton text={proverb.amharic} track="amharic" className="proverb-say" />
+          <p className="proverb-translit">{proverb.transliteration}</p>
+        </div>
         <p className="proverb-gloss" aria-live="polite">
           {word !== null ? (
             <>

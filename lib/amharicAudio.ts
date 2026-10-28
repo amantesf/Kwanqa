@@ -7,6 +7,7 @@ import { courseContent } from '@/lib/courses';
 import { PICTURES } from '@/lib/pictures';
 import { phraseAudio } from '@/lib/phraseAudio';
 import { fidelSounds } from '@/lib/fidel';
+import { proverbs } from '@/lib/proverbs';
 
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -36,7 +37,15 @@ export function speakableAmharic(): Set<string> {
     }
   }
   return new Set(
-    [...lines, ...words, ...meanings, ...PICTURES.map(p => p.amharic), ...fidelSounds()]
+    [
+      ...lines,
+      ...words,
+      ...meanings,
+      ...PICTURES.map(p => p.amharic),
+      ...fidelSounds(),
+      // every proverb, and each of its words for the tap-a-word hints
+      ...proverbs.flatMap(p => [p.amharic, ...p.words.map(w => w.am)]),
+    ]
       .map(t => t?.trim())
       .filter(t => t && !hasGap(t)),
   );

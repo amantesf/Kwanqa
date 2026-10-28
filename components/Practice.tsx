@@ -812,7 +812,12 @@ export default function Practice({
                       ) : (
                         <>
                           <span className="option-key">{i + 1}</span>
-                          {option}
+                          <span className="option-text">
+                            {option}
+                            {current.optionHints?.[option] && (
+                              <small className="option-hint">{current.optionHints[option]}</small>
+                            )}
+                          </span>
                         </>
                       )}
                     </button>
@@ -833,6 +838,9 @@ export default function Practice({
                     onClick={() => setPicked(p => p.filter(x => x !== i))}
                   >
                     {current.tiles[i]}
+                    {current.tileHints?.[current.tiles[i]] && (
+                      <small className="tile-hint">{current.tileHints[current.tiles[i]]}</small>
+                    )}
                   </button>
                 ))}
               </div>
@@ -853,6 +861,7 @@ export default function Practice({
                       }}
                     >
                       {tile}
+                      {current.tileHints?.[tile] && <small className="tile-hint">{current.tileHints[tile]}</small>}
                     </button>
                   );
                 })}

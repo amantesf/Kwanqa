@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
@@ -54,6 +54,24 @@ export default function Account() {
   const isSignup = mode === 'signup';
   const forgot = mode === 'forgot';
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
+
+  // Signing in here (with email, Google or Apple) brings back the account's
+  // survey answers and progress, which arrive a moment later. Wait briefly
+  // for them, then go to the trail; with none saved, the survey comes first.
+  const signedOutAtStart = useRef(!user);
+  useEffect(() => {
+    if (!user || !signedOutAtStart.current) return;
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries++;
+      if (readProfile() || tries >= 12) {
+        clearInterval(timer);
+        if (router.canDismiss()) router.dismissAll();
+        router.replace(readProfile() ? '/' : '/welcome');
+      }
+    }, 200);
+    return () => clearInterval(timer);
+  }, [user]);
 
   async function submit() {
     if (!supabase || busy) return;

@@ -1,11 +1,15 @@
 import { Redirect } from 'expo-router';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useProfile } from '@/lib/profile';
+import { useAuth } from '@/auth';
 import { colors } from '@/theme';
 
 export default function TabsLayout() {
-  // new learners start with the "Get started" survey, as on the website
-  if (!useProfile()) return <Redirect href="/welcome" />;
+  const profile = useProfile();
+  const { user } = useAuth();
+  // New learners start on the welcome screen, then the Get started survey; a
+  // signed-in learner without saved answers goes straight to the survey.
+  if (!profile) return <Redirect href={user ? '/welcome' : '/start'} />;
   return (
     <NativeTabs backgroundColor={colors.bg} iconColor={{ default: colors.muted, selected: colors.primary }} labelStyle={{ selected: { color: colors.primary } }}>
       <NativeTabs.Trigger name="(learn)">

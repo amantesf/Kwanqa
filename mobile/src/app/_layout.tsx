@@ -42,7 +42,8 @@ export default function RootLayout() {
         <Stack.Screen name="practice" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
         <Stack.Screen name="account" options={{ presentation: 'modal' }} />
         <Stack.Screen name="call" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
-        <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="start" options={{ gestureEnabled: false, animation: 'fade' }} />
+        <Stack.Screen name="welcome" />
         <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
       </Stack>
     </AuthProvider>

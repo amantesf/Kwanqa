@@ -5,6 +5,18 @@ import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import { showToast } from '@/components/Toaster';
 import { accountsEnabled, supabase } from '@/lib/supabase';
+import {
+  applyExtras,
+  clearExtras,
+  EXTRA_COLUMNS,
+  extrasFromRow,
+  mergeExtras,
+  readExtras,
+  sameExtras,
+  settleExtras,
+  subscribeExtras,
+  type Extras,
+} from '@/lib/accountSync';
 import { clearClimb, mergeClimbs, readClimb, replaceClimb, subscribeClimb, type Climb } from '@/lib/climb';
 import { clearProfile, normalizeProfile, readProfile, saveProfile, subscribeProfile } from '@/lib/profile';
 
@@ -42,7 +54,9 @@ export function safeNext(next: string | null | undefined, fallback = '/courses')
 }
 
 // ---------------------------------------------------------------------------
-// Progress sync: this browser's climb <-> the account's `climbs` row.
+// Progress sync: this browser's climb <-> the account's `climbs` row. The
+// same row also holds the questions waiting to be practised again and the
+// passport stamps already celebrated (lib/accountSync.ts), synced alongside.
 //
 // Every sync reads the account first and never saves blindly, so a tab left
 // open since yesterday, or a second device, can't wipe newer progress:
@@ -61,6 +75,9 @@ function missingColumn(error: { code?: string } | null) {
 
 let syncUser: string | null = null; // whose account we're syncing with
 let lastSynced: Climb | null = null; // the account's row as of our last sync
+let lastExtras: Extras | null = null; // its mistakes and stamps as of our last sync
+// False once the database turns out not to have the mistakes/stamps columns yet.
+let extrasSaved = true;
 let syncing = false;
 let syncAgain = false;
 let applyingRemote = false;
@@ -83,43 +100,73 @@ function sameClimb(a: Climb, b: Climb) {
   return stable(a) === stable(b);
 }
 
+type Remote = { climb: Climb; extras: Extras | null };
+
 function isEmptyClimb(c: Climb) {
   return Object.keys(c.completed).length === 0 && c.grass === 0 && c.days.length === 0;
 }
 
-/** The account's saved climb, or null if it couldn't be read (offline, server error). */
-async function fetchRemote(userId: string): Promise<Climb | null> {
+/** The account's saved progress, or null if it couldn't be read (offline, server error). */
+async function fetchRemote(userId: string): Promise<Remote | null> {
   if (!supabase) return null;
-  let result = await supabase.from('climbs').select('completed, grass, days, log').eq('user_id', userId).maybeSingle();
-  // Older databases have no streak columns yet; read the rest of the progress without them.
+  const select = (columns: string) => supabase!.from('climbs').select(columns).eq('user_id', userId).maybeSingle();
+  let result = extrasSaved ? await select(`completed, grass, days, log, ${EXTRA_COLUMNS}`) : null;
+  // Older databases are missing the newer columns; read what's there without them.
+  if (!result || missingColumn(result.error)) {
+    if (result) {
+      extrasSaved = false;
+      console.warn('Kwanqa: the climbs table has no mistakes/stamps columns, so those stay on this device. Run supabase/schema.sql.');
+    }
+    result = await select('completed, grass, days, log');
+  }
   if (missingColumn(result.error)) {
     console.warn('Kwanqa: the climbs table has no days/log columns, so the streak is not saved. Run supabase/schema.sql.');
-    result = await supabase.from('climbs').select('completed, grass').eq('user_id', userId).maybeSingle();
+    result = await select('completed, grass');
   }
   if (result.error) {
     console.warn('Kwanqa: could not read progress', result.error.message);
     return null;
   }
-  const row = result.data as { completed?: Climb['completed']; grass?: number; days?: string[]; log?: Climb['log'] } | null;
+  const row = result.data as unknown as {
+    completed?: Climb['completed'];
+    grass?: number;
+    days?: string[];
+    log?: Climb['log'];
+    mistakes?: unknown;
+    stamps?: unknown;
+  } | null;
   return {
-    completed: row?.completed && typeof row.completed === 'object' ? row.completed : {},
-    grass: typeof row?.grass === 'number' ? row.grass : 0,
-    days: Array.isArray(row?.days) ? row.days : [],
-    log: row?.log && typeof row.log === 'object' ? row.log : {},
+    climb: {
+      completed: row?.completed && typeof row.completed === 'object' ? row.completed : {},
+      grass: typeof row?.grass === 'number' ? row.grass : 0,
+      days: Array.isArray(row?.days) ? row.days : [],
+      log: row?.log && typeof row.log === 'object' ? row.log : {},
+    },
+    extras: extrasSaved ? extrasFromRow(row) : null,
   };
 }
 
-/** Saves the climb to the account. Returns whether it worked. */
-async function pushClimb(userId: string, climb: Climb) {
+/** Saves the progress to the account. Returns whether it worked. */
+async function pushClimb(userId: string, climb: Climb, extras: Extras | null) {
   if (!supabase) return false;
   const base = { user_id: userId, completed: climb.completed, grass: climb.grass, updated_at: new Date().toISOString() };
-  const { error } = await supabase.from('climbs').upsert({ ...base, days: climb.days, log: climb.log });
+  const full = { ...base, days: climb.days, log: climb.log };
+  let { error } = extras
+    ? await supabase.from('climbs').upsert({ ...full, mistakes: extras.mistakes, stamps: extras.stamps })
+    : await supabase.from('climbs').upsert(full);
   if (!error) return true;
-  // Only an older database without the streak columns gets a save without them;
-  // any other error is retried, so the streak days are never dropped.
+  // Only an older database without the newer columns gets a save without them;
+  // any other error is retried, so nothing is ever dropped quietly.
   if (!missingColumn(error)) {
     console.warn('Kwanqa: could not save progress', error.message);
     return false;
+  }
+  if (extras) {
+    extrasSaved = false;
+    console.warn('Kwanqa: the climbs table has no mistakes/stamps columns, so those stay on this device. Run supabase/schema.sql.');
+    ({ error } = await supabase.from('climbs').upsert(full));
+    if (!error) return true;
+    if (!missingColumn(error)) return false;
   }
   console.warn('Kwanqa: the climbs table has no days/log columns, so the streak is not saved. Run supabase/schema.sql.');
   const fallback = await supabase.from('climbs').upsert(base);
@@ -132,28 +179,39 @@ function scheduleRetry() {
 }
 
 async function syncOnce(userId: string) {
-  const remote = await fetchRemote(userId);
+  const remoteRow = await fetchRemote(userId);
   if (userId !== syncUser) return; // signed out (or switched accounts) meanwhile
-  if (!remote) return scheduleRetry(); // never save without knowing what's there
+  if (!remoteRow) return scheduleRetry(); // never save without knowing what's there
+  const remote = remoteRow.climb;
 
   const local = readClimb();
   const untouched = lastSynced !== null && sameClimb(remote, lastSynced);
   // This device's copy wins only if nobody else changed the account and it isn't a wiped-out copy.
   const next = untouched && !(isEmptyClimb(local) && !isEmptyClimb(remote)) ? local : mergeClimbs(local, remote);
 
-  if (!sameClimb(next, local)) {
-    applyingRemote = true;
-    replaceClimb(next);
-    applyingRemote = false;
-  }
-  if (sameClimb(next, remote)) {
+  // Mistakes and celebrated stamps: merged with the account's, and stamps that were
+  // earned on another device are filed away so they aren't celebrated again here.
+  const localExtras = readExtras();
+  const mergedExtras = remoteRow.extras ? mergeExtras(localExtras, remoteRow.extras, lastExtras) : localExtras;
+  const nextExtras = settleExtras(localExtras, mergedExtras, local, next);
+
+  applyingRemote = true;
+  applyExtras(nextExtras); // before the climb, so the trail sees the stamps as filed
+  if (!sameClimb(next, local)) replaceClimb(next);
+  applyingRemote = false;
+
+  const extrasMatch = !remoteRow.extras || sameExtras(nextExtras, remoteRow.extras);
+  if (sameClimb(next, remote) && extrasMatch) {
     lastSynced = next;
+    lastExtras = remoteRow.extras ? nextExtras : null;
     return;
   }
-  const saved = await pushClimb(userId, next);
+  const saved = await pushClimb(userId, next, remoteRow.extras ? nextExtras : null);
   if (userId !== syncUser) return;
-  if (saved) lastSynced = next;
-  else scheduleRetry();
+  if (saved) {
+    lastSynced = next;
+    lastExtras = remoteRow.extras && extrasSaved ? nextExtras : null;
+  } else scheduleRetry();
 }
 
 /** Sync now, or right after the sync that's already running. */
@@ -183,6 +241,7 @@ function requestSync() {
 function startSync(userId: string | null) {
   syncUser = userId;
   lastSynced = null;
+  lastExtras = null;
   clearTimeout(retryTimer);
   if (userId) requestSync();
 }
@@ -246,6 +305,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         // Covers expired sessions too: never leave one person's progress for the next.
         startSync(null); // stop first, so the cleared copy is never saved
         clearClimb();
+        clearExtras();
         clearProfile();
       }
       if (next && (event === 'INITIAL_SESSION' || (event === 'SIGNED_IN' && wasSignedOut))) {
@@ -267,6 +327,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = subscribeClimb(() => {
       if (!signingOut.current) requestSync();
     });
+    const unsubscribeExtras = subscribeExtras(() => {
+      if (!signingOut.current) requestSync();
+    });
     const onVisible = () => {
       if (document.visibilityState === 'visible') requestSync();
     };
@@ -274,6 +337,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     window.addEventListener('online', requestSync);
     return () => {
       unsubscribe();
+      unsubscribeExtras();
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('online', requestSync);
     };
@@ -294,6 +358,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     startSync(null);
     await supabase?.auth.signOut();
     clearClimb(); // the account keeps the progress; this device forgets it
+    clearExtras();
     clearProfile();
     signingOut.current = false;
     router.push('/');
@@ -310,6 +375,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     startSync(null);
     await supabase.auth.signOut({ scope: 'local' }); // the account is gone, so just forget it here
     clearClimb();
+    clearExtras();
     clearProfile();
     signingOut.current = false;
     router.push('/');

@@ -18,9 +18,8 @@ import type { Track } from '@/lib/courses';
 import { useMistakes } from '@/lib/mistakes';
 import { campComplete, stampsFor, type Stamp } from '@/lib/passport';
 import { useProfile } from '@/lib/profile';
-import { storage } from '@/lib/storage';
+import { markSeen, readSeen, writeSeen } from '@/lib/stampsSeen';
 
-const SEEN_KEY = 'kwanqa-stamps-seen-v1';
 const TILTS = [-6, 4, -3, 7, -5, 3, -7, 5];
 
 const noopSubscribe = () => () => {};
@@ -43,23 +42,6 @@ export function usePassport(track: Track): PassportEntry[] {
 }
 
 const seenKey = (track: Track, e: PassportEntry) => `${track}:${e.slug}`;
-
-function readSeen(): string[] | null {
-  try {
-    const raw = storage().getItem(SEEN_KEY);
-    return raw ? (JSON.parse(raw) as string[]) : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeSeen(keys: string[]) {
-  try {
-    storage().setItem(SEEN_KEY, JSON.stringify(keys));
-  } catch {
-    // storage unavailable: the celebration may show again, which is harmless
-  }
-}
 
 /**
  * "New stamp!" on the trail, the first time a camp's stamp is earned. Stamps
@@ -90,14 +72,9 @@ export function StampCelebration({ track }: { track: Track }) {
   }, [hydrated, earnedSig, track]);
 
   const close = useCallback(() => {
-    setShowing(current => {
-      if (current) {
-        const seen = readSeen() ?? [];
-        writeSeen([...new Set([...seen, seenKey(track, current)])]);
-      }
-      return null;
-    });
-  }, [track]);
+    if (showing) markSeen([seenKey(track, showing)]);
+    setShowing(null);
+  }, [showing, track]);
 
   if (!showing) return null;
   return <StampReveal stamp={showing.stamp} camp={showing.camp} track={track} onClose={close} />;

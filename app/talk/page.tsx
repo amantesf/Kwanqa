@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import TalkPage from '@/components/TalkPage';
 import './call.css';
 import './talk.css';
+import './call.dark.css';
+import './talk.dark.css';
 
 export const metadata: Metadata = {
   title: 'Talk with Walia',

@@ -1,4 +1,6 @@
 import './globals.css';
+import './dark.generated.css';
+import './dark.css';
 import type { Metadata, Viewport } from 'next';
 import { Suspense, type ReactNode } from 'react';
 import { Noto_Sans_Ethiopic, Nunito } from 'next/font/google';
@@ -7,6 +9,7 @@ import Header from '@/components/Header';
 import Toaster from '@/components/Toaster';
 import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
+import { THEME_SCRIPT } from '@/lib/themeScript';
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -48,7 +51,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${nunito.variable} ${ethiopic.variable}`}>
+    // suppressHydrationWarning: THEME_SCRIPT may add data-theme before React loads
+    <html lang="en" data-scroll-behavior="smooth" className={`${nunito.variable} ${ethiopic.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
         <AuthProvider>
           <Header />

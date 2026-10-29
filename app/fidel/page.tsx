@@ -4,6 +4,7 @@ import FidelChart from '@/components/FidelChart';
 import FidelTabs from '@/components/FidelTabs';
 import { PageHero } from '@/components/sections';
 import './fidel.css';
+import './fidel.dark.css';
 
 export const metadata: Metadata = { title: 'The ፊደል alphabet' };
 

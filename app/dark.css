@@ -60,7 +60,7 @@ html[data-theme='dark'] .learn-nav-link[aria-current='page'] .learn-nav-label {
 }
 
 html[data-theme='dark'] .climb-art {
-  filter: brightness(0.8) saturate(0.85);
+  filter: brightness(0.7) saturate(0.85);
 }
 
 html[data-theme='dark'] .climb-night {

@@ -7,6 +7,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import Link from 'next/link';
 import { displayName, useAuth } from '@/components/AuthProvider';
+import { ThemeButton } from '@/components/ThemeToggle';
 import Logo from '@/components/Logo';
 import type { Track } from '@/lib/courses';
 
@@ -172,8 +173,9 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         <NavLink item={passport} icon={ICONS.passport} current={active === 'passport'} />
         <NavLink item={profile} icon={profileIcon} current={active === 'profile'} />
       </nav>
-      {user && (
-        <div className="learn-account">
+      <div className="learn-account">
+        <ThemeButton />
+        {user && (
           <button type="button" className="learn-logout" onClick={signOut} aria-label="Log out" title="Log out">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
@@ -182,8 +184,8 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
             </svg>
             <span className="learn-logout-text">Log out</span>
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </aside>
   );
 }

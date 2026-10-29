@@ -11,6 +11,7 @@ import { showToast } from '@/components/Toaster';
 import LearnSidebar from '@/components/LearnSidebar';
 import TopStats from '@/components/TopStats';
 import ReminderToggle from '@/components/ReminderToggle';
+import ThemeToggle from '@/components/ThemeToggle';
 import {
   altitudeFor,
   climbStreak,
@@ -470,6 +471,13 @@ export default function ProfileView() {
             >
               {profile ? 'Retake survey' : 'Take the survey'}
             </Link>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="pf-title">Settings</h2>
+          <div className="pf-card profile-settings">
+            <ThemeToggle />
           </div>
         </section>
 

@@ -5,16 +5,18 @@ import { onOtherTab, storage } from '@/lib/storage';
 // The questions each learner got wrong, kept per camp so they can be asked
 // again before the learner moves on to the next camp. The exact question is
 // saved (not just the word), so the review asks what they actually missed.
-// Like the climb, this lives in this browser's localStorage.
+// Like the climb, it's kept on this device and synced with the learner's
+// account (lib/accountSync.ts), so it follows them to the app or a new phone.
 
 const KEY = 'kwanqa-mistakes-v1';
 /** Most saved questions per camp; the oldest fall off first. */
-const MAX_PER_CAMP = 40;
+export const MAX_PER_CAMP = 40;
 /** Questions in one review session. */
 export const REVIEW_SIZE = 12;
 
 export type SavedMistake = { key: string; lesson: number; exercise: Exercise; at: number };
-type Store = Record<string, SavedMistake[]>;
+export type MistakeStore = Record<string, SavedMistake[]>;
+type Store = MistakeStore;
 
 const listeners = new Set<() => void>();
 
@@ -28,16 +30,33 @@ function readRaw(): string {
 
 function parse(raw: string): Store {
   try {
-    const value = JSON.parse(raw);
-    if (!value || typeof value !== 'object') return {};
-    const store: Store = {};
-    for (const [slug, list] of Object.entries(value)) {
-      if (Array.isArray(list)) store[slug] = list.filter(m => m && typeof m.key === 'string' && m.exercise);
-    }
-    return store;
+    return cleanMistakes(JSON.parse(raw));
   } catch {
     return {};
   }
+}
+
+/** Keeps only well-formed saved questions (from this device or the account). */
+export function cleanMistakes(value: unknown): Store {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const store: Store = {};
+  for (const [slug, list] of Object.entries(value).slice(0, 64)) {
+    if (!Array.isArray(list)) continue;
+    const kept = list
+      .filter(
+        m =>
+          m &&
+          typeof m.key === 'string' &&
+          typeof m.lesson === 'number' &&
+          typeof m.at === 'number' &&
+          m.exercise &&
+          typeof m.exercise === 'object' &&
+          typeof m.exercise.kind === 'string',
+      )
+      .slice(-MAX_PER_CAMP);
+    if (kept.length) store[slug] = kept;
+  }
+  return store;
 }
 
 function write(store: Store) {
@@ -47,6 +66,11 @@ function write(store: Store) {
     // storage full or blocked: the review just won't happen
   }
   listeners.forEach(fn => fn());
+}
+
+/** Calls back whenever the saved mistakes change. */
+export function subscribeMistakes(callback: () => void) {
+  return subscribe(callback);
 }
 
 function subscribe(callback: () => void) {
@@ -86,6 +110,21 @@ export function clearMistakes(slug: string, keys: string[]) {
   if (left.length) store[slug] = left;
   else delete store[slug];
   write(store);
+}
+
+/** Puts in the saved mistakes after syncing with the account. */
+export function replaceMistakes(store: Store) {
+  write(store);
+}
+
+/** Forgets every saved mistake on this device (on sign-out; the account keeps them). */
+export function clearAllMistakes() {
+  try {
+    storage().removeItem(KEY);
+  } catch {
+    // nothing to clear
+  }
+  listeners.forEach(fn => fn());
 }
 
 /** Saved mistakes for every camp, as they are right now. */

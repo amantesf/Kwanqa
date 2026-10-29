@@ -49,6 +49,16 @@ export function signInWithGoogle(): Promise<string | null> {
   return nativeGoogle ? signInWithGoogleNative() : signInWithGoogleBrowser();
 }
 
+/** Which app the Google token was made for, and whether it carries a nonce, for the logs (no secrets). */
+function tokenSummary(token: string) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return { audience: payload.aud, hasNonce: Boolean(payload.nonce) };
+  } catch {
+    return {};
+  }
+}
+
 /**
  * Like the website (components/GoogleButton.tsx): Google hands the app a
  * sign-in token, and Supabase checks it. Google shows "Kwanqa", never Supabase.
@@ -68,11 +78,19 @@ async function signInWithGoogleNative(): Promise<string | null> {
     const token = response.data.idToken;
     if (!token) return 'Google sign-in didn’t work. Please try again.';
     const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token });
-    return error ? 'Google sign-in didn’t work. Please try again.' : null;
+    if (error) {
+      // Supabase turned Google's token down: say why (usually a client ID or nonce setting)
+      console.warn('Kwanqa: Supabase rejected the Google sign-in', error.message, tokenSummary(token));
+      return `Google sign-in didn’t work. Please try again. (${error.message})`;
+    }
+    return null;
   } catch (error) {
     if (isErrorWithCode(error) && error.code === statusCodes.IN_PROGRESS) return null;
     if (isErrorWithCode(error) && error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) return 'Google sign-in needs Google Play services on this phone.';
-    return 'Google sign-in didn’t work. Please try again.';
+    // Google's own sign-in on the phone failed: say why (usually the iOS client ID)
+    console.warn('Kwanqa: Google sign-in failed on the phone', error);
+    const detail = isErrorWithCode(error) ? `${error.code}: ${error.message}` : error instanceof Error ? error.message : String(error);
+    return `Google sign-in didn’t work. Please try again. (${detail})`;
   }
 }
 

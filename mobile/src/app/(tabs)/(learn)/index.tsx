@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { BASE_ALTITUDE, climbStreak, hornLevel, isDone, nextLesson, startCamp, SUMMIT_ALTITUDE, trackCourses, useClimb, zoneForCamp } from '@/lib/climb';
@@ -8,6 +8,8 @@ import { courseContent, type Track } from '@/lib/courses';
 import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
+import CampArt from '@/components/camp-art';
+import Flag from '@/components/flag';
 import Mountain, { type MountainCamp } from '@/components/mountain';
 import { StampCelebration } from '@/components/passport';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
@@ -20,9 +22,9 @@ import { campColors, colors, fonts } from '@/theme';
 // The banner at the top names the camp you're looking at, and the trail opens
 // where Walia is standing. Progress is the same climb as the website's.
 
-const TRACKS: { id: Track; label: string }[] = [
-  { id: 'amharic', label: 'Amharic' },
-  { id: 'english', label: 'English' },
+const TRACKS: { id: Track; label: string; native: string; flag: 'ethiopia' | 'usa' }[] = [
+  { id: 'amharic', label: 'Amharic', native: 'አማርኛ', flag: 'ethiopia' },
+  { id: 'english', label: 'English', native: 'እንግሊዝኛ', flag: 'usa' },
 ];
 
 // how far each stone sits from the middle, row height, and where the stone sits in its row (as on the website)
@@ -39,10 +41,12 @@ type Box = { top: number; bottom: number };
 export default function Trail() {
   const profile = useProfile();
   const [guestTrack, setGuestTrack] = useState<Track>('amharic');
+  const [picking, setPicking] = useState(false);
   // the course comes from the learner's own choice in the survey
   const track: Track = profile?.track ?? guestTrack;
   // learners who already know some of the language start at a higher camp
   const start = startCamp(track, profile?.levels[track]);
+  const current = TRACKS.find(t => t.id === track) ?? TRACKS[0];
   const { width, height: screenH } = useWindowDimensions();
   const climb = useClimb();
   const mistakes = useMistakes();
@@ -152,24 +156,16 @@ export default function Trail() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       {/* "New stamp!" when a camp is finished */}
       <StampCelebration track={track} />
+      {/* one row like the website's top stats: the course, then streak, grass and horns */}
       <View style={styles.top}>
-        <View style={styles.tracks}>
-          {TRACKS.map(t => (
-            <Pressable
-              key={t.id}
-              onPress={() => {
-                if (profile) switchTrack(t.id);
-                else setGuestTrack(t.id);
-                setBoxes({});
-                setScrollY(null);
-              }}
-              style={[styles.track, track === t.id && styles.trackOn]}
-              accessibilityState={{ selected: track === t.id }}
-            >
-              <Text style={[styles.trackText, track === t.id && styles.trackTextOn]}>{t.label}</Text>
-            </Pressable>
-          ))}
-        </View>
+        <Pressable onPress={() => setPicking(true)} style={styles.course} accessibilityLabel={`Course: ${current.label}. Change course`} accessibilityRole="button">
+          <View style={styles.flag}>
+            <Flag name={current.flag} width={30} />
+          </View>
+          <Svg width={12} height={12} viewBox="0 0 24 24">
+            <Path d="M6 9l6 6 6-6" stroke={colors.muted} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </Svg>
+        </Pressable>
         <View style={styles.stats}>
           <View style={styles.stat} accessibilityLabel={`${streak.count} day climb streak`}>
             <Peak lit={streak.doneToday} size={26} />
@@ -185,6 +181,37 @@ export default function Trail() {
           </View>
         </View>
       </View>
+
+      {/* My courses: switch between Amharic and English */}
+      <Modal visible={picking} transparent animationType="fade" onRequestClose={() => setPicking(false)}>
+        <Pressable style={styles.menuBackdrop} onPress={() => setPicking(false)}>
+          <View style={styles.menu}>
+            <Text style={styles.menuTitle}>My courses</Text>
+            {TRACKS.map(t => (
+              <Pressable
+                key={t.id}
+                onPress={() => {
+                  if (profile) switchTrack(t.id);
+                  else setGuestTrack(t.id);
+                  setBoxes({});
+                  setScrollY(null);
+                  setPicking(false);
+                }}
+                style={[styles.menuItem, track === t.id && styles.menuItemOn]}
+                accessibilityState={{ selected: track === t.id }}
+              >
+                <View style={styles.flag}>
+                  <Flag name={t.flag} width={36} />
+                </View>
+                <View style={styles.flex}>
+                  <Text style={[styles.menuLabel, track === t.id && styles.menuLabelOn]}>{t.label}</Text>
+                  <Text style={styles.menuNative}>{t.native}</Text>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
 
       <View style={styles.flex} onLayout={e => setViewH(e.nativeEvent.layout.height)}>
         <ScrollView ref={scroller} onScroll={onScroll} scrollEventThrottle={32} onContentSizeChange={(_, h) => setContentH(h)}>
@@ -284,16 +311,16 @@ export default function Trail() {
           <Pressable
             onPress={() => router.push({ pathname: '/[slug]', params: { slug: shown.slug } })}
             style={({ pressed }) => [styles.banner, { backgroundColor: look.color, borderBottomColor: look.shadow }, pressed && styles.bannerDown]}
+            accessibilityRole="button"
+            accessibilityHint="Opens every phrase from this camp"
           >
+            <CampArt slug={shown.slug} camp={shownIdx} english={track === 'english'} />
             <Text style={styles.bannerKicker}>
               Camp {shownIdx + 1} · {shownLocked ? 'Locked' : zoneForCamp(shownIdx, camps.length).name}
             </Text>
             <Text style={styles.bannerTitle} numberOfLines={2}>
               {shown.description}
             </Text>
-            <View style={[styles.bannerButton, { borderColor: look.shadow }]}>
-              <Text style={styles.bannerButtonText}>Phrases</Text>
-            </View>
           </Pressable>
         ) : null}
       </View>
@@ -304,21 +331,24 @@ export default function Trail() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
-  top: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 10, gap: 10, borderBottomWidth: 2, borderBottomColor: colors.line, backgroundColor: colors.bg },
-  tracks: { flexDirection: 'row', gap: 8 },
-  track: { flex: 1, paddingVertical: 9, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, alignItems: 'center' },
-  trackOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
-  trackText: { fontFamily: fonts.heavy, fontSize: 15, color: colors.muted },
-  trackTextOn: { color: colors.primary },
-  stats: { flexDirection: 'row', justifyContent: 'space-around' },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 2, borderBottomColor: colors.line, backgroundColor: colors.bg },
+  course: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 4, paddingHorizontal: 6, borderRadius: 10 },
+  flag: { borderRadius: 5, overflow: 'hidden', borderWidth: 2, borderColor: colors.line },
+  stats: { flex: 1, flexDirection: 'row', justifyContent: 'space-around' },
+  menuBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', paddingTop: 110, paddingHorizontal: 16 },
+  menu: { gap: 8, padding: 14, borderRadius: 20, backgroundColor: '#ffffff', borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
+  menuTitle: { fontFamily: fonts.heavy, fontSize: 12, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.6, paddingHorizontal: 4 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 14, borderWidth: 2, borderColor: 'transparent' },
+  menuItemOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
+  menuLabel: { fontFamily: fonts.black, fontSize: 17, color: colors.ink },
+  menuLabelOn: { color: colors.primary },
+  menuNative: { fontFamily: fonts.amharic, fontSize: 14, color: colors.muted },
   stat: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statText: { fontFamily: fonts.black, fontSize: 17 },
-  banner: { position: 'absolute', top: 10, left: 12, right: 12, borderRadius: 18, borderBottomWidth: 5, padding: 14, paddingRight: 108, gap: 2 },
+  banner: { position: 'absolute', top: 10, left: 12, right: 12, minHeight: 84, justifyContent: 'center', overflow: 'hidden', borderRadius: 18, borderBottomWidth: 5, padding: 14, paddingRight: 112, gap: 2 },
   bannerDown: { borderBottomWidth: 2, top: 13 },
   bannerKicker: { fontFamily: fonts.heavy, fontSize: 12, color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: 0.4 },
   bannerTitle: { fontFamily: fonts.black, fontSize: 17, lineHeight: 22, color: '#ffffff' },
-  bannerButton: { position: 'absolute', right: 12, top: '50%', marginTop: -19, paddingHorizontal: 12, height: 38, justifyContent: 'center', borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, backgroundColor: 'rgba(255,255,255,0.12)' },
-  bannerButtonText: { fontFamily: fonts.heavy, fontSize: 14, color: '#ffffff' },
   summit: { alignItems: 'center', gap: 6, paddingTop: 128, paddingHorizontal: 20, zIndex: 2 },
   summitCard: { alignItems: 'center', gap: 4, padding: 16, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)' },
   summitKicker: { fontFamily: fonts.heavy, fontSize: 12, color: '#4d5866', textTransform: 'uppercase', letterSpacing: 0.6 },

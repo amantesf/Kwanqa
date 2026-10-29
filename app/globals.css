@@ -10990,3 +10990,132 @@ body:has(.practice-screen) {
     display: none;
   }
 }
+
+/* ---------- Reading the ፊደል in lessons (lib/letterLessons.ts) ---------- */
+
+/* "Which letter do you hear?": big single letters to pick from, in one row */
+.letter-options {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.letter-options .option {
+  position: relative;
+  flex: 1 1 80px;
+  max-width: 150px;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.letter-options .option-key {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.letter-options .option-text {
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+/* "Spell it with letters": letter tiles that join into one word */
+.letter-build .build-answer {
+  justify-content: center;
+  gap: 4px;
+}
+
+.letter-build .build-bank {
+  justify-content: center;
+}
+
+.letter-build .tile {
+  min-width: 66px;
+  padding: 6px 14px;
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+/* "Trace the new letter" */
+.letter-trace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.letter-trace-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.letter-trace-box {
+  width: min(260px, 72vw);
+  aspect-ratio: 1;
+  border: 2px dashed var(--border);
+  border-radius: 24px;
+  background:
+    linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat,
+    linear-gradient(var(--border), var(--border)) center / 1px 100% no-repeat,
+    var(--bg);
+  touch-action: none;
+}
+
+.letter-trace-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.letter-trace-char {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-strong);
+}
+
+.letter-trace-sound {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+.letter-trace-word {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.letter-trace-message {
+  min-height: 1.5em;
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .letter-trace-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .letter-trace-char {
+    font-size: 40px;
+  }
+
+  .letter-options .option {
+    min-height: 96px;
+  }
+
+  .letter-options .option-text {
+    font-size: 46px;
+  }
+}

@@ -23,6 +23,11 @@ import { courseCatalog } from '@/lib/courses';
 import { useProfile } from '@/lib/profile';
 import type { LessonSection, Track } from '@/lib/courses';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
+import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
+import LetterTrace from '@/components/LetterTrace';
+
+/** A question in a lesson: the shared kinds, plus "Trace the new letter", which only this screen can draw. */
+type Question = Exercise | TraceExercise;
 
 const MAX_STAMINA = 5;
 const STREAK_TO_RECOVER = 3;
@@ -288,8 +293,9 @@ export default function Practice({
   const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
   // What the learner said they know in the survey sets how hard the questions are.
   const level = useProfile()?.levels[track];
-  const [initial] = useState(() =>
-    review ? review.exercises : buildExercises(
+  const [initial] = useState<Question[]>(() => {
+    if (review) return review.exercises;
+    const questions: Question[] = buildExercises(
       lesson,
       courseLessons,
       track,
@@ -300,10 +306,16 @@ export default function Practice({
         listening: true,
         level,
         canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
+        // the Amharic course teaches reading the ፊደል as it goes
+        reading: track === 'amharic',
       },
-    ),
-  );
-  const [queue, setQueue] = useState<Exercise[]>(initial);
+    );
+    // and new learners trace each lesson's first new letter, early on
+    const trace = track === 'amharic' ? traceQuestion(lesson, level) : null;
+    if (trace) questions.splice(Math.min(1, questions.length), 0, trace);
+    return questions;
+  });
+  const [queue, setQueue] = useState<Question[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());
   // Questions missed once: when they come back they're labelled "Previous mistake".
   const [missed, setMissed] = useState<Set<string>>(new Set());
@@ -350,7 +362,7 @@ export default function Practice({
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
   // While answering they play only the part you can see (if recorded), never the answer.
   const promptAudio: Sound =
-    !current || current.kind === 'match'
+    !current || current.kind === 'match' || current.kind === 'trace'
       ? null
       : reveal && phase === 'feedback'
         ? (soundFor(reveal) ?? soundFor(current.prompt))
@@ -400,7 +412,9 @@ export default function Practice({
   // Once a question is answered, Walia says the right answer (the whole line,
   // in the language being learned), just after the right/wrong sound.
   const answerLine =
-    phase === 'feedback' && current && current.kind !== 'match' && !reveal ? (current.answerAudio ?? null) : null;
+    phase === 'feedback' && current && current.kind !== 'match' && current.kind !== 'trace' && !reveal
+      ? (current.answerAudio ?? null)
+      : null;
   const answerKey = answerLine ? `${current.id}:${queue.length}:answer` : null;
   useEffect(() => {
     if (!answerKey || !answerLine || sounds.muted) return;
@@ -410,7 +424,8 @@ export default function Practice({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answerKey]);
   // "Tap what you hear": the line stays hidden until it's answered.
-  const listening = !!current && current.kind !== 'match' && !!current.listen && phase !== 'feedback';
+  const listening =
+    !!current && current.kind !== 'match' && current.kind !== 'trace' && !!current.listen && phase !== 'feedback';
   const progress = initial.length ? solved.size / initial.length : 1;
   const horns = hornLevel(climb.grass);
   // Walia's face: puzzling over the question, then cheering or disappointed.
@@ -737,7 +752,7 @@ export default function Practice({
               <div key={`${mood}-${reaction?.n ?? 0}`} className="practice-walia" aria-hidden>
                 <Mascot mood={mood} size={110} hornScale={horns.scale} />
               </div>
-              {current.kind !== 'match' && (
+              {current.kind !== 'match' && current.kind !== 'trace' && (
                 <div className={`prompt-bubble${promptAudio ? ' has-audio' : ''}`}>
                   {promptAudio && (
                     <button type="button" className="prompt-speak" onClick={playPrompt} aria-label="Play the Amharic again">
@@ -772,7 +787,7 @@ export default function Practice({
 
           {current.kind === 'choice' ? (
             <>
-              <div className={`options${current.pictures ? ' picture-options' : ''}`}>
+              <div className={`options${current.pictures ? ' picture-options' : ''}${current.letters ? ' letter-options' : ''}`}>
                 {current.options.map((option, i) => {
                   const reveal = phase === 'feedback';
                   const state = reveal
@@ -826,7 +841,7 @@ export default function Practice({
               </div>
             </>
           ) : current.kind === 'build' ? (
-            <div className={`build${phase === 'feedback' ? (lastCorrect ? ' good' : ' bad') : ''}`}>
+            <div className={`build${current.letters ? ' letter-build' : ''}${phase === 'feedback' ? (lastCorrect ? ' good' : ' bad') : ''}`}>
               <div className="build-answer" aria-label="Your answer">
                 {picked.map(i => (
                   <button
@@ -867,7 +882,7 @@ export default function Practice({
                 })}
               </div>
             </div>
-          ) : (
+          ) : current.kind === 'match' ? (
             <MatchRound
               key={current.id + solved.size + queue.length}
               exercise={current}
@@ -878,6 +893,17 @@ export default function Practice({
                 if (stamina <= 1) setPhase('rest');
               }}
               onSolved={solveMatch}
+            />
+          ) : (
+            // tracing is for learning the letter, so a wobbly stroke never costs a heart
+            <LetterTrace
+              key={current.id + solved.size + queue.length}
+              exercise={current}
+              onSay={sayAloud}
+              onMistake={() => sounds.play('wrong')}
+              onDone={() => {
+                if (phase === 'question') solveMatch();
+              }}
             />
           )}
         </div>
@@ -898,7 +924,8 @@ export default function Practice({
             <FeedbackIcon good={lastCorrect} />
             <div className="feedback-text">
               <strong>{lastCorrect ? ui.good : ui.bad}</strong>
-              {current.kind !== 'match' && (
+              {current.kind === 'trace' && <span>{current.explain}</span>}
+              {current.kind !== 'match' && current.kind !== 'trace' && (
                 <span>
                   {lastCorrect
                     ? current.explain
@@ -924,10 +951,17 @@ export default function Practice({
             <span className="faint small">
               {streak > 0 ? ui.inARow(streak, STREAK_TO_RECOVER - streak) : ' '}
             </span>
-            {current.kind !== 'match' && (
-              <button type="button" className="btn" onClick={check} disabled={!canCheck}>
-                {ui.check}
+            {current.kind === 'trace' ? (
+              // like "Can't listen now": skip writing (on a phone in your pocket, say)
+              <button type="button" className="btn btn-secondary" onClick={solveMatch}>
+                Skip
               </button>
+            ) : (
+              current.kind !== 'match' && (
+                <button type="button" className="btn" onClick={check} disabled={!canCheck}>
+                  {ui.check}
+                </button>
+              )
             )}
           </>
           )}

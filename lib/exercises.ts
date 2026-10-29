@@ -1,6 +1,7 @@
 import type { LessonSection, Track } from '@/lib/courses';
 import type { Level } from '@/lib/profile';
 import { PICTURES, pictureFor, type Picture } from '@/lib/pictures';
+import { letterQuestions } from '@/lib/letterLessons';
 
 // Practice questions generated from a lesson's phrases and dialogue. The Amharic
 // course quizzes Amharic; the English course quizzes English, with Amharic as
@@ -33,6 +34,8 @@ export type ChoiceExercise = {
   answerAudio?: string;
   /** For beginners: how to read each Amharic option, shown small underneath it. */
   optionHints?: Record<string, string>;
+  /** Reading questions: the options are single ፊደል letters, shown large. */
+  letters?: boolean;
 };
 
 export type MatchExercise = {
@@ -59,6 +62,8 @@ export type BuildExercise = {
   listen?: boolean;
   /** For beginners: how to read each Amharic tile, shown small underneath it. */
   tileHints?: Record<string, string>;
+  /** Spelling questions: the tiles are single ፊደል letters that join into one word. */
+  letters?: boolean;
 };
 
 export type Exercise = ChoiceExercise | MatchExercise | BuildExercise;
@@ -310,6 +315,12 @@ export type BuildOptions = {
   canHear?: (text: string) => boolean;
   /** How much the learner already knows, from the survey: lessons get easier or harder to match. */
   level?: Level;
+  /**
+   * Reading the ፊደል (lib/letterLessons.ts): each Amharic lesson's quiz gets
+   * "Which letter do you hear?" and "Spell it with letters" questions about the
+   * letters in its words.
+   */
+  reading?: boolean;
 };
 
 type MainKind = 'meaning' | 'say' | 'listen' | 'word';
@@ -724,6 +735,18 @@ export function buildExercises(
   }
 
   if (d.readingHelp) addReadingHelp(exercises, poolCards);
+
+  // Reading the ፊደል: the letter questions are spread through the lesson
+  // (before the final matching round). Added after the reading help, so the
+  // letters don't come with their sounds written under them. Screens that can
+  // draw add a "Trace the new letter" question themselves (traceQuestion).
+  if (options.reading) {
+    const matchAt = exercises.findIndex(e => e.kind === 'match');
+    const body = matchAt >= 0 ? exercises.slice(0, matchAt) : [...exercises];
+    const tail = matchAt >= 0 ? exercises.slice(matchAt) : [];
+    spreadIn(body, letterQuestions(lesson, options.level));
+    exercises.splice(0, exercises.length, ...body, ...tail);
+  }
   return exercises;
 }
 

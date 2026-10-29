@@ -6,6 +6,8 @@
 // (the Simien Mountains have no snow), with Ethiopia's flag on the peak;
 // clouds drifting past, distant blue ranges and lakes off to the sides.
 // Camps you haven't reached yet sit under a layer of cloud.
+// In dark mode it's night: the classes on the sky, sun, clouds and distant
+// ranges are recoloured in app/dark.css, the sun becomes a moon and stars come out.
 //
 // It measures the climb it sits in (and where each camp starts and ends), so
 // the mountain always fits the trail, however many lessons there are.
@@ -71,7 +73,7 @@ function Pine({ x, y, s }: { x: number; y: number; s: number }) {
 
 function Cloud({ x, y, s, opacity = 0.95 }: { x: number; y: number; s: number; opacity?: number }) {
   return (
-    <g opacity={opacity}>
+    <g className="climb-cloud" opacity={opacity}>
       <ellipse cx={x} cy={y} rx={70 * s} ry={22 * s} fill="#fff" />
       <circle cx={x - 34 * s} cy={y - 12 * s} r={24 * s} fill="#fff" />
       <circle cx={x + 2 * s} cy={y - 26 * s} r={34 * s} fill="#fff" />
@@ -230,6 +232,15 @@ function draw({ w, h, peakY, camps }: Layout) {
     clouds.push({ x: k % 2 ? w - 30 + r() * 30 : 30 - r() * 30, y, s: 0.8 + r() * 0.5 });
   }
 
+  // Stars for the night sky (shown only in dark mode), above the meadow.
+  const stars = Array.from({ length: Math.round((w * (baseY - 120)) / 7000) }, () => ({
+    x: r() * w,
+    y: r() * (baseY - 160),
+    r: 0.8 + r() * 1.6,
+    twinkle: r() < 0.3,
+    delay: r() * 4,
+  }));
+
   // Camps you haven't reached wait above the clouds.
   const lockedCamps = camps.filter(c => c.locked);
   const lockLine = lockedCamps.length ? Math.max(...lockedCamps.map(c => c.bottom)) : null;
@@ -238,36 +249,67 @@ function draw({ w, h, peakY, camps }: Layout) {
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden>
       <defs>
         <linearGradient id="climb-sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={C.skyTop} />
-          <stop offset="0.5" stopColor="#c4e5f7" />
-          <stop offset="1" stopColor={C.skyBottom} />
+          <stop className="climb-sky-top" offset="0" stopColor={C.skyTop} />
+          <stop className="climb-sky-mid" offset="0.5" stopColor="#c4e5f7" />
+          <stop className="climb-sky-bottom" offset="1" stopColor={C.skyBottom} />
         </linearGradient>
         <linearGradient id="climb-lock" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.32" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0.22" />
+          <stop className="climb-lock-stop" offset="0" stopColor="#fff" stopOpacity="0.32" />
+          <stop className="climb-lock-stop" offset="1" stopColor="#fff" stopOpacity="0.22" />
         </linearGradient>
         <radialGradient id="climb-sun">
           <stop offset="0" stopColor="#fffbe0" />
           <stop offset="0.45" stopColor="#fff3b8" stopOpacity="0.9" />
           <stop offset="1" stopColor="#fff3b8" stopOpacity="0" />
         </radialGradient>
+        <radialGradient id="climb-moon-glow">
+          <stop offset="0" stopColor="#fff6d6" stopOpacity="0.45" />
+          <stop offset="1" stopColor="#fff6d6" stopOpacity="0" />
+        </radialGradient>
+        <mask id="climb-crescent">
+          <circle cx={w - 70} cy={peakY + 260} r={30} fill="#fff" />
+          <circle cx={w - 56} cy={peakY + 250} r={26} fill="#000" />
+        </mask>
         <clipPath id="climb-body">
           <path d={body} />
         </clipPath>
       </defs>
 
       <rect width={w} height={h} fill="url(#climb-sky)" />
-      <circle cx={w - 70} cy={peakY + 260} r={120} fill="url(#climb-sun)" />
+      <circle className="climb-sun" cx={w - 70} cy={peakY + 260} r={120} fill="url(#climb-sun)" />
+      {/* the night sky: only shown in dark mode */}
+      <g className="climb-night">
+        {stars.map((st, i) => (
+          <circle
+            key={i}
+            className={st.twinkle ? 'climb-star twinkle' : 'climb-star'}
+            cx={st.x}
+            cy={st.y}
+            r={st.r}
+            style={st.twinkle ? { animationDelay: `${st.delay.toFixed(2)}s` } : undefined}
+          />
+        ))}
+        <circle cx={w - 70} cy={peakY + 260} r={110} fill="url(#climb-moon-glow)" />
+        <rect
+          x={w - 110}
+          y={peakY + 220}
+          width={80}
+          height={80}
+          fill="#fdf3cf"
+          mask="url(#climb-crescent)"
+        />
+      </g>
       {[...ranges].reverse().map((m, i) => (
         <g key={i}>
-          <path d={m.d} fill={m.color} />
-          <path d={m.snow} fill={C.farRock} />
+          <path className={m.color === C.far ? 'climb-range' : 'climb-range far'} d={m.d} fill={m.color} />
+          <path className="climb-range-rock" d={m.snow} fill={C.farRock} />
         </g>
       ))}
-      <ellipse cx={-20} cy={baseY - 40} rx={180} ry={26} fill={C.lake} />
-      <ellipse cx={w + 30} cy={baseY - 10} rx={200} ry={30} fill={C.lake} />
-      {/* birds near the top */}
+      <ellipse className="climb-lake" cx={-20} cy={baseY - 40} rx={180} ry={26} fill={C.lake} />
+      <ellipse className="climb-lake" cx={w + 30} cy={baseY - 10} rx={200} ry={30} fill={C.lake} />
+      {/* birds near the top (asleep at night) */}
       <path
+        className="climb-birds"
         d={`M${cx - 190} ${peakY + 80} q8 -8 16 0 q8 -8 16 0 M${cx + 150} ${peakY + 30} q6 -6 12 0 q6 -6 12 0`}
         stroke="#fff"
         strokeWidth="3"

@@ -51,9 +51,89 @@ html[data-theme='dark'] .learn-nav-link[aria-current='page'] .learn-nav-label {
   color: color-mix(in srgb, var(--c) 70%, #fff);
 }
 
-/* The mountain drawing behind the trail, dimmed a little so it doesn't glare at night. */
+/* ---------- The mountain at night ----------
+   The sky turns deep blue, the sun becomes a crescent moon, stars come out,
+   clouds and the far-off ranges go moonlit blue-grey, and the birds go to sleep.
+   The rock and grass are dimmed so they look lit by the moon. */
+.climb-night {
+  display: none;
+}
+
 html[data-theme='dark'] .climb-art {
-  filter: brightness(0.72) saturate(0.9);
+  filter: brightness(0.8) saturate(0.85);
+}
+
+html[data-theme='dark'] .climb-night {
+  display: inline;
+}
+
+html[data-theme='dark'] .climb-sun,
+html[data-theme='dark'] .climb-birds {
+  display: none;
+}
+
+html[data-theme='dark'] .climb-sky-top {
+  stop-color: #0a1230;
+}
+
+html[data-theme='dark'] .climb-sky-mid {
+  stop-color: #16255a;
+}
+
+html[data-theme='dark'] .climb-sky-bottom {
+  stop-color: #2e3f78;
+}
+
+html[data-theme='dark'] .climb-star {
+  fill: #fffbea;
+  opacity: 0.85;
+}
+
+html[data-theme='dark'] .climb-star.twinkle {
+  animation: climb-twinkle 3.2s ease-in-out infinite;
+}
+
+@keyframes climb-twinkle {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+html[data-theme='dark'] .climb-cloud ellipse,
+html[data-theme='dark'] .climb-cloud circle {
+  fill: #56638a;
+}
+
+html[data-theme='dark'] .climb-cloud ellipse:last-child {
+  fill: #434f73;
+}
+
+/* the cloud veil over camps you haven't reached yet */
+html[data-theme='dark'] .climb-lock-stop {
+  stop-color: #0a1230;
+  stop-opacity: 0.4;
+}
+
+html[data-theme='dark'] .climb-range {
+  fill: #283a6e;
+}
+
+html[data-theme='dark'] .climb-range.far {
+  fill: #1e2d5c;
+}
+
+html[data-theme='dark'] .climb-range-rock {
+  fill: #3a4c80;
+}
+
+html[data-theme='dark'] .climb-lake {
+  fill: #31508e;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme='dark'] .climb-star.twinkle {
+    animation: none;
+  }
 }
 
 /* Text in a camp's own ink stays readable on dark cards. */

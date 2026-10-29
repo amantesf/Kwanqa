@@ -154,3 +154,22 @@ $$;
 
 revoke execute on function public.holiday_candidates() from public, anon, authenticated;
 grant execute on function public.holiday_candidates() to service_role;
+
+-- Mistakes and passport stamps, saved in the account so they follow the learner
+-- to the app or a new phone: the questions waiting to be practised again (per
+-- camp) and the stamps already celebrated. Safe to run more than once.
+alter table public.climbs add column if not exists mistakes jsonb not null default '{}'::jsonb;
+alter table public.climbs add column if not exists stamps jsonb not null default '[]'::jsonb;
+
+alter table public.climbs drop constraint if exists climbs_extras_shape;
+alter table public.climbs add constraint climbs_extras_shape check (
+  jsonb_typeof(mistakes) = 'object'
+  and jsonb_typeof(stamps) = 'array'
+);
+
+-- At most 40 saved questions per camp, about 1 KB each.
+alter table public.climbs drop constraint if exists climbs_extras_size;
+alter table public.climbs add constraint climbs_extras_size check (
+  length(mistakes::text) <= 700000
+  and length(stamps::text) <= 10000
+);

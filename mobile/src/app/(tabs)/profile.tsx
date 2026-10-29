@@ -7,7 +7,7 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { altitudeFor, climbStreak, hornLevel, isCallKey, trackCourses, trackTotals, useClimb, type Climb } from '@/lib/climb';
 import { courseContent, type Track } from '@/lib/courses';
 import { useProfile, type Profile as Survey } from '@/lib/profile';
-import { displayName, useAuth } from '@/auth';
+import { accountLabel, displayName, useAuth } from '@/auth';
 import Button from '@/components/button';
 import Flag from '@/components/flag';
 import { Grass, Peak } from '@/components/icons';
@@ -244,7 +244,7 @@ export default function Profile() {
                 <Text style={styles.name}>{fullName}</Text>
               </Pressable>
             )}
-            <Text style={styles.handle}>{user ? user.email : 'Saved on this phone'}</Text>
+            <Text style={styles.handle}>{user ? accountLabel(user) : 'Saved on this phone'}</Text>
             {joined ? <Text style={styles.joined}>Joined {joined}</Text> : null}
           </View>
           {survey ? <Flag name={survey.track === 'amharic' ? 'ethiopia' : 'usa'} width={44} /> : null}
@@ -313,7 +313,7 @@ export default function Profile() {
           <>
             <Text style={styles.title}>Account</Text>
             <View style={styles.card}>
-              <Text style={styles.switchTitle}>{user.email}</Text>
+              <Text style={styles.switchTitle}>{accountLabel(user)}</Text>
               <Text style={styles.switchText}>Your progress is saved to this account.</Text>
               <Reminders userId={user.id} />
               <Button label="Log out" tone="plain" onPress={() => void signOut()} />

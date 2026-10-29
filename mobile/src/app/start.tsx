@@ -1,12 +1,14 @@
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
-import { useEffect, type ReactNode } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, type ReactNode } from 'react';
 import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Ellipse, Path, Rect } from 'react-native-svg';
 import Button from '@/components/button';
 import { Grass } from '@/components/icons';
+import { readProfile } from '@/lib/profile';
+import { useAuth } from '@/auth';
 import { accountsEnabled } from '@/supabase';
 import { colors, fonts } from '@/theme';
 
@@ -55,6 +57,14 @@ function Buna() {
 }
 
 export default function Start() {
+  // Back here while signed in (say, after closing the sign-in sheet): go on
+  // in, to the trail or, with no survey answers yet, the survey.
+  const { user } = useAuth();
+  useFocusEffect(
+    useCallback(() => {
+      if (user) router.replace(readProfile() ? '/' : '/welcome');
+    }, [user]),
+  );
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.art}>

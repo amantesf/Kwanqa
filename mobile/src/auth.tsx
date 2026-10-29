@@ -44,7 +44,18 @@ export function displayName(user: User | null) {
   const meta = user?.user_metadata ?? {};
   const name = meta.name ?? meta.full_name;
   if (typeof name === 'string' && name.trim()) return name.trim().split(' ')[0];
+  if (hidesEmail(user)) return 'Kwanqa learner';
   return user?.email?.split('@')[0] ?? '';
+}
+
+/** Apple's "Hide My Email" gives a random relay address, not one to show. */
+function hidesEmail(user: User | null) {
+  return !!user?.email?.endsWith('@privaterelay.appleid.com');
+}
+
+/** The email to show for an account, or how they signed in when it's hidden. */
+export function accountLabel(user: User | null) {
+  return hidesEmail(user) ? 'Signed in with Apple (email hidden)' : (user?.email ?? '');
 }
 
 const RETRY_MS = 15000;

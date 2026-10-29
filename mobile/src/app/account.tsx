@@ -1,10 +1,10 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { readProfile } from '@/lib/profile';
-import { useAuth } from '@/auth';
+import { accountLabel, useAuth } from '@/auth';
 import Captcha from '@/components/captcha';
 import SocialButtons from '@/components/social-buttons';
 import Walia from '@/components/walia';
@@ -58,20 +58,24 @@ export default function Account() {
   // Signing in here (with email, Google or Apple) brings back the account's
   // survey answers and progress, which arrive a moment later. Wait briefly
   // for them, then go to the trail; with none saved, the survey comes first.
-  const signedOutAtStart = useRef(!user);
+  const [leaving, setLeaving] = useState(false);
+  const goIn = () => {
+    if (router.canDismiss()) router.dismissAll();
+    router.replace(readProfile() ? '/' : '/welcome');
+  };
   useEffect(() => {
-    if (!user || !signedOutAtStart.current) return;
+    if (!user || leaving) return;
     let tries = 0;
     const timer = setInterval(() => {
       tries++;
       if (readProfile() || tries >= 12) {
         clearInterval(timer);
-        if (router.canDismiss()) router.dismissAll();
-        router.replace(readProfile() ? '/' : '/welcome');
+        setLeaving(true);
+        goIn();
       }
     }, 200);
     return () => clearInterval(timer);
-  }, [user]);
+  }, [user, leaving]);
 
   async function submit() {
     if (!supabase || busy) return;
@@ -101,13 +105,12 @@ export default function Account() {
       });
       setBusy(false);
       if (error) return setError(friendly(error.message));
-      if (data.session) return close();
+      if (data.session) return; // signed in: the effect above takes them in
       setSentTo(email.trim()); // email confirmation is on: wait for the link
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password, options: { captchaToken: token } });
       setBusy(false);
       if (error) return setError(friendly(error.message));
-      close();
     }
   }
 
@@ -134,8 +137,8 @@ export default function Account() {
             <View style={styles.center}>
               <Walia pose="wave" size={110} />
               <Text style={styles.title}>You’re logged in</Text>
-              <Text style={styles.lead}>{user.email}</Text>
-              <Button label="Continue climbing" onPress={close} />
+              <Text style={styles.lead}>{accountLabel(user)}</Text>
+              <Button label="Continue climbing" onPress={goIn} />
             </View>
           ) : resetSentTo ? (
             <View style={styles.center}>

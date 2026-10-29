@@ -10,11 +10,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type HanziWriter from 'hanzi-writer';
-import type { CharacterJson } from 'hanzi-writer';
 import { FIDEL, VOWELS } from '@/lib/fidel';
+import { loadFamily, loadLetter } from '@/lib/fidelStrokes';
 
 type Mode = 'watch' | 'trace' | 'memory';
-type Family = Record<string, CharacterJson>;
 
 const DONE_KEY = 'kwanqa-fidel-written';
 const MUTE_KEY = 'kwanqa-sound-off';
@@ -36,29 +35,6 @@ function effect(kind: 'correct' | 'wrong') {
   } catch {
     // no sound is fine
   }
-}
-
-// one fetch per family, shared by every letter in it
-const families = new Map<string, Promise<Family>>();
-
-function loadFamily(base: string) {
-  const code = base.codePointAt(0)!.toString(16);
-  if (!families.has(code)) {
-    families.set(
-      code,
-      fetch(`/fidel-strokes/${code}.json`).then(r => {
-        if (!r.ok) throw new Error(`no strokes for ${base}`);
-        return r.json() as Promise<Family>;
-      }),
-    );
-  }
-  return families.get(code)!;
-}
-
-function familyOf(char: string) {
-  // fidel families sit in blocks of eight code points; the first is the base letter
-  const code = char.codePointAt(0)!;
-  return String.fromCodePoint(code - ((code - 0x1200) % 8));
 }
 
 function SpeakerIcon() {
@@ -104,11 +80,7 @@ export default function FidelWrite() {
         width: size,
         height: size,
         padding: Math.round(size * 0.08),
-        charDataLoader: (char, onLoad, onError) => {
-          loadFamily(familyOf(char))
-            .then(f => (f[char] ? onLoad(f[char]) : onError(new Error(`no strokes for ${char}`))))
-            .catch(onError);
-        },
+        charDataLoader: loadLetter,
         showOutline: true,
         strokeColor: '#3c3c3c',
         outlineColor: '#e8e2dc',

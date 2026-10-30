@@ -792,7 +792,8 @@ function addReadingHelp(exercises: Exercise[], cards: Card[]) {
  * Pictures all through the lesson, not just in the picture questions:
  * - "What does this mean?" and "Tap what you hear" about a word with a picture
  *   become picture cards ("Select the correct picture"): the wrong answers are
- *   swapped for other words with pictures, from this lesson first.
+ *   swapped for other words with pictures, from this lesson first. "What does
+ *   this mean?" cards hide their words until answered.
  * - Every other question about a word with a picture shows it with the answer
  *   once it's answered (ውሃ እፈልጋለሁ → the glass of water).
  * Only questions asked in the language being learned get picture cards: for
@@ -860,6 +861,9 @@ function addPictures(exercises: Exercise[], cards: Card[], lessonCards: Card[], 
           ex.pictures = Object.fromEntries(
             options.map(o => [o.text, { src: o.picture!.src, transliteration: amharicOptions ? o.picture!.transliteration : '' }]),
           );
+          // "What does ሽሮ (shiro) mean?": a card saying "shiro" would give it away, so
+          // the cards show only their pictures until it's answered
+          if (ex.id.startsWith('meaning-')) ex.hideWords = true;
           ex.instruction =
             track === 'english' ? 'ትክክለኛውን ስዕል ይምረጡ · Select the correct picture' : ex.id.startsWith('listen-') ? 'Tap the picture you hear' : 'Select the correct picture';
           continue;

@@ -48,6 +48,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ግራ', transliteration: 'gira', english: 'left', src: '/pictures/gira.png' },
   { amharic: 'ቀጥታ', transliteration: 'qetita', english: 'straight ahead', src: '/pictures/qetita.png' },
   { amharic: 'መንገድ', transliteration: 'menged', english: 'road', src: '/pictures/menged.png' },
+  { amharic: 'ሰዓት', transliteration: 'se\'at', english: 'clock', src: '/pictures/seat.png' },
 ];
 
 export function pictureFor(amharic: string) {

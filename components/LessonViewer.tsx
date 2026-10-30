@@ -9,6 +9,7 @@ import Trail from '@/components/Trail';
 import { hornLevel, isDone, useClimb } from '@/lib/climb';
 import { reviewSession, useMistakes } from '@/lib/mistakes';
 import type { LessonSection, Track } from '@/lib/courses';
+import { pictureFor } from '@/lib/pictures';
 
 type Props = {
   slug: string;
@@ -42,8 +43,14 @@ function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolea
       {phrases.map((phrase, idx) => {
         const hidden = quiz && !revealed.has(idx);
         const side = sides(phrase, track);
+        const picture = pictureFor(phrase.amharic.replace(/[።፣፤፥፦፧?!.,]/g, '').trim());
         const body = (
           <>
+            {picture && (
+              // in the quiz the picture would give the meaning away, so it's blurred until revealed
+              // eslint-disable-next-line @next/next/no-img-element -- small local pictures
+              <img className={`phrase-picture${hidden ? ' hidden' : ''}`} src={picture.src} alt="" />
+            )}
             <span className="phrase-am">{side.learn}</span>
             {side.say && <span className="phrase-tr">{side.say}</span>}
             <span className={`phrase-en${hidden ? ' hidden' : ''}`}>

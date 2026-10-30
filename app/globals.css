@@ -2194,6 +2194,20 @@ button.phrase-card:hover {
   background-color: var(--bg-soft);
 }
 
+/* a phrase with a picture (ሽሮ, ውሃ...) shows it at the top of its card */
+.phrase-picture {
+  width: 84px;
+  height: 84px;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.phrase-picture.hidden {
+  filter: blur(10px) grayscale(1);
+  opacity: 0.35;
+}
+
 .phrase-am {
   font-size: 22px;
   font-weight: 700;

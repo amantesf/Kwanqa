@@ -238,7 +238,9 @@ const PUNCT = /[።፣፤፥፦፧?!.,]/g;
  * Amharic; the English course asks in Amharic and answers in English.
  */
 function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercise; read: ChoiceExercise } {
-  const others = shuffle(PICTURES.filter(p => p.amharic !== pictured.amharic)).slice(0, 2);
+  // wrong answers that can't be mistaken for it (not the mother for "my sister")
+  const lookalike = (p: Picture) => !!pictured.group && p.group === pictured.group;
+  const others = shuffle(PICTURES.filter(p => p.amharic !== pictured.amharic && !lookalike(p))).slice(0, 2);
   const cards = [pictured, ...others];
   if (track === 'english') {
     const pictures = Object.fromEntries(cards.map(p => [p.english, { src: p.src, transliteration: '' }]));

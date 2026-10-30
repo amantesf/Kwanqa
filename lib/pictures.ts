@@ -2,7 +2,17 @@
 // A lesson that teaches one of these words gets picture questions for it;
 // the other pictures are the wrong answers.
 
-export type Picture = { amharic: string; transliteration: string; english: string; src: string };
+export type Picture = {
+  amharic: string;
+  transliteration: string;
+  english: string;
+  src: string;
+  /**
+   * Pictures that look alike (the family portraits, sugar and salt) share a
+   * group and are never the wrong answers for each other.
+   */
+  group?: 'family' | 'white-bowl';
+};
 
 export const PICTURES: Picture[] = [
   { amharic: 'ቡና', transliteration: 'buna', english: 'coffee', src: '/pictures/buna.png' },

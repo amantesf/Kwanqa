@@ -527,7 +527,7 @@ export default function Practice() {
             {missed.has(current.id) ? <Text style={styles.retry}>{ui.previous}</Text> : null}
             <Text style={styles.instruction}>{current.instruction}</Text>
 
-            {!(current.kind === 'choice' && current.pictures && !current.hideWords) && current.kind !== 'trace' && (
+            {!(current.kind === 'choice' && current.id === 'picture-see') && current.kind !== 'trace' && (
               <View style={styles.ask}>
                 <Walia mood={mood} size={96} />
                 {current.kind !== 'match' && (

@@ -747,7 +747,7 @@ export default function Practice({
           <h2 className="practice-instruction">{current.instruction}</h2>
 
           {/* "Which one of these is “coffee”?" already says it all, so the cards come straight after */}
-          {!(current.kind === 'choice' && current.pictures && !current.hideWords) && (
+          {!(current.kind === 'choice' && current.id === 'picture-see') && (
             <div className="practice-ask">
               <div key={`${mood}-${reaction?.n ?? 0}`} className="practice-walia" aria-hidden>
                 <Mascot mood={mood} size={110} hornScale={horns.scale} />

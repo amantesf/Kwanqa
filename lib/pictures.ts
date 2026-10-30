@@ -28,6 +28,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'እናቴ', transliteration: 'ənnate', english: 'my mother', src: '/pictures/inate.png', group: 'family' },
   { amharic: 'እህቴ', transliteration: 'əhtē', english: 'my sister', src: '/pictures/ihite.png', group: 'family' },
   { amharic: 'ወንድሜ', transliteration: 'wəndime', english: 'my brother', src: '/pictures/wendime.png', group: 'family' },
+  { amharic: 'አያቴ', transliteration: 'ayyate', english: 'my grandmother', src: '/pictures/ayate.png', group: 'family' },
 ];
 
 export function pictureFor(amharic: string) {

@@ -15,6 +15,7 @@ import { StampCelebration } from '@/components/passport';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
 import Walia from '@/components/walia';
 import { campColors, fonts, makeStyles, useColors, useScheme } from '@/theme';
+import OfflineNote from '@/components/offline-note';
 
 // The trail, like the website's Learn page (components/CoursesRoadmap.tsx and
 // Trail.tsx): one mountain from the meadow at the trailhead up to the summit,
@@ -199,6 +200,7 @@ export default function Trail() {
           </View>
         </View>
       </View>
+      <OfflineNote />
 
       {/* My courses: switch between Amharic and English */}
       <Modal visible={picking} transparent animationType="fade" onRequestClose={() => setPicking(false)}>

@@ -11,6 +11,7 @@ import PassportStamp from '@/components/passport-stamp';
 import { useProfile } from '@/lib/profile';
 import Walia from '@/components/walia';
 import { fonts, makeStyles, useColors } from '@/theme';
+import OfflineNote from '@/components/offline-note';
 
 // Everything beyond the trail, like the website's menu: the phrasebook,
 // passport, proverbs, holidays and flashcards.
@@ -62,6 +63,7 @@ export default function Explore() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.page}>
         <Text style={styles.heading}>Explore</Text>
+        <OfflineNote text="You’re offline. Proverbs, holidays and the phrasebook still work, but sounds and pictures need the internet." />
 
         <Pressable onPress={() => router.push('/explore/proverbs')} style={({ pressed }) => [styles.today, pressed && styles.rowDown]} accessibilityRole="button">
           <Text style={styles.todayKicker}>Today’s proverb</Text>

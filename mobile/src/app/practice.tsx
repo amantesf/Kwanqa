@@ -20,6 +20,7 @@ import Walia, { type Mood } from '@/components/walia';
 import LetterTrace from '@/components/letter-trace';
 import { siteUrl } from '@/site';
 import { fonts, makeStyles, useColors } from '@/theme';
+import OfflineNote from '@/components/offline-note';
 
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
@@ -498,6 +499,7 @@ export default function Practice() {
           ))}
         </View>
       </View>
+      <OfflineNote text="You’re offline. Keep going: your progress is saved on this phone. Sounds need the internet." />
 
       <ScrollView contentContainerStyle={styles.body}>
         {phase === 'cheer' && CHEERS[combo] ? (

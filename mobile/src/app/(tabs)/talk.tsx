@@ -12,6 +12,8 @@ import { useAuth } from '@/auth';
 import Button from '@/components/button';
 import Walia from '@/components/walia';
 import { fonts, makeStyles, tabBarTop } from '@/theme';
+import OfflineNote from '@/components/offline-note';
+import { useOnline } from '@/online';
 
 // Talk with Walia, like the website's /talk (components/TalkPage.tsx): pick a
 // call by level, and Walia rings. Calls use real speech recognition, so they
@@ -61,6 +63,7 @@ function text(track: Track) {
 
 export default function Talk() {
   const styles = useStyles();
+  const online = useOnline();
   const profile = useProfile();
   const climb = useClimb();
   const { user, enabled, loading } = useAuth();
@@ -81,6 +84,7 @@ export default function Talk() {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.page}>
+        <OfflineNote text="You’re offline. Calls with Walia need the internet, so they’ll be here when you’re back online." />
         <View style={styles.tracks}>
           {(['amharic', 'english'] as Track[]).map(k => (
             <Pressable key={k} onPress={() => setTrack(k)} style={[styles.chip, track === k && styles.chipOn]}>
@@ -126,7 +130,7 @@ export default function Talk() {
               <Text style={styles.levelTitle}>{t.level(level.id, level.label)}</Text>
               {list.map(c => {
                 const best = callBest(climb, c.slug);
-                const ready = !locked && gender !== null;
+                const ready = !locked && gender !== null && online;
                 return (
                   <View key={c.slug} style={styles.call}>
                     <View style={styles.callText}>

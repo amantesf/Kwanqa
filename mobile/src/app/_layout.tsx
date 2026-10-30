@@ -4,10 +4,12 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { AuthProvider } from '@/auth';
+import Intro from '@/components/intro';
 import { loadProgress } from '@/progress';
 import { colors } from '@/theme';
 
 // keep the splash screen up until the fonts and saved progress are ready
+// (then Intro takes over from it)
 SplashScreen.preventAutoHideAsync();
 
 // The tabs, with practice opening over them full screen and the account
@@ -29,10 +31,6 @@ export default function RootLayout() {
     loadProgress().then(() => setProgressReady(true));
   }, []);
 
-  useEffect(() => {
-    if (ready) SplashScreen.hideAsync();
-  }, [ready]);
-
   if (!ready) return null;
 
   return (
@@ -46,6 +44,7 @@ export default function RootLayout() {
         <Stack.Screen name="welcome" />
         <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
       </Stack>
+      <Intro />
     </AuthProvider>
   );
 }

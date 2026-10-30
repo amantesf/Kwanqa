@@ -51,6 +51,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ሰዓት', transliteration: 'se\'at', english: 'clock', src: '/pictures/seat.png' },
   { amharic: 'ጠዋት', transliteration: 'tewat', english: 'morning', src: '/pictures/tewat.png' },
   { amharic: 'ማታ', transliteration: 'mata', english: 'evening', src: '/pictures/mata.png' },
+  { amharic: 'መስጊድ', transliteration: 'mesgid', english: 'mosque', src: '/pictures/mesgid.png' },
 ];
 
 export function pictureFor(amharic: string) {

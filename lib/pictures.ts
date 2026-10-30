@@ -46,6 +46,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ቲማቲም', transliteration: 'timatim', english: 'tomato', src: '/pictures/timatim.png' },
   { amharic: 'ቀኝ', transliteration: 'qegn', english: 'right', src: '/pictures/qegn.png' },
   { amharic: 'ግራ', transliteration: 'gira', english: 'left', src: '/pictures/gira.png' },
+  { amharic: 'ቀጥታ', transliteration: 'qetita', english: 'straight ahead', src: '/pictures/qetita.png' },
 ];
 
 export function pictureFor(amharic: string) {

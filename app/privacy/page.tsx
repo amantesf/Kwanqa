@@ -4,7 +4,7 @@ import { PageHero } from '@/components/sections';
 export const metadata: Metadata = { title: 'Privacy policy' };
 
 const CONTACT = 'kwanqa.team@gmail.com';
-const UPDATED = 'October 25, 2026';
+const UPDATED = 'October 30, 2026';
 
 // Plain-language privacy policy. Keep it in step with what the site actually
 // collects, and have it reviewed by a lawyer before a public launch.
@@ -54,6 +54,14 @@ export default function PrivacyPage() {
                 and which lessons are finished, with the visitor’s country, device type, browser,
                 and the site they came from. It uses no cookies and doesn’t identify you, and we only
                 see totals.
+              </li>
+              <li>
+                <strong>Lesson activity:</strong> when you open kwanqa (once a day), start a lesson,
+                finish it, or leave it early, we save that event with the lesson, your level from the
+                survey, how many questions you answered, and whether you’re on the website or the
+                app. Each device gets a random ID, kept in your browser, so we can count how many
+                people come back; it isn’t linked to your name or email. If you’re logged in, the event
+                is also linked to your account. Only the kwanqa team sees these, as totals.
               </li>
             </ul>
 

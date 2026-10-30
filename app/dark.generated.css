@@ -648,3 +648,15 @@
 :where(html[data-theme='dark']) .passport-page-lesson {
     color: #79ecc9
 }
+:where(html[data-theme='dark']) .stats-period {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .stats-card {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .stats-chart {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .stats-table-wrap {
+    background: #1a2428
+}

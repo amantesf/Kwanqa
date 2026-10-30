@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/auth/', '/app-captcha', '/profile', '/delete-account', '/reset-password', '/unsubscribe'],
+      disallow: ['/api/', '/auth/', '/app-captcha', '/profile', '/stats', '/delete-account', '/reset-password', '/unsubscribe'],
     },
     sitemap: 'https://kwanqa.com/sitemap.xml',
   };

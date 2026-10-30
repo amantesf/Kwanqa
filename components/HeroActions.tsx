@@ -45,7 +45,7 @@ export default function HeroActions() {
         </Link>
         {enabled && (
           <Link href="/login" className="btn btn-secondary">
-            I already have an account
+            Log in
           </Link>
         )}
       </div>

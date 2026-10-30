@@ -47,7 +47,7 @@ const REASON: Record<string, string> = {
   fun: 'Just for fun',
   other: 'Something else',
 };
-const GOAL: Record<number, string> = { 5: 'Casual', 10: 'Regular', 15: 'Serious', 20: 'Intense' };
+const GOAL: Record<number, string> = { 5: 'A stroll', 10: 'A hike', 15: 'A climb', 20: 'Summit push' };
 
 function lessonsDone(climb: Climb) {
   return Object.entries(climb.completed)
@@ -330,7 +330,7 @@ export default function ProfileView() {
       <LearnSidebar active="profile" track={track} />
 
       <div className="learn-main pf-main">
-        {/* Banner, like Duolingo's: a big avatar on a mountain backdrop */}
+        {/* Banner: a big avatar on a mountain backdrop */}
         <section className="pf-banner">
           <MountainScene className="pf-banner-art" />
           <div className="pf-avatar">{fullName.charAt(0).toUpperCase()}</div>
@@ -499,7 +499,7 @@ export default function ProfileView() {
         </section>
       </div>
 
-      {/* Right column, like Duolingo's: stats on top, then cards */}
+      {/* Right column: stats on top, then cards */}
       <aside className="learn-rail pf-rail" aria-label="More">
         <TopStats track={track} />
 

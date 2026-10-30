@@ -89,7 +89,7 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
 
   const [active, setActive] = useState(initial);
   // Opened from a trail stone (?practice=1): go straight into practice, and
-  // return to the trail when the learner exits or finishes, like Duolingo.
+  // return to the trail when the learner exits or finishes.
   const [fromTrail, setFromTrail] = useState(params.get('practice') === '1');
   const [mode, setMode] = useState<'learn' | 'practice'>(fromTrail ? 'practice' : 'learn');
   // Opened from the review stone (?review=1): ask the camp's missed questions again.

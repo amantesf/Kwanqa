@@ -10,7 +10,7 @@ import { nextLesson, startCamp, trackCourses, useClimb } from '@/lib/climb';
 import { courseContent, type Track } from '@/lib/courses';
 import { useProfile } from '@/lib/profile';
 
-// A guide to a whole camp, like Duolingo's guidebook: every lesson's key
+// A guide to a whole camp: every lesson's key
 // phrases and dialogue on one page. It opens on the camp the learner is
 // currently climbing (or the camp named in ?camp=, from a camp banner).
 export default function Phrasebook() {

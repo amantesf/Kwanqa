@@ -8,7 +8,7 @@ export type Level = 'new' | 'some-words' | 'basic' | 'conversational';
 
 export type Profile = {
   track: Track; // the course being climbed right now
-  tracks: Track[]; // every course the learner has chosen (like Duolingo's "My courses")
+  tracks: Track[]; // every course the learner has chosen 
   speaks: string[];
   level: Level; // the answer for `track` when the survey was taken
   /** How much of each language the learner already knew; decides where their trail starts. */

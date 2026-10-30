@@ -1,7 +1,7 @@
 'use client';
 
-// The left navigation shared by the learn dashboard and the profile page,
-// like Duolingo's sidebar. Each page has its own colour: a little app-style
+// The left navigation shared by the learn dashboard and the profile page.
+// Each page has its own colour: a little app-style
 // tile with a white symbol, the English name and its Amharic name underneath.
 
 import type { CSSProperties, ReactNode } from 'react';

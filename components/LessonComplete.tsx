@@ -1,6 +1,6 @@
 'use client';
 
-// The "Lesson complete!" screen, like Duolingo's: Walia hops up the mountain
+// The "Lesson complete!" screen: Walia hops up the mountain
 // to the flag at the top, celebrates, and the lesson's results sit below.
 
 import type { Track } from '@/lib/courses';

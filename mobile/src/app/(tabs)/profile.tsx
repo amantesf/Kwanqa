@@ -25,7 +25,7 @@ import { colors, fonts, tabBarTop } from '@/theme';
 const LANGUAGE: Record<string, string> = { amharic: 'Amharic', english: 'English', oromo: 'Afaan Oromo', tigrinya: 'Tigrinya', other: 'Another language' };
 const LEVEL: Record<Survey['level'], string> = { new: 'Brand new', 'some-words': 'Knows some common words', basic: 'Basic conversations', conversational: 'Can talk about most topics' };
 const REASON: Record<string, string> = { family: 'Talk with family', heritage: 'Connect with heritage', travel: 'Travel to Ethiopia', work: 'Work or school', fun: 'Just for fun', other: 'Something else' };
-const GOAL: Record<number, string> = { 5: 'Casual', 10: 'Regular', 15: 'Serious', 20: 'Intense' };
+const GOAL: Record<number, string> = { 5: 'A stroll', 10: 'A hike', 15: 'A climb', 20: 'Summit push' };
 
 const lessonsDone = (climb: Climb) => Object.entries(climb.completed).filter(([key]) => !isCallKey(key)).reduce((sum, [, list]) => sum + list.length, 0);
 const campsDone = (climb: Climb) => Object.entries(courseContent).filter(([slug, course]) => course.sections.every((_, i) => climb.completed[slug]?.includes(i))).length;

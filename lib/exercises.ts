@@ -439,7 +439,7 @@ export function buildExercises(
   lesson: LessonSection,
   courseLessons: LessonSection[],
   track: Track = 'amharic',
-  /** The very first lesson of the course opens with a picture question, like Duolingo. */
+  /** The very first lesson of the course opens with a picture question. */
   firstLesson = false,
   options: BuildOptions = {},
 ): Exercise[] {

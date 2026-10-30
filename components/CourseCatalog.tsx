@@ -252,7 +252,7 @@ export default function CourseCatalog() {
               Get started
             </Link>
             <Link href="/login?next=%2Fcourses" className="btn btn-secondary">
-              I already have an account
+              Log in
             </Link>
           </div>
         </div>

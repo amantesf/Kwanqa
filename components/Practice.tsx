@@ -34,7 +34,7 @@ const STREAK_TO_RECOVER = 3;
 
 type Phase = 'question' | 'feedback' | 'cheer' | 'rest' | 'done';
 
-// Mid-lesson encouragement, like Duolingo's "Super impressive!": after this many
+// Mid-lesson encouragement: after this many
 // correct answers in a row, Walia pops up with a few words of praise.
 const CHEERS: Record<number, { amharic: string; transliteration: string; english: string }> = {
   3: { amharic: 'ጎበዝ!', transliteration: 'gobez!', english: 'Well done. 3 in a row!' },
@@ -537,7 +537,7 @@ export default function Practice({
     }
   }
 
-  // Keyboard, like Duolingo: number keys pick an answer, Enter checks or continues.
+  // Keyboard: number keys pick an answer, Enter checks or continues.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;

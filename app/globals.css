@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Kwanqa design system — playful, chunky, Duolingo-inspired, in Ethiopian colors.
+   Kwanqa design system — playful and chunky, in Ethiopian colors.
    Every page uses these tokens and classes so the look stays consistent.
    ========================================================================== */
 
@@ -6049,7 +6049,7 @@ a.rail-link:hover {
 }
 
 /* --------------------------------------------------------------------------
-   Practice takes over the whole screen, like Duolingo: progress across the
+   Practice takes over the whole screen: progress across the
    top, the question big in the middle, a full-width feedback bar at the bottom.
    -------------------------------------------------------------------------- */
 
@@ -7166,7 +7166,7 @@ body:has(.practice-screen) {
   }
 }
 
-/* ---------- Profile, Duolingo-style ---------- */
+/* ---------- Profile ---------- */
 .pf-main {
   gap: 34px;
   padding-top: 28px;
@@ -9070,7 +9070,7 @@ body:has(.practice-screen) {
   }
 }
 
-/* Word tiles: tap words into the answer line, like Duolingo's word bank. */
+/* Word tiles: tap words into the answer line, a word bank. */
 .build {
   display: flex;
   flex-direction: column;

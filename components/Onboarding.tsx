@@ -125,10 +125,10 @@ export default function Onboarding() {
       key: 'dailyMinutes',
       question: 'What’s your daily learning goal?',
       options: [
-        { value: '5', label: 'Casual', sub: '5 min / day' },
-        { value: '10', label: 'Regular', sub: '10 min / day' },
-        { value: '15', label: 'Serious', sub: '15 min / day' },
-        { value: '20', label: 'Intense', sub: '20 min / day' },
+        { value: '5', label: 'A stroll', sub: '5 min / day' },
+        { value: '10', label: 'A hike', sub: '10 min / day' },
+        { value: '15', label: 'A climb', sub: '15 min / day' },
+        { value: '20', label: 'Summit push', sub: '20 min / day' },
       ],
     },
   ];

@@ -224,7 +224,7 @@ export default function CoursesRoadmap() {
     return () => observer.disconnect();
   }, [track, nextKey]);
 
-  // Like Duolingo's unit header, the floating banner names (and takes the
+  // The floating banner names (and takes the
   // colour of) the camp you're scrolling through. Until the page scrolls it
   // shows the camp being climbed.
   useEffect(() => {
@@ -458,7 +458,7 @@ export default function CoursesRoadmap() {
 
         {guest && (
           <div className="rail-card">
-            <h3 className="rail-title">Create a profile to save your progress!</h3>
+            <h3 className="rail-title">Keep your climb safe</h3>
             <p className="small">
               Your climb is only saved on this device. Sign up free to keep your grass, horns, and
               progress on any device.

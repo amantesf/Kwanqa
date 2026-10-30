@@ -36,6 +36,8 @@ export type ChoiceExercise = {
   optionHints?: Record<string, string>;
   /** Reading questions: the options are single ፊደል letters, shown large. */
   letters?: boolean;
+  /** The picture of the word this question is about, shown with the answer once it's answered. */
+  answerPicture?: string;
 };
 
 export type MatchExercise = {
@@ -64,6 +66,8 @@ export type BuildExercise = {
   tileHints?: Record<string, string>;
   /** Spelling questions: the tiles are single ፊደል letters that join into one word. */
   letters?: boolean;
+  /** The picture of a word in the answer, shown with it once it's answered. */
+  answerPicture?: string;
 };
 
 export type Exercise = ChoiceExercise | MatchExercise | BuildExercise;
@@ -736,6 +740,7 @@ export function buildExercises(
     });
   }
 
+  addPictures(exercises, poolCards, uniqueCards, 'amharic');
   if (d.readingHelp) addReadingHelp(exercises, poolCards);
 
   // Reading the ፊደል: the letter questions are spread through the lesson
@@ -780,6 +785,90 @@ function addReadingHelp(exercises: Exercise[], cards: Card[]) {
       const hints = Object.fromEntries(ex.tiles.flatMap(t => (words.get(strip(t)) ? [[t, words.get(strip(t))!]] : [])));
       if (Object.keys(hints).length) ex.tileHints = hints;
     }
+  }
+}
+
+/**
+ * Pictures all through the lesson, not just in the picture questions:
+ * - "What does this mean?" and "Tap what you hear" about a word with a picture
+ *   become picture cards ("Select the correct picture"): the wrong answers are
+ *   swapped for other words with pictures, from this lesson first.
+ * - Every other question about a word with a picture shows it with the answer
+ *   once it's answered (ውሃ እፈልጋለሁ → the glass of water).
+ * Only questions asked in the language being learned get picture cards: for
+ * "How do you say “water”?" the picture would give the answer away.
+ */
+function addPictures(exercises: Exercise[], cards: Card[], lessonCards: Card[], track: Track) {
+  const strip = (t: string) => t.replace(PUNCT_ALL, '').trim();
+  // a word's picture, by its Amharic, the picture's English, or a lesson's English for it ("shiro (chickpea stew)")
+  const byText = new Map<string, Picture>();
+  for (const p of PICTURES) {
+    byText.set(p.amharic, p);
+    byText.set(p.english.toLowerCase(), p);
+  }
+  for (const c of cards) {
+    const p = pictureFor(strip(c.amharic));
+    if (!p || /\s/.test(strip(c.amharic))) continue;
+    byText.set(strip(c.english).toLowerCase(), p);
+  }
+  const pictureOf = (text: string) => byText.get(strip(text)) ?? byText.get(strip(text).toLowerCase());
+  /** The first word with a picture in a line (ውሃ እፈልጋለሁ → water). */
+  const pictureIn = (text: string) =>
+    pictureOf(text) ??
+    strip(text)
+      .split(/\s+/)
+      .map(w => byText.get(w))
+      .find(Boolean);
+  const lessonPictures = new Set(lessonCards.map(c => pictureFor(strip(c.amharic))).filter(Boolean));
+  const ethiopic = /[ሀ-፿]/;
+
+  for (const ex of exercises) {
+    if (ex.kind === 'match' || ex.letters) continue;
+    if (ex.kind === 'choice' && ex.pictures) continue;
+    if (ex.kind === 'choice' && /^(meaning|listen)-/.test(ex.id)) {
+      const answer = pictureOf(ex.answer);
+      if (answer) {
+        // keep the options' language: Amharic words, or each picture's short English name
+        // ("my grandmother", not "my grandfather / grandmother (depending on context)")
+        const amharicOptions = ethiopic.test(ex.answer);
+        const asText = (p: Picture) => (amharicOptions ? p.amharic : p.english);
+        const answerText = amharicOptions ? ex.answer : answer.english;
+        const options = ex.options.map(o => {
+          const picture = pictureOf(o);
+          return { text: o === ex.answer ? answerText : picture && !amharicOptions ? picture.english : o, picture };
+        });
+        const taken = new Set(options.map(o => o.picture).filter(Boolean));
+        const spares = shuffle(
+          PICTURES.filter(
+            p =>
+              !taken.has(p) &&
+              !(answer.group && p.group === answer.group) &&
+              !clashes(answerText, asText(p)) &&
+              !options.some(o => o.text === asText(p)),
+          ),
+        ).sort((a, b) => Number(lessonPictures.has(b)) - Number(lessonPictures.has(a)));
+        for (const o of options) {
+          if (o.picture && !(o.text !== answerText && answer.group && o.picture.group === answer.group)) continue;
+          const spare = spares.shift();
+          if (!spare) break;
+          o.text = asText(spare);
+          o.picture = spare;
+        }
+        if (options.every(o => o.picture) && new Set(options.map(o => o.text)).size === options.length) {
+          ex.answer = answerText;
+          ex.options = options.map(o => o.text);
+          ex.pictures = Object.fromEntries(
+            options.map(o => [o.text, { src: o.picture!.src, transliteration: amharicOptions ? o.picture!.transliteration : '' }]),
+          );
+          ex.instruction =
+            track === 'english' ? 'ትክክለኛውን ስዕል ይምረጡ · Select the correct picture' : ex.id.startsWith('listen-') ? 'Tap the picture you hear' : 'Select the correct picture';
+          continue;
+        }
+      }
+    }
+    const found =
+      ex.kind === 'choice' ? pictureIn(ex.answer) ?? pictureIn(ex.prompt) : pictureIn(ex.answer.join(' ')) ?? pictureIn(ex.prompt);
+    if (found) ex.answerPicture = found.src;
   }
 }
 
@@ -1072,6 +1161,8 @@ function buildEnglishExercises(
     uniqueCards.some(c => new RegExp(`\\b${p.english}\\b`, 'i').test(c.english)),
   );
   addPictureExercises(exercises, mentioned ?? (firstLesson ? shuffle(PICTURES)[0] : undefined), 'english');
+
+  addPictures(exercises, poolCards, uniqueCards, 'english');
 
   // each Amharic meaning only once, so every pair has exactly one match
   const seenAm = new Set<string>();

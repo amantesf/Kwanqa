@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import Animated, { Easing, FadeInDown, useAnimatedStyle, useSharedValue, withSequence, withTiming, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { amharicAudio } from '@/lib/amharicAudio';
@@ -254,6 +255,12 @@ export default function Practice() {
 
   const current = queue[0];
 
+  // A wrong answer gives the answers a little shake; the progress bar fills smoothly.
+  const shake = useSharedValue(0);
+  const shakeStyle = useAnimatedStyle(() => ({ transform: [{ translateX: shake.get() }] }));
+  const fill = useSharedValue(0);
+  const fillStyle = useAnimatedStyle(() => ({ width: `${fill.get()}%` }));
+
   // The language being learned is the one that's spoken.
   function soundFor(text: string | null | undefined) {
     if (!text) return null;
@@ -295,6 +302,9 @@ export default function Practice() {
   const listening = !!current && current.kind !== 'match' && current.kind !== 'trace' && !!current.listen && phase !== 'feedback';
 
   const progress = initial.length ? solved.size / initial.length : 1;
+  useEffect(() => {
+    fill.set(withTiming(Math.max(progress * 100, 6), { duration: 450, easing: Easing.out(Easing.cubic) }));
+  }, [progress, fill]);
   const mood: Mood = phase === 'feedback' ? (lastCorrect ? 'cheer' : 'sad') : current?.kind === 'match' && reaction ? (reaction === 'hop' ? 'cheer' : 'sad') : 'thinking';
 
   function loseStamina() {
@@ -329,6 +339,7 @@ export default function Practice() {
     playEffect(correct ? 'correct' : 'wrong');
     if (correct) gainStreak();
     else {
+      shake.set(withSequence(...[-10, 10, -8, 8, -4, 0].map(x => withTiming(x, { duration: 55 }))));
       loseStamina();
       // remember it, so it's asked again before the next camp
       if (!review) recordMistake(slug, lessonIndex, current);
@@ -491,7 +502,7 @@ export default function Practice() {
           </Svg>
         </Pressable>
         <View style={styles.meter}>
-          <View style={[styles.meterFill, { width: `${Math.max(progress * 100, 6)}%` }]} />
+          <Animated.View style={[styles.meterFill, fillStyle]} />
         </View>
         <View style={styles.stamina} accessibilityLabel={`Stamina ${stamina} of ${MAX_STAMINA}`}>
           {Array.from({ length: MAX_STAMINA }, (_, i) => (
@@ -541,6 +552,7 @@ export default function Practice() {
               </View>
             )}
 
+            <Animated.View style={shakeStyle}>
             {current.kind === 'choice' ? (
               <View style={current.pictures ? styles.pictureGrid : current.letters ? styles.letterGrid : styles.options}>
                 {current.options.map((option, i) => {
@@ -651,6 +663,7 @@ export default function Practice() {
                 }}
               />
             )}
+            </Animated.View>
           </>
         )}
       </ScrollView>
@@ -660,8 +673,10 @@ export default function Practice() {
           <Button label={ui.continue} onPress={() => setPhase('question')} />
         ) : feedback ? (
           <>
-            <View style={styles.feedbackRow}>
-              <Mark good={lastCorrect} />
+            <Animated.View entering={FadeInDown.duration(220)} style={styles.feedbackRow}>
+              <Animated.View entering={ZoomIn.duration(260).delay(60)}>
+                <Mark good={lastCorrect} />
+              </Animated.View>
               <View style={styles.feedbackText}>
                 <Text style={[styles.feedbackTitle, lastCorrect ? styles.goodText : styles.badText]}>{lastCorrect ? ui.good : ui.bad}</Text>
                 {current.kind === 'trace' && <Text style={[styles.feedbackBody, styles.goodText]}>{current.explain}</Text>}
@@ -672,7 +687,7 @@ export default function Practice() {
                 )}
                 {!lastCorrect && <Text style={styles.comeBack}>{ui.comeBack}</Text>}
               </View>
-            </View>
+            </Animated.View>
             <Button label={ui.continue} tone={lastCorrect ? 'green' : 'red'} onPress={advance} />
           </>
         ) : (

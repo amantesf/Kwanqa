@@ -6230,6 +6230,25 @@ body:has(.practice-screen) {
   color: var(--green);
 }
 
+/* the answer's picture, beside the tick or cross once you've answered */
+.feedback-picture {
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  border: 3px solid #fff;
+  object-fit: cover;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.08);
+  animation: feedback-picture-in 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes feedback-picture-in {
+  from {
+    transform: scale(0.6) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
 .feedback-icon.bad {
   color: var(--red);
 }
@@ -6305,6 +6324,12 @@ body:has(.practice-screen) {
   .feedback-icon {
     width: 52px;
     height: 52px;
+  }
+
+  .feedback-picture {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
   }
 
   .feedback-icon svg {

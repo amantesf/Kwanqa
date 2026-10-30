@@ -351,6 +351,9 @@
 :where(html[data-theme='dark']) .feedback-icon {
     background-color: #1a2428
 }
+:where(html[data-theme='dark']) .feedback-picture {
+    border: 3px solid #2e3b42
+}
 :where(html[data-theme='dark']) .cheer-bubble {
     background: #1a2428
 }

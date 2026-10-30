@@ -922,6 +922,10 @@ export default function Practice({
           ) : phase === 'feedback' ? (
           <>
             <FeedbackIcon good={lastCorrect} />
+            {current.kind !== 'match' && current.kind !== 'trace' && current.answerPicture && (
+              // eslint-disable-next-line @next/next/no-img-element -- small local pictures
+              <img key={current.id} className="feedback-picture" src={current.answerPicture} alt="" />
+            )}
             <div className="feedback-text">
               <strong>{lastCorrect ? ui.good : ui.bad}</strong>
               {current.kind === 'trace' && <span>{current.explain}</span>}

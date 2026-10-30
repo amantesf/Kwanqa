@@ -9,13 +9,16 @@ import { SITE } from '@/site';
 // web view (an iframe in the browser preview) and reports back to the app:
 // how many strokes, what to say, and when the letter is written.
 
-export type Mode = 'watch' | 'trace' | 'memory';
+// 'lesson' is a lesson's "Trace the new letter": it shows how once, then you trace.
+export type Mode = 'watch' | 'trace' | 'memory' | 'lesson';
 export type WriterEvent =
   | { t: 'strokes'; n: number }
   | { t: 'message'; text: string }
   | { t: 'correct' }
   | { t: 'wrong' }
-  | { t: 'done'; mistakes: number };
+  | { t: 'done'; mistakes: number }
+  /** this letter's strokes couldn't load, so there's nothing to write */
+  | { t: 'missing' };
 
 function page(char: string, mode: Mode) {
   return `<!doctype html>
@@ -38,7 +41,7 @@ function page(char: string, mode: Mode) {
   // fidel families sit in blocks of eight code points; the first is the base letter
   var code = CHAR.codePointAt(0), base = code - ((code - 0x1200) % 8);
   var family = fetch(SITE + '/fidel-strokes/' + base.toString(16) + '.json').then(function (r) { return r.json(); });
-  family.then(function (f) { if (f[CHAR]) send({ t: 'strokes', n: f[CHAR].strokes.length }); });
+  family.then(function (f) { send(f[CHAR] ? { t: 'strokes', n: f[CHAR].strokes.length } : { t: 'missing' }); }, function () { send({ t: 'missing' }); });
   var box = document.getElementById('box');
   var size = Math.min(window.innerWidth, window.innerHeight);
   var w = HanziWriter.create(box, CHAR, {
@@ -48,13 +51,10 @@ function page(char: string, mode: Mode) {
     drawingWidth: Math.max(14, Math.round(size / 22)), strokeAnimationSpeed: 0.9, delayBetweenStrokes: 450,
     showHintAfterMisses: 2, leniency: 1.4,
   });
-  if (MODE === 'watch') {
-    send({ t: 'message', text: 'Watch the order, then try tracing it.' });
-    w.animateCharacter();
-  } else {
-    (MODE === 'trace' ? w.showOutline() : w.hideOutline());
+  function quiz() {
+    (MODE === 'memory' ? w.hideOutline() : w.showOutline());
     w.hideCharacter();
-    send({ t: 'message', text: MODE === 'trace' ? 'Trace stroke 1 over the outline.' : 'Write it from memory, stroke 1 first.' });
+    send({ t: 'message', text: MODE === 'memory' ? 'Write it from memory, stroke 1 first.' : 'Trace stroke 1 over the outline.' });
     w.quiz({
       onCorrectStroke: function (s) { send({ t: 'message', text: s.strokesRemaining ? 'Good. Now stroke ' + (s.strokeNum + 2) + '.' : '' }); },
       onMistake: function (s) {
@@ -63,6 +63,15 @@ function page(char: string, mode: Mode) {
       },
       onComplete: function (r) { send({ t: 'correct' }); send({ t: 'done', mistakes: r.totalMistakes }); },
     });
+  }
+  if (MODE === 'watch') {
+    send({ t: 'message', text: 'Watch the order, then try tracing it.' });
+    w.animateCharacter();
+  } else if (MODE === 'lesson') {
+    send({ t: 'message', text: 'Watch first, then trace stroke 1.' });
+    w.animateCharacter({ onComplete: quiz });
+  } else {
+    quiz();
   }
 </script></body></html>`;
 }

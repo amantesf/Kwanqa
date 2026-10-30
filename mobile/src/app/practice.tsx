@@ -10,12 +10,14 @@ import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
+import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
 import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import { play, playEffect } from '@/components/sound';
 import { Grass } from '@/components/icons';
 import Speaker from '@/components/speaker';
 import Walia, { type Mood } from '@/components/walia';
+import LetterTrace from '@/components/letter-trace';
 import { siteUrl } from '@/site';
 import { colors, fonts } from '@/theme';
 
@@ -25,6 +27,9 @@ import { colors, fonts } from '@/theme';
 // a row win one back. Finishing earns grass and marks the stone done, and
 // wrong answers are saved for the camp's review (lib/climb.ts, lib/mistakes.ts),
 // all the same as on the website. With review=1 it asks those saved questions.
+
+/** A question in a lesson: the shared kinds, plus "Trace the new letter", which only this screen can draw. */
+type Question = Exercise | TraceExercise;
 
 const MAX_STAMINA = 5;
 const STREAK_TO_RECOVER = 3;
@@ -204,26 +209,27 @@ export default function Practice() {
   const level = useProfile()?.levels[track];
 
   // a review asks the camp's saved mistakes instead of a lesson's own questions
-  const [session] = useState(() =>
-    review
-      ? reviewSession(readMistakes()[slug] ?? [])
-      : {
-          exercises: lesson
-            ? buildExercises(lesson, lessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0, {
-                // "Tap what you hear", only for lines that can be played
-                listening: true,
-                level,
-                canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
-              })
-            : [],
-          keys: [],
-        },
-  );
+  const [session] = useState<{ exercises: Question[]; keys: string[] }>(() => {
+    if (review) return reviewSession(readMistakes()[slug] ?? []);
+    if (!lesson) return { exercises: [], keys: [] };
+    const exercises: Question[] = buildExercises(lesson, lessons, track, slug === 'amharic-beginner-1' && lessonIndex === 0, {
+      // "Tap what you hear", only for lines that can be played
+      listening: true,
+      level,
+      canHear: text => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text)),
+      // the Amharic course teaches reading the ፊደል as it goes
+      reading: track === 'amharic',
+    });
+    // and new learners trace each lesson's first new letter, early on
+    const trace = track === 'amharic' ? traceQuestion(lesson, level) : null;
+    if (trace) exercises.splice(Math.min(1, exercises.length), 0, trace);
+    return { exercises, keys: [] };
+  });
   const initial = session.exercises;
   const climb = useClimb();
   const [earned, setEarned] = useState(0);
   const [startedAt] = useState(() => Date.now()); // for the daily log's time spent
-  const [queue, setQueue] = useState<Exercise[]>(initial);
+  const [queue, setQueue] = useState<Question[]>(initial);
   const [solved, setSolved] = useState<Set<string>>(new Set());
   const [missed, setMissed] = useState<Set<string>>(new Set());
   const [stamina, setStamina] = useState(MAX_STAMINA);
@@ -248,7 +254,7 @@ export default function Practice() {
 
   // Fill-in-the-blank questions keep quiet until answered, then say the whole line.
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
-  const promptAudio = !current || current.kind === 'match' ? null : reveal && phase === 'feedback' ? (soundFor(reveal) ?? soundFor(current.prompt)) : soundFor(current.prompt);
+  const promptAudio = !current || current.kind === 'match' || current.kind === 'trace' ? null : reveal && phase === 'feedback' ? (soundFor(reveal) ?? soundFor(current.prompt)) : soundFor(current.prompt);
   const promptKey = !promptAudio ? null : phase === 'question' ? `${current.id}:${queue.length}` : reveal && phase === 'feedback' ? `${current.id}:${queue.length}:reveal` : null;
 
   // the question's sound plays by itself once when it appears
@@ -268,7 +274,7 @@ export default function Practice() {
 
   // Once a question is answered, Walia says the right answer (the whole line,
   // in the language being learned), just after the right/wrong sound.
-  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && !reveal ? (current.answerAudio ?? null) : null;
+  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && current.kind !== 'trace' && !reveal ? (current.answerAudio ?? null) : null;
   const answerKey = answerLine ? `${current.id}:${queue.length}:answer` : null;
   useEffect(() => {
     if (!answerKey || !answerLine) return;
@@ -277,7 +283,7 @@ export default function Practice() {
   }, [answerKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // "Tap what you hear": the line stays hidden until it's answered.
-  const listening = !!current && current.kind !== 'match' && !!current.listen && phase !== 'feedback';
+  const listening = !!current && current.kind !== 'match' && current.kind !== 'trace' && !!current.listen && phase !== 'feedback';
 
   const progress = initial.length ? solved.size / initial.length : 1;
   const mood: Mood = phase === 'feedback' ? (lastCorrect ? 'cheer' : 'sad') : current?.kind === 'match' && reaction ? (reaction === 'hop' ? 'cheer' : 'sad') : 'thinking';
@@ -500,7 +506,7 @@ export default function Practice() {
             {missed.has(current.id) ? <Text style={styles.retry}>{ui.previous}</Text> : null}
             <Text style={styles.instruction}>{current.instruction}</Text>
 
-            {!(current.kind === 'choice' && current.pictures && !current.hideWords) && (
+            {!(current.kind === 'choice' && current.pictures && !current.hideWords) && current.kind !== 'trace' && (
               <View style={styles.ask}>
                 <Walia mood={mood} size={96} />
                 {current.kind !== 'match' && (
@@ -526,7 +532,7 @@ export default function Practice() {
             )}
 
             {current.kind === 'choice' ? (
-              <View style={current.pictures ? styles.pictureGrid : styles.options}>
+              <View style={current.pictures ? styles.pictureGrid : current.letters ? styles.letterGrid : styles.options}>
                 {current.options.map((option, i) => {
                   const state = feedback ? (option === current.answer ? 'correct' : option === choice ? 'wrong' : null) : option === choice ? 'selected' : null;
                   const picture = current.pictures?.[option];
@@ -541,6 +547,7 @@ export default function Practice() {
                       style={[
                         styles.option,
                         picture && styles.pictureOption,
+                        current.letters && styles.letterOption,
                         state === 'selected' && styles.optionSelected,
                         state === 'correct' && styles.optionMatched,
                         state === 'wrong' && styles.optionWrong,
@@ -557,6 +564,13 @@ export default function Practice() {
                               <Text style={styles.pictureRoman}>{picture.transliteration}</Text>
                             </>
                           )}
+                        </>
+                      ) : current.letters ? (
+                        <>
+                          <View style={[styles.key, styles.letterKey]}>
+                            <Text style={styles.keyText}>{i + 1}</Text>
+                          </View>
+                          <Text style={styles.letterText}>{option}</Text>
                         </>
                       ) : (
                         <>
@@ -575,15 +589,15 @@ export default function Practice() {
               </View>
             ) : current.kind === 'build' ? (
               <View style={styles.build}>
-                <View style={styles.buildAnswer}>
+                <View style={[styles.buildAnswer, current.letters && styles.letterRow]}>
                   {picked.map(i => (
-                    <Pressable key={i} disabled={feedback} onPress={() => setPicked(p => p.filter(x => x !== i))} style={styles.tile}>
-                      <Text style={[styles.tileText, track === 'amharic' && styles.amharic]}>{current.tiles[i]}</Text>
+                    <Pressable key={i} disabled={feedback} onPress={() => setPicked(p => p.filter(x => x !== i))} style={[styles.tile, current.letters && styles.letterTile]}>
+                      <Text style={[styles.tileText, track === 'amharic' && styles.amharic, current.letters && styles.letterTileText]}>{current.tiles[i]}</Text>
                       {current.tileHints?.[current.tiles[i]] ? <Text style={styles.hint}>{current.tileHints[current.tiles[i]]}</Text> : null}
                     </Pressable>
                   ))}
                 </View>
-                <View style={styles.bank}>
+                <View style={[styles.bank, current.letters && styles.letterRow]}>
                   {current.tiles.map((tile, i) => {
                     const used = picked.includes(i);
                     return (
@@ -594,16 +608,16 @@ export default function Practice() {
                           setPicked(p => [...p, i]);
                           sayAloud(tile);
                         }}
-                        style={[styles.tile, used && styles.tileUsed]}
+                        style={[styles.tile, current.letters && styles.letterTile, used && styles.tileUsed]}
                       >
-                        <Text style={[styles.tileText, track === 'amharic' && styles.amharic, used && styles.tileTextUsed]}>{tile}</Text>
+                        <Text style={[styles.tileText, track === 'amharic' && styles.amharic, current.letters && styles.letterTileText, used && styles.tileTextUsed]}>{tile}</Text>
                         {current.tileHints?.[tile] && !used ? <Text style={styles.hint}>{current.tileHints[tile]}</Text> : null}
                       </Pressable>
                     );
                   })}
                 </View>
               </View>
-            ) : (
+            ) : current.kind === 'match' ? (
               <MatchRound
                 key={current.id + solved.size + queue.length}
                 exercise={current}
@@ -614,6 +628,17 @@ export default function Practice() {
                   if (stamina <= 1) setPhase('rest');
                 }}
                 onSolved={solveMatch}
+              />
+            ) : (
+              // tracing is for learning the letter, so a wobbly stroke never costs a heart
+              <LetterTrace
+                key={current.id + solved.size + queue.length}
+                exercise={current}
+                onSay={sayAloud}
+                onMistake={() => playEffect('wrong')}
+                onDone={() => {
+                  if (phase === 'question') solveMatch();
+                }}
               />
             )}
           </>
@@ -629,7 +654,8 @@ export default function Practice() {
               <Mark good={lastCorrect} />
               <View style={styles.feedbackText}>
                 <Text style={[styles.feedbackTitle, { color: lastCorrect ? '#3a9a28' : '#d9443a' }]}>{lastCorrect ? ui.good : ui.bad}</Text>
-                {current.kind !== 'match' && (
+                {current.kind === 'trace' && <Text style={[styles.feedbackBody, { color: '#3a9a28' }]}>{current.explain}</Text>}
+                {current.kind !== 'match' && current.kind !== 'trace' && (
                   <Text style={[styles.feedbackBody, { color: lastCorrect ? '#3a9a28' : '#d9443a' }]}>
                     {lastCorrect ? current.explain : `${ui.correctAnswer} ${sentence(current.kind === 'build' ? current.answer.join(' ') : current.answer)} ${current.explain}`}
                   </Text>
@@ -642,7 +668,12 @@ export default function Practice() {
         ) : (
           <>
             {streak > 0 ? <Text style={styles.streak}>{ui.inARow(streak, STREAK_TO_RECOVER - streak)}</Text> : null}
-            {current.kind !== 'match' && <Button label={ui.check} onPress={check} disabled={!canCheck} />}
+            {current.kind === 'trace' ? (
+              // skip writing (on a bus with one hand, say), like on the website
+              <Button label="Skip" tone="plain" onPress={solveMatch} />
+            ) : (
+              current.kind !== 'match' && <Button label={ui.check} onPress={check} disabled={!canCheck} />
+            )}
           </>
         )}
       </SafeAreaView>
@@ -683,6 +714,13 @@ const styles = StyleSheet.create({
   amharic: { fontFamily: fonts.amharicBold, fontSize: 19, lineHeight: 28 },
   key: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
   keyText: { fontFamily: fonts.heavy, fontSize: 13, color: colors.muted },
+  letterGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
+  letterOption: { flexBasis: 90, flexGrow: 1, maxWidth: 150, minHeight: 120, justifyContent: 'center' },
+  letterKey: { position: 'absolute', top: 8, left: 8 },
+  letterText: { fontFamily: fonts.amharicBold, fontSize: 52, lineHeight: 72, color: colors.ink },
+  letterRow: { justifyContent: 'center' },
+  letterTile: { minWidth: 66, alignItems: 'center', paddingHorizontal: 14 },
+  letterTileText: { fontSize: 36, lineHeight: 50 },
   pictureGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
   pictureOption: { flexDirection: 'column', width: '47%', gap: 4, paddingVertical: 14 },
   picture: { width: '100%', height: 110 },

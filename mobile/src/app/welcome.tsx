@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { startCamp } from '@/lib/climb';
@@ -11,7 +11,7 @@ import Button from '@/components/button';
 import Flag from '@/components/flag';
 import Walia from '@/components/walia';
 import { supabase } from '@/supabase';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // "Get started", like the website's survey (components/Onboarding.tsx): which
 // language, what the learner already knows (it sets their starting camp and
@@ -33,6 +33,7 @@ const LANGUAGE_NAME: Record<Track, string> = { amharic: 'Amharic', english: 'Eng
 
 /** Signal-style bars for how much the learner knows. */
 function Bars({ filled }: { filled: number }) {
+  const colors = useColors();
   return (
     <Svg width={28} height={24} viewBox="0 0 28 24">
       {[0, 1, 2, 3].map(i => (
@@ -51,6 +52,7 @@ function BackArrow() {
 }
 
 export default function Welcome() {
+  const styles = useStyles();
   const { user } = useAuth();
   const [answers, setAnswers] = useState<Answers>({ speaks: [], reasons: [], heardFrom: [] });
   const [step, setStep] = useState(0);
@@ -235,34 +237,34 @@ export default function Welcome() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg },
   flex: { flex: 1 },
   top: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 10 },
   hidden: { opacity: 0 },
-  meter: { flex: 1, height: 16, borderRadius: 8, backgroundColor: colors.line, overflow: 'hidden' },
-  meterFill: { height: '100%', borderRadius: 8, backgroundColor: colors.primary },
+  meter: { flex: 1, height: 16, borderRadius: 8, backgroundColor: c.line, overflow: 'hidden' },
+  meterFill: { height: '100%', borderRadius: 8, backgroundColor: c.primary },
   body: { padding: 16, gap: 14, paddingBottom: 32 },
   ask: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  bubble: { flex: 1, padding: 14, borderRadius: 18, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, marginBottom: 22 },
-  question: { fontFamily: fonts.black, fontSize: 20, lineHeight: 26, color: colors.ink },
-  hint: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
+  bubble: { flex: 1, padding: 14, borderRadius: 18, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, marginBottom: 22 },
+  question: { fontFamily: fonts.black, fontSize: 20, lineHeight: 26, color: c.ink },
+  hint: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   options: { gap: 10 },
   cards: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  option: { flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 58, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
-  card: { width: '47%', flexGrow: 1, alignItems: 'center', gap: 8, paddingVertical: 18, paddingHorizontal: 10, borderRadius: 18, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#ffffff' },
+  option: { flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 58, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
+  card: { width: '47%', flexGrow: 1, alignItems: 'center', gap: 8, paddingVertical: 18, paddingHorizontal: 10, borderRadius: 18, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#ffffff' },
   cardIcon: { borderRadius: 6, overflow: 'hidden' },
   cardText: { alignItems: 'center' },
   center: { textAlign: 'center' },
   optionOn: { borderColor: '#b9cdf2', backgroundColor: '#e6eefb' },
   soon: { opacity: 0.55 },
-  label: { fontFamily: fonts.heavy, fontSize: 17, color: colors.ink },
-  labelOn: { color: colors.blue },
-  sub: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
-  soonText: { fontFamily: fonts.heavy, fontSize: 11, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  label: { fontFamily: fonts.heavy, fontSize: 17, color: c.ink },
+  labelOn: { color: c.blue },
+  sub: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
+  soonText: { fontFamily: fonts.heavy, fontSize: 11, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
   done: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
-  doneTitle: { fontFamily: fonts.black, fontSize: 30, color: colors.ink },
-  doneText: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 24, color: colors.muted, textAlign: 'center', maxWidth: 380 },
-  strong: { fontFamily: fonts.black, color: colors.ink },
-  footer: { padding: 16, borderTopWidth: 2, borderTopColor: colors.line },
-});
+  doneTitle: { fontFamily: fonts.black, fontSize: 30, color: c.ink },
+  doneText: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 24, color: c.muted, textAlign: 'center', maxWidth: 380 },
+  strong: { fontFamily: fonts.black, color: c.ink },
+  footer: { padding: 16, borderTopWidth: 2, borderTopColor: c.line },
+}));

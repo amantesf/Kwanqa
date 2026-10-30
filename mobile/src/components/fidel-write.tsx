@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { FIDEL, VOWELS } from '@/lib/fidel';
 import { storage } from '@/lib/storage';
 import Button from '@/components/button';
 import { play, playEffect } from '@/components/sound';
 import Speaker from '@/components/speaker';
 import Writer, { type Mode, type WriterEvent } from '@/components/writer';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles } from '@/theme';
 
 // Write the ፊደል, like the website's Write tab (components/FidelWrite.tsx):
 // watch a letter's strokes in order, trace them, then write it from memory.
@@ -29,6 +29,7 @@ const MODES: { id: Mode; label: string }[] = [
 ];
 
 export default function FidelWrite() {
+  const styles = useStyles();
   const [row, setRow] = useState(0);
   const [form, setForm] = useState(0);
   const [mode, setMode] = useState<Mode>('watch');
@@ -133,33 +134,33 @@ export default function FidelWrite() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   page: { padding: 16, gap: 14, paddingBottom: 40 },
   letters: { gap: 8, paddingTop: 10, paddingRight: 8 },
-  letter: { width: 58, paddingVertical: 6, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
-  letterOn: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
+  letter: { width: 58, paddingVertical: 6, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
+  letterOn: { borderColor: c.primary, backgroundColor: c.primarySoft },
   letterDone: { borderColor: '#a5ed6e' },
-  letterChar: { fontFamily: fonts.amharicBold, fontSize: 24, lineHeight: 32, color: colors.ink },
-  letterCharOn: { color: colors.primary },
-  letterRoman: { fontFamily: fonts.heavy, fontSize: 11, color: colors.muted },
+  letterChar: { fontFamily: fonts.amharicBold, fontSize: 24, lineHeight: 32, color: c.ink },
+  letterCharOn: { color: c.primary },
+  letterRoman: { fontFamily: fonts.heavy, fontSize: 11, color: c.muted },
   check: { position: 'absolute', top: -2, right: 4, fontFamily: fonts.black, fontSize: 13, color: '#3a9a28' },
-  part: { position: 'absolute', top: -8, right: -6, paddingHorizontal: 5, borderRadius: 8, overflow: 'hidden', backgroundColor: colors.gold, fontFamily: fonts.black, fontSize: 10, color: '#ffffff' },
+  part: { position: 'absolute', top: -8, right: -6, paddingHorizontal: 5, borderRadius: 8, overflow: 'hidden', backgroundColor: c.gold, fontFamily: fonts.black, fontSize: 10, color: '#ffffff' },
   forms: { flexDirection: 'row', gap: 5 },
-  form: { flex: 1, paddingVertical: 4, alignItems: 'center', borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  formOn: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
-  formChar: { fontFamily: fonts.amharic, fontSize: 21, lineHeight: 29, color: colors.ink },
-  formCharOn: { color: colors.primary },
-  formRoman: { fontFamily: fonts.heavy, fontSize: 11, color: colors.muted },
+  form: { flex: 1, paddingVertical: 4, alignItems: 'center', borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  formOn: { borderColor: c.primary, backgroundColor: c.primarySoft },
+  formChar: { fontFamily: fonts.amharic, fontSize: 21, lineHeight: 29, color: c.ink },
+  formCharOn: { color: c.primary },
+  formRoman: { fontFamily: fonts.heavy, fontSize: 11, color: c.muted },
   head: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  big: { fontFamily: fonts.amharicBold, fontSize: 44, lineHeight: 60, color: colors.ink },
+  big: { fontFamily: fonts.amharicBold, fontSize: 44, lineHeight: 60, color: c.ink },
   headText: { flex: 1 },
-  sound: { fontFamily: fonts.black, fontSize: 24, color: colors.primary },
-  hint: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
-  message: { minHeight: 24, fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: colors.ink, textAlign: 'center' },
-  gobez: { fontFamily: fonts.amharicBold, color: colors.primary },
+  sound: { fontFamily: fonts.black, fontSize: 24, color: c.primary },
+  hint: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
+  message: { minHeight: 24, fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: c.ink, textAlign: 'center' },
+  gobez: { fontFamily: fonts.amharicBold, color: c.primary },
   modes: { flexDirection: 'row', gap: 8 },
-  mode: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
+  mode: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
   modeOn: { borderColor: '#b9cdf2', backgroundColor: '#e6eefb' },
-  modeText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
-  modeTextOn: { color: colors.blue },
-});
+  modeText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  modeTextOn: { color: c.blue },
+}));

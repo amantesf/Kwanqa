@@ -2,11 +2,12 @@ import { NotoSansEthiopic_600SemiBold, NotoSansEthiopic_700Bold } from '@expo-go
 import { Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black, useFonts } from '@expo-google-fonts/nunito';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { AuthProvider } from '@/auth';
 import Intro from '@/components/intro';
 import { loadProgress } from '@/progress';
-import { colors } from '@/theme';
+import { ThemeProvider, useColors, useScheme } from '@/theme';
 
 // keep the splash screen up until the fonts and saved progress are ready
 // (then Intro takes over from it)
@@ -31,10 +32,26 @@ export default function RootLayout() {
     loadProgress().then(() => setProgressReady(true));
   }, []);
 
+  // the theme choice is saved with the progress, so it's read once that's loaded
   if (!ready) return null;
 
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Screens />
+        <Intro />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
+
+/** Every screen, on the page colour of the theme (light or dark, chosen on Profile). */
+function Screens() {
+  const colors = useColors();
+  const scheme = useScheme();
+  return (
+    <>
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="practice" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
@@ -44,7 +61,6 @@ export default function RootLayout() {
         <Stack.Screen name="welcome" />
         <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
       </Stack>
-      <Intro />
-    </AuthProvider>
+    </>
   );
 }

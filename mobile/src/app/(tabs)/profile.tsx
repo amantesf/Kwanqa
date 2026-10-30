@@ -15,7 +15,7 @@ import MountainScene from '@/components/mountain-scene';
 import Walia from '@/components/walia';
 import { SITE } from '@/site';
 import { supabase } from '@/supabase';
-import { colors, fonts, tabBarTop } from '@/theme';
+import { fonts, makeStyles, tabBarTop, useColors, useThemeSetting, type ThemeSetting } from '@/theme';
 
 // The learner's profile, like the website's (components/ProfileView.tsx):
 // statistics, achievements, their Get started answers, and their account
@@ -76,6 +76,7 @@ const GLYPHS: Record<string, ReactNode> = {
 type Achievement = { title: string; color: string; glyph: keyof typeof GLYPHS; value: number; tiers: number[]; describe: (goal: number) => string };
 
 function AchievementRow({ a }: { a: Achievement }) {
+  const styles = useStyles();
   const reached = a.tiers.filter(t => a.value >= t).length;
   const maxed = reached === a.tiers.length;
   const goal = maxed ? a.tiers[a.tiers.length - 1] : a.tiers[reached];
@@ -104,6 +105,7 @@ function AchievementRow({ a }: { a: Achievement }) {
 }
 
 function Stat({ icon, value, label }: { icon: ReactNode; value: ReactNode; label: string }) {
+  const styles = useStyles();
   return (
     <View style={styles.stat}>
       {icon}
@@ -116,7 +118,39 @@ function Stat({ icon, value, label }: { icon: ReactNode; value: ReactNode; label
 }
 
 /** Streak reminder and holiday email switches, saved to the account (the website's ReminderToggle). */
+const THEMES: { value: ThemeSetting; label: string }[] = [
+  { value: 'system', label: 'Automatic' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+];
+
+/** Light, dark, or the phone's own setting, like the website's dark mode switch. */
+function Appearance() {
+  const styles = useStyles();
+  const [setting, setSetting] = useThemeSetting();
+  return (
+    <View style={styles.card}>
+      <View>
+        <Text style={styles.switchTitle}>Dark mode</Text>
+        <Text style={styles.switchText}>Automatic follows your phone’s setting. At night the mountain gets stars and a moon.</Text>
+      </View>
+      <View style={styles.segments} accessibilityRole="radiogroup">
+        {THEMES.map(t => {
+          const on = setting === t.value;
+          return (
+            <Pressable key={t.value} onPress={() => setSetting(t.value)} accessibilityRole="radio" accessibilityState={{ selected: on }} style={[styles.segment, on && styles.segmentOn]}>
+              <Text style={[styles.segmentText, on && styles.segmentTextOn]}>{t.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
 function Reminders({ userId }: { userId: string }) {
+  const styles = useStyles();
+  const colors = useColors();
   const [settings, setSettings] = useState<{ enabled: boolean; holiday_emails: boolean } | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -161,6 +195,8 @@ function Reminders({ userId }: { userId: string }) {
 }
 
 export default function Profile() {
+  const styles = useStyles();
+  const colors = useColors();
   const climb = useClimb();
   const survey = useProfile();
   const { user, enabled, loading, signOut } = useAuth();
@@ -309,6 +345,9 @@ export default function Profile() {
           <Button label={survey ? 'Retake survey' : 'Take the survey'} tone="plain" onPress={() => router.push('/welcome')} />
         </View>
 
+        <Text style={styles.title}>Settings</Text>
+        <Appearance />
+
         {user ? (
           <>
             <Text style={styles.title}>Account</Text>
@@ -366,6 +405,7 @@ export default function Profile() {
 }
 
 function Fact({ term, value }: { term: string; value: string }) {
+  const styles = useStyles();
   return (
     <View style={styles.fact}>
       <Text style={styles.factTerm}>{term}</Text>
@@ -374,50 +414,55 @@ function Fact({ term, value }: { term: string; value: string }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg, paddingTop: tabBarTop },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg, paddingTop: tabBarTop },
   flex: { flex: 1 },
   page: { padding: 16, gap: 14, paddingBottom: 48 },
   banner: { height: 150, borderRadius: 22, overflow: 'hidden', backgroundColor: '#fcede6', justifyContent: 'flex-end', padding: 14 },
-  avatar: { width: 84, height: 84, borderRadius: 42, borderWidth: 4, borderColor: '#ffffff', backgroundColor: colors.blue, alignItems: 'center', justifyContent: 'center' },
+  avatar: { width: 84, height: 84, borderRadius: 42, borderWidth: 4, borderColor: '#ffffff', backgroundColor: c.blue, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontFamily: fonts.black, fontSize: 38, color: '#ffffff' },
   bannerWalia: { position: 'absolute', right: 10, bottom: -4 },
   id: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  name: { fontFamily: fonts.black, fontSize: 26, color: colors.ink },
-  handle: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
+  name: { fontFamily: fonts.black, fontSize: 26, color: c.ink },
+  handle: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   joined: { fontFamily: fonts.bold, fontSize: 13, color: '#afafaf' },
   nameForm: { flexDirection: 'row', gap: 8 },
-  input: { flex: 1, minHeight: 46, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, borderColor: colors.line, backgroundColor: colors.bgSoft, fontFamily: fonts.bold, fontSize: 16, color: colors.ink },
-  smallButton: { paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  input: { flex: 1, minHeight: 46, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, borderColor: c.line, backgroundColor: c.bgSoft, fontFamily: fonts.bold, fontSize: 16, color: c.ink },
+  smallButton: { paddingHorizontal: 16, borderRadius: 12, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
   smallButtonText: { fontFamily: fonts.black, fontSize: 14, color: '#ffffff' },
-  title: { fontFamily: fonts.black, fontSize: 22, color: colors.ink, marginTop: 6 },
+  title: { fontFamily: fonts.black, fontSize: 22, color: c.ink, marginTop: 6 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  stat: { width: '47%', flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  statValue: { fontFamily: fonts.black, fontSize: 19, color: colors.ink },
-  statLabel: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
-  card: { gap: 12, padding: 16, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
-  cardTitle: { fontFamily: fonts.black, fontSize: 18, lineHeight: 23, color: colors.ink },
-  cardText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: colors.muted },
+  stat: { width: '47%', flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  statValue: { fontFamily: fonts.black, fontSize: 19, color: c.ink },
+  statLabel: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
+  card: { gap: 12, padding: 16, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
+  cardTitle: { fontFamily: fonts.black, fontSize: 18, lineHeight: 23, color: c.ink },
+  cardText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.muted },
+  segments: { flexDirection: 'row', gap: 4, padding: 4, borderRadius: 14, backgroundColor: c.bgSoft, borderWidth: 2, borderColor: c.line },
+  segment: { flex: 1, minHeight: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  segmentOn: { backgroundColor: c.bg, borderWidth: 2, borderBottomWidth: 3, borderColor: c.line },
+  segmentText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  segmentTextOn: { color: c.primary },
   ach: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   badge: { width: 66, height: 72, borderRadius: 16, alignItems: 'center', justifyContent: 'center', paddingBottom: 10 },
   badgeLevel: { position: 'absolute', bottom: 5, paddingHorizontal: 5, borderRadius: 6, overflow: 'hidden', backgroundColor: '#ffffff', fontFamily: fonts.black, fontSize: 9 },
   achTop: { flexDirection: 'row', justifyContent: 'space-between' },
-  achTitle: { fontFamily: fonts.black, fontSize: 16, color: colors.ink },
-  achCount: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
-  bar: { height: 12, borderRadius: 6, backgroundColor: colors.line, overflow: 'hidden', marginVertical: 5 },
-  barFill: { height: '100%', borderRadius: 6, backgroundColor: colors.gold },
-  achText: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
+  achTitle: { fontFamily: fonts.black, fontSize: 16, color: c.ink },
+  achCount: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  bar: { height: 12, borderRadius: 6, backgroundColor: c.line, overflow: 'hidden', marginVertical: 5 },
+  barFill: { height: '100%', borderRadius: 6, backgroundColor: c.gold },
+  achText: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
   fact: { gap: 1 },
-  factTerm: { fontFamily: fonts.heavy, fontSize: 12, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
-  factValue: { fontFamily: fonts.bold, fontSize: 16, color: colors.ink },
+  factTerm: { fontFamily: fonts.heavy, fontSize: 12, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  factValue: { fontFamily: fonts.bold, fontSize: 16, color: c.ink },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  switchTitle: { fontFamily: fonts.heavy, fontSize: 15, color: colors.ink },
-  switchText: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 18, color: colors.muted },
+  switchTitle: { fontFamily: fonts.heavy, fontSize: 15, color: c.ink },
+  switchText: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 18, color: c.muted },
   delete: { alignSelf: 'center', padding: 8 },
   deleteText: { fontFamily: fonts.heavy, fontSize: 14, color: '#d9443a' },
   invite: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   hornsHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   links: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 18, paddingVertical: 8 },
-  linkText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
-  kicker: { fontFamily: fonts.heavy, fontSize: 12, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
-});
+  linkText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  kicker: { fontFamily: fonts.heavy, fontSize: 12, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
+}));

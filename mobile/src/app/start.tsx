@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, type ReactNode } from 'react';
-import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { Text, View, type ViewStyle } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Ellipse, Path, Rect } from 'react-native-svg';
@@ -10,7 +10,7 @@ import { Grass } from '@/components/icons';
 import { readProfile } from '@/lib/profile';
 import { useAuth } from '@/auth';
 import { accountsEnabled } from '@/supabase';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // The first screen a new learner sees, like the website's home page hero
 // (app/page.tsx): Walia with ሰላም!, Hello! and a few fidel letters floating
@@ -19,6 +19,7 @@ import { colors, fonts } from '@/theme';
 
 /** Bobs gently up and down, each one on its own beat (the website's floaty). */
 function Floaty({ children, style, delay = 0 }: { children: ReactNode; style: ViewStyle; delay?: number }) {
+  const styles = useStyles();
   const y = useSharedValue(0);
   useEffect(() => {
     y.set(withDelay(delay, withRepeat(withSequence(withTiming(-8, { duration: 2100, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 2100, easing: Easing.inOut(Easing.sin) })), -1)));
@@ -28,6 +29,7 @@ function Floaty({ children, style, delay = 0 }: { children: ReactNode; style: Vi
 }
 
 function Bubble({ text, sub, color, size = 20 }: { text: string; sub?: string; color: string; size?: number }) {
+  const styles = useStyles();
   return (
     <View style={styles.bubble}>
       <Text style={[styles.bubbleText, { color, fontSize: size }]}>{text}</Text>
@@ -37,6 +39,7 @@ function Bubble({ text, sub, color, size = 20 }: { text: string; sub?: string; c
 }
 
 function Letter({ char, bg, color = '#ffffff' }: { char: string; bg: string; color?: string }) {
+  const styles = useStyles();
   return (
     <View style={[styles.letter, { backgroundColor: bg }]}>
       <Text style={[styles.letterText, { color }]}>{char}</Text>
@@ -45,6 +48,7 @@ function Letter({ char, bg, color = '#ffffff' }: { char: string; bg: string; col
 }
 
 function Buna() {
+  const colors = useColors();
   return (
     <Svg viewBox="0 0 48 48" width={50} height={50}>
       <Path d="M17 6c-2 3 2 5 0 8M24 4c-2 3 2 5 0 8M31 6c-2 3 2 5 0 8" stroke="#c9a27a" strokeWidth={2.6} strokeLinecap="round" fill="none" />
@@ -57,6 +61,8 @@ function Buna() {
 }
 
 export default function Start() {
+  const styles = useStyles();
+  const colors = useColors();
   // Back here while signed in (say, after closing the sign-in sheet): go on
   // in, to the trail or, with no survey answers yet, the survey.
   const { user } = useAuth();
@@ -111,20 +117,20 @@ export default function Start() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg },
   art: { flex: 1, marginHorizontal: 20, marginTop: 8 },
-  blob: { position: 'absolute', top: '12%', left: '8%', right: '8%', bottom: '6%', borderTopLeftRadius: 180, borderTopRightRadius: 200, borderBottomLeftRadius: 170, borderBottomRightRadius: 190, backgroundColor: colors.primarySoft },
+  blob: { position: 'absolute', top: '12%', left: '8%', right: '8%', bottom: '6%', borderTopLeftRadius: 180, borderTopRightRadius: 200, borderBottomLeftRadius: 170, borderBottomRightRadius: 190, backgroundColor: c.primarySoft },
   walia: { position: 'absolute', left: '19%', right: '15%', bottom: '4%', top: '22%' },
   floaty: { position: 'absolute', zIndex: 2 },
-  bubble: { paddingVertical: 7, paddingHorizontal: 14, borderRadius: 18, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff', alignItems: 'center' },
+  bubble: { paddingVertical: 7, paddingHorizontal: 14, borderRadius: 18, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff', alignItems: 'center' },
   bubbleText: { fontFamily: fonts.amharicBold, lineHeight: 28 },
   bubbleSub: { fontFamily: fonts.bold, fontSize: 12, color: '#afafaf' },
   letter: { width: 46, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 4, borderBottomColor: 'rgba(0,0,0,0.15)' },
   letterText: { fontFamily: fonts.amharicBold, fontSize: 24, lineHeight: 34 },
-  star: { fontSize: 26, color: colors.gold },
+  star: { fontSize: 26, color: c.gold },
   copy: { paddingHorizontal: 24, paddingBottom: 16, gap: 10 },
-  wordmark: { fontFamily: fonts.black, fontSize: 22, color: colors.primary, textAlign: 'center', letterSpacing: 0.5 },
-  title: { fontFamily: fonts.black, fontSize: 26, lineHeight: 32, color: colors.ink, textAlign: 'center' },
+  wordmark: { fontFamily: fonts.black, fontSize: 22, color: c.primary, textAlign: 'center', letterSpacing: 0.5 },
+  title: { fontFamily: fonts.black, fontSize: 26, lineHeight: 32, color: c.ink, textAlign: 'center' },
   actions: { gap: 10, marginTop: 8 },
-});
+}));

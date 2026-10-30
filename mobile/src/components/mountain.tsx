@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import Svg, { Circle, ClipPath, Defs, Ellipse, G, LinearGradient, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
+import Svg, { Circle, ClipPath, Defs, Ellipse, G, LinearGradient, Mask, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 // The mountain behind the trail, drawn the same way as on the website
 // (components/ClimbMountain.tsx): from the meadow at the trailhead (Camp 1) up
@@ -7,9 +7,12 @@ import Svg, { Circle, ClipPath, Defs, Ellipse, G, LinearGradient, Path, RadialGr
 // green ledges, pines, cliffs, distant ranges, lakes and drifting clouds.
 // Camps not reached yet sit under a layer of cloud. The trail measures itself
 // and passes in where the summit and each camp are, so the mountain always fits.
+// In dark mode it's night, with the website's night colours (app/dark.css):
+// a deep blue sky, a crescent moon instead of the sun, stars, moonlit clouds
+// and ranges, the birds asleep, and the whole picture dimmed.
 
 export type MountainCamp = { top: number; bottom: number; locked: boolean };
-export type MountainLayout = { w: number; h: number; peakY: number; camps: MountainCamp[] };
+export type MountainLayout = { w: number; h: number; peakY: number; camps: MountainCamp[]; night?: boolean };
 type Pt = [number, number];
 
 const C = {
@@ -64,14 +67,15 @@ function Pine({ x, y, s }: { x: number; y: number; s: number }) {
   );
 }
 
-function Cloud({ x, y, s, opacity = 0.95 }: { x: number; y: number; s: number; opacity?: number }) {
+function Cloud({ x, y, s, opacity = 0.95, night }: { x: number; y: number; s: number; opacity?: number; night?: boolean }) {
+  const puff = night ? '#56638a' : '#fff';
   return (
     <G opacity={opacity}>
-      <Ellipse cx={x} cy={y} rx={70 * s} ry={22 * s} fill="#fff" />
-      <Circle cx={x - 34 * s} cy={y - 12 * s} r={24 * s} fill="#fff" />
-      <Circle cx={x + 2 * s} cy={y - 26 * s} r={34 * s} fill="#fff" />
-      <Circle cx={x + 38 * s} cy={y - 10 * s} r={22 * s} fill="#fff" />
-      <Ellipse cx={x + 6 * s} cy={y + 8 * s} rx={64 * s} ry={10 * s} fill="#e9f2f9" />
+      <Ellipse cx={x} cy={y} rx={70 * s} ry={22 * s} fill={puff} />
+      <Circle cx={x - 34 * s} cy={y - 12 * s} r={24 * s} fill={puff} />
+      <Circle cx={x + 2 * s} cy={y - 26 * s} r={34 * s} fill={puff} />
+      <Circle cx={x + 38 * s} cy={y - 10 * s} r={22 * s} fill={puff} />
+      <Ellipse cx={x + 6 * s} cy={y + 8 * s} rx={64 * s} ry={10 * s} fill={night ? '#434f73' : '#e9f2f9'} />
     </G>
   );
 }
@@ -89,7 +93,7 @@ export function mountainHalfWidth(w: number, peakY: number, y: number) {
   return maxHW * (1 - Math.exp(-d / 260)) * (1 + 0.07 * Math.sin(y / 380));
 }
 
-function Mountain({ w, h, peakY, camps }: MountainLayout) {
+function Mountain({ w, h, peakY, camps, night = false }: MountainLayout) {
   const r = rng(7);
   const cx = w / 2;
   const baseY = h - 230; // where the mountain meets the meadow
@@ -215,6 +219,9 @@ function Mountain({ w, h, peakY, camps }: MountainLayout) {
     clouds.push({ x: k % 2 ? w - 30 + r() * 30 : 30 - r() * 30, y, s: 0.8 + r() * 0.5 });
   }
 
+  // Stars for the night sky (shown only in dark mode), above the meadow.
+  const stars = Array.from({ length: Math.round((w * (baseY - 120)) / 7000) }, () => ({ x: r() * w, y: r() * (baseY - 160), r: 0.8 + r() * 1.6, twinkle: r() < 0.3, delay: r() * 4 }));
+
   // Camps you haven't reached wait above the clouds.
   const lockedCamps = camps.filter(c => c.locked);
   const lockLine = lockedCamps.length ? Math.max(...lockedCamps.map(c => c.bottom)) : null;
@@ -224,19 +231,27 @@ function Mountain({ w, h, peakY, camps }: MountainLayout) {
     <Svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
       <Defs>
         <LinearGradient id="climb-sky" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor={C.skyTop} />
-          <Stop offset="0.5" stopColor="#c4e5f7" />
-          <Stop offset="1" stopColor={C.skyBottom} />
+          <Stop offset="0" stopColor={night ? '#0a1230' : C.skyTop} />
+          <Stop offset="0.5" stopColor={night ? '#16255a' : '#c4e5f7'} />
+          <Stop offset="1" stopColor={night ? '#2e3f78' : C.skyBottom} />
         </LinearGradient>
         <LinearGradient id="climb-lock" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor="#fff" stopOpacity="0.32" />
-          <Stop offset="1" stopColor="#fff" stopOpacity="0.22" />
+          <Stop offset="0" stopColor={night ? '#0a1230' : '#fff'} stopOpacity={night ? 0.4 : 0.32} />
+          <Stop offset="1" stopColor={night ? '#0a1230' : '#fff'} stopOpacity={night ? 0.4 : 0.22} />
         </LinearGradient>
         <RadialGradient id="climb-sun">
           <Stop offset="0" stopColor="#fffbe0" />
           <Stop offset="0.45" stopColor="#fff3b8" stopOpacity="0.9" />
           <Stop offset="1" stopColor="#fff3b8" stopOpacity="0" />
         </RadialGradient>
+        <RadialGradient id="climb-moon-glow">
+          <Stop offset="0" stopColor="#fff6d6" stopOpacity="0.45" />
+          <Stop offset="1" stopColor="#fff6d6" stopOpacity="0" />
+        </RadialGradient>
+        <Mask id="climb-crescent">
+          <Circle cx={w - 70} cy={peakY + 260} r={30} fill="#fff" />
+          <Circle cx={w - 56} cy={peakY + 250} r={26} fill="#000" />
+        </Mask>
         <ClipPath id="climb-body">
           <Path d={body} />
         </ClipPath>
@@ -246,23 +261,33 @@ function Mountain({ w, h, peakY, camps }: MountainLayout) {
       </Defs>
 
       <Rect width={w} height={h} fill="url(#climb-sky)" />
-      <Circle cx={w - 70} cy={peakY + 260} r={120} fill="url(#climb-sun)" />
+      {night ? (
+        <G>
+          {stars.map((st, i) => (
+            <Circle key={i} cx={st.x} cy={st.y} r={st.r} fill="#fffbea" opacity={st.twinkle ? 0.55 : 0.85} />
+          ))}
+          <Circle cx={w - 70} cy={peakY + 260} r={110} fill="url(#climb-moon-glow)" />
+          <Rect x={w - 110} y={peakY + 220} width={80} height={80} fill="#fdf3cf" mask="url(#climb-crescent)" />
+        </G>
+      ) : (
+        <Circle cx={w - 70} cy={peakY + 260} r={120} fill="url(#climb-sun)" />
+      )}
       {[...ranges].reverse().map((m, i) => (
         <G key={i}>
-          <Path d={m.d} fill={m.color} />
-          <Path d={m.snow} fill={C.farRock} />
+          <Path d={m.d} fill={night ? (m.color === C.far ? '#283a6e' : '#1e2d5c') : m.color} />
+          <Path d={m.snow} fill={night ? '#3a4c80' : C.farRock} />
         </G>
       ))}
-      <Ellipse cx={-20} cy={baseY - 40} rx={180} ry={26} fill={C.lake} />
-      <Ellipse cx={w + 30} cy={baseY - 10} rx={200} ry={30} fill={C.lake} />
-      {/* birds near the top */}
-      <Path
+      <Ellipse cx={-20} cy={baseY - 40} rx={180} ry={26} fill={night ? '#31508e' : C.lake} />
+      <Ellipse cx={w + 30} cy={baseY - 10} rx={200} ry={30} fill={night ? '#31508e' : C.lake} />
+      {/* birds near the top (asleep at night) */}
+      {night ? null : <Path
         d={`M${cx - 190} ${peakY + 80} q8 -8 16 0 q8 -8 16 0 M${cx + 150} ${peakY + 30} q6 -6 12 0 q6 -6 12 0`}
         stroke="#fff"
         strokeWidth={3}
         fill="none"
         strokeLinecap="round"
-      />
+      />}
 
       <Path d={body} fill={C.rock} />
       <G clipPath="url(#climb-body)">
@@ -328,17 +353,19 @@ function Mountain({ w, h, peakY, camps }: MountainLayout) {
       ))}
 
       {clouds.map((c, i) => (
-        <Cloud key={i} {...c} />
+        <Cloud key={i} {...c} night={night} />
       ))}
 
       {lockLine !== null && (
         <G>
           <Rect x={0} y={0} width={w} height={lockLine} fill="url(#climb-lock)" />
           {Array.from({ length: Math.ceil(w / 120) + 1 }, (_, i) => (
-            <Cloud key={i} x={i * 120 + (i % 2 ? 20 : -10)} y={lockLine + 6} s={0.75 + (i % 3) * 0.12} opacity={0.97} />
+            <Cloud key={i} x={i * 120 + (i % 2 ? 20 : -10)} y={lockLine + 6} s={0.75 + (i % 3) * 0.12} opacity={0.97} night={night} />
           ))}
         </G>
       )}
+      {/* moonlight: the whole picture a little dimmer, like the website's brightness(0.7) */}
+      {night ? <Rect width={w} height={h} fill="#000" opacity={0.3} /> : null}
     </Svg>
   );
 }

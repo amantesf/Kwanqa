@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { amharicAudio } from '@/lib/amharicAudio';
 import type { Stamp } from '@/lib/passport';
 import { PLACE_LESSONS, type PlaceWord } from '@/lib/placeLessons';
@@ -7,7 +7,7 @@ import Button from '@/components/button';
 import PassportStamp from '@/components/passport-stamp';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles } from '@/theme';
 
 // The one-minute lesson about a passport stamp's place, like the website's
 // (components/PlaceLesson.tsx): a few short cards, each with an Amharic word
@@ -22,6 +22,7 @@ function say(text: string) {
 
 /** The Amharic word on a card: said once as it appears, and again when tapped. */
 function WordChip({ word }: { word: PlaceWord }) {
+  const styles = useStyles();
   useEffect(() => {
     const timer = setTimeout(() => say(word.am), 300);
     return () => clearTimeout(timer);
@@ -40,6 +41,7 @@ function WordChip({ word }: { word: PlaceWord }) {
 }
 
 export default function PlaceLesson({ stamp, onDone }: { stamp: Stamp; onDone: () => void }) {
+  const styles = useStyles();
   const lesson = PLACE_LESSONS[stamp.id];
   const [step, setStep] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
@@ -104,28 +106,28 @@ export default function PlaceLesson({ stamp, onDone }: { stamp: Stamp; onDone: (
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   flex: { flex: 1 },
   wrap: { gap: 14 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   kicker: { fontFamily: fonts.heavy, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.6 },
-  title: { fontFamily: fonts.black, fontSize: 22, color: colors.ink },
+  title: { fontFamily: fonts.black, fontSize: 22, color: c.ink },
   titleAm: { fontFamily: fonts.amharicBold },
   dots: { flexDirection: 'row', gap: 6 },
-  dot: { flex: 1, height: 6, borderRadius: 3, backgroundColor: colors.line },
+  dot: { flex: 1, height: 6, borderRadius: 3, backgroundColor: c.line },
   card: { gap: 12 },
-  text: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 25, color: colors.ink },
-  word: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: colors.bgSoft },
-  wordAm: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: colors.ink },
-  wordTr: { fontFamily: fonts.heavy, fontSize: 14, color: colors.primary },
-  wordEn: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
-  question: { fontFamily: fonts.black, fontSize: 19, lineHeight: 25, color: colors.ink },
-  option: { padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
+  text: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 25, color: c.ink },
+  word: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: c.bgSoft },
+  wordAm: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: c.ink },
+  wordTr: { fontFamily: fonts.heavy, fontSize: 14, color: c.primary },
+  wordEn: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
+  question: { fontFamily: fonts.black, fontSize: 19, lineHeight: 25, color: c.ink },
+  option: { padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
   right: { borderColor: '#a5ed6e', backgroundColor: '#e9f8e4' },
   wrong: { borderColor: '#ffb3ad', backgroundColor: '#ffe9e7' },
   dim: { opacity: 0.5 },
-  optionText: { fontFamily: fonts.bold, fontSize: 16, color: colors.ink },
+  optionText: { fontFamily: fonts.bold, fontSize: 16, color: c.ink },
   why: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: '#d9443a' },
   whyRight: { color: '#3a9a28' },
   whyLead: { fontFamily: fonts.black },
-});
+}));

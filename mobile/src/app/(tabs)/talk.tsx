@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { callBest, useClimb } from '@/lib/climb';
@@ -11,7 +11,7 @@ import { storage } from '@/lib/storage';
 import { useAuth } from '@/auth';
 import Button from '@/components/button';
 import Walia from '@/components/walia';
-import { colors, fonts, tabBarTop } from '@/theme';
+import { fonts, makeStyles, tabBarTop } from '@/theme';
 
 // Talk with Walia, like the website's /talk (components/TalkPage.tsx): pick a
 // call by level, and Walia rings. Calls use real speech recognition, so they
@@ -60,6 +60,7 @@ function text(track: Track) {
 }
 
 export default function Talk() {
+  const styles = useStyles();
   const profile = useProfile();
   const climb = useClimb();
   const { user, enabled, loading } = useAuth();
@@ -158,38 +159,38 @@ export default function Talk() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg, paddingTop: tabBarTop },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg, paddingTop: tabBarTop },
   page: { padding: 16, gap: 16, paddingBottom: 48 },
   tracks: { flexDirection: 'row', gap: 8 },
-  chip: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  chipOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
-  chipText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
-  chipTextOn: { color: colors.primary },
+  chip: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  chipOn: { borderColor: c.primaryBorder, backgroundColor: c.primarySoft },
+  chipText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  chipTextOn: { color: c.primary },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   heroText: { flex: 1, gap: 4 },
-  heading: { fontFamily: fonts.black, fontSize: 28, color: colors.ink },
-  lede: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: colors.muted },
-  card: { gap: 10, padding: 16, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
-  cardTitle: { fontFamily: fonts.black, fontSize: 18, lineHeight: 24, color: colors.ink },
-  cardText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: colors.muted },
+  heading: { fontFamily: fonts.black, fontSize: 28, color: c.ink },
+  lede: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.muted },
+  card: { gap: 10, padding: 16, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
+  cardTitle: { fontFamily: fonts.black, fontSize: 18, lineHeight: 24, color: c.ink },
+  cardText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.muted },
   genders: { flexDirection: 'row', gap: 8 },
-  gender: { flex: 1, paddingVertical: 11, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
+  gender: { flex: 1, paddingVertical: 11, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
   genderOn: { borderColor: '#b9cdf2', backgroundColor: '#e6eefb' },
-  genderText: { fontFamily: fonts.heavy, fontSize: 15, color: colors.muted },
-  genderTextOn: { color: colors.blue },
+  genderText: { fontFamily: fonts.heavy, fontSize: 15, color: c.muted },
+  genderTextOn: { color: c.blue },
   level: { gap: 10 },
-  levelTitle: { fontFamily: fonts.black, fontSize: 22, color: colors.ink, marginTop: 6 },
-  call: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#ffffff' },
+  levelTitle: { fontFamily: fonts.black, fontSize: 22, color: c.ink, marginTop: 6 },
+  call: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#ffffff' },
   callText: { flex: 1, gap: 2 },
-  callTitle: { fontFamily: fonts.black, fontSize: 17, color: colors.ink },
-  callAm: { fontFamily: fonts.amharicBold, fontSize: 15, lineHeight: 22, color: colors.primary },
-  callBlurb: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 18, color: colors.muted },
+  callTitle: { fontFamily: fonts.black, fontSize: 17, color: c.ink },
+  callAm: { fontFamily: fonts.amharicBold, fontSize: 15, lineHeight: 22, color: c.primary },
+  callBlurb: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 18, color: c.muted },
   callMeta: { fontFamily: fonts.heavy, fontSize: 12, color: '#afafaf', marginTop: 2 },
   callDone: { fontFamily: fonts.heavy, fontSize: 12, color: '#3a9a28' },
-  callButton: { alignItems: 'center', justifyContent: 'center', gap: 2, width: 66, height: 66, borderRadius: 33, backgroundColor: colors.green, borderBottomWidth: 4, borderBottomColor: '#3a9a28' },
-  callButtonOff: { backgroundColor: colors.line, borderBottomColor: colors.line },
+  callButton: { alignItems: 'center', justifyContent: 'center', gap: 2, width: 66, height: 66, borderRadius: 33, backgroundColor: c.green, borderBottomWidth: 4, borderBottomColor: '#3a9a28' },
+  callButtonOff: { backgroundColor: c.line, borderBottomColor: c.line },
   callButtonDown: { borderBottomWidth: 0, marginTop: 4 },
   callButtonText: { fontFamily: fonts.black, fontSize: 12, color: '#ffffff' },
   callButtonTextOff: { color: '#afafaf' },
-});
+}));

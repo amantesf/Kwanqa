@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { MONTHS, formatEthiopian, fromEthiopian, geezNumber, toEthiopian, type EthiopianDate } from '@/lib/ethiopianCalendar';
 import { holidays, upcomingHolidays, type Holiday } from '@/lib/holidays';
 import { DateTile, ShareGreeting, countdown } from '@/components/holiday';
 import Tilet from '@/components/tilet';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles } from '@/theme';
 
 // The Ethiopian calendar and every holiday in the order it comes up, like the
 // website's /holidays (components/HolidayCalendar.tsx).
@@ -44,6 +44,7 @@ const openHoliday = (id: string) => router.push({ pathname: '/explore/holiday/[i
 
 /** One Ethiopian month as a calendar grid, starting on Sunday. */
 function MonthGrid({ month, today }: { month: EthiopianDate; today: EthiopianDate }) {
+  const styles = useStyles();
   const first = fromEthiopian({ ...month, day: 1 });
   const length = monthLength(month);
   const marked = holidaysIn(month);
@@ -105,6 +106,7 @@ function MonthGrid({ month, today }: { month: EthiopianDate; today: EthiopianDat
 }
 
 export default function Holidays() {
+  const styles = useStyles();
   const [now] = useState(() => new Date());
   const [offset, setOffset] = useState(0);
   const today = toEthiopian(now);
@@ -172,15 +174,15 @@ export default function Holidays() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   flex: { flex: 1 },
   page: { padding: 16, gap: 14, paddingBottom: 48 },
   card: { overflow: 'hidden', borderRadius: 24, borderWidth: 1, borderColor: '#ece4d8', backgroundColor: '#ffffff' },
   heroBody: { padding: 18, gap: 4 },
-  kicker: { fontFamily: fonts.amharicBold, fontSize: 14, color: colors.primary },
+  kicker: { fontFamily: fonts.amharicBold, fontSize: 14, color: c.primary },
   kickerEn: { fontFamily: fonts.heavy, color: SAND },
   big: { fontFamily: fonts.amharicBold, fontSize: 34, lineHeight: 46, color: INK },
-  sub: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: colors.muted },
+  sub: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: c.muted },
   monthBody: { padding: 14, paddingTop: 12, gap: 4 },
   monthName: { fontFamily: fonts.amharicBold, fontSize: 24, lineHeight: 34, color: INK, textAlign: 'center' },
   monthSub: { fontFamily: fonts.bold, fontSize: 13, color: SAND, textAlign: 'center', marginBottom: 8 },
@@ -197,18 +199,18 @@ const styles = StyleSheet.create({
   feastText: { fontFamily: fonts.heavy, fontSize: 14, color: INK },
   feastGeez: { fontFamily: fonts.amharicBold },
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  navButton: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  navText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.ink },
-  thisMonth: { fontFamily: fonts.heavy, fontSize: 14, color: colors.blue },
-  heading: { fontFamily: fonts.black, fontSize: 24, color: colors.ink, marginTop: 8 },
-  item: { gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#ffffff' },
+  navButton: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  navText: { fontFamily: fonts.heavy, fontSize: 14, color: c.ink },
+  thisMonth: { fontFamily: fonts.heavy, fontSize: 14, color: c.blue },
+  heading: { fontFamily: fonts.black, fontSize: 24, color: c.ink, marginTop: 8 },
+  item: { gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#ffffff' },
   itemTop: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   itemText: { flex: 1, gap: 2 },
-  itemName: { fontFamily: fonts.black, fontSize: 18, color: colors.ink },
+  itemName: { fontFamily: fonts.black, fontSize: 18, color: c.ink },
   itemAm: { fontFamily: fonts.amharicBold },
-  itemAbout: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
+  itemAbout: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   itemActions: { flexDirection: 'row', gap: 10, alignItems: 'center' },
   lessonLink: { minHeight: 50, paddingHorizontal: 18, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  lessonLinkText: { fontFamily: fonts.black, fontSize: 16, color: colors.blue, textTransform: 'uppercase', letterSpacing: 0.8 },
-  note: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 19, color: colors.muted, textAlign: 'center', paddingHorizontal: 8 },
-});
+  lessonLinkText: { fontFamily: fonts.black, fontSize: 16, color: c.blue, textTransform: 'uppercase', letterSpacing: 0.8 },
+  note: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 19, color: c.muted, textAlign: 'center', paddingHorizontal: 8 },
+}));

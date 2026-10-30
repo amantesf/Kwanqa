@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { FIDEL, VOWELS, type FidelCell, type FidelRow } from '@/lib/fidel';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // The ፊደል chart, like the website's (components/FidelChart.tsx): one row per
 // consonant, one column per vowel sound. Tap a letter to hear it and see how
@@ -12,6 +12,8 @@ import { colors, fonts } from '@/theme';
 const sound = (cell: FidelCell) => cell.roman || cell.vowel.roman;
 
 export default function FidelChart() {
+  const styles = useStyles();
+  const colors = useColors();
   const [row, setRow] = useState<FidelRow>(FIDEL[0]);
   const [cell, setCell] = useState<FidelCell>(FIDEL[0].cells[0]);
   const [hideDuplicates, setHideDuplicates] = useState(false);
@@ -109,33 +111,33 @@ export default function FidelChart() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
-  detail: { margin: 12, marginBottom: 6, padding: 14, gap: 10, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg },
+  detail: { margin: 12, marginBottom: 6, padding: 14, gap: 10, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: c.bg },
   detailTop: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  big: { fontFamily: fonts.amharicBold, fontSize: 64, lineHeight: 84, color: colors.ink, minWidth: 76, textAlign: 'center' },
+  big: { fontFamily: fonts.amharicBold, fontSize: 64, lineHeight: 84, color: c.ink, minWidth: 76, textAlign: 'center' },
   detailText: { flex: 1, gap: 4 },
   soundRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  roman: { fontFamily: fonts.black, fontSize: 30, color: colors.primary },
-  explain: { fontFamily: fonts.body, fontSize: 14, lineHeight: 20, color: colors.muted },
-  strong: { fontFamily: fonts.heavy, color: colors.ink },
-  strongAm: { fontFamily: fonts.amharicBold, color: colors.ink },
+  roman: { fontFamily: fonts.black, fontSize: 30, color: c.primary },
+  explain: { fontFamily: fonts.body, fontSize: 14, lineHeight: 20, color: c.muted },
+  strong: { fontFamily: fonts.heavy, color: c.ink },
+  strongAm: { fontFamily: fonts.amharicBold, color: c.ink },
   note: { fontFamily: fonts.body, fontSize: 13, color: '#8a6d00', backgroundColor: '#fff6dc', borderRadius: 10, padding: 8, overflow: 'hidden' },
   family: { flexDirection: 'row', gap: 5 },
-  mini: { flex: 1, paddingVertical: 4, borderRadius: 10, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, alignItems: 'center' },
-  miniOn: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
-  miniChar: { fontFamily: fonts.amharic, fontSize: 20, lineHeight: 28, color: colors.ink },
-  miniCharOn: { color: colors.primary },
+  mini: { flex: 1, paddingVertical: 4, borderRadius: 10, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, alignItems: 'center' },
+  miniOn: { borderColor: c.primary, backgroundColor: c.primarySoft },
+  miniChar: { fontFamily: fonts.amharic, fontSize: 20, lineHeight: 28, color: c.ink },
+  miniCharOn: { color: c.primary },
   page: { paddingHorizontal: 12, paddingBottom: 40, gap: 4 },
   toggle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4, paddingVertical: 6 },
-  toggleText: { fontFamily: fonts.heavy, fontSize: 15, color: colors.ink },
+  toggleText: { fontFamily: fonts.heavy, fontSize: 15, color: c.ink },
   row: { flexDirection: 'row', gap: 4, borderRadius: 12 },
   dup: { backgroundColor: '#fffbf0' },
   head: { flex: 1, alignItems: 'center', paddingBottom: 2 },
-  vowel: { fontFamily: fonts.black, fontSize: 16, color: colors.primary },
-  order: { fontFamily: fonts.bold, fontSize: 11, color: colors.muted },
+  vowel: { fontFamily: fonts.black, fontSize: 16, color: c.primary },
+  order: { fontFamily: fonts.bold, fontSize: 11, color: c.muted },
   cell: { flex: 1, paddingVertical: 4, borderRadius: 12, borderWidth: 2, borderColor: 'transparent', alignItems: 'center' },
-  cellOn: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
-  char: { fontFamily: fonts.amharic, fontSize: 24, lineHeight: 34, color: colors.ink },
+  cellOn: { borderColor: c.primary, backgroundColor: c.primarySoft },
+  char: { fontFamily: fonts.amharic, fontSize: 24, lineHeight: 34, color: c.ink },
   cellSound: { fontFamily: fonts.heavy, fontSize: 11, color: '#16449c' },
-});
+}));

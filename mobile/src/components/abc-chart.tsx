@@ -1,12 +1,12 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { ABC, type AbcLetter } from '@/lib/abc';
 import { englishAudioUrl } from '@/lib/englishAudio';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
 import { siteUrl } from '@/site';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // The English alphabet for Amharic speakers, like the website's /abc
 // (components/AbcChart.tsx): tap a letter to see it big, hear its name and an
@@ -19,6 +19,8 @@ function say(texts: string[]) {
 }
 
 export default function AbcChart() {
+  const styles = useStyles();
+  const colors = useColors();
   const [l, setSelected] = useState<AbcLetter>(ABC[0]);
   const [quiz, setQuiz] = useState(false);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
@@ -109,30 +111,30 @@ export default function AbcChart() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   flex: { flex: 1 },
   page: { padding: 12, gap: 12, paddingBottom: 40 },
-  lead: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: colors.muted, paddingHorizontal: 4 },
+  lead: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.muted, paddingHorizontal: 4 },
   am: { fontFamily: fonts.amharic },
-  detail: { gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
+  detail: { gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
   detailTop: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  big: { fontFamily: fonts.black, fontSize: 56, color: colors.ink, minWidth: 90 },
-  bigLower: { fontSize: 36, color: colors.muted },
-  nameLabel: { fontFamily: fonts.heavy, fontSize: 12, color: colors.muted, textTransform: 'uppercase' },
-  nameAm: { fontFamily: fonts.amharicBold, fontSize: 28, lineHeight: 40, color: colors.primary },
-  word: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: colors.bgSoft },
+  big: { fontFamily: fonts.black, fontSize: 56, color: c.ink, minWidth: 90 },
+  bigLower: { fontSize: 36, color: c.muted },
+  nameLabel: { fontFamily: fonts.heavy, fontSize: 12, color: c.muted, textTransform: 'uppercase' },
+  nameAm: { fontFamily: fonts.amharicBold, fontSize: 28, lineHeight: 40, color: c.primary },
+  word: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: c.bgSoft },
   picture: { width: 64, height: 64 },
-  wordEn: { fontFamily: fonts.heavy, fontSize: 24, color: colors.ink },
-  wordMark: { fontFamily: fonts.black, color: colors.primary },
-  wordAm: { fontFamily: fonts.amharic, fontSize: 17, lineHeight: 25, color: colors.muted },
+  wordEn: { fontFamily: fonts.heavy, fontSize: 24, color: c.ink },
+  wordMark: { fontFamily: fonts.black, color: c.primary },
+  wordAm: { fontFamily: fonts.amharic, fontSize: 17, lineHeight: 25, color: c.muted },
   note: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 19, color: '#8a6d00', backgroundColor: '#fff6dc', borderRadius: 10, padding: 8, overflow: 'hidden' },
   toggle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4 },
-  toggleText: { fontFamily: fonts.heavy, fontSize: 15, color: colors.ink },
+  toggleText: { fontFamily: fonts.heavy, fontSize: 15, color: c.ink },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cell: { width: '22%', flexGrow: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  cellOn: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
-  cellLetter: { fontFamily: fonts.black, fontSize: 24, color: colors.ink },
-  cellLetterOn: { color: colors.primary },
-  cellLower: { fontSize: 16, color: colors.muted },
+  cell: { width: '22%', flexGrow: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  cellOn: { borderColor: c.primary, backgroundColor: c.primarySoft },
+  cellLetter: { fontFamily: fonts.black, fontSize: 24, color: c.ink },
+  cellLetterOn: { color: c.primary },
+  cellLower: { fontSize: 16, color: c.muted },
   cellWord: { fontFamily: fonts.bold, fontSize: 12, color: '#16449c' },
-});
+}));

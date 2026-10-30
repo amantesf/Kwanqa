@@ -1,9 +1,9 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useEffect, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { appleAvailable, signInWithApple, signInWithGoogle } from '@/social';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles } from '@/theme';
 
 // The one-tap ways in, above the email form: Apple's own button (iPhone only,
 // as Apple requires) and Google's, followed by an "or" before the form.
@@ -20,6 +20,7 @@ function GoogleMark() {
 }
 
 export default function SocialButtons({ onError, signup }: { onError: (message: string) => void; signup: boolean }) {
+  const styles = useStyles();
   const [apple, setApple] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -65,13 +66,13 @@ export default function SocialButtons({ onError, signup }: { onError: (message: 
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   wrap: { gap: 10 },
   apple: { height: 52, width: '100%' },
-  google: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 52, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
+  google: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 52, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
   googleDown: { borderBottomWidth: 2, marginTop: 2 },
-  googleText: { fontFamily: fonts.heavy, fontSize: 17, color: colors.ink },
+  googleText: { fontFamily: fonts.heavy, fontSize: 17, color: c.ink },
   or: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 4 },
-  line: { flex: 1, height: 2, backgroundColor: colors.line },
-  orText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted, textTransform: 'uppercase' },
-});
+  line: { flex: 1, height: 2, backgroundColor: c.line },
+  orText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted, textTransform: 'uppercase' },
+}));

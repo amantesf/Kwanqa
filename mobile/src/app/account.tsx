@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { readProfile } from '@/lib/profile';
@@ -10,7 +10,7 @@ import SocialButtons from '@/components/social-buttons';
 import Walia from '@/components/walia';
 import { SITE } from '@/site';
 import { supabase } from '@/supabase';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles } from '@/theme';
 
 // Sign up or log in with Apple, Google, or email and password, like the
 // website's forms (components/AuthForm.tsx): same account, same progress.
@@ -30,6 +30,7 @@ function friendly(message: string) {
 }
 
 function Field({ label, ...props }: { label: string } & React.ComponentProps<typeof TextInput>) {
+  const styles = useStyles();
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -39,6 +40,7 @@ function Field({ label, ...props }: { label: string } & React.ComponentProps<typ
 }
 
 export default function Account() {
+  const styles = useStyles();
   const params = useLocalSearchParams<{ mode?: Mode }>();
   const [mode, setMode] = useState<Mode>(params.mode === 'login' ? 'login' : 'signup');
   const { user } = useAuth();
@@ -236,6 +238,7 @@ export default function Account() {
 }
 
 function Button({ label, onPress, disabled }: { label: string; onPress: () => void; disabled?: boolean }) {
+  const styles = useStyles();
   return (
     <Pressable
       onPress={disabled ? undefined : onPress}
@@ -248,25 +251,25 @@ function Button({ label, onPress, disabled }: { label: string; onPress: () => vo
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg },
   flex: { flex: 1 },
   top: { paddingHorizontal: 16, paddingVertical: 10 },
   page: { padding: 20, gap: 14, paddingBottom: 40, maxWidth: 480, width: '100%', alignSelf: 'center' },
   center: { alignItems: 'center', gap: 8, marginBottom: 6 },
-  title: { fontFamily: fonts.black, fontSize: 26, color: colors.ink, textAlign: 'center' },
-  lead: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: colors.muted, textAlign: 'center' },
+  title: { fontFamily: fonts.black, fontSize: 26, color: c.ink, textAlign: 'center' },
+  lead: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: c.muted, textAlign: 'center' },
   field: { gap: 6 },
-  label: { fontFamily: fonts.heavy, fontSize: 14, color: colors.ink },
-  input: { minHeight: 52, paddingHorizontal: 16, borderRadius: 14, borderWidth: 2, borderColor: colors.line, backgroundColor: colors.bgSoft, fontFamily: fonts.bold, fontSize: 17, color: colors.ink },
+  label: { fontFamily: fonts.heavy, fontSize: 14, color: c.ink },
+  input: { minHeight: 52, paddingHorizontal: 16, borderRadius: 14, borderWidth: 2, borderColor: c.line, backgroundColor: c.bgSoft, fontFamily: fonts.bold, fontSize: 17, color: c.ink },
   error: { fontFamily: fonts.bold, fontSize: 15, color: '#d9443a', textAlign: 'center' },
-  button: { minHeight: 52, borderRadius: 16, borderBottomWidth: 5, borderBottomColor: colors.primaryShadow, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch' },
-  buttonOff: { backgroundColor: colors.line, borderBottomColor: colors.line },
+  button: { minHeight: 52, borderRadius: 16, borderBottomWidth: 5, borderBottomColor: c.primaryShadow, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch' },
+  buttonOff: { backgroundColor: c.line, borderBottomColor: c.line },
   buttonDown: { borderBottomWidth: 0, marginTop: 5 },
   buttonText: { fontFamily: fonts.black, fontSize: 16, color: '#ffffff', textTransform: 'uppercase', letterSpacing: 0.8 },
   buttonTextOff: { color: '#afafaf' },
   forgot: { alignSelf: 'flex-end', marginTop: -4 },
-  forgotText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.blue },
+  forgotText: { fontFamily: fonts.heavy, fontSize: 14, color: c.blue },
   switch: { paddingVertical: 10, alignItems: 'center' },
-  switchText: { fontFamily: fonts.black, fontSize: 15, color: colors.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
-});
+  switchText: { fontFamily: fonts.black, fontSize: 15, color: c.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
+}));

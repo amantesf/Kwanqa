@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { nextLesson, trackCourses, useClimb } from '@/lib/climb';
 import { amharicAudio } from '@/lib/amharicAudio';
 import { courseContent, type Track } from '@/lib/courses';
@@ -9,13 +9,15 @@ import { useProfile } from '@/lib/profile';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
 import Walia from '@/components/walia';
-import { campColors, colors, fonts } from '@/theme';
+import { campColors, fonts, makeStyles, useColors } from '@/theme';
 
 // A guide to a whole camp, like the website's phrasebook (components/Phrasebook.tsx):
 // every lesson's phrases and dialogue on one page. It opens on the camp being
 // climbed; "Quiz me" hides the meanings until tapped.
 
 export default function Phrasebook() {
+  const styles = useStyles();
+  const colors = useColors();
   const climb = useClimb();
   const profile = useProfile();
   const [track, setTrack] = useState<Track>(profile?.track ?? 'amharic');
@@ -142,40 +144,40 @@ export default function Phrasebook() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   flex: { flex: 1 },
   page: { padding: 16, gap: 14, paddingBottom: 48 },
   tracks: { flexDirection: 'row', gap: 8 },
   camps: { gap: 8 },
-  chip: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  chipOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
-  chipText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
-  chipTextOn: { color: colors.primary },
+  chip: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  chipOn: { borderColor: c.primaryBorder, backgroundColor: c.primarySoft },
+  chipText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  chipTextOn: { color: c.primary },
   banner: { borderRadius: 18, borderBottomWidth: 5, padding: 16, gap: 4 },
   bannerKicker: { fontFamily: fonts.heavy, fontSize: 12, color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', letterSpacing: 0.4 },
   bannerTitle: { fontFamily: fonts.black, fontSize: 20, lineHeight: 25, color: '#ffffff' },
   bannerText: { fontFamily: fonts.bold, fontSize: 14, color: 'rgba(255,255,255,0.9)' },
   bar: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  barText: { flex: 1, fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: colors.muted },
+  barText: { flex: 1, fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: c.muted },
   toggle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  toggleText: { fontFamily: fonts.heavy, fontSize: 15, color: colors.ink },
+  toggleText: { fontFamily: fonts.heavy, fontSize: 15, color: c.ink },
   lesson: { gap: 10, paddingTop: 6 },
   lessonHead: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
-  num: { width: 34, height: 34, borderRadius: 17, overflow: 'hidden', textAlign: 'center', lineHeight: 34, backgroundColor: colors.primary, color: '#ffffff', fontFamily: fonts.black, fontSize: 16 },
-  lessonTitle: { fontFamily: fonts.black, fontSize: 20, color: colors.ink },
-  lessonText: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
-  mainAm: { fontFamily: fonts.amharicBold, fontSize: 20, lineHeight: 29, color: colors.ink },
-  mainEn: { fontFamily: fonts.black, fontSize: 18, color: colors.ink },
-  mainAmSmall: { fontFamily: fonts.amharicBold, fontSize: 17, lineHeight: 25, color: colors.ink },
-  mainEnSmall: { fontFamily: fonts.heavy, fontSize: 16, color: colors.ink },
-  roman: { fontFamily: fonts.bold, fontSize: 14, color: colors.primary },
-  meaning: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted },
-  hidden: { color: colors.blue },
-  label: { fontFamily: fonts.heavy, fontSize: 12, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.6, marginTop: 4 },
-  line: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, borderRadius: 16, backgroundColor: colors.bgSoft },
+  num: { width: 34, height: 34, borderRadius: 17, overflow: 'hidden', textAlign: 'center', lineHeight: 34, backgroundColor: c.primary, color: '#ffffff', fontFamily: fonts.black, fontSize: 16 },
+  lessonTitle: { fontFamily: fonts.black, fontSize: 20, color: c.ink },
+  lessonText: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
+  mainAm: { fontFamily: fonts.amharicBold, fontSize: 20, lineHeight: 29, color: c.ink },
+  mainEn: { fontFamily: fonts.black, fontSize: 18, color: c.ink },
+  mainAmSmall: { fontFamily: fonts.amharicBold, fontSize: 17, lineHeight: 25, color: c.ink },
+  mainEnSmall: { fontFamily: fonts.heavy, fontSize: 16, color: c.ink },
+  roman: { fontFamily: fonts.bold, fontSize: 14, color: c.primary },
+  meaning: { fontFamily: fonts.bold, fontSize: 15, color: c.muted },
+  hidden: { color: c.blue },
+  label: { fontFamily: fonts.heavy, fontSize: 12, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.6, marginTop: 4 },
+  line: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, borderRadius: 16, backgroundColor: c.bgSoft },
   lineB: { backgroundColor: '#e6eefb' },
-  speakerTag: { width: 26, height: 26, borderRadius: 13, overflow: 'hidden', textAlign: 'center', lineHeight: 26, backgroundColor: colors.primary, color: '#ffffff', fontFamily: fonts.black, fontSize: 13 },
-  speakerTagB: { backgroundColor: colors.blue },
-  link: { fontFamily: fonts.black, fontSize: 15, color: colors.blue, textTransform: 'uppercase', letterSpacing: 0.5, paddingVertical: 6 },
-});
+  speakerTag: { width: 26, height: 26, borderRadius: 13, overflow: 'hidden', textAlign: 'center', lineHeight: 26, backgroundColor: c.primary, color: '#ffffff', fontFamily: fonts.black, fontSize: 13 },
+  speakerTagB: { backgroundColor: c.blue },
+  link: { fontFamily: fonts.black, fontSize: 15, color: c.blue, textTransform: 'uppercase', letterSpacing: 0.5, paddingVertical: 6 },
+}));

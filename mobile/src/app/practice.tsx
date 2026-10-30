@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { amharicAudio } from '@/lib/amharicAudio';
@@ -19,7 +19,7 @@ import Speaker from '@/components/speaker';
 import Walia, { type Mood } from '@/components/walia';
 import LetterTrace from '@/components/letter-trace';
 import { siteUrl } from '@/site';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
@@ -87,6 +87,7 @@ const ETHIOPIC = /[ሀ-፿]/;
 const sentence = (text: string) => (/[.?!።፧]$/.test(text) ? text : `${text}.`);
 
 function Hoof({ filled }: { filled: boolean }) {
+  const colors = useColors();
   const fill = filled ? '#6b4a2b' : colors.line;
   return (
     <Svg viewBox="0 0 24 24" width={24} height={24}>
@@ -97,6 +98,8 @@ function Hoof({ filled }: { filled: boolean }) {
 }
 
 function Mark({ good }: { good: boolean }) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View style={[styles.mark, { backgroundColor: good ? colors.green : '#ff5a4e' }]}>
       <Svg viewBox="0 0 24 24" width={30} height={30}>
@@ -108,6 +111,8 @@ function Mark({ good }: { good: boolean }) {
 
 /** A chunky 3D button, like the website's .btn. */
 function Button({ label, onPress, disabled, tone = 'primary' }: { label: string; onPress: () => void; disabled?: boolean; tone?: 'primary' | 'green' | 'red' | 'plain' }) {
+  const styles = useStyles();
+  const colors = useColors();
   const look = disabled
     ? { bg: colors.line, edge: colors.line, fg: '#afafaf' }
     : tone === 'green'
@@ -115,7 +120,7 @@ function Button({ label, onPress, disabled, tone = 'primary' }: { label: string;
       : tone === 'red'
         ? { bg: '#ff5a4e', edge: '#d9443a', fg: '#ffffff' }
         : tone === 'plain'
-          ? { bg: '#ffffff', edge: colors.line, fg: colors.muted }
+          ? { bg: colors.bg, edge: colors.line, fg: colors.muted }
           : { bg: colors.primary, edge: colors.primaryShadow, fg: '#ffffff' };
   return (
     <Pressable
@@ -135,6 +140,7 @@ function Button({ label, onPress, disabled, tone = 'primary' }: { label: string;
 }
 
 function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchExercise; onMistake: () => void; onSolved: () => void; onSay: (text: string) => void }) {
+  const styles = useStyles();
   const rights = useMemo(() => shuffle(exercise.pairs.map(p => p.right)), [exercise]);
   const [left, setLeft] = useState<string | null>(null);
   const [matched, setMatched] = useState<Set<string>>(new Set());
@@ -194,6 +200,8 @@ function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchE
 }
 
 export default function Practice() {
+  const styles = useStyles();
+  const colors = useColors();
   const params = useLocalSearchParams<{ slug?: string; lesson?: string; review?: string; holiday?: string; track?: Track }>();
   const review = params.review === '1';
   // A holiday's lesson is saved as "holiday-<id>-<track>", as on the website.
@@ -407,13 +415,13 @@ export default function Practice() {
           <View style={styles.stats}>
             <View style={[styles.stat, { borderColor: colors.green }]}>
               <Text style={[styles.statHead, { backgroundColor: colors.green }]}>{accuracyLabel(accuracy)}</Text>
-              <Text style={[styles.statValue, { color: '#3a9a28' }]}>{accuracy}%</Text>
+              <Text style={[styles.statValue, styles.goodText]}>{accuracy}%</Text>
             </View>
             <View style={[styles.stat, { borderColor: '#5fb84a' }]}>
               <Text style={[styles.statHead, { backgroundColor: '#5fb84a' }]}>Grass</Text>
               <View style={styles.statRow}>
                 <Grass size={26} />
-                <Text style={[styles.statValue, { color: '#3a9a28' }]}>+{earned}</Text>
+                <Text style={[styles.statValue, styles.goodText]}>+{earned}</Text>
               </View>
             </View>
           </View>
@@ -653,10 +661,10 @@ export default function Practice() {
             <View style={styles.feedbackRow}>
               <Mark good={lastCorrect} />
               <View style={styles.feedbackText}>
-                <Text style={[styles.feedbackTitle, { color: lastCorrect ? '#3a9a28' : '#d9443a' }]}>{lastCorrect ? ui.good : ui.bad}</Text>
-                {current.kind === 'trace' && <Text style={[styles.feedbackBody, { color: '#3a9a28' }]}>{current.explain}</Text>}
+                <Text style={[styles.feedbackTitle, lastCorrect ? styles.goodText : styles.badText]}>{lastCorrect ? ui.good : ui.bad}</Text>
+                {current.kind === 'trace' && <Text style={[styles.feedbackBody, styles.goodText]}>{current.explain}</Text>}
                 {current.kind !== 'match' && current.kind !== 'trace' && (
-                  <Text style={[styles.feedbackBody, { color: lastCorrect ? '#3a9a28' : '#d9443a' }]}>
+                  <Text style={[styles.feedbackBody, lastCorrect ? styles.goodText : styles.badText]}>
                     {lastCorrect ? current.explain : `${ui.correctAnswer} ${sentence(current.kind === 'build' ? current.answer.join(' ') : current.answer)} ${current.explain}`}
                   </Text>
                 )}
@@ -681,66 +689,68 @@ export default function Practice() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  goodText: { color: '#3a9a28' },
+  badText: { color: '#d9443a' },
+  safe: { flex: 1, backgroundColor: c.bg },
   center: { alignItems: 'center', justifyContent: 'center', padding: 24, gap: 14 },
   top: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10 },
-  meter: { flex: 1, height: 16, borderRadius: 8, backgroundColor: colors.line, overflow: 'hidden' },
-  meterFill: { height: '100%', borderRadius: 8, backgroundColor: colors.primary },
+  meter: { flex: 1, height: 16, borderRadius: 8, backgroundColor: c.line, overflow: 'hidden' },
+  meterFill: { height: '100%', borderRadius: 8, backgroundColor: c.primary },
   stamina: { flexDirection: 'row' },
   body: { padding: 16, gap: 16, paddingBottom: 32 },
   retry: { alignSelf: 'flex-start', fontFamily: fonts.heavy, fontSize: 13, color: '#8f4fd0', textTransform: 'uppercase', letterSpacing: 0.4 },
-  instruction: { fontFamily: fonts.black, fontSize: 24, lineHeight: 30, color: colors.ink },
+  instruction: { fontFamily: fonts.black, fontSize: 24, lineHeight: 30, color: c.ink },
   ask: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  bubble: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 18, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, marginBottom: 24 },
+  bubble: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 18, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, marginBottom: 24 },
   bubbleText: { flex: 1, gap: 2 },
-  prompt: { fontFamily: fonts.heavy, fontSize: 19, lineHeight: 25, color: colors.ink },
+  prompt: { fontFamily: fonts.heavy, fontSize: 19, lineHeight: 25, color: c.ink },
   promptAmharic: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32 },
-  listenCue: { fontFamily: fonts.heavy, fontSize: 17, lineHeight: 23, color: colors.ink },
+  listenCue: { fontFamily: fonts.heavy, fontSize: 17, lineHeight: 23, color: c.ink },
   slower: { alignSelf: 'flex-start', marginTop: 6, paddingVertical: 4, paddingHorizontal: 10, borderRadius: 10, backgroundColor: '#e6eefb' },
-  slowerText: { fontFamily: fonts.heavy, fontSize: 13, color: colors.blue },
-  tag: { fontFamily: fonts.heavy, fontSize: 11, color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.5 },
-  promptHint: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
+  slowerText: { fontFamily: fonts.heavy, fontSize: 13, color: c.blue },
+  tag: { fontFamily: fonts.heavy, fontSize: 11, color: c.primary, textTransform: 'uppercase', letterSpacing: 0.5 },
+  promptHint: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   options: { gap: 10 },
-  option: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
-  optionSelected: { borderColor: colors.blue, backgroundColor: '#e6eefb' },
+  option: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
+  optionSelected: { borderColor: c.blue, backgroundColor: '#e6eefb' },
   optionMatched: { borderColor: '#a5ed6e', backgroundColor: '#e9f8e4' },
   optionWrong: { borderColor: '#ffb3ad', backgroundColor: '#ffe9e7' },
   optionBody: { flex: 1, gap: 1 },
-  hint: { fontFamily: fonts.bold, fontSize: 12, color: colors.muted, textAlign: 'center' },
+  hint: { fontFamily: fonts.bold, fontSize: 12, color: c.muted, textAlign: 'center' },
   optionLabel: { flex: 0 },
-  optionHint: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
-  optionText: { flex: 1, fontFamily: fonts.bold, fontSize: 17, color: colors.ink },
+  optionHint: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
+  optionText: { flex: 1, fontFamily: fonts.bold, fontSize: 17, color: c.ink },
   amharic: { fontFamily: fonts.amharicBold, fontSize: 19, lineHeight: 28 },
-  key: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
-  keyText: { fontFamily: fonts.heavy, fontSize: 13, color: colors.muted },
+  key: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: c.line, alignItems: 'center', justifyContent: 'center' },
+  keyText: { fontFamily: fonts.heavy, fontSize: 13, color: c.muted },
   letterGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
   letterOption: { flexBasis: 90, flexGrow: 1, maxWidth: 150, minHeight: 120, justifyContent: 'center' },
   letterKey: { position: 'absolute', top: 8, left: 8 },
-  letterText: { fontFamily: fonts.amharicBold, fontSize: 52, lineHeight: 72, color: colors.ink },
+  letterText: { fontFamily: fonts.amharicBold, fontSize: 52, lineHeight: 72, color: c.ink },
   letterRow: { justifyContent: 'center' },
   letterTile: { minWidth: 66, alignItems: 'center', paddingHorizontal: 14 },
   letterTileText: { fontSize: 36, lineHeight: 50 },
   pictureGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
   pictureOption: { flexDirection: 'column', width: '47%', gap: 4, paddingVertical: 14 },
   picture: { width: '100%', height: 110 },
-  pictureRoman: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
+  pictureRoman: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
   hiddenWord: { height: 28 },
   build: { gap: 24 },
-  buildAnswer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, minHeight: 70, paddingVertical: 8, borderTopWidth: 2, borderBottomWidth: 2, borderColor: colors.line },
+  buildAnswer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, minHeight: 70, paddingVertical: 8, borderTopWidth: 2, borderBottomWidth: 2, borderColor: c.line },
   bank: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
-  tile: { minHeight: 52, paddingHorizontal: 18, justifyContent: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#ffffff' },
-  tileUsed: { backgroundColor: colors.line, borderColor: colors.line },
-  tileText: { fontFamily: fonts.bold, fontSize: 20, color: colors.ink },
-  tileTextUsed: { color: colors.line },
+  tile: { minHeight: 52, paddingHorizontal: 18, justifyContent: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#ffffff' },
+  tileUsed: { backgroundColor: c.line, borderColor: c.line },
+  tileText: { fontFamily: fonts.bold, fontSize: 20, color: c.ink },
+  tileTextUsed: { color: c.line },
   matchGrid: { flexDirection: 'row', gap: 10 },
   matchCol: { flex: 1, gap: 10 },
   cheer: { alignItems: 'center', gap: 16, paddingTop: 24 },
-  cheerBubble: { alignItems: 'center', gap: 2, padding: 18, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
-  cheerBig: { fontFamily: fonts.amharicBold, fontSize: 34, lineHeight: 48, color: colors.primary },
-  cheerRoman: { fontFamily: fonts.heavy, fontSize: 16, color: colors.primary },
-  cheerText: { fontFamily: fonts.bold, fontSize: 16, color: colors.ink, textAlign: 'center' },
-  footer: { padding: 16, gap: 12, borderTopWidth: 2, borderTopColor: colors.line, backgroundColor: colors.bg },
+  cheerBubble: { alignItems: 'center', gap: 2, padding: 18, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
+  cheerBig: { fontFamily: fonts.amharicBold, fontSize: 34, lineHeight: 48, color: c.primary },
+  cheerRoman: { fontFamily: fonts.heavy, fontSize: 16, color: c.primary },
+  cheerText: { fontFamily: fonts.bold, fontSize: 16, color: c.ink, textAlign: 'center' },
+  footer: { padding: 16, gap: 12, borderTopWidth: 2, borderTopColor: c.line, backgroundColor: c.bg },
   footerGood: { borderTopColor: 'transparent', backgroundColor: '#e9f8e4' },
   footerBad: { borderTopColor: 'transparent', backgroundColor: '#ffe9e7' },
   feedbackRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
@@ -748,27 +758,27 @@ const styles = StyleSheet.create({
   feedbackText: { flex: 1, gap: 2 },
   feedbackTitle: { fontFamily: fonts.black, fontSize: 21 },
   feedbackBody: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21 },
-  comeBack: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
-  streak: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted, textAlign: 'center' },
+  comeBack: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
+  streak: { fontFamily: fonts.bold, fontSize: 14, color: c.muted, textAlign: 'center' },
   button: { minHeight: 52, borderRadius: 16, borderBottomWidth: 5, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
-  buttonPlain: { borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
+  buttonPlain: { borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
   buttonDown: { borderBottomWidth: 0, marginTop: 5 },
   buttonText: { fontFamily: fonts.black, fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.8 },
-  doneTitle: { fontFamily: fonts.black, fontSize: 28, color: colors.goldShadow, textAlign: 'center' },
+  doneTitle: { fontFamily: fonts.black, fontSize: 28, color: c.goldShadow, textAlign: 'center' },
   stats: { flexDirection: 'row', gap: 12 },
   stat: { width: 130, borderRadius: 16, borderWidth: 2, overflow: 'hidden', alignItems: 'center' },
   statHead: { alignSelf: 'stretch', textAlign: 'center', paddingVertical: 4, fontFamily: fonts.black, fontSize: 13, color: '#ffffff', textTransform: 'uppercase' },
   statRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  grassLeft: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
+  grassLeft: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   statValue: { fontFamily: fonts.black, fontSize: 24, paddingVertical: 10 },
-  doneNote: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: colors.ink, backgroundColor: colors.primarySoft, padding: 14, borderRadius: 16, overflow: 'hidden', maxWidth: 420 },
+  doneNote: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.ink, backgroundColor: c.primarySoft, padding: 14, borderRadius: 16, overflow: 'hidden', maxWidth: 420 },
   doneButton: { alignSelf: 'stretch', gap: 10, maxWidth: 420, width: '100%', marginTop: 8 },
-  restText: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: colors.muted, textAlign: 'center', maxWidth: 360 },
+  restText: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: c.muted, textAlign: 'center', maxWidth: 360 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
   dialog: { backgroundColor: '#ffffff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 36, gap: 12, alignItems: 'stretch' },
   dialogWalia: { alignSelf: 'center' },
-  dialogTitle: { fontFamily: fonts.black, fontSize: 24, color: colors.ink, textAlign: 'center' },
-  dialogText: { fontFamily: fonts.bold, fontSize: 16, color: colors.muted, textAlign: 'center' },
+  dialogTitle: { fontFamily: fonts.black, fontSize: 24, color: c.ink, textAlign: 'center' },
+  dialogText: { fontFamily: fonts.bold, fontSize: 16, color: c.muted, textAlign: 'center' },
   endSession: { paddingVertical: 12, alignItems: 'center' },
   endSessionText: { fontFamily: fonts.black, fontSize: 15, color: '#ff5a4e', textTransform: 'uppercase', letterSpacing: 0.8 },
-});
+}));

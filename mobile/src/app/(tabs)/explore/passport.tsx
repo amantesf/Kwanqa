@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import type { Track } from '@/lib/courses';
 import type { Stamp } from '@/lib/passport';
 import { useProfile } from '@/lib/profile';
@@ -10,13 +10,15 @@ import PassportStamp from '@/components/passport-stamp';
 import PlaceLesson, { hasPlaceLesson } from '@/components/place-lesson';
 import StampReveal from '@/components/stamp-reveal';
 import Walia from '@/components/walia';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // The Kwanqa passport book, like the website's /passport (components/Passport.tsx):
 // a stamp from a real place in Ethiopia for every camp finished. Tap a stamp
 // to replay its celebration, or open its place's quick lesson.
 
 export default function Passport() {
+  const styles = useStyles();
+  const colors = useColors();
   const params = useLocalSearchParams<{ track?: Track }>();
   const profile = useProfile();
   const { user } = useAuth();
@@ -91,7 +93,7 @@ export default function Passport() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   flex: { flex: 1 },
   page: { padding: 16, gap: 14, paddingBottom: 48 },
   cover: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 18, borderRadius: 22, backgroundColor: '#1f3a52', borderBottomWidth: 5, borderBottomColor: '#14283a' },
@@ -101,18 +103,18 @@ const styles = StyleSheet.create({
   meter: { height: 10, borderRadius: 5, backgroundColor: 'rgba(255,255,255,0.2)', overflow: 'hidden', marginTop: 8 },
   meterFill: { height: '100%', borderRadius: 5, backgroundColor: '#ffc233' },
   tabs: { flexDirection: 'row', gap: 8 },
-  tab: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  tabOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
-  tabText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
-  tabTextOn: { color: colors.primary },
-  pageCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#fbf8f3' },
+  tab: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  tabOn: { borderColor: c.primaryBorder, backgroundColor: c.primarySoft },
+  tabText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
+  tabTextOn: { color: c.primary },
+  pageCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#fbf8f3' },
   pageEarned: { backgroundColor: '#ffffff' },
-  camp: { fontFamily: fonts.heavy, fontSize: 11, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.6 },
-  name: { fontFamily: fonts.black, fontSize: 19, color: colors.ink },
+  camp: { fontFamily: fonts.heavy, fontSize: 11, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.6 },
+  name: { fontFamily: fonts.black, fontSize: 19, color: c.ink },
   nameAm: { fontFamily: fonts.amharicBold },
-  fact: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 19, color: colors.ink, marginTop: 4 },
+  fact: { fontFamily: fonts.bold, fontSize: 13, lineHeight: 19, color: c.ink, marginTop: 4 },
   lessonLink: { fontFamily: fonts.heavy, fontSize: 14, marginTop: 6 },
-  locked: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted, marginTop: 4 },
+  locked: { fontFamily: fonts.bold, fontSize: 13, color: c.muted, marginTop: 4 },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   sheet: { padding: 20, paddingBottom: 36, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: '#ffffff' },
-});
+}));

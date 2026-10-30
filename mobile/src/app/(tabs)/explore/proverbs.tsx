@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Share, Text, TextInput, View } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, Ellipse, Path, Rect } from 'react-native-svg';
 import { THEMES, meaningChoices, proverbOfTheDay, proverbs, themeOf, type Proverb, type Theme } from '@/lib/proverbs';
@@ -8,7 +8,7 @@ import Button from '@/components/button';
 import { play, playEffect } from '@/components/sound';
 import Speaker from '@/components/speaker';
 import Walia from '@/components/walia';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // ተረትና ምሳሌ, like the website's Proverbs page (components/ProverbsPage.tsx):
 // Walia hosts "crack the proverb" (tap words for hints, pick the meaning), then
@@ -65,6 +65,7 @@ function ThemeIcon({ theme, size = 22 }: { theme: Theme; size?: number }) {
 
 /** "Crack the proverb": tap words for hints, pick the meaning, Walia reacts. */
 function Game({ first }: { first: Proverb }) {
+  const styles = useStyles();
   const [proverb, setProverb] = useState(first);
   const [seen, setSeen] = useState<string[]>([first.id]);
   const [word, setWord] = useState<number | null>(null);
@@ -177,6 +178,7 @@ function Game({ first }: { first: Proverb }) {
 
 /** Tap to flip: the Amharic on the front, what it means on the back. */
 function FlipCard({ proverb }: { proverb: Proverb }) {
+  const styles = useStyles();
   const [flipped, setFlipped] = useState(false);
   const turn = useSharedValue(0);
   const theme = themeOf(proverb);
@@ -214,6 +216,8 @@ function FlipCard({ proverb }: { proverb: Proverb }) {
 }
 
 export default function Proverbs() {
+  const styles = useStyles();
+  const colors = useColors();
   const [theme, setTheme] = useState<Theme | 'all'>('all');
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
@@ -248,44 +252,44 @@ export default function Proverbs() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   page: { padding: 16, gap: 14, paddingBottom: 48 },
   hero: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  heroBubble: { flex: 1, padding: 12, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, marginBottom: 22 },
-  heroText: { fontFamily: fonts.heavy, fontSize: 15, lineHeight: 20, color: colors.ink },
-  heading: { fontFamily: fonts.black, fontSize: 24, color: colors.ink, marginTop: 10 },
-  game: { gap: 12, padding: 18, borderRadius: 24, borderWidth: 2, borderTopWidth: 8, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#ffffff' },
+  heroBubble: { flex: 1, padding: 12, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, marginBottom: 22 },
+  heroText: { fontFamily: fonts.heavy, fontSize: 15, lineHeight: 20, color: c.ink },
+  heading: { fontFamily: fonts.black, fontSize: 24, color: c.ink, marginTop: 10 },
+  game: { gap: 12, padding: 18, borderRadius: 24, borderWidth: 2, borderTopWidth: 8, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#ffffff' },
   gameTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   chip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 999 },
   chipLabel: { fontFamily: fonts.heavy, fontSize: 13 },
-  score: { fontFamily: fonts.heavy, fontSize: 13, color: colors.muted },
+  score: { fontFamily: fonts.heavy, fontSize: 13, color: c.muted },
   words: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  word: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
-  wordText: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: colors.ink },
+  word: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 14, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
+  wordText: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: c.ink },
   flex: { flex: 1 },
   listen: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   flipSay: { position: 'absolute', right: 10, bottom: 12 },
-  translit: { fontFamily: fonts.bold, fontSize: 15, color: colors.primary },
-  hint: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted },
-  hintAm: { fontFamily: fonts.amharicBold, color: colors.ink },
+  translit: { fontFamily: fonts.bold, fontSize: 15, color: c.primary },
+  hint: { fontFamily: fonts.bold, fontSize: 15, color: c.muted },
+  hintAm: { fontFamily: fonts.amharicBold, color: c.ink },
   ask: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  bubble: { flex: 1, padding: 12, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, marginBottom: 20 },
-  bubbleText: { fontFamily: fonts.heavy, fontSize: 16, lineHeight: 21, color: colors.ink },
+  bubble: { flex: 1, padding: 12, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, marginBottom: 20 },
+  bubbleText: { fontFamily: fonts.heavy, fontSize: 16, lineHeight: 21, color: c.ink },
   options: { gap: 10 },
-  option: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line, backgroundColor: '#ffffff' },
+  option: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: '#ffffff' },
   optionRight: { borderColor: '#a5ed6e', backgroundColor: '#e9f8e4' },
   optionWrong: { borderColor: '#ffb3ad', backgroundColor: '#ffe9e7' },
   optionDim: { opacity: 0.5 },
-  key: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
-  keyText: { fontFamily: fonts.heavy, fontSize: 13, color: colors.muted },
-  optionText: { flex: 1, fontFamily: fonts.bold, fontSize: 16, lineHeight: 21, color: colors.ink },
+  key: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: c.line, alignItems: 'center', justifyContent: 'center' },
+  keyText: { fontFamily: fonts.heavy, fontSize: 13, color: c.muted },
+  optionText: { flex: 1, fontFamily: fonts.bold, fontSize: 16, lineHeight: 21, color: c.ink },
   reveal: { gap: 10 },
-  literal: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: colors.muted, fontStyle: 'italic' },
-  search: { minHeight: 48, paddingHorizontal: 16, borderRadius: 14, borderWidth: 2, borderColor: colors.line, backgroundColor: colors.bgSoft, fontFamily: fonts.bold, fontSize: 16, color: colors.ink },
+  literal: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.muted, fontStyle: 'italic' },
+  search: { minHeight: 48, paddingHorizontal: 16, borderRadius: 14, borderWidth: 2, borderColor: c.line, backgroundColor: c.bgSoft, fontFamily: fonts.bold, fontSize: 16, color: c.ink },
   themes: { gap: 8 },
-  themeChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
-  themeChipOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
-  themeText: { fontFamily: fonts.heavy, fontSize: 14, color: colors.muted },
+  themeChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
+  themeChipOn: { borderColor: c.primaryBorder, backgroundColor: c.primarySoft },
+  themeText: { fontFamily: fonts.heavy, fontSize: 14, color: c.muted },
   flip: { height: 190 },
   face: {
     position: 'absolute',
@@ -301,14 +305,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderTopWidth: 6,
     borderBottomWidth: 5,
-    borderColor: colors.line,
+    borderColor: c.line,
     backgroundColor: '#ffffff',
     backfaceVisibility: 'hidden',
   },
-  faceAm: { fontFamily: fonts.amharicBold, fontSize: 21, lineHeight: 31, color: colors.ink, textAlign: 'center' },
-  faceTr: { fontFamily: fonts.bold, fontSize: 14, color: colors.primary, textAlign: 'center' },
+  faceAm: { fontFamily: fonts.amharicBold, fontSize: 21, lineHeight: 31, color: c.ink, textAlign: 'center' },
+  faceTr: { fontFamily: fonts.bold, fontSize: 14, color: c.primary, textAlign: 'center' },
   faceTap: { fontFamily: fonts.heavy, fontSize: 12, color: '#afafaf', textTransform: 'uppercase', letterSpacing: 0.6 },
-  faceLit: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: colors.muted, textAlign: 'center', fontStyle: 'italic' },
-  faceMean: { fontFamily: fonts.black, fontSize: 18, lineHeight: 24, color: colors.ink, textAlign: 'center' },
-  empty: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted, textAlign: 'center', paddingVertical: 20 },
-});
+  faceLit: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.muted, textAlign: 'center', fontStyle: 'italic' },
+  faceMean: { fontFamily: fonts.black, fontSize: 18, lineHeight: 24, color: c.ink, textAlign: 'center' },
+  empty: { fontFamily: fonts.bold, fontSize: 15, color: c.muted, textAlign: 'center', paddingVertical: 20 },
+}));

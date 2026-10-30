@@ -1,6 +1,6 @@
 import { router, type Href } from 'expo-router';
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { upcomingHolidays } from '@/lib/holidays';
@@ -10,12 +10,13 @@ import { usePassport } from '@/components/passport';
 import PassportStamp from '@/components/passport-stamp';
 import { useProfile } from '@/lib/profile';
 import Walia from '@/components/walia';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // Everything beyond the trail, like the website's menu: the phrasebook,
 // passport, proverbs, holidays and flashcards.
 
 function Book() {
+  const colors = useColors();
   return (
     <Svg width={44} height={44} viewBox="0 0 24 24">
       <Rect x={4} y={3} width={16} height={18} rx={3} fill={colors.blue} />
@@ -25,6 +26,7 @@ function Book() {
 }
 
 function Stack() {
+  const colors = useColors();
   return (
     <Svg width={44} height={44} viewBox="0 0 24 24">
       <Rect x={6} y={3} width={13} height={16} rx={3} fill="#f6d3c4" transform="rotate(8 12 12)" />
@@ -35,6 +37,7 @@ function Stack() {
 }
 
 function Row({ title, text, art, href, tint }: { title: string; text: string; art: ReactNode; href: Href; tint: string }) {
+  const styles = useStyles();
   return (
     <Pressable onPress={() => router.push(href)} style={({ pressed }) => [styles.row, pressed && styles.rowDown]} accessibilityRole="button">
       <View style={[styles.art, { backgroundColor: tint }]}>{art}</View>
@@ -47,6 +50,8 @@ function Row({ title, text, art, href, tint }: { title: string; text: string; ar
 }
 
 export default function Explore() {
+  const styles = useStyles();
+  const colors = useColors();
   const now = new Date();
   const today = proverbOfTheDay(now);
   const soon = upcomingHolidays(now)[0];
@@ -90,20 +95,20 @@ export default function Explore() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  safe: { flex: 1, backgroundColor: c.bg },
   page: { padding: 16, gap: 14, paddingBottom: 40 },
-  heading: { fontFamily: fonts.black, fontSize: 32, color: colors.ink },
-  today: { padding: 18, paddingRight: 96, gap: 4, borderRadius: 22, borderWidth: 2, borderTopWidth: 8, borderBottomWidth: 5, borderColor: colors.line, borderTopColor: colors.gold, backgroundColor: '#ffffff' },
-  todayKicker: { fontFamily: fonts.heavy, fontSize: 12, color: colors.goldShadow, textTransform: 'uppercase', letterSpacing: 0.6 },
-  todayAm: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: colors.ink },
-  todayTr: { fontFamily: fonts.bold, fontSize: 14, color: colors.primary },
-  todayAsk: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted, marginTop: 4 },
+  heading: { fontFamily: fonts.black, fontSize: 32, color: c.ink },
+  today: { padding: 18, paddingRight: 96, gap: 4, borderRadius: 22, borderWidth: 2, borderTopWidth: 8, borderBottomWidth: 5, borderColor: c.line, borderTopColor: c.gold, backgroundColor: '#ffffff' },
+  todayKicker: { fontFamily: fonts.heavy, fontSize: 12, color: c.goldShadow, textTransform: 'uppercase', letterSpacing: 0.6 },
+  todayAm: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: c.ink },
+  todayTr: { fontFamily: fonts.bold, fontSize: 14, color: c.primary },
+  todayAsk: { fontFamily: fonts.bold, fontSize: 14, color: c.muted, marginTop: 4 },
   todayWalia: { position: 'absolute', right: 12, bottom: 10 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line, backgroundColor: '#ffffff' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line, backgroundColor: '#ffffff' },
   rowDown: { borderBottomWidth: 2, marginTop: 3 },
   art: { width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   rowText: { flex: 1, gap: 2 },
-  rowTitle: { fontFamily: fonts.black, fontSize: 19, color: colors.ink },
-  rowBody: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: colors.muted },
-});
+  rowTitle: { fontFamily: fonts.black, fontSize: 19, color: c.ink },
+  rowBody: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: c.muted },
+}));

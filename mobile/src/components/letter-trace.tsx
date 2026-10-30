@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import type { TraceExercise } from '@/lib/letterLessons';
 import Writer, { type WriterEvent } from '@/components/writer';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles } from '@/theme';
 
 // "Trace the new letter" in a lesson, like the website's (components/LetterTrace.tsx):
 // Walia says the letter and shows how it's written once, then you trace it
@@ -21,6 +21,7 @@ export default function LetterTrace({
   /** Traced it (or the strokes couldn't load, so there's nothing to trace). */
   onDone: () => void;
 }) {
+  const styles = useStyles();
   const [message, setMessage] = useState('Watch first, then trace stroke 1.');
   const [finished, setFinished] = useState(false);
   // the latest callbacks, without restarting the trace when the lesson re-renders
@@ -68,17 +69,17 @@ export default function LetterTrace({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   wrap: { alignItems: 'center', gap: 12 },
   side: { flexDirection: 'row', alignItems: 'center', gap: 14, alignSelf: 'stretch' },
-  char: { fontFamily: fonts.amharicBold, fontSize: 52, lineHeight: 68, color: colors.ink },
+  char: { fontFamily: fonts.amharicBold, fontSize: 52, lineHeight: 68, color: c.ink },
   about: { flex: 1, gap: 2 },
-  sound: { fontFamily: fonts.black, fontSize: 20, color: colors.primary },
-  word: { fontFamily: fonts.bold, fontSize: 14, color: colors.muted },
+  sound: { fontFamily: fonts.black, fontSize: 20, color: c.primary },
+  word: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   amharic: { fontFamily: fonts.amharicBold },
-  hear: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: colors.line },
+  hear: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line },
   hearDown: { borderBottomWidth: 2, marginTop: 2 },
-  hearText: { fontFamily: fonts.black, fontSize: 13, color: colors.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
+  hearText: { fontFamily: fonts.black, fontSize: 13, color: c.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
   paper: { width: '100%', maxWidth: 300 },
-  message: { fontFamily: fonts.bold, fontSize: 15, color: colors.muted, textAlign: 'center', minHeight: 21 },
-});
+  message: { fontFamily: fonts.bold, fontSize: 15, color: c.muted, textAlign: 'center', minHeight: 21 },
+}));

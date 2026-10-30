@@ -1,8 +1,9 @@
 import { Stack } from 'expo-router';
 import { View } from 'react-native';
-import { colors, fonts, tabBarTop } from '@/theme';
+import { fonts, tabBarTop, useColors } from '@/theme';
 
 export default function ExploreLayout() {
+  const colors = useColors();
   return (
     <View style={{ flex: 1, paddingTop: tabBarTop, backgroundColor: colors.bg }}>
       <Stack

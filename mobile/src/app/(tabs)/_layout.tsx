@@ -2,9 +2,10 @@ import { Redirect } from 'expo-router';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useProfile } from '@/lib/profile';
 import { useAuth } from '@/auth';
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 export default function TabsLayout() {
+  const colors = useColors();
   const profile = useProfile();
   const { user } = useAuth();
   // New learners start on the welcome screen, then the Get started survey; a

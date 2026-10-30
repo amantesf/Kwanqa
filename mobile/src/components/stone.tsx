@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
-import { colors } from '@/theme';
+import { colors, makeStyles, useColors } from '@/theme';
 
 // A trail stone, like the website's (components/Trail.tsx): round and chunky
 // with a thick bottom edge that presses down when tapped.
@@ -39,6 +39,7 @@ function Check({ color }: { color: string }) {
 }
 
 function Trophy({ won }: { won: boolean }) {
+  const colors = useColors();
   const cup = won ? colors.gold : '#afafaf';
   return (
     <Svg width={34} height={34} viewBox="0 0 32 32">
@@ -88,6 +89,7 @@ export function Mesob({ open }: { open: boolean }) {
 type Props = { state: StoneState; kind?: StoneKind; label: string; onPress?: () => void };
 
 export default function Stone({ state, kind = 'lesson', label, onPress }: Props) {
+  const styles = useStyles();
   const [down, setDown] = useState(false);
   // review stones are purple whenever they're open
   const look = kind === 'review' && state !== 'locked' ? REVIEW : LOOK[state];
@@ -122,12 +124,12 @@ export default function Stone({ state, kind = 'lesson', label, onPress }: Props)
   );
 }
 
-const styles = StyleSheet.create({
-  ring: { padding: 6, borderRadius: SIZE, borderWidth: 6, borderColor: colors.primarySoft, margin: -12 },
+const useStyles = makeStyles(c => ({
+  ring: { padding: 6, borderRadius: SIZE, borderWidth: 6, borderColor: c.primarySoft, margin: -12 },
   ringReview: { borderColor: '#e9ddf6' },
   stone: { width: SIZE, height: SIZE + EDGE },
   edge: { position: 'absolute', top: EDGE, width: SIZE, height: SIZE, borderRadius: SIZE / 2 },
   face: { position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   shine: { position: 'absolute', top: 6, left: 10, width: 26, height: 14, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.25)', transform: [{ rotate: '-30deg' }] },
   reward: { width: SIZE, height: SIZE + EDGE, alignItems: 'center', justifyContent: 'center' },
-});
+}));

@@ -14,7 +14,7 @@ import Mountain, { mountainHalfWidth, type MountainCamp } from '@/components/mou
 import { StampCelebration } from '@/components/passport';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
 import Walia from '@/components/walia';
-import { campColors, colors, fonts } from '@/theme';
+import { campColors, fonts, makeStyles, useColors, useScheme } from '@/theme';
 
 // The trail, like the website's Learn page (components/CoursesRoadmap.tsx and
 // Trail.tsx): one mountain from the meadow at the trailhead up to the summit,
@@ -40,6 +40,9 @@ type Stop = { key: string; kind: StoneKind; state: StoneState; label: string; op
 type Box = { top: number; bottom: number };
 
 export default function Trail() {
+  const scheme = useScheme();
+  const styles = useStyles();
+  const colors = useColors();
   const profile = useProfile();
   const [guestTrack, setGuestTrack] = useState<Track>('amharic');
   const [picking, setPicking] = useState(false);
@@ -112,6 +115,7 @@ export default function Trail() {
   }
 
   const allStops = camps.map((_, idx) => stopsFor(idx));
+
   const xOf = (i: number) => WIND[i % WIND.length] * bend;
   const rowOf = (stops: Stop[], i: number) => stops.length - 1 - i; // the first lesson sits at the bottom
 
@@ -187,11 +191,11 @@ export default function Trail() {
           </View>
           <View style={styles.stat} accessibilityLabel={`${climb.grass} grass`}>
             <Grass size={24} />
-            <Text style={[styles.statText, { color: '#3a9a28' }]}>{climb.grass}</Text>
+            <Text style={[styles.statText, styles.grassText]}>{climb.grass}</Text>
           </View>
           <View style={styles.stat} accessibilityLabel={`Horn level ${horns.level}`}>
             <Walia size={24} hornScale={horns.scale} />
-            <Text style={[styles.statText, { color: '#843a18' }]}>{horns.level}</Text>
+            <Text style={[styles.statText, styles.hornText]}>{horns.level}</Text>
           </View>
         </View>
       </View>
@@ -231,7 +235,7 @@ export default function Trail() {
         <ScrollView ref={scroller} onScroll={onScroll} scrollEventThrottle={32} onContentSizeChange={(_, h) => setContentH(h)}>
           {contentH > 0 && summitBottom > 0 ? (
             <View style={StyleSheet.absoluteFill} pointerEvents="none">
-              <Mountain w={width} h={contentH} peakY={summitBottom + PEAK} camps={mountainCamps} />
+              <Mountain w={width} h={contentH} peakY={summitBottom + PEAK} camps={mountainCamps} night={scheme === 'dark'} />
             </View>
           ) : null}
 
@@ -361,21 +365,23 @@ export default function Trail() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const useStyles = makeStyles(c => ({
+  grassText: { color: '#3a9a28' },
+  hornText: { color: '#843a18' },
+  safe: { flex: 1, backgroundColor: c.bg },
   flex: { flex: 1 },
-  top: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 2, borderBottomColor: colors.line, backgroundColor: colors.bg },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 2, borderBottomColor: c.line, backgroundColor: c.bg },
   course: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 4, paddingHorizontal: 6, borderRadius: 10 },
-  flag: { borderRadius: 5, overflow: 'hidden', borderWidth: 2, borderColor: colors.line },
+  flag: { borderRadius: 5, overflow: 'hidden', borderWidth: 2, borderColor: c.line },
   stats: { flex: 1, flexDirection: 'row', justifyContent: 'space-around' },
   menuBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', paddingTop: 110, paddingHorizontal: 16 },
-  menu: { gap: 8, padding: 14, borderRadius: 20, backgroundColor: '#ffffff', borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
-  menuTitle: { fontFamily: fonts.heavy, fontSize: 12, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.6, paddingHorizontal: 4 },
+  menu: { gap: 8, padding: 14, borderRadius: 20, backgroundColor: '#ffffff', borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
+  menuTitle: { fontFamily: fonts.heavy, fontSize: 12, color: c.muted, textTransform: 'uppercase', letterSpacing: 0.6, paddingHorizontal: 4 },
   menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 14, borderWidth: 2, borderColor: 'transparent' },
-  menuItemOn: { borderColor: colors.primaryBorder, backgroundColor: colors.primarySoft },
-  menuLabel: { fontFamily: fonts.black, fontSize: 17, color: colors.ink },
-  menuLabelOn: { color: colors.primary },
-  menuNative: { fontFamily: fonts.amharic, fontSize: 14, color: colors.muted },
+  menuItemOn: { borderColor: c.primaryBorder, backgroundColor: c.primarySoft },
+  menuLabel: { fontFamily: fonts.black, fontSize: 17, color: c.ink },
+  menuLabelOn: { color: c.primary },
+  menuNative: { fontFamily: fonts.amharic, fontSize: 14, color: c.muted },
   stat: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statText: { fontFamily: fonts.black, fontSize: 17 },
   banner: { position: 'absolute', top: 10, left: 12, right: 12, minHeight: 84, justifyContent: 'center', overflow: 'hidden', borderRadius: 18, borderBottomWidth: 5, padding: 14, paddingRight: 112, gap: 2 },
@@ -385,7 +391,7 @@ const styles = StyleSheet.create({
   summit: { alignItems: 'center', gap: 6, paddingTop: 128, paddingHorizontal: 20, zIndex: 2 },
   summitCard: { alignItems: 'center', gap: 4, padding: 16, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)' },
   summitKicker: { fontFamily: fonts.heavy, fontSize: 12, color: '#4d5866', textTransform: 'uppercase', letterSpacing: 0.6 },
-  summitTitle: { fontFamily: fonts.black, fontSize: 20, lineHeight: 25, color: colors.ink, textAlign: 'center' },
+  summitTitle: { fontFamily: fonts.black, fontSize: 20, lineHeight: 25, color: c.ink, textAlign: 'center' },
   summitText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 19, color: '#4d5866', textAlign: 'center', maxWidth: 320 },
   divider: { height: DIVIDER, alignItems: 'center', justifyContent: 'center', zIndex: 2 },
   dividerText: {
@@ -409,5 +415,5 @@ const styles = StyleSheet.create({
   countText: { fontFamily: fonts.black, fontSize: 13, color: '#ffffff' },
   trailhead: { zIndex: 2, marginTop: 40, marginBottom: 60, marginHorizontal: 20, padding: 16, gap: 4, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center' },
   trailheadKicker: { fontFamily: fonts.heavy, fontSize: 12, color: '#4d5866', textTransform: 'uppercase', letterSpacing: 0.6 },
-  trailheadText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: colors.ink, textAlign: 'center' },
-});
+  trailheadText: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.ink, textAlign: 'center' },
+}));

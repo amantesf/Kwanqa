@@ -15,7 +15,7 @@ import { play, playEffect, stopVoice } from '@/components/sound';
 import Walia, { type Mood } from '@/components/walia';
 import { SITE } from '@/site';
 import { supabase } from '@/supabase';
-import { colors, fonts } from '@/theme';
+import { fonts, makeStyles, useColors } from '@/theme';
 
 // A call with Walia, like the website's (components/TalkCall.tsx). Walia says a
 // line (Azure, Ameha's voice), the learner taps the mic and answers out loud,
@@ -143,6 +143,7 @@ const END =
 
 /** A line of the call: the language being practised big, its meaning underneath when switched on. */
 function LineText({ line, meaning, englishCall }: { line: Line; meaning: boolean; englishCall: boolean }) {
+  const styles = useStyles();
   if (englishCall) {
     return (
       <>
@@ -161,6 +162,8 @@ function LineText({ line, meaning, englishCall }: { line: Line; meaning: boolean
 }
 
 export default function Call() {
+  const styles = useStyles();
+  const colors = useColors();
   const params = useLocalSearchParams<{ slug: string; gender?: string }>();
   const conversation = allConversations.find(c => c.slug === params.slug) ?? allConversations[0];
   const gender: Gender = params.gender === 'f' ? 'f' : 'm';
@@ -598,7 +601,7 @@ export default function Call() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(c => ({
   screen: { flex: 1, backgroundColor: '#ffffff' },
   flex: { flex: 1 },
   video: { height: '42%', overflow: 'hidden' },
@@ -613,47 +616,47 @@ const styles = StyleSheet.create({
   waliaBox: { position: 'absolute', bottom: -6, left: 0, right: 0, alignItems: 'center' },
   panel: { flex: 1, marginTop: -18, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: '#ffffff' },
   turns: { flexDirection: 'row', justifyContent: 'center', gap: 6, paddingTop: 12 },
-  turnDot: { width: 22, height: 6, borderRadius: 3, backgroundColor: colors.line },
-  turnDone: { backgroundColor: colors.green },
-  turnNow: { backgroundColor: colors.primary },
+  turnDot: { width: 22, height: 6, borderRadius: 3, backgroundColor: c.line },
+  turnDone: { backgroundColor: c.green },
+  turnNow: { backgroundColor: c.primary },
   panelBody: { padding: 16, gap: 12 },
   heard: { alignSelf: 'flex-end', maxWidth: '85%', padding: 10, borderRadius: 14, backgroundColor: '#e6eefb' },
-  heardLabel: { fontFamily: fonts.heavy, fontSize: 11, color: colors.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
-  heardAm: { fontFamily: fonts.amharicBold, fontSize: 17, lineHeight: 25, color: colors.ink },
-  heardEn: { fontFamily: fonts.heavy, fontSize: 16, color: colors.ink },
-  caption: { gap: 6, padding: 16, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: colors.line },
+  heardLabel: { fontFamily: fonts.heavy, fontSize: 11, color: c.blue, textTransform: 'uppercase', letterSpacing: 0.5 },
+  heardAm: { fontFamily: fonts.amharicBold, fontSize: 17, lineHeight: 25, color: c.ink },
+  heardEn: { fontFamily: fonts.heavy, fontSize: 16, color: c.ink },
+  caption: { gap: 6, padding: 16, borderRadius: 20, borderWidth: 2, borderBottomWidth: 5, borderColor: c.line },
   captionGood: { borderColor: '#a5ed6e', backgroundColor: '#f4fcf1' },
   captionBad: { borderColor: '#ffc9c4', backgroundColor: '#fff6f5' },
-  lineAm: { fontFamily: fonts.amharicBold, fontSize: 24, lineHeight: 35, color: colors.ink },
-  lineTr: { fontFamily: fonts.heavy, fontSize: 16, color: colors.primary },
-  lineEn: { fontFamily: fonts.black, fontSize: 22, lineHeight: 28, color: colors.ink },
-  meaning: { fontFamily: fonts.bold, fontSize: 16, color: colors.muted },
-  meaningAm: { fontFamily: fonts.amharic, fontSize: 17, lineHeight: 25, color: colors.muted },
-  dots: { fontFamily: fonts.black, fontSize: 28, color: colors.primary, letterSpacing: 4 },
-  asked: { fontFamily: fonts.bold, fontSize: 13, color: colors.muted },
+  lineAm: { fontFamily: fonts.amharicBold, fontSize: 24, lineHeight: 35, color: c.ink },
+  lineTr: { fontFamily: fonts.heavy, fontSize: 16, color: c.primary },
+  lineEn: { fontFamily: fonts.black, fontSize: 22, lineHeight: 28, color: c.ink },
+  meaning: { fontFamily: fonts.bold, fontSize: 16, color: c.muted },
+  meaningAm: { fontFamily: fonts.amharic, fontSize: 17, lineHeight: 25, color: c.muted },
+  dots: { fontFamily: fonts.black, fontSize: 28, color: c.primary, letterSpacing: 4 },
+  asked: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
   tools: { flexDirection: 'row', gap: 18, marginTop: 4 },
-  tool: { fontFamily: fonts.heavy, fontSize: 14, color: colors.blue },
+  tool: { fontFamily: fonts.heavy, fontSize: 14, color: c.blue },
   example: { gap: 2, marginTop: 6, padding: 12, borderRadius: 14, backgroundColor: '#fff6dc' },
-  exampleLabel: { fontFamily: fonts.heavy, fontSize: 11, color: colors.goldShadow, textTransform: 'uppercase', letterSpacing: 0.5 },
+  exampleLabel: { fontFamily: fonts.heavy, fontSize: 11, color: c.goldShadow, textTransform: 'uppercase', letterSpacing: 0.5 },
   feedback: { gap: 8, marginTop: 8 },
   feedbackTitle: { fontFamily: fonts.black, fontSize: 19 },
-  note: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: colors.ink },
+  note: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.ink },
   finish: { gap: 10 },
   finishTitle: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: '#3a9a28' },
   earned: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   earnedText: { fontFamily: fonts.black, fontSize: 16, color: '#3a9a28' },
   type: { flexDirection: 'row', gap: 8 },
-  input: { flex: 1, minHeight: 48, paddingHorizontal: 14, borderRadius: 14, borderWidth: 2, borderColor: colors.line, backgroundColor: colors.bgSoft, fontFamily: fonts.bold, fontSize: 16, color: colors.ink },
-  send: { paddingHorizontal: 16, borderRadius: 14, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  input: { flex: 1, minHeight: 48, paddingHorizontal: 14, borderRadius: 14, borderWidth: 2, borderColor: c.line, backgroundColor: c.bgSoft, fontFamily: fonts.bold, fontSize: 16, color: c.ink },
+  send: { paddingHorizontal: 16, borderRadius: 14, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center' },
   sendText: { fontFamily: fonts.black, fontSize: 14, color: '#ffffff', textTransform: 'uppercase' },
-  hint: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: colors.muted, textAlign: 'center' },
-  controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 12, paddingTop: 10, paddingBottom: 6, borderTopWidth: 2, borderTopColor: colors.line },
-  ctl: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bgSoft },
+  hint: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.muted, textAlign: 'center' },
+  controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 12, paddingTop: 10, paddingBottom: 6, borderTopWidth: 2, borderTopColor: c.line },
+  ctl: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', backgroundColor: c.bgSoft },
   ctlOn: { backgroundColor: '#e6eefb' },
-  ctlText: { fontFamily: fonts.black, fontSize: 15, color: colors.ink },
-  ctlTextOn: { color: colors.blue },
-  mic: { width: 74, height: 74, borderRadius: 37, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary, borderBottomWidth: 5, borderBottomColor: colors.primaryShadow },
+  ctlText: { fontFamily: fonts.black, fontSize: 15, color: c.ink },
+  ctlTextOn: { color: c.blue },
+  mic: { width: 74, height: 74, borderRadius: 37, alignItems: 'center', justifyContent: 'center', backgroundColor: c.primary, borderBottomWidth: 5, borderBottomColor: c.primaryShadow },
   micOn: { backgroundColor: '#ff5a4e', borderBottomColor: '#d9443a' },
-  micOff: { backgroundColor: colors.line, borderBottomColor: colors.line },
+  micOff: { backgroundColor: c.line, borderBottomColor: c.line },
   end: { backgroundColor: '#ff5a4e' },
-});
+}));

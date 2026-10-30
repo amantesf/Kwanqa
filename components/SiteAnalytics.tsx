@@ -9,8 +9,10 @@
 // is reported as a visit to /done/…, so the Pages list shows how far learners
 // get (custom events need a paid plan; these work on the free one).
 
+import { useEffect } from 'react';
 import { Analytics, type BeforeSendEvent } from '@vercel/analytics/next';
 import { pageview } from '@vercel/analytics';
+import { logVisit } from '@/lib/events';
 
 function readablePath(event: BeforeSendEvent): BeforeSendEvent | null {
   try {
@@ -37,6 +39,8 @@ function readablePath(event: BeforeSendEvent): BeforeSendEvent | null {
 }
 
 export default function SiteAnalytics() {
+  // and our own count of learners coming back (lib/events.ts), once a day
+  useEffect(() => logVisit(), []);
   return <Analytics beforeSend={readablePath} />;
 }
 

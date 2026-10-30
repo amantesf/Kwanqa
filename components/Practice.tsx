@@ -5,6 +5,7 @@ import { amharicAudio } from '@/lib/amharicAudio';
 import SayButton from '@/components/SayButton';
 import { clearMistakes, recordMistake } from '@/lib/mistakes';
 import { countFinished } from '@/components/SiteAnalytics';
+import { logLessonFinish, logLessonQuit, logLessonStart } from '@/lib/events';
 import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
 import GrassIcon from '@/components/GrassIcon';
 import LessonComplete from '@/components/LessonComplete';
@@ -342,6 +343,22 @@ export default function Practice({
   const altitudeNow = altitudeOf(climb);
   const sounds = useAnswerSounds();
 
+  // Learning numbers (lib/events.ts): this lesson was started, and later finished or left.
+  const eventInfo = { track, camp: slug, lesson: lessonIndex, review: !!review, level };
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    logLessonStart(eventInfo);
+    // once, when the lesson opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  /** Leaving before the end: counted as an early exit, with how far they got. */
+  function exit() {
+    logLessonQuit({ ...eventInfo, answered: solved.size, mistakes });
+    onExit();
+  }
+
   const current = queue[0];
   const ui = uiText(track);
 
@@ -519,6 +536,7 @@ export default function Practice({
         setEarned(completeLesson(slug, lessonIndex, mistakes, work));
       }
       countFinished(slug, review ? 'review' : lessonIndex);
+      logLessonFinish({ ...eventInfo, answered: initial.length, mistakes });
       sounds.play('complete');
       setPhase('done');
     } else if (stamina === 0) {
@@ -634,7 +652,7 @@ export default function Practice({
           <button type="button" className="btn" onClick={rest} disabled={!canRest}>
             {ui.eat(REST_COST)}
           </button>
-          <button type="button" className="btn btn-secondary" onClick={onExit}>
+          <button type="button" className="btn btn-secondary" onClick={exit}>
             {ui.review}
           </button>
         </div>
@@ -671,7 +689,7 @@ export default function Practice({
             <button type="button" className="btn leave-keep" onClick={() => setLeaving(false)} autoFocus>
               {ui.keepLearning}
             </button>
-            <button type="button" className="leave-end" onClick={onExit}>
+            <button type="button" className="leave-end" onClick={exit}>
               {ui.endSession}
             </button>
           </div>
@@ -682,7 +700,7 @@ export default function Practice({
           type="button"
           className="practice-close"
           // Nothing answered yet? Nothing to lose, so just leave.
-          onClick={() => (solved.size > 0 || mistakes > 0 ? setLeaving(true) : onExit())}
+          onClick={() => (solved.size > 0 || mistakes > 0 ? setLeaving(true) : exit())}
           aria-label="Leave practice"
         >
           ✕

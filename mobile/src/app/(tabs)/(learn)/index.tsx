@@ -10,7 +10,7 @@ import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
 import CampArt from '@/components/camp-art';
 import Flag from '@/components/flag';
-import Mountain, { type MountainCamp } from '@/components/mountain';
+import Mountain, { mountainHalfWidth, type MountainCamp } from '@/components/mountain';
 import { StampCelebration } from '@/components/passport';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
 import Walia from '@/components/walia';
@@ -34,6 +34,7 @@ const STONE_Y = 44;
 const STONE = 72;
 const REACH = 120; // the path runs on past a camp's first and last stones to join the next camp
 const DIVIDER = 64; // height of a camp's name pill, with its spacing
+const PEAK = 110; // how far below the summit card the mountain's peak (and flag) sits
 
 type Stop = { key: string; kind: StoneKind; state: StoneState; label: string; open?: () => void; count?: number };
 type Box = { top: number; bottom: number };
@@ -113,6 +114,19 @@ export default function Trail() {
   const allStops = camps.map((_, idx) => stopsFor(idx));
   const xOf = (i: number) => WIND[i % WIND.length] * bend;
   const rowOf = (stops: Stop[], i: number) => stops.length - 1 - i; // the first lesson sits at the bottom
+
+  // The mountain is only a sharp point near its peak, so the top camp starts
+  // far enough below it that every stone (and its edge) stands on rock.
+  const topStops = allStops[camps.length - 1] ?? [];
+  let climbToTop = 0;
+  for (let gap = 0; gap < 1200; gap += 8) {
+    climbToTop = gap;
+    const fits = topStops.every((_, i) => {
+      const top = gap + DIVIDER + rowOf(topStops, i) * ROW + STONE_Y - STONE / 2; // below the summit card
+      return mountainHalfWidth(width, summitBottom + PEAK, summitBottom + top) >= Math.abs(xOf(i)) + STONE / 2 + 10;
+    });
+    if (fits) break;
+  }
 
   // where Walia is standing, in the scrolling trail
   const here = (() => {
@@ -217,7 +231,7 @@ export default function Trail() {
         <ScrollView ref={scroller} onScroll={onScroll} scrollEventThrottle={32} onContentSizeChange={(_, h) => setContentH(h)}>
           {contentH > 0 && summitBottom > 0 ? (
             <View style={StyleSheet.absoluteFill} pointerEvents="none">
-              <Mountain w={width} h={contentH} peakY={summitBottom + 110} camps={mountainCamps} />
+              <Mountain w={width} h={contentH} peakY={summitBottom + PEAK} camps={mountainCamps} />
             </View>
           ) : null}
 
@@ -232,6 +246,25 @@ export default function Trail() {
             </View>
             {!next && !blocking ? <Walia pose="cheer" size={110} hornScale={horns.scale} /> : null}
           </View>
+
+          {/* the last stretch of trail, from the top camp up to the flag */}
+          {climbToTop > PEAK ? (
+            <Svg width={width} height={climbToTop} pointerEvents="none">
+              {(() => {
+                const cx = width / 2;
+                const d = `M ${cx} ${climbToTop} C ${cx + 40} ${climbToTop - (climbToTop - PEAK) * 0.4}, ${cx - 30} ${PEAK + (climbToTop - PEAK) * 0.4}, ${cx} ${PEAK + 14}`;
+                return (
+                  <>
+                    <Path d={d} stroke="#cdb47a" strokeWidth={22} strokeOpacity={0.45} fill="none" strokeLinecap="round" />
+                    <Path d={d} stroke="#f0e3bf" strokeWidth={16} fill="none" strokeLinecap="round" />
+                    <Path d={d} stroke="#ffffff" strokeWidth={6} strokeDasharray="1 14" fill="none" strokeLinecap="round" />
+                  </>
+                );
+              })()}
+            </Svg>
+          ) : (
+            <View style={{ height: climbToTop }} />
+          )}
 
           {/* Camps, highest first so the trail climbs up the page */}
           {[...camps].reverse().map(camp => {

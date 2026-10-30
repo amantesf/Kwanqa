@@ -76,19 +76,28 @@ function Cloud({ x, y, s, opacity = 0.95 }: { x: number; y: number; s: number; o
   );
 }
 
+/**
+ * How wide the mountain is, each side of the middle, at height y: a sharp peak
+ * that broadens quickly. (Lower down it spreads out into the meadow too.)
+ * The trail uses this to start its top camp low enough to stand on rock.
+ */
+export function mountainHalfWidth(w: number, peakY: number, y: number) {
+  const d = y - peakY;
+  if (d <= 0) return 0;
+  // a little wider than the website's on a phone, where the trail fills more of the width
+  const maxHW = Math.min(215, w / 2 - 12);
+  return maxHW * (1 - Math.exp(-d / 260)) * (1 + 0.07 * Math.sin(y / 380));
+}
+
 function Mountain({ w, h, peakY, camps }: MountainLayout) {
   const r = rng(7);
   const cx = w / 2;
-  const maxHW = Math.min(215, w / 2 - 22);
   const baseY = h - 230; // where the mountain meets the meadow
   const STEP = 36;
 
-  // How wide the mountain is at height y: a sharp peak that broadens quickly.
   const halfWidth = (y: number) => {
-    const d = y - peakY;
-    if (d <= 0) return 0;
-    let hw = maxHW * (1 - Math.exp(-d / 260)) * (1 + 0.07 * Math.sin(y / 380));
-    if (y > baseY - 260) hw += ((y - (baseY - 260)) / 260) ** 2 * (w / 2 - hw + 60);
+    let hw = mountainHalfWidth(w, peakY, y);
+    if (hw && y > baseY - 260) hw += ((y - (baseY - 260)) / 260) ** 2 * (w / 2 - hw + 60);
     return hw;
   };
 

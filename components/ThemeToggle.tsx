@@ -33,6 +33,27 @@ export function ThemeButton() {
   );
 }
 
+/**
+ * Just the sun/moon, in the stats bar at the top of the trail. Only shown on
+ * phones and small tablets, where the sidebar is a row of icons with no room
+ * left for the sidebar's own button.
+ */
+export function ThemeIconButton() {
+  const dark = useTheme() === 'dark';
+  const label = dark ? 'Light mode' : 'Dark mode';
+  return (
+    <button
+      type="button"
+      className="top-theme"
+      onClick={() => setTheme(dark ? 'light' : 'dark')}
+      aria-label={`Switch to ${label.toLowerCase()}`}
+      title={label}
+    >
+      {dark ? SUN : MOON}
+    </button>
+  );
+}
+
 /** The Dark mode switch in the profile page's settings. */
 export default function ThemeToggle() {
   const dark = useTheme() === 'dark';

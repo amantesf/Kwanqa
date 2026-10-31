@@ -1,7 +1,8 @@
 'use client';
 
 // The row of stats at the top of the right column: course, climb streak,
-// grass, and Walia's horn level. Shared by the learn dashboard and profile.
+// grass, Walia's horn level and, on phones, the light/dark switch. Shared by
+// the learn dashboard and profile.
 
 import ClimbStreak from '@/components/ClimbStreak';
 import CourseSwitcher from '@/components/CourseSwitcher';
@@ -9,6 +10,7 @@ import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 import { altitudeFor, hornLevel, trackTotals, useClimb } from '@/lib/climb';
 import type { Track } from '@/lib/courses';
+import { ThemeIconButton } from '@/components/ThemeToggle';
 
 export default function TopStats({ track }: { track: Track }) {
   const climb = useClimb();
@@ -28,6 +30,7 @@ export default function TopStats({ track }: { track: Track }) {
         <Mascot pose="happy" size={28} hornScale={horns.scale} title="Walia" />
         {horns.level}
       </span>
+      <ThemeIconButton />
     </div>
   );
 }

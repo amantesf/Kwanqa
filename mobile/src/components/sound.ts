@@ -1,4 +1,5 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import { feel } from '@/haptics';
 import { siteUrl } from '@/site';
 
 // Recordings and Walia's voice come from kwanqa.com. Each sound gets a fresh
@@ -57,7 +58,8 @@ export function stopVoice() {
   stop('voice');
 }
 
-// the website's answer sounds (public/sounds/)
+// the website's answer sounds (public/sounds/), each with a matching buzz
 export function playEffect(kind: 'correct' | 'wrong' | 'complete') {
+  feel(kind);
   playOn('chime', `/sounds/${kind}.mp3`, 0.6);
 }

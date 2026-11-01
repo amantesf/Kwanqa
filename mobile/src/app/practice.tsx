@@ -15,6 +15,7 @@ import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
 import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import { play, playEffect } from '@/components/sound';
+import { feel } from '@/haptics';
 import { Grass } from '@/components/icons';
 import Speaker from '@/components/speaker';
 import Walia, { type Mood } from '@/components/walia';
@@ -154,6 +155,7 @@ function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchE
     const pair = exercise.pairs.find(p => p.left === left);
     if (pair?.right === right) {
       const next = new Set(matched).add(left);
+      if (next.size < exercise.pairs.length) feel('pick');
       setMatched(next);
       setLeft(null);
       if (next.size === exercise.pairs.length) onSolved();
@@ -173,6 +175,7 @@ function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchE
             key={p.left}
             disabled={matched.has(p.left)}
             onPress={() => {
+              feel('pick');
               setLeft(p.left);
               onSay(p.left);
             }}
@@ -563,6 +566,7 @@ export default function Practice() {
                       key={option}
                       disabled={feedback}
                       onPress={() => {
+                        feel('pick');
                         setChoice(option);
                         sayAloud(option);
                       }}
@@ -613,7 +617,15 @@ export default function Practice() {
               <View style={styles.build}>
                 <View style={[styles.buildAnswer, current.letters && styles.letterRow]}>
                   {picked.map(i => (
-                    <Pressable key={i} disabled={feedback} onPress={() => setPicked(p => p.filter(x => x !== i))} style={[styles.tile, current.letters && styles.letterTile]}>
+                    <Pressable
+                      key={i}
+                      disabled={feedback}
+                      onPress={() => {
+                        feel('pick');
+                        setPicked(p => p.filter(x => x !== i));
+                      }}
+                      style={[styles.tile, current.letters && styles.letterTile]}
+                    >
                       <Text style={[styles.tileText, track === 'amharic' && styles.amharic, current.letters && styles.letterTileText]}>{current.tiles[i]}</Text>
                       {current.tileHints?.[current.tiles[i]] ? <Text style={styles.hint}>{current.tileHints[current.tiles[i]]}</Text> : null}
                     </Pressable>
@@ -627,6 +639,7 @@ export default function Practice() {
                         key={i}
                         disabled={used || feedback}
                         onPress={() => {
+                          feel('pick');
                           setPicked(p => [...p, i]);
                           sayAloud(tile);
                         }}

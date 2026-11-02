@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ComponentRef } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
@@ -13,6 +13,8 @@ import Flag from '@/components/flag';
 import Mountain, { mountainHalfWidth, type MountainCamp } from '@/components/mountain';
 import { StampCelebration } from '@/components/passport';
 import Stone, { type StoneKind, type StoneState } from '@/components/stone';
+import StoneCard, { type StoneSpot } from '@/components/stone-card';
+import { feel } from '@/haptics';
 import Walia from '@/components/walia';
 import { campColors, fonts, makeStyles, useColors, useScheme } from '@/theme';
 import OfflineNote from '@/components/offline-note';
@@ -38,6 +40,8 @@ const DIVIDER = 64; // height of a camp's name pill, with its spacing
 const PEAK = 110; // how far below the summit card the mountain's peak (and flag) sits
 
 type Stop = { key: string; kind: StoneKind; state: StoneState; label: string; open?: () => void; count?: number };
+/** The lesson stone whose card is open, and where it is on screen. */
+type Preview = { slug: string; lesson: number; done: boolean; spot: StoneSpot };
 type Box = { top: number; bottom: number };
 
 export default function Trail() {
@@ -69,6 +73,8 @@ export default function Trail() {
   const [scrollY, setScrollY] = useState<number | null>(null);
   const scroller = useRef<ScrollViewInstance>(null);
   const scrolledFor = useRef<string | null>(null);
+  const stoneViews = useRef<Record<string, ComponentRef<typeof View> | null>>({});
+  const [preview, setPreview] = useState<Preview | null>(null);
 
   // Questions missed in a camp are asked again before the next camp opens.
   const lessonsOf = (slug: string) => courseContent[slug]?.sections ?? [];
@@ -84,6 +90,15 @@ export default function Trail() {
 
   const openLesson = (slug: string, lesson: number) => router.push({ pathname: '/[slug]', params: { slug, lesson: String(lesson) } });
   const openReview = (slug: string) => router.push({ pathname: '/practice', params: { slug, review: '1' } });
+  const startLesson = (slug: string, lesson: number) => router.push({ pathname: '/practice', params: { slug, lesson: String(lesson) } });
+
+  /** Opens the card over a lesson's stone, once we know where the stone is on screen. */
+  function showPreview(key: string, slug: string, lesson: number, done: boolean) {
+    stoneViews.current[key]?.measureInWindow((x, y, w, h) => {
+      feel('pick');
+      setPreview({ slug, lesson, done, spot: { x, y, width: w, height: h } });
+    });
+  }
 
   function stopsFor(campIdx: number): Stop[] {
     const camp = camps[campIdx];
@@ -91,7 +106,8 @@ export default function Trail() {
     const stops: Stop[] = lessons.map((lesson, i) => {
       const isNext = next?.slug === camp.slug && next.lesson === i;
       const state: StoneState = isDone(climb, camp.slug, i) ? 'done' : isNext ? (blocking ? 'locked' : 'current') : campIdx < start && campIdx !== currentCamp ? 'todo' : 'locked';
-      return { key: `${camp.slug}:${i}`, kind: 'lesson', state, label: lesson.title.replace(/^Lesson \d+ – /, ''), open: () => openLesson(camp.slug, i) };
+      const key = `${camp.slug}:${i}`;
+      return { key, kind: 'lesson', state, label: lesson.title.replace(/^Lesson \d+ – /, ''), open: () => showPreview(key, camp.slug, i, state === 'done') };
     });
     // a mesob of grass waits halfway through each camp
     if (lessons.length >= 3) {
@@ -201,6 +217,25 @@ export default function Trail() {
         </View>
       </View>
       <OfflineNote />
+
+      {/* what a lesson teaches, over the stone you tapped */}
+      <StoneCard
+        spot={preview?.spot ?? null}
+        lesson={preview ? (lessonsOf(preview.slug)[preview.lesson] ?? null) : null}
+        track={track}
+        done={!!preview?.done}
+        onStart={() => {
+          if (!preview) return;
+          setPreview(null);
+          startLesson(preview.slug, preview.lesson);
+        }}
+        onPhrases={() => {
+          if (!preview) return;
+          setPreview(null);
+          openLesson(preview.slug, preview.lesson);
+        }}
+        onClose={() => setPreview(null)}
+      />
 
       {/* My courses: switch between Amharic and English */}
       <Modal visible={picking} transparent animationType="fade" onRequestClose={() => setPicking(false)}>
@@ -316,7 +351,13 @@ export default function Trail() {
                     const x = xOf(i);
                     const isHere = stop.state === 'current';
                     return (
-                      <View key={stop.key} style={[styles.stop, { top: rowOf(stops, i) * ROW + STONE_Y - STONE / 2, left: width / 2 + x - STONE / 2 }]}>
+                      <View
+                        key={stop.key}
+                        ref={el => {
+                          stoneViews.current[stop.key] = el;
+                        }}
+                        style={[styles.stop, { top: rowOf(stops, i) * ROW + STONE_Y - STONE / 2, left: width / 2 + x - STONE / 2 }]}
+                      >
                         {isHere && (
                           // beside the stone, on the side with more room
                           <View style={[styles.walia, x >= 0 ? { right: STONE + 16 } : { left: STONE + 16 }]} pointerEvents="none">

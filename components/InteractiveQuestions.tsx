@@ -350,7 +350,7 @@ export function ChatRound({
   }
 
   return (
-    <div className="chat">
+    <div className="wchat">
       <div className="chat-log" ref={log}>
         {exercise.turns.slice(0, Math.min(turn + 1, exercise.turns.length)).map((t, i) => (
           <div key={i} className="chat-pair">

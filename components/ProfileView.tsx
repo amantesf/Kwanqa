@@ -203,12 +203,38 @@ export default function ProfileView() {
       <div className="container">
       <div className="gate">
         <Mascot pose="wave" size={120} />
-        <h1 className="h3" style={{ fontSize: 26 }}>
-          Create a profile to see your stats
-        </h1>
-        <p className="muted">
-          Your profile keeps your grass, lessons, achievements, and Walia’s horns on any device.
-        </p>
+        {lessonsDone(climb) > 0 ? (
+          <>
+            <h1 className="h3" style={{ fontSize: 26 }}>
+              Your climb so far
+            </h1>
+            {/* what this device knows, so a guest sees their progress too */}
+            <div className="guest-stats">
+              <span>
+                <strong>{lessonsDone(climb)}</strong> lesson{lessonsDone(climb) === 1 ? '' : 's'}
+              </span>
+              <span>
+                <strong>{climbStreak(climb.days).count}</strong> day streak
+              </span>
+              <span>
+                <strong>{climb.grass}</strong> grass
+              </span>
+            </div>
+            <p className="muted">
+              It’s only saved on this device. Create a free profile to keep it safe and see all
+              your stats on any device.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="h3" style={{ fontSize: 26 }}>
+              Create a profile to see your stats
+            </h1>
+            <p className="muted">
+              Your profile keeps your grass, lessons, achievements, and Walia’s horns on any device.
+            </p>
+          </>
+        )}
         {enabled ? (
           <div className="row" style={{ justifyContent: 'center' }}>
             <Link href="/signup?next=%2Fprofile" className="btn">

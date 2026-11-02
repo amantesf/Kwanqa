@@ -690,3 +690,6 @@
 :where(html[data-theme='dark']) .home-pics figure {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .guest-stats span {
+    background: #1a2428
+}

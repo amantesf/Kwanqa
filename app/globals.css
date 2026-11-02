@@ -11973,3 +11973,26 @@ body:has(.practice-screen) {
   letter-spacing: 0.04em;
   font-size: 14px;
 }
+
+/* the profile page for learners without an account: what this device knows */
+.guest-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.guest-stats span {
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  background: #fff;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.guest-stats strong {
+  color: var(--text-strong);
+  font-weight: 900;
+}

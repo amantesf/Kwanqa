@@ -352,8 +352,9 @@ function draw({ w, h, peakY, camps }: Layout) {
         <Pine key={i} {...p} />
       ))}
 
-      {/* Ethiopia's flag on the summit: green, yellow and red with the blue emblem */}
-      <g>
+      {/* Ethiopia's flag on the summit: green, yellow and red with the blue emblem
+          (hidden while the top of the mountain is still in the clouds) */}
+      <g className="climb-flagpole">
         <rect x={cx - 2} y={peakY - 74} width="4" height="78" rx="2" fill="#6b4a2e" />
         <circle cx={cx} cy={peakY - 75} r="3.5" fill="#f2c94c" />
         <g className="climb-flag" style={{ transformOrigin: `${cx + 2}px ${peakY - 56}px` }}>

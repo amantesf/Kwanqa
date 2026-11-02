@@ -11325,3 +11325,61 @@ body:has(.practice-screen) {
   color: var(--red);
   font-weight: 800;
 }
+
+/* ---------- above Camp 7: the rest of the mountain hides in the clouds ---------- */
+
+/* the summit flag waits for the real summit */
+.climb:has(.summit-clouds) .climb-flagpole {
+  display: none;
+}
+
+.learn-app .climb .summit.summit-clouds {
+  z-index: 3; /* over the top of the trail path, which disappears into the cloud */
+  padding-bottom: 150px;
+  pointer-events: none;
+}
+
+.summit-cloud {
+  position: absolute;
+  width: 180px;
+  height: 75px;
+  fill: #fff;
+  opacity: 0.95;
+  filter: drop-shadow(0 6px 0 rgba(120, 160, 190, 0.25));
+  animation: summit-cloud-drift 9s ease-in-out infinite alternate;
+}
+
+.summit-cloud.left {
+  left: 6%;
+  bottom: 60px;
+}
+
+.summit-cloud.middle {
+  left: 50%;
+  width: 400px;
+  height: 120px;
+  margin-left: -200px;
+  z-index: 2;
+  opacity: 1;
+  bottom: -46px;
+  animation-duration: 12s;
+}
+
+.summit-cloud.right {
+  right: 4%;
+  bottom: 96px;
+  width: 150px;
+  animation-delay: -4s;
+}
+
+@keyframes summit-cloud-drift {
+  to {
+    transform: translateX(18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summit-cloud {
+    animation: none;
+  }
+}

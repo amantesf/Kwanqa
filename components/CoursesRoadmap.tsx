@@ -51,6 +51,9 @@ import {
 
 const WALIA_AT_KEY = 'kwanqa-walia-at';
 
+/** Camps shown on the mountain before Camp 7 is finished. */
+const VISIBLE_CAMPS = 7;
+
 const noopSubscribe = () => () => {};
 /** False during the server render and hydration, true in the browser after. */
 function useHydrated() {
@@ -140,6 +143,12 @@ export default function CoursesRoadmap() {
   const nextKey = blocking ? `${blocking.slug}:review` : next ? `${next.slug}:${next.lesson}` : 'summit';
   // Camps above the one you're on stay locked under the clouds.
   const currentCamp = next ? courses.findIndex(c => c.slug === next.slug) : courses.length;
+  // The mountain shows Camps 1–7. Anything higher hides above the clouds until
+  // Camp 7 is finished (or the learner already started up there), so the
+  // trail feels like a climb with more to discover, not a long list.
+  const revealAll =
+    courses.length <= VISIBLE_CAMPS || campDoneAt(VISIBLE_CAMPS - 1) || currentCamp >= VISIBLE_CAMPS || start >= VISIBLE_CAMPS;
+  const shownCourses = revealAll ? courses : courses.slice(0, VISIBLE_CAMPS);
 
   // Open the trail where Walia is standing, not at the summit. Fonts and images
   // can still change the page height after the first scroll, so keep Walia in
@@ -326,7 +335,38 @@ export default function CoursesRoadmap() {
         <div className="climb">
         <ClimbMountain />
 
-        {/* Summit */}
+        {/* Above Camp 7: clouds, until Camp 7 is finished */}
+        {!revealAll ? (
+          <div className="summit summit-clouds zone-locked">
+            <svg className="summit-cloud left" viewBox="0 0 120 50" aria-hidden>
+              <ellipse cx="40" cy="32" rx="38" ry="16" />
+              <circle cx="58" cy="22" r="20" />
+              <circle cx="82" cy="30" r="16" />
+            </svg>
+            {/* a thick bank of cloud over the peak, so the mountain clearly goes on */}
+            <svg className="summit-cloud middle" viewBox="0 0 240 70" aria-hidden>
+              <ellipse cx="120" cy="50" rx="118" ry="20" />
+              <circle cx="60" cy="38" r="26" />
+              <circle cx="105" cy="26" r="30" />
+              <circle cx="150" cy="30" r="28" />
+              <circle cx="192" cy="40" r="22" />
+            </svg>
+            <svg className="summit-cloud right" viewBox="0 0 120 50" aria-hidden>
+              <ellipse cx="70" cy="32" rx="40" ry="16" />
+              <circle cx="48" cy="24" r="18" />
+              <circle cx="78" cy="20" r="20" />
+            </svg>
+            <div className="summit-text">
+              <span className="kicker">Above the clouds</span>
+              <h2 className="h3" style={{ fontSize: 22 }}>
+                More of the mountain is up here
+              </h2>
+              <p className="muted small">
+                Finish Camp {VISIBLE_CAMPS} to see what’s waiting above the clouds.
+              </p>
+            </div>
+          </div>
+        ) : (
         <div className={`summit${next || blocking ? ' zone-locked' : ' reached'}`}>
           <div className="summit-text">
             <span className="kicker">
@@ -345,9 +385,10 @@ export default function CoursesRoadmap() {
             </div>
           )}
         </div>
+        )}
 
         {/* Camps, highest first so the trail climbs up the page */}
-        {[...courses].reverse().map(course => {
+        {[...shownCourses].reverse().map(course => {
           const campIdx = courses.indexOf(course);
           const zone = zoneForCamp(campIdx, courses.length);
           const lessons = courseContent[course.slug]?.sections ?? [];

@@ -32,7 +32,7 @@ export type Course = {
 export const courseContent: Record<string, Course> = {
   // Amharic part 1
   'amharic-beginner-1': {
-    title: 'Amharic for Absolute Beginners – Part 1',
+    title: 'Amharic Camp 1 – Greetings & First Words',
     intro:
       'Start speaking from day one with simple greetings, introductions, and polite phrases.',
     sections: [
@@ -331,7 +331,7 @@ export const courseContent: Record<string, Course> = {
 
   // Amharic part 2
   'amharic-beginner-2': {
-    title: 'Amharic for Absolute Beginners – Part 2',
+    title: 'Amharic Camp 2 – Numbers, Family & People',
     intro:
       'Build on the basics with numbers, family vocabulary, and high‑frequency everyday expressions.',
     sections: [
@@ -1604,7 +1604,7 @@ export type CourseSummary = {
 export const courseCatalog: CourseSummary[] = [
   {
     slug: 'amharic-beginner-1',
-    title: 'Amharic for Absolute Beginners – Part 1',
+    title: 'Amharic Camp 1 – Greetings & First Words',
     description: 'Greetings, introductions, and basic polite phrases.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',
@@ -1612,7 +1612,7 @@ export const courseCatalog: CourseSummary[] = [
   },
   {
     slug: 'amharic-beginner-2',
-    title: 'Amharic for Absolute Beginners – Part 2',
+    title: 'Amharic Camp 2 – Numbers, Family & People',
     description: 'Numbers, family, and everyday expressions.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',

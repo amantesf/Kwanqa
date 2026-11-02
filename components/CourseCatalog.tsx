@@ -32,7 +32,6 @@ const startTrack = (track: Track) => `/welcome?track=${track}`;
 function campName(title: string) {
   return title
     .replace(/^(Amharic|English) Camp \d+ – /, '')
-    .replace(/^Amharic for Absolute Beginners – Part (\d)/, 'Absolute Beginners, Part $1')
     .replace(/^The Summit: /, '');
 }
 

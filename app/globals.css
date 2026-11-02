@@ -11383,3 +11383,386 @@ body:has(.practice-screen) {
     animation: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Interactive questions (components/InteractiveQuestions.tsx)
+   -------------------------------------------------------------------------- */
+
+/* each as wide as the picture cards, and the whole screen on phones */
+.speak,
+.order,
+.chat,
+.type-answer {
+  width: 600px;
+  max-width: 100%;
+}
+
+/* ---------- Speak this ---------- */
+.speak {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.speak-mic {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 520px;
+  min-height: 84px;
+  padding: 14px 24px;
+  border-radius: 20px;
+  border: 2px solid var(--blue-shadow);
+  border-bottom-width: 6px;
+  background: var(--blue);
+  color: #fff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.speak-mic:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 4px;
+}
+
+.speak-mic.recording {
+  background: var(--red);
+  border-color: var(--red-shadow);
+  animation: speak-pulse 1.2s ease-in-out infinite;
+}
+
+.speak-mic.checking {
+  opacity: 0.75;
+  cursor: progress;
+}
+
+@keyframes speak-pulse {
+  50% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--red) 22%, transparent);
+  }
+}
+
+.speak-bars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+}
+
+.speak-bars span {
+  width: 6px;
+  height: 34px;
+  border-radius: 3px;
+  background: #fff;
+  transition: transform 0.08s linear;
+}
+
+.speak-heard {
+  min-height: 1.4em;
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ---------- Type what you hear ---------- */
+.type-answer {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 2px solid var(--border);
+  background: var(--bg-soft);
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-strong);
+  resize: none;
+  outline: none;
+}
+
+.type-answer:focus {
+  border-color: var(--blue);
+  background: #fff;
+}
+
+.type-answer.good {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+.type-answer.bad {
+  border-color: #ffb3ad;
+  background: var(--red-soft);
+}
+
+/* ---------- Put the conversation in order ---------- */
+.order {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.order-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 70px;
+  margin: 0;
+  padding: 12px 0;
+  list-style: none;
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+}
+
+.order-line {
+  display: flex;
+}
+
+.order-line.side-B {
+  justify-content: flex-end;
+}
+
+.order-line button,
+.order-pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  background: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-strong);
+  text-align: left;
+  cursor: pointer;
+}
+
+.order-line.side-A button {
+  border-bottom-left-radius: 4px;
+}
+
+.order-line.side-B button {
+  border-bottom-right-radius: 4px;
+  background: var(--blue-soft);
+  border-color: color-mix(in srgb, var(--blue) 35%, var(--border));
+}
+
+.order.good .order-line button {
+  border-color: var(--green);
+}
+
+.order.bad .order-line button {
+  border-color: #ffb3ad;
+}
+
+.order-num {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.order-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-text small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+
+.order-slot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 2px dashed var(--border);
+  color: var(--text-faint);
+  font-weight: 900;
+}
+
+.order-bank {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-card {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.order-card .order-pick {
+  flex: 1;
+  max-width: none;
+}
+
+.order-card.used .order-pick {
+  visibility: hidden;
+}
+
+.order-say {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  background: #fff;
+  color: var(--blue);
+  cursor: pointer;
+}
+
+/* ---------- Chat with Walia ---------- */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+
+.chat-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: chat-in 0.3s ease-out;
+}
+
+.chat-row.you {
+  justify-content: flex-end;
+}
+
+@keyframes chat-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.chat-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary-soft);
+}
+
+.chat-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 2px solid var(--border);
+  background: #fff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-strong);
+  text-align: left;
+  cursor: pointer;
+}
+
+.chat-bubble small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+
+.chat-bubble.walia {
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.you {
+  border-bottom-right-radius: 4px;
+  border-color: color-mix(in srgb, var(--green) 45%, var(--border));
+  background: var(--green-soft);
+}
+
+.chat-typing {
+  flex-direction: row;
+  gap: 5px;
+  padding: 16px 18px;
+  cursor: default;
+}
+
+.chat-typing i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  animation: chat-dot 1s ease-in-out infinite;
+}
+
+.chat-typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.chat-typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes chat-dot {
+  40% {
+    transform: translateY(-5px);
+    opacity: 0.5;
+  }
+}
+
+.chat-options {
+  display: grid;
+  gap: 10px;
+}
+
+.practice-screen .chat-option {
+  min-height: 60px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speak-mic.recording,
+  .chat-row,
+  .chat-typing i {
+    animation: none;
+  }
+}

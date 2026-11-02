@@ -660,3 +660,24 @@
 :where(html[data-theme='dark']) .stats-table-wrap {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .speak-bars span {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .type-answer:focus {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .type-answer.bad {
+    border-color: #53403e
+}
+:where(html[data-theme='dark']) .order-line button, :where(html[data-theme='dark']) .order-pick {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .order.bad .order-line button {
+    border-color: #53403e
+}
+:where(html[data-theme='dark']) .order-say {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .chat-bubble {
+    background: #1a2428
+}

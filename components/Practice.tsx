@@ -1122,9 +1122,10 @@ export default function Practice({
               exercise={current}
               onSay={sayAloud}
               onMistake={() => {
+                // a wrong reply costs a heart, but the chat carries on: resting
+                // now would start the conversation over, so any rest comes after it
                 sounds.play('wrong');
                 loseStamina();
-                if (stamina <= 1) setPhase('rest');
               }}
               onDone={() => {
                 if (phase === 'question') solveMatch();

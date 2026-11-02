@@ -15,6 +15,7 @@ import {
   completeLesson,
   completeReview,
   hornLevel,
+  isDone,
   REST_COST,
   spendGrass,
   trackTotals,
@@ -28,7 +29,8 @@ import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
 import LetterTrace from '@/components/LetterTrace';
 import { ChatRound, OrderQuestion, SpeakQuestion, TypeAnswer } from '@/components/InteractiveQuestions';
 import { useAuth } from '@/components/AuthProvider';
-import { interactiveQuestions, typedRight, type InteractiveExercise } from '@/lib/interactive';
+import { interactiveQuestions, introCards, typedRight, type InteractiveExercise } from '@/lib/interactive';
+import { pictureFor } from '@/lib/pictures';
 
 /**
  * A question in a lesson: the shared kinds, plus the ones only this screen can
@@ -94,6 +96,10 @@ export function uiText(track: Track | undefined) {
     cantSpeak: both('Can’t speak now', 'አሁን መናገር አልችልም'),
     keepPractising: both('Keep practising this one out loud!', 'ይህን ጮክ ብለው መለማመድ ይቀጥሉ!'),
     correctOrder: both('The right order:', 'ትክክለኛው ቅደም ተከተል፡'),
+    gotIt: both('Got it', 'ገባኝ'),
+    safeZone: both('Camp 1 is a safe zone: mistakes don’t cost stamina.', 'ካምፕ 1 ላይ ስህተት ጉልበት አይቀንስም'),
+    breather: both('Catch your breath (free)', 'ትንሽ አረፍ በል (በነፃ)'),
+    breatherNote: both('Out of grass? Walia can catch his breath once per lesson for free.', 'ሳር ከሌለ፣ ዋሊያ በአንድ ትምህርት አንድ ጊዜ በነፃ ያርፋል።'),
     slower: both('Slower', 'በዝግታ'),
     waliaSays: both('Walia says', 'ዋሊያ እንዲህ ይላል'),
     inARow: (n: number, more: number) =>
@@ -268,6 +274,7 @@ function MatchRound({
             }}
           >
             {p.left}
+            {exercise.hints?.[p.left] && <small className="option-hint">{exercise.hints[p.left]}</small>}
           </button>
         ))}
       </div>
@@ -320,6 +327,9 @@ export default function Practice({
   const climb = useClimb();
   const { user, enabled: accountsEnabled } = useAuth();
   const track = trackProp ?? courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic';
+  // Camp 1 is a safe zone: mistakes there never cost stamina, so a brand-new
+  // learner can't get stuck in their very first lessons.
+  const firstCamp = courseCatalog.find(c => c.slug === slug)?.part === 1;
   // What the learner said they know in the survey sets how hard the questions are.
   const level = useProfile()?.levels[track];
   const [initial] = useState<Question[]>(() => {
@@ -352,20 +362,33 @@ export default function Practice({
       !!navigator.mediaDevices?.getUserMedia &&
       (!accountsEnabled || !!user) &&
       !speakingPaused();
-    const extra = interactiveQuestions(lesson, courseLessons, track, { level, canHear, speaking });
-    const place: Record<InteractiveExercise['kind'], number> = { speak: 0.3, type: 0.5, order: 0.7, chat: 1 };
+    const extra = interactiveQuestions(lesson, courseLessons, track, { level, canHear, speaking, firstCamp });
+    const place: Record<InteractiveExercise['kind'], number> = { speak: 0.3, type: 0.5, order: 0.7, chat: 1, intro: 0 };
     for (const q of extra) {
       const matchAt = questions.findIndex(x => x.kind === 'match');
       const end = matchAt >= 0 ? matchAt : questions.length;
       questions.splice(Math.max(1, Math.min(end, Math.round(end * place[q.kind]))), 0, q);
     }
+    // Teach, then test: the first time through a lesson, each phrase gets a
+    // "New phrase" card just before the first question that uses it.
+    if (!review && !isDone(climb, slug, lessonIndex)) {
+      const cards = introCards(lesson, track, am => pictureFor(am)?.src);
+      const at = cards
+        .map(card => ({ card, i: questions.findIndex(q => q.kind !== 'match' && JSON.stringify(q).includes(card.learn)) }))
+        .filter(x => x.i >= 0)
+        .sort((a, b) => b.i - a.i);
+      for (const { card, i } of at) questions.splice(i, 0, card);
+    }
     return questions;
   });
   const [queue, setQueue] = useState<Question[]>(initial);
+  // questions that are answered (New phrase cards are just read)
+  const graded = initial.filter(q => q.kind !== 'intro').length;
   const [solved, setSolved] = useState<Set<string>>(new Set());
   // Questions missed once: when they come back they're labelled "Previous mistake".
   const [missed, setMissed] = useState<Set<string>>(new Set());
   const [stamina, setStamina] = useState(MAX_STAMINA);
+  const [breatherUsed, setBreatherUsed] = useState(false);
   // "Wait, don't go!": asked before leaving a lesson that's under way.
   const [leaving, setLeaving] = useState(false);
   const [streak, setStreak] = useState(0);
@@ -427,7 +450,9 @@ export default function Practice({
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
   // While answering they play only the part you can see (if recorded), never the answer.
   const promptAudio: Sound =
-    !current || !('prompt' in current)
+    current?.kind === 'intro'
+      ? soundFor(current.learn)
+      : !current || !('prompt' in current)
       ? null
       : reveal && phase === 'feedback'
         ? (soundFor(reveal) ?? soundFor(current.prompt))
@@ -515,7 +540,7 @@ export default function Practice({
     setMistakes(m => m + 1);
     setStreak(0);
     react('slip');
-    setStamina(s => Math.max(0, s - 1));
+    if (!firstCamp) setStamina(s => Math.max(0, s - 1));
   }
 
   function gainStreak() {
@@ -619,7 +644,7 @@ export default function Practice({
 
   function finishLesson() {
     // Every question was answered correctly once, plus each wrong try along the way.
-    const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
+    const work = { answers: graded + mistakes, correct: graded, seconds: (Date.now() - startedAt) / 1000 };
     if (review) {
       clearMistakes(slug, review.keys);
       setEarned(completeReview(work));
@@ -627,7 +652,7 @@ export default function Practice({
       setEarned(completeLesson(slug, lessonIndex, mistakes, work));
     }
     countFinished(slug, review ? 'review' : lessonIndex);
-    logLessonFinish({ ...eventInfo, answered: initial.length, mistakes });
+    logLessonFinish({ ...eventInfo, answered: graded, mistakes });
     sounds.play('complete');
     setPhase('done');
   }
@@ -637,6 +662,22 @@ export default function Practice({
       setStamina(MAX_STAMINA);
       setPhase('question');
     }
+  }
+
+  // Out of grass too: never a dead end. Once per lesson, Walia rests for free.
+  function breather() {
+    setBreatherUsed(true);
+    setStamina(MAX_STAMINA);
+    setPhase('question');
+  }
+
+  /** "Got it" on a New phrase card: on to the questions about it. */
+  function learnedIntro() {
+    if (!current) return;
+    const rest = queue.slice(1);
+    setSolved(prev => new Set(prev).add(current.id));
+    setQueue(rest);
+    if (rest.length === 0) finishLesson();
   }
 
   // Keyboard: number keys pick an answer, Enter checks or continues.
@@ -657,7 +698,10 @@ export default function Practice({
         return;
       }
       if (!current) return;
-      if (phase === 'question' && current.kind === 'choice') {
+      if (phase === 'question' && current.kind === 'intro' && e.key === 'Enter') {
+        e.preventDefault();
+        learnedIntro();
+      } else if (phase === 'question' && current.kind === 'choice') {
         const n = Number(e.key);
         if (n >= 1 && n <= current.options.length) {
           setChoice(current.options[n - 1]);
@@ -712,11 +756,11 @@ export default function Practice({
   }
 
   if (phase === 'done') {
-    const answers = initial.length + mistakes;
+    const answers = graded + mistakes;
     return (
       <LessonComplete
         earned={earned}
-        accuracy={answers ? Math.round((initial.length / answers) * 100) : 100}
+        accuracy={answers ? Math.round((graded / answers) * 100) : 100}
         altitude={altitudeNow}
         altitudeGain={Math.max(0, altitudeNow - altitudeBefore)}
         hornsGrew={horns.level > hornsBefore}
@@ -739,16 +783,28 @@ export default function Practice({
           {ui.restText}
         </p>
         <div className="row" style={{ justifyContent: 'center' }}>
-          <button type="button" className="btn" onClick={rest} disabled={!canRest}>
-            {ui.eat(REST_COST)}
-          </button>
+          {canRest || breatherUsed ? (
+            <button type="button" className="btn" onClick={rest} disabled={!canRest}>
+              {ui.eat(REST_COST)}
+            </button>
+          ) : (
+            <button type="button" className="btn" onClick={breather}>
+              {ui.breather}
+            </button>
+          )}
           <button type="button" className="btn btn-secondary" onClick={exit}>
             {ui.review}
           </button>
         </div>
         <p className="faint small">
-          You have <GrassIcon size={16} className="inline-icon" /> {climb.grass} grass
-          {canRest ? '' : '. Finish lessons to earn more'}.
+          {!canRest && !breatherUsed ? (
+            ui.breatherNote
+          ) : (
+            <>
+              You have <GrassIcon size={16} className="inline-icon" /> {climb.grass} grass
+              {canRest ? '' : '. Finish lessons to earn more'}.
+            </>
+          )}
         </p>
       </div>
     );
@@ -859,7 +915,8 @@ export default function Practice({
           {!(current.kind === 'choice' && current.id === 'picture-see') &&
             current.kind !== 'speak' &&
             current.kind !== 'order' &&
-            current.kind !== 'chat' && (
+            current.kind !== 'chat' &&
+            current.kind !== 'intro' && (
             <div className="practice-ask">
               <div key={`${mood}-${reaction?.n ?? 0}`} className="practice-walia" aria-hidden>
                 <Mascot mood={mood} size={110} hornScale={horns.scale} />
@@ -994,6 +1051,26 @@ export default function Practice({
                 })}
               </div>
             </div>
+          ) : current.kind === 'intro' ? (
+            <div className="intro-card" key={current.id}>
+              {current.picture && (
+                // eslint-disable-next-line @next/next/no-img-element -- small local pictures
+                <img className="intro-picture" src={current.picture} alt="" />
+              )}
+              <button type="button" className="intro-say" onClick={playPrompt} aria-label="Hear it again">
+                <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+                  <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                </svg>
+              </button>
+              <span className="intro-learn" lang={track === 'english' ? 'en' : 'am'}>
+                {current.learn}
+              </span>
+              {current.roman && <span className="intro-roman">{current.roman}</span>}
+              <span className="intro-meaning" lang={track === 'english' ? 'am' : 'en'}>
+                {current.meaning}
+              </span>
+            </div>
           ) : current.kind === 'type' ? (
             <TypeAnswer
               key={current.id + queue.length}
@@ -1091,7 +1168,7 @@ export default function Practice({
               <strong>{soft ? ui.keepPractising : lastCorrect ? ui.good : ui.bad}</strong>
               {(current.kind === 'trace' || current.kind === 'speak' || current.kind === 'chat') && <span>{current.explain}</span>}
               {current.kind === 'type' && (
-                <span>{lastCorrect ? current.explain : `${ui.correctAnswer} ${current.shown}. ${current.explain}`}</span>
+                <span>{lastCorrect ? current.explain : `${ui.correctAnswer} ${current.explain}`}</span>
               )}
               {current.kind === 'order' && (
                 <span>
@@ -1104,11 +1181,14 @@ export default function Practice({
                 <span>
                   {lastCorrect
                     ? current.explain
-                    : `${ui.correctAnswer} ${(() => {
+                    : (() => {
                         const shown = current.kind === 'build' ? current.answer.join(' ') : current.answer;
+                        const bare = shown.replace(/[.!?።፧]+$/, '');
+                        // the explanation usually names the answer already ("ሰላም (selam) means…"): don't say it twice
+                        if (current.explain.includes(bare)) return `${ui.correctAnswer} ${current.explain}`;
                         // no "!." when the answer already ends with its own punctuation
-                        return /[.!?።፧]$/.test(shown) ? shown : `${shown}.`;
-                      })()} ${current.explain}`}
+                        return `${ui.correctAnswer} ${/[.!?።፧]$/.test(shown) ? shown : `${shown}.`} ${current.explain}`;
+                      })()}
                   {/* English course: an Amharic answer can be heard once you've answered */}
                   {track === 'english' && current.kind === 'choice' && /[ሀ-፿]/.test(current.answer) && (
                     <SayButton text={current.answer} track="amharic" className="say-inline say-am" size={14} />
@@ -1124,12 +1204,16 @@ export default function Practice({
         ) : (
           <>
             <span className="faint small">
-              {streak > 0 ? ui.inARow(streak, STREAK_TO_RECOVER - streak) : ' '}
+              {firstCamp ? ui.safeZone : streak > 0 ? ui.inARow(streak, STREAK_TO_RECOVER - streak) : ' '}
             </span>
             {current.kind === 'trace' ? (
               // like "Can't listen now": skip writing (on a phone in your pocket, say)
               <button type="button" className="btn btn-secondary" onClick={solveMatch}>
                 Skip
+              </button>
+            ) : current.kind === 'intro' ? (
+              <button type="button" className="btn" onClick={learnedIntro} autoFocus>
+                {ui.gotIt}
               </button>
             ) : current.kind === 'speak' ? (
               // on the bus, or no microphone: skip speaking for a while

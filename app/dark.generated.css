@@ -681,3 +681,9 @@
 :where(html[data-theme='dark']) .chat-bubble {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .intro-card {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .intro-roman {
+    color: color-mix(in srgb, var(--blue) 70%, #fff)
+}

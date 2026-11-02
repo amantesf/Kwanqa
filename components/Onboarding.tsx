@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import Flag from '@/components/Flag';
 import Mascot from '@/components/Mascot';
-import { startCamp } from '@/lib/climb';
+import { nextLesson, readClimb, startCamp } from '@/lib/climb';
 import type { Track } from '@/lib/courses';
 import { readProfile, saveProfile, type Profile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
@@ -62,6 +62,8 @@ export default function Onboarding() {
     key: keyof Answers;
     question: string;
     multi?: boolean;
+    /** Can be skipped (it's for us, not for the learner's trail). */
+    optional?: boolean;
     options: Option[];
   }[] = [
     {
@@ -72,18 +74,6 @@ export default function Onboarding() {
         { value: 'english', label: 'English', sub: 'እንግሊዝኛ', icon: <Flag name="usa" className="onb-flag" /> },
         { value: 'oromo', label: 'Afaan Oromoo', sub: 'Oromo', icon: <Flag name="oromia" className="onb-flag" />, soon: true },
         { value: 'tigrinya', label: 'Tigrinya', sub: 'ትግርኛ', icon: <Flag name="tigray" className="onb-flag" />, soon: true },
-      ],
-    },
-    {
-      key: 'speaks',
-      question: 'Which languages do you already speak?',
-      multi: true,
-      options: [
-        { value: 'english', label: 'English' },
-        { value: 'amharic', label: 'Amharic', sub: 'አማርኛ' },
-        { value: 'oromo', label: 'Afaan Oromo' },
-        { value: 'tigrinya', label: 'Tigrinya', sub: 'ትግርኛ' },
-        { value: 'other', label: 'Something else' },
       ],
     },
     {
@@ -113,6 +103,7 @@ export default function Onboarding() {
       key: 'heardFrom',
       question: 'How did you hear about kwanqa?',
       multi: true,
+      optional: true,
       options: [
         { value: 'friends', label: 'Friends or family', icon: emoji('🤝') },
         { value: 'community', label: 'Church or community', icon: emoji('⛪') },
@@ -169,7 +160,9 @@ export default function Onboarding() {
     const profile: Profile = {
       track,
       tracks: earlier.includes(track) ? earlier : [...earlier, track],
-      speaks: answers.speaks,
+      // Learners of English already speak Amharic, and the other way round;
+      // the survey no longer asks (one question less before the first lesson).
+      speaks: answers.speaks.length ? answers.speaks : [track === 'english' ? 'amharic' : 'english'],
       level,
       levels: { ...before?.levels, [track]: level },
       reasons: answers.reasons,
@@ -179,7 +172,12 @@ export default function Onboarding() {
     };
     saveProfile(profile);
     if (user) supabase?.auth.updateUser({ data: { onboarding: profile } }); // retaking it while logged in
-    router.push(`/courses?track=${profile.track}`);
+    // Straight into the first lesson (from the camp the survey placed them at);
+    // finishing it brings them to the trail.
+    const first = nextLesson(readClimb(), profile.track, startCamp(profile.track, level));
+    router.push(
+      first ? `/courses/${first.slug}?lesson=${first.lesson}&practice=1` : `/courses?track=${profile.track}`,
+    );
   }
 
   return (
@@ -208,7 +206,7 @@ export default function Onboarding() {
             Learning <strong>{lang}</strong> · <strong>{answers.dailyMinutes ?? 10} min</strong> a day.{' '}
             {placedAt > 0
               ? `You already know some ${lang}, so you’ll start at Camp ${placedAt + 1}. The camps below stay open for review.`
-              : 'Your trail is ready. Let’s take the first step.'}
+              : 'Your first lesson takes just a few minutes. Let’s take the first step!'}
           </p>
         </div>
       ) : (
@@ -248,14 +246,21 @@ export default function Onboarding() {
             Start climbing
           </button>
         ) : (
-          <button
-            type="button"
-            className="btn onb-continue"
-            disabled={!answered}
-            onClick={() => setStep(s => s + 1)}
-          >
-            Continue
-          </button>
+          <>
+            {current.optional && !answered && (
+              <button type="button" className="btn btn-secondary onb-skip" onClick={() => setStep(s => s + 1)}>
+                Skip
+              </button>
+            )}
+            <button
+              type="button"
+              className="btn onb-continue"
+              disabled={!answered}
+              onClick={() => setStep(s => s + 1)}
+            >
+              Continue
+            </button>
+          </>
         )}
       </div>
     </div>

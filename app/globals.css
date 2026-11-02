@@ -2874,6 +2874,14 @@ body:has(.onboarding) .site-footer {
   min-width: 200px;
 }
 
+.onb-footer {
+  gap: 12px;
+}
+
+.onb-skip {
+  min-width: 120px;
+}
+
 @media (max-width: 640px) {
   .onb-body {
     padding-top: 24px;
@@ -2890,6 +2898,11 @@ body:has(.onboarding) .site-footer {
 
   .onb-continue {
     width: 100%;
+  }
+
+  .onb-skip {
+    min-width: 0;
+    flex-shrink: 0;
   }
 }
 

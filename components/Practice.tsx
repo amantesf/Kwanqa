@@ -14,14 +14,17 @@ import {
   altitudeFor,
   completeLesson,
   completeReview,
+  climbStreak,
   hornLevel,
   isDone,
+  nextLesson,
   REST_COST,
   spendGrass,
+  startCamp,
   trackTotals,
   useClimb,
 } from '@/lib/climb';
-import { courseCatalog } from '@/lib/courses';
+import { courseCatalog, courseContent } from '@/lib/courses';
 import { useProfile } from '@/lib/profile';
 import type { LessonSection, Track } from '@/lib/courses';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
@@ -769,6 +772,13 @@ export default function Practice({
         onFinish={onFinish}
         track={track}
         review={!!review}
+        streak={climbStreak(climb.days).count}
+        nextUp={(() => {
+          const up = nextLesson(climb, track, startCamp(track, level));
+          const title = up ? courseContent[up.slug]?.sections[up.lesson]?.title : null;
+          return title ? title.replace(/^Lesson \d+\s*[–-]\s*/, '') : undefined;
+        })()}
+        guest={accountsEnabled && !user}
       />
     );
   }

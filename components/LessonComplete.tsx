@@ -5,6 +5,7 @@
 
 import type { Track } from '@/lib/courses';
 import Image from 'next/image';
+import Link from 'next/link';
 import GrassIcon from '@/components/GrassIcon';
 
 type Props = {
@@ -20,6 +21,12 @@ type Props = {
   track?: Track;
   /** A mistakes review rather than a lesson: says "Mistakes fixed!" instead. */
   review?: boolean;
+  /** Days in a row with a finished lesson, counting today. */
+  streak?: number;
+  /** The next lesson's name, to look forward to tomorrow. */
+  nextUp?: string;
+  /** Not logged in: offer a free profile so Walia can send a reminder. */
+  guest?: boolean;
 };
 
 function accuracyLabel(accuracy: number, both: (en: string, am: string) => string) {
@@ -121,6 +128,9 @@ export default function LessonComplete({
   onFinish,
   track,
   review = false,
+  streak = 0,
+  nextUp,
+  guest = false,
 }: Props) {
   const both = (en: string, am: string) => (track === 'english' ? `${am} · ${en}` : en);
   return (
@@ -178,6 +188,30 @@ export default function LessonComplete({
             {altitudeGain > 0 && <span className="lc-stat-sub">+{altitudeGain} m {both('today', 'ዛሬ')}</span>}
           </div>
         </div>
+
+        {streak > 0 && (
+          <div className="lc-tomorrow">
+            <span className="lc-flame" aria-hidden>
+              🔥
+            </span>
+            <div>
+              <strong>
+                {streak === 1
+                  ? both('Day 1 of your streak!', 'የተከታታይ ቀን 1!')
+                  : both(`${streak}-day streak!`, `${streak} ተከታታይ ቀናት!`)}
+              </strong>
+              <span>
+                {both(`Come back tomorrow to make it ${streak + 1}.`, `ነገ ይመለሱና ${streak + 1} ያድርጉት።`)}
+                {nextUp && ` ${both(`Up next: ${nextUp}.`, `ቀጣዩ፡ ${nextUp}`)}`}
+              </span>
+              {guest && (
+                <Link href="/signup?next=/courses" className="lc-remind">
+                  {both('Create a free profile so Walia can remind you →', 'ዋሊያ እንዲያስታውስዎ ነፃ መገለጫ ይፍጠሩ →')}
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
 
         {hornsGrew && <p className="grew">{both('Walia’s horns grew a new ridge!', 'የዋሊያ ቀንዶች አደጉ!')}</p>}
         {note && (

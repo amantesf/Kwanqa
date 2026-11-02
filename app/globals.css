@@ -11863,3 +11863,59 @@ body:has(.practice-screen) {
     animation: none;
   }
 }
+
+/* ---------- lesson complete: a reason to come back tomorrow ---------- */
+.lc-tomorrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: min(520px, 100%);
+  margin: 6px auto 0;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 2px solid color-mix(in srgb, var(--gold) 45%, var(--border));
+  border-bottom-width: 5px;
+  background: var(--gold-soft);
+  text-align: left;
+}
+
+.lc-flame {
+  font-size: 34px;
+  line-height: 1;
+  animation: lc-flame 1.6s ease-in-out infinite;
+}
+
+@keyframes lc-flame {
+  50% {
+    transform: scale(1.12) rotate(-4deg);
+  }
+}
+
+.lc-tomorrow > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lc-tomorrow strong {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.lc-tomorrow span {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.lc-remind {
+  margin-top: 4px;
+  font-weight: 800;
+  color: var(--blue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-flame {
+    animation: none;
+  }
+}

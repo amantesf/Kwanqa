@@ -75,7 +75,19 @@ export type ChatExercise = {
   explain: string;
 };
 
-export type InteractiveExercise = SpeakExercise | TypeExercise | OrderExercise | ChatExercise;
+/** "New phrase": shown the first time a lesson's phrase comes up, before any question about it. */
+export type IntroExercise = {
+  kind: 'intro';
+  id: string;
+  instruction: string;
+  /** The phrase in the language being learned, how to read it, and what it means. */
+  learn: string;
+  roman?: string;
+  meaning: string;
+  picture?: string;
+};
+
+export type InteractiveExercise = SpeakExercise | TypeExercise | OrderExercise | ChatExercise | IntroExercise;
 
 function shuffle<T>(items: T[]): T[] {
   const a = [...items];
@@ -154,6 +166,8 @@ export function spokenRight(exercise: SpeakExercise, heard: string) {
 
 type Options = {
   level?: Level;
+  /** The camp's first lessons: beginners get the gentler question types only. */
+  firstCamp?: boolean;
   /** Lines that can be played aloud: questions only use those. */
   canHear: (text: string) => boolean;
   /** The microphone can be used (a logged-in learner whose browser can record). */
@@ -178,6 +192,9 @@ export function interactiveQuestions(
   options: Options,
 ): InteractiveExercise[] {
   const beginner = !options.level || options.level === 'new' || options.level === 'some-words';
+  // Beginners in Camp 1 can't read or type the ፊደል yet: they listen, speak,
+  // and chat, and typing and ordering come in from Camp 2.
+  const gentle = beginner && !!options.firstCamp;
   const phrases = (lesson.phrases ?? []).filter(c => !hasGap(c.amharic) && !hasGap(c.english));
   const dialogue = (lesson.dialogue ?? []).filter(c => !hasGap(c.amharic) && !hasGap(c.english));
   const out: InteractiveExercise[] = [];
@@ -204,17 +221,16 @@ export function interactiveQuestions(
     }
   }
 
-  // Type what you hear: a short line, so typing it is quick (not the one just spoken)
+  // Type what you hear: a short line, so typing it is quick (not the one just
+  // spoken). Beginners only type single words.
   const spoken = out.find(q => q.kind === 'speak')?.prompt;
-  const typeCard = shuffle([...phrases, ...dialogue]).find(c => {
-    const s = sides(c, track);
-    return (
-      s.learn !== spoken &&
-      wordCount(s.learn) >= 1 &&
-      wordCount(s.learn) <= (track === 'english' ? 6 : 3) &&
-      options.canHear(s.learn)
-    );
-  });
+  const longest = beginner ? (track === 'english' ? 3 : 1) : track === 'english' ? 6 : 3;
+  const typeCard = gentle
+    ? undefined
+    : shuffle([...phrases, ...dialogue]).find(c => {
+        const s = sides(c, track);
+        return s.learn !== spoken && wordCount(s.learn) >= 1 && wordCount(s.learn) <= longest && options.canHear(s.learn);
+      });
   if (typeCard) {
     const s = sides(typeCard, track);
     out.push({
@@ -232,7 +248,7 @@ export function interactiveQuestions(
   }
 
   // Put the conversation in order: 3–4 lines of the dialogue, starting at its beginning
-  if (dialogue.length >= 3) {
+  if (dialogue.length >= 3 && !gentle) {
     const lines = (lesson.dialogue ?? []).slice(0, 4).filter(l => !hasGap(l.amharic) && !hasGap(l.english));
     if (lines.length >= 3) {
       const ordered: OrderLine[] = lines.map(l => {
@@ -318,4 +334,30 @@ export function interactiveQuestions(
     }
   }
   return out;
+}
+
+/**
+ * "New phrase" cards for a lesson being climbed for the first time: each of
+ * its phrases, with how to say it and what it means (and its picture), shown
+ * just before the first question about it. Teach, then test.
+ */
+export function introCards(
+  lesson: LessonSection,
+  track: Track,
+  pictureOf: (amharic: string) => string | undefined,
+): IntroExercise[] {
+  return (lesson.phrases ?? [])
+    .filter(c => !hasGap(c.amharic) && !hasGap(c.english))
+    .map(card => {
+      const s = sides(card, track);
+      return {
+        kind: 'intro' as const,
+        id: `intro-${s.learn}`,
+        instruction: track === 'english' ? 'አዲስ ሐረግ · New phrase' : 'New phrase',
+        learn: s.learn,
+        roman: s.roman || undefined,
+        meaning: s.meaning,
+        picture: pictureOf(card.amharic.replace(ETHIOPIC_PUNCT, '').trim()),
+      };
+    });
 }

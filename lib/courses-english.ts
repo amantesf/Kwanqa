@@ -435,7 +435,7 @@ export const englishCourses: Record<string, Course> = {
   },
 
   'english-from-amharic-6': {
-    title: 'English Camp 6 – The Summit: Real Conversations',
+    title: 'English Camp 6 – Real Conversations',
     intro: 'Share opinions, tell stories, talk about the future, and sound natural with everyday expressions.',
     sections: [
       {
@@ -536,6 +536,107 @@ export const englishCourses: Record<string, Course> = {
       },
     ],
   },
+  'english-from-amharic-7': {
+    title: 'English Camp 7 – Job Interviews & New Jobs',
+    intro: 'Answer interview questions with confidence, talk about your strengths, start a new job, and handle video calls.',
+    sections: [
+      {
+        title: 'Lesson 1 – Tell Me About Yourself',
+        description: 'Introduce yourself in an interview: what you studied, what you’ve done, and why you want the job.',
+        phrases: [
+          p('Tell me about yourself.', 'ስለራስህ ንገረኝ።'),
+          p('I have three years of experience in sales.', 'በሽያጭ ሥራ የሦስት ዓመት ልምድ አለኝ።'),
+          p('I graduated from Addis Ababa University.', 'ከአዲስ አበባ ዩኒቨርሲቲ ተመርቄያለሁ።'),
+          p('I’m a hard worker, and I learn quickly.', 'ታታሪ ሠራተኛ ነኝ፣ በፍጥነትም እማራለሁ።'),
+          p('Why do you want this job?', 'ይህን ሥራ ለምን ትፈልገዋለህ?'),
+          p('I want to grow and learn new skills.', 'ማደግና አዲስ ክህሎቶችን መማር እፈልጋለሁ።'),
+        ],
+        dialogue: [
+          d('A', 'Thank you for coming in. Tell me about yourself.', 'ስለመጣህ አመሰግናለሁ። ስለራስህ ንገረኝ።'),
+          d('B', 'I studied accounting, and I have two years of experience.', 'የሂሳብ አያያዝ ተምሬያለሁ፣ የሁለት ዓመት ልምድም አለኝ።'),
+          d('A', 'Why do you want this job?', 'ይህን ሥራ ለምን ትፈልገዋለህ?'),
+          d('B', 'I like your company, and I want to learn new skills.', 'ድርጅታችሁን እወደዋለሁ፣ አዲስ ክህሎቶችንም መማር እፈልጋለሁ።'),
+        ],
+        note: 'In an interview, “Tell me about yourself” means your studies and work, not your family. Keep it to about a minute: what you studied, what you’ve done, and why you want this job.',
+      },
+      {
+        title: 'Lesson 2 – Strengths & Skills',
+        description: 'Say what you’re good at, back it up with an example, and answer the “weakness” question.',
+        phrases: [
+          p('What are your strengths?', 'ጠንካራ ጎኖችህ ምንድን ናቸው?'),
+          p('I’m good at working with people.', 'ከሰዎች ጋር በመሥራት ጎበዝ ነኝ።'),
+          p('I speak Amharic, English and Afaan Oromoo.', 'አማርኛ፣ እንግሊዝኛና አፋን ኦሮሞ እናገራለሁ።'),
+          p('I’m very organized.', 'ነገሮችን በሥርዓት እይዛለሁ።'),
+          p('Sometimes I work too much, but I’m learning to take breaks.', 'አንዳንድ ጊዜ ከልክ በላይ እሠራለሁ፣ ግን ዕረፍት መውሰድ እየተማርኩ ነው።'),
+          p('Can you give me an example?', 'ምሳሌ ልትሰጠኝ ትችላለህ?'),
+        ],
+        dialogue: [
+          d('A', 'What are your strengths?', 'ጠንካራ ጎኖችህ ምንድን ናቸው?'),
+          d('B', 'I’m good at working with people, and I’m very organized.', 'ከሰዎች ጋር በመሥራት ጎበዝ ነኝ፣ ነገሮችንም በሥርዓት እይዛለሁ።'),
+          d('A', 'Can you give me an example?', 'ምሳሌ ልትሰጠኝ ትችላለህ?'),
+          d('B', 'At my last job, I trained five new workers.', 'ባለፈው ሥራዬ አምስት አዲስ ሠራተኞችን አሠልጥኛለሁ።'),
+        ],
+        note: 'When you name a strength, back it up with a short example from real life. For a weakness, pick a small one and say what you’re doing to get better.',
+      },
+      {
+        title: 'Lesson 3 – Questions, Pay & the Offer',
+        description: 'Ask the interviewer good questions, talk about pay, and accept a job offer.',
+        phrases: [
+          p('Do you have any questions for us?', 'ለእኛ ጥያቄ አለህ?'),
+          p('What does a normal day look like?', 'የተለመደ የሥራ ቀን ምን ይመስላል?'),
+          p('When can you start?', 'መቼ መጀመር ትችላለህ?'),
+          p('I can start next Monday.', 'በሚቀጥለው ሰኞ መጀመር እችላለሁ።'),
+          p('What is the salary for this position?', 'የዚህ የሥራ መደብ ደሞዝ ስንት ነው?'),
+          p('We’d like to offer you the job.', 'ሥራውን ልንሰጥህ እንፈልጋለን።'),
+        ],
+        dialogue: [
+          d('A', 'Do you have any questions for us?', 'ለእኛ ጥያቄ አለህ?'),
+          d('B', 'Yes. What does a normal day look like?', 'አዎ። የተለመደ የሥራ ቀን ምን ይመስላል?'),
+          d('A', 'You’ll help customers in the morning. When can you start?', 'ጠዋት ደንበኞችን ትረዳለህ። መቼ መጀመር ትችላለህ?'),
+          d('B', 'I can start next Monday.', 'በሚቀጥለው ሰኞ መጀመር እችላለሁ።'),
+        ],
+        note: 'Always have one or two questions ready: it shows you’re interested. Ask about pay near the end of the interview, or once they offer you the job.',
+      },
+      {
+        title: 'Lesson 4 – Your First Day',
+        description: 'Meet your coworkers, find your way around, and ask for help without feeling shy.',
+        phrases: [
+          p('Nice to meet you. I’m the new receptionist.', 'ስለተዋወቅን ደስ ብሎኛል። አዲሱ እንግዳ ተቀባይ ነኝ።'),
+          p('Where should I put my things?', 'ዕቃዎቼን የት ላስቀምጥ?'),
+          p('Who should I ask if I have a question?', 'ጥያቄ ካለኝ ማንን ልጠይቅ?'),
+          p('Could you show me how this works?', 'ይህ እንዴት እንደሚሠራ ልታሳየኝ ትችላለህ?'),
+          p('What time is the lunch break?', 'የምሳ ዕረፍት ስንት ሰዓት ነው?'),
+          p('Thanks, that’s really helpful.', 'አመሰግናለሁ፣ በጣም ጠቃሚ ነው።'),
+        ],
+        dialogue: [
+          d('A', 'Welcome! You must be the new receptionist.', 'እንኳን ደህና መጣህ! አዲሱ እንግዳ ተቀባይ መሆን አለብህ።'),
+          d('B', 'Yes, nice to meet you. Where should I put my things?', 'አዎ፣ ስለተዋወቅን ደስ ብሎኛል። ዕቃዎቼን የት ላስቀምጥ?'),
+          d('A', 'Right here. If you have a question, just ask me.', 'እዚሁ። ጥያቄ ካለህ እኔን ጠይቀኝ።'),
+          d('B', 'Thanks, that’s really helpful.', 'አመሰግናለሁ፣ በጣም ጠቃሚ ነው።'),
+        ],
+        note: 'Nobody expects you to know everything on your first day. Asking “Could you show me how this works?” is normal and polite, and people usually like to help.',
+      },
+      {
+        title: 'Lesson 5 – Video Calls & Meetings',
+        description: 'Handle online meetings: sound problems, sharing your screen, and joining the conversation.',
+        phrases: [
+          p('Can you hear me?', 'ትሰማኛለህ?'),
+          p('You’re on mute.', 'ማይክሮፎንህ ተዘግቷል።'),
+          p('Sorry, my internet is slow.', 'ይቅርታ፣ ኢንተርኔቴ ቀርፋፋ ነው።'),
+          p('Could you share your screen?', 'ስክሪንህን ልታጋራ ትችላለህ?'),
+          p('Can I add something?', 'አንድ ነገር ልጨምር?'),
+          p('Let’s talk again next week.', 'በሚቀጥለው ሳምንት እንደገና እንነጋገር።'),
+        ],
+        dialogue: [
+          d('A', 'Hi, everyone. Can you hear me?', 'ሰላም ለሁላችሁ። ትሰሙኛላችሁ?'),
+          d('B', 'We can hear you, but your video is off.', 'እንሰማሃለን፣ ግን ቪዲዮህ ጠፍቷል።'),
+          d('A', 'Sorry, my internet is slow. Could you share your screen?', 'ይቅርታ፣ ኢንተርኔቴ ቀርፋፋ ነው። ስክሪንህን ልታጋራ ትችላለህ?'),
+          d('B', 'Sure. Can everyone see it?', 'እሺ። ሁላችሁም ታዩታላችሁ?'),
+        ],
+        note: '“You’re on mute” means nobody can hear you because your microphone is off. In a meeting, say “Can I add something?” before you speak, so you don’t talk over someone.',
+      },
+    ],
+  },
 };
 
 const AUDIENCE = 'Amharic speakers learning English';
@@ -547,6 +648,7 @@ export const englishCatalog: CourseSummary[] = [
   { slug: 'english-from-amharic-4', description: 'Directions and transport, the airport, hotels, and asking for help.' },
   { slug: 'english-from-amharic-5', description: 'The doctor, renting a home, phone appointments, and offices.' },
   { slug: 'english-from-amharic-6', description: 'Opinions, stories, plans, natural expressions, and kind words.' },
+  { slug: 'english-from-amharic-7', description: 'Job interviews, your strengths, the offer, your first day, and video calls.' },
 ].map((course, i) => ({
   ...course,
   title: englishCourses[course.slug].title,

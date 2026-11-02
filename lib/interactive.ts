@@ -204,10 +204,16 @@ export function interactiveQuestions(
     }
   }
 
-  // Type what you hear: a short line, so typing it is quick
+  // Type what you hear: a short line, so typing it is quick (not the one just spoken)
+  const spoken = out.find(q => q.kind === 'speak')?.prompt;
   const typeCard = shuffle([...phrases, ...dialogue]).find(c => {
     const s = sides(c, track);
-    return wordCount(s.learn) >= 1 && wordCount(s.learn) <= (track === 'english' ? 6 : 3) && options.canHear(s.learn);
+    return (
+      s.learn !== spoken &&
+      wordCount(s.learn) >= 1 &&
+      wordCount(s.learn) <= (track === 'english' ? 6 : 3) &&
+      options.canHear(s.learn)
+    );
   });
   if (typeCard) {
     const s = sides(typeCard, track);
@@ -251,17 +257,26 @@ export function interactiveQuestions(
     }
   }
 
-  // Chat with Walia: Walia says A's lines, you choose B's replies
-  const pairs: { said: Card; reply: Card }[] = [];
-  const all = lesson.dialogue ?? [];
-  for (let i = 0; i + 1 < all.length; i++) {
-    if (all[i].speaker === 'A' && all[i + 1].speaker === 'B' && !hasGap(all[i].amharic) && !hasGap(all[i + 1].amharic)) {
-      pairs.push({ said: all[i], reply: all[i + 1] });
+  // Chat with Walia: Walia says A's lines, you choose B's replies. Many
+  // dialogues are a single exchange, so the chat carries on with exchanges from
+  // the camp's earlier lessons (things the learner has already met).
+  const pairsIn = (l: LessonSection) => {
+    const lines = l.dialogue ?? [];
+    const found: { said: Card; reply: Card }[] = [];
+    for (let i = 0; i + 1 < lines.length; i++) {
+      const [a, b] = [lines[i], lines[i + 1]];
+      if (a.speaker === 'A' && b.speaker === 'B' && ![a, b].some(c => hasGap(c.amharic) || hasGap(c.english))) {
+        found.push({ said: a, reply: b });
+      }
     }
-  }
+    return found;
+  };
+  const here = courseLessons.findIndex(l => l === lesson || l.title === lesson.title);
+  const earlier = here > 0 ? courseLessons.slice(0, here) : [];
+  const pairs = [...pairsIn(lesson), ...shuffle(earlier.flatMap(pairsIn))].slice(0, 3);
   if (pairs.length >= 2) {
-    // wrong replies: other lines from this camp that aren't questions or this lesson's own replies
-    const own = new Set(pairs.map(p => sides(p.reply, track).learn));
+    // wrong replies: other lines from this camp that aren't questions or lines of this chat
+    const own = new Set(pairs.flatMap(p => [sides(p.reply, track).learn, sides(p.said, track).learn]));
     const pool = [
       ...new Set(
         courseLessons
@@ -279,7 +294,7 @@ export function interactiveQuestions(
           return [s.learn, track === 'english' ? s.meaning : beginner ? s.roman : s.meaning] as const;
         }),
     );
-    const turns: ChatTurn[] = pairs.slice(0, 3).map(pair => {
+    const turns: ChatTurn[] = pairs.map(pair => {
       const said = sides(pair.said, track);
       const reply = sides(pair.reply, track);
       const wrong = shuffle(pool.filter(t => t !== reply.learn)).slice(0, beginner ? 1 : 2);

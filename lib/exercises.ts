@@ -45,6 +45,8 @@ export type MatchExercise = {
   id: string;
   instruction: string;
   pairs: { left: string; right: string }[];
+  /** For beginners: how to read each Amharic card, shown small underneath it. */
+  hints?: Record<string, string>;
 };
 
 /** Tap word tiles in order to answer: one tile for a single word, several to build a sentence. */
@@ -722,7 +724,7 @@ export function buildExercises(
   const pictured =
     shuffle(uniqueCards)
       .map(c => pictureFor(c.amharic.replace(PUNCT, '').trim()))
-      .find(Boolean) ?? (firstLesson ? shuffle(PICTURES)[0] : undefined);
+      .find(Boolean) ?? (firstLesson ? (pictureFor('ቡና') ?? shuffle(PICTURES)[0]) : undefined);
   addPictureExercises(exercises, pictured, 'amharic');
 
   // Match pairs as a final round, with the phrases seen least.
@@ -737,6 +739,8 @@ export function buildExercises(
       id: 'match',
       instruction: 'Match the pairs',
       pairs: matchCards.map(c => ({ left: c.amharic, right: c.english })),
+      // beginners can't read the ፊደል yet: each Amharic card says how it sounds
+      hints: d.readingHelp ? Object.fromEntries(matchCards.map(c => [c.amharic, c.transliteration])) : undefined,
     });
   }
 
@@ -1164,7 +1168,7 @@ function buildEnglishExercises(
   const mentioned = shuffle(PICTURES).find(p =>
     uniqueCards.some(c => new RegExp(`\\b${p.english}\\b`, 'i').test(c.english)),
   );
-  addPictureExercises(exercises, mentioned ?? (firstLesson ? shuffle(PICTURES)[0] : undefined), 'english');
+  addPictureExercises(exercises, mentioned ?? (firstLesson ? (pictureFor('ቡና') ?? shuffle(PICTURES)[0]) : undefined), 'english');
 
   addPictures(exercises, poolCards, uniqueCards, 'english');
 

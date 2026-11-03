@@ -175,43 +175,6 @@ export default function Home() {
           <FadeInOnScroll>
             <div className="feature-row flip">
               <div className="feature-copy">
-                <h2 className="h2">speak it out loud</h2>
-                <p className="lead">
-                  Say each phrase into your microphone and Walia tells you how you did. Match
-                  words to hand-drawn pictures, chat with Walia, and give him a call in Talk for a
-                  real back-and-forth.
-                </p>
-              </div>
-              <div className="feature-art">
-                <span className="art-bg" style={{ background: 'var(--green-soft)' }} aria-hidden />
-                <div className="mini-card home-speak">
-                  <div className="home-pics">
-                    {[
-                      ['/pictures/injera.png', 'እንጀራ'],
-                      ['/pictures/buna.png', 'ቡና'],
-                      ['/pictures/wiha.png', 'ውሃ'],
-                    ].map(([src, word]) => (
-                      <figure key={src}>
-                        <Image src={src} alt="" width={96} height={96} />
-                        <figcaption lang="am">{word}</figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                  <div className="home-mic" aria-hidden>
-                    <svg width="22" height="22" viewBox="0 0 24 24">
-                      <rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor" />
-                      <path d="M5 11a7 7 0 0 0 14 0M12 18v3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-                    </svg>
-                    Tap and speak
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FadeInOnScroll>
-
-          <FadeInOnScroll>
-            <div className="feature-row">
-              <div className="feature-copy">
                 <h2 className="h2">made for our community</h2>
                 <p className="lead">
                   For years, major language apps ignored Amharic. kwanqa is built by

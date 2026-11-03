@@ -687,9 +687,6 @@
 :where(html[data-theme='dark']) .intro-roman {
     color: color-mix(in srgb, var(--blue) 70%, #fff)
 }
-:where(html[data-theme='dark']) .home-pics figure {
-    background: #1a2428
-}
 :where(html[data-theme='dark']) .guest-stats span {
     background: #1a2428
 }

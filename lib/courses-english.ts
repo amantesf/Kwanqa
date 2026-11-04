@@ -670,6 +670,12 @@ export const englishCourses: Record<string, Course> = {
           p('Could you keep an eye on my house?', 'ቤቴን ልትከታተልልኝ ትችላለህ?'),
           p('See you around!', 'እንገናኛለን!'),
         ],
+        dialogue: [
+          d('A', 'Hi! I just moved in next door. I’m Sara.', 'ሰላም! ጎረቤትህ ነኝ፤ አሁን ነው የገባሁት። ሳራ እባላለሁ።'),
+          d('B', 'Welcome to the neighborhood! I’m Tom.', 'ወደ ሰፈሩ እንኳን ደህና መጣሽ! ቶም እባላለሁ።'),
+          d('A', 'Nice to meet you. Nice weather today, isn’t it?', 'ስለተዋወቅን ደስ ብሎኛል። ዛሬ አየሩ ጥሩ ነው፣ አይደል?'),
+          d('B', 'Yes, finally some sun!', 'አዎ፣ በመጨረሻ ፀሐይ ወጣች!'),
+        ],
       },
     ],
   },

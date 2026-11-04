@@ -4225,17 +4225,6 @@ body:has(.learn-app) .site-footer {
   background-color: var(--bg-soft);
 }
 
-.learn-nav-link:not([aria-current='page']) .learn-nav-tile {
-  filter: saturate(0.2) brightness(1.08);
-  transition:
-    transform 0.18s cubic-bezier(0.3, 1.6, 0.5, 1),
-    filter 0.15s ease;
-}
-
-.learn-nav-link:hover .learn-nav-tile {
-  filter: none;
-}
-
 .learn-nav-link:hover .learn-nav-tile {
   transform: translateY(-2px) rotate(-6deg);
 }

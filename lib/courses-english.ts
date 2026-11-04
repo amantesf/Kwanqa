@@ -689,6 +689,12 @@ export const englishCourses: Record<string, Course> = {
           p('My address is 25 Main Street.', 'አድራሻዬ 25 ሜይን ስትሪት ነው።'),
           p('Please hurry!', 'እባክህ ፍጠን!'),
         ],
+        dialogue: [
+          d('A', '911, what’s your emergency?', '911፣ ምን ዓይነት አደጋ ነው?'),
+          d('B', 'My father fell, and he can’t get up.', 'አባቴ ወደቀ፣ መነሳት አልቻለም።'),
+          d('A', 'What’s your address?', 'አድራሻህ ምንድን ነው?'),
+          d('B', '25 Main Street. Please hurry!', '25 ሜይን ስትሪት። እባክህ ፍጠን!'),
+        ],
       },
     ],
   },

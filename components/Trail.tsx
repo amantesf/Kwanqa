@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
 
@@ -19,6 +20,21 @@ export type TrailStop = {
   onSelect?: () => void;
   /** Stable name for the stop (e.g. "amharic-beginner-1:0"), used to animate progress. */
   id?: string;
+  /** What the lesson teaches: clicking the stone shows it in a card, with a Start button (to `href`). */
+  preview?: StonePreview;
+};
+
+export type StonePreview = {
+  description?: string;
+  /** The first few phrases, in the language being learned, how to read them, and what they mean. */
+  phrases: { learn: string; roman?: string; meaning: string }[];
+  /** How many more phrases the lesson has. */
+  more: number;
+  done: boolean;
+  /** Grass earned by finishing it (again). */
+  grass: number;
+  /** The lesson's phrases page. */
+  phrasesHref?: string;
 };
 
 export type Scenery = 'foothills' | 'forest' | 'heather' | 'alpine' | 'locked';
@@ -26,6 +42,7 @@ export type Scenery = 'foothills' | 'forest' | 'heather' | 'alpine' | 'locked';
 const WIDTH = 340;
 const ROW = 124;
 const STONE_Y = 44; // stone centre within its row
+const ETHIOPIC = /[ሀ-፿]/;
 // Horizontal offsets that make the trail wind back and forth up the mountain.
 const WIND = [0, 70, 96, 70, 0, -70, -96, -70];
 
@@ -311,6 +328,67 @@ function Mountain({ scenery, peakX, height }: { scenery: Scenery; peakX: number;
   );
 }
 
+/** What a lesson teaches, over its stone, before you start it (the phone app has the same card). */
+function StoneCard({ title, preview, href, offset, onClose }: { title: string; preview: StonePreview; href: string; offset: number; onClose: () => void }) {
+  const card = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    card.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    // close on a click anywhere else (the stone toggles it itself), or on Escape
+    function away(e: PointerEvent) {
+      const target = e.target as Element | null;
+      if (!card.current?.contains(target) && !target?.closest?.('[aria-haspopup="dialog"]')) onClose();
+    }
+    function escape(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('pointerdown', away);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', away);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [onClose]);
+
+  return (
+    // centred on the trail, with its pointer on the stone
+    <div ref={card} className="stone-card" role="dialog" aria-label={title} style={{ left: -offset }}>
+      <span className="stone-card-arrow" style={{ left: `calc(50% + ${offset}px)` }} aria-hidden />
+      <div className="stone-card-head">
+        <h3>{title}</h3>
+        {preview.done && <span className="stone-card-done">✓ Done</span>}
+      </div>
+      {preview.description && <p className="stone-card-text">{preview.description}</p>}
+      {preview.phrases.length > 0 && (
+        <ul className="stone-card-phrases">
+          {preview.phrases.map(p => (
+            <li key={p.learn}>
+              <strong lang={ETHIOPIC.test(p.learn) ? 'am' : undefined}>{p.learn}</strong>
+              {p.roman && <span className="stone-card-roman"> {p.roman}</span>}
+              <span className="stone-card-meaning" lang={ETHIOPIC.test(p.meaning) ? 'am' : undefined}>
+                {' '}
+                · {p.meaning}
+              </span>
+            </li>
+          ))}
+          {preview.more > 0 && <li className="stone-card-more">+ {preview.more} more</li>}
+        </ul>
+      )}
+      <Link href={href} className="btn btn-block stone-card-start" aria-label={`${preview.done ? 'Practice again' : 'Start'}, earns ${preview.grass} grass`}>
+        {preview.done ? 'Practice again' : 'Start'}
+        <span className="stone-card-grass">
+          <GrassIcon size={18} />+{preview.grass}
+        </span>
+      </Link>
+      {preview.phrasesHref && (
+        <Link href={preview.phrasesHref} className="stone-card-link">
+          See all the phrases
+        </Link>
+      )}
+    </div>
+  );
+}
+
 /**
  * A winding trail of lesson stones. The trail climbs bottom-up: the first stop
  * sits at the bottom and later stops rise above it.
@@ -334,6 +412,8 @@ export default function Trail({
   dance?: boolean;
 }) {
   const height = stops.length * ROW;
+  const [open, setOpen] = useState<string | null>(null); // the stone whose card is showing
+  const close = useCallback(() => setOpen(null), []);
   const rowOf = (i: number) => stops.length - 1 - i;
   const point = (i: number) => ({
     x: WIDTH / 2 + offsetAt(i),
@@ -424,7 +504,7 @@ export default function Trail({
         return (
           <div
             key={stop.title}
-            className="trail-stop"
+            className={`trail-stop${open === stop.title ? ' open' : ''}`}
             style={{ top: rowOf(i) * ROW, left: WIDTH / 2 + offset }}
             data-current-stone={stop.state === 'current' ? '' : undefined}
             data-stop={stop.id}
@@ -443,6 +523,18 @@ export default function Trail({
               <span className={className} role="img" aria-label={aria} title={label}>
                 {content}
               </span>
+            ) : stop.href && stop.preview ? (
+              <button
+                type="button"
+                className={className}
+                onClick={() => setOpen(o => (o === stop.title ? null : stop.title))}
+                aria-label={aria}
+                aria-haspopup="dialog"
+                aria-expanded={open === stop.title}
+                aria-current={stop.state === 'current' ? 'step' : undefined}
+              >
+                {content}
+              </button>
             ) : stop.href ? (
               <Link href={stop.href} className={className} aria-label={aria} title={label}>
                 {content}
@@ -459,6 +551,9 @@ export default function Trail({
               </button>
             )}
             <span className="stone-label">{label}</span>
+            {open === stop.title && stop.href && stop.preview && (
+              <StoneCard title={label} preview={stop.preview} href={stop.href} offset={offset} onClose={close} />
+            )}
 
             {stop.state !== 'done' && (
               <span

@@ -32,15 +32,17 @@ import Mascot from '@/components/Mascot';
 import { PassportRailCard, StampCelebration } from '@/components/Passport';
 import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
-import Trail, { type TrailStop } from '@/components/Trail';
-import { courseContent, type Track } from '@/lib/courses';
+import Trail, { type StonePreview, type TrailStop } from '@/components/Trail';
+import { courseContent, type LessonSection, type Track } from '@/lib/courses';
 import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import {
   BASE_ALTITUDE,
   hornLevel,
   isDone,
+  LESSON_GRASS,
   readClimb,
+  REPLAY_GRASS,
   nextLesson,
   startCamp,
   SUMMIT_ALTITUDE,
@@ -53,6 +55,23 @@ const WALIA_AT_KEY = 'kwanqa-walia-at';
 
 /** Camps shown on the mountain before Camp 7 is finished. */
 const VISIBLE_CAMPS = 7;
+
+/** What a lesson teaches, for the card over its stone: its first three phrases. */
+function previewOf(lesson: LessonSection, track: Track, done: boolean, phrasesHref: string): StonePreview {
+  const phrases = lesson.phrases ?? [];
+  return {
+    description: lesson.description,
+    phrases: phrases.slice(0, 3).map(p =>
+      track === 'english'
+        ? { learn: p.english, meaning: p.amharic }
+        : { learn: p.amharic, roman: p.transliteration, meaning: p.english },
+    ),
+    more: Math.max(0, phrases.length - 3),
+    done,
+    grass: done ? REPLAY_GRASS : LESSON_GRASS,
+    phrasesHref: phrases.length || lesson.dialogue?.length ? phrasesHref : undefined,
+  };
+}
 
 const noopSubscribe = () => () => {};
 /** False during the server render and hydration, true in the browser after. */
@@ -415,6 +434,11 @@ export default function CoursesRoadmap() {
                 ? reviewHref(blocking.slug)
                 : `/courses/${course.slug}?lesson=${i}&practice=1`,
             id: `${course.slug}:${i}`,
+            // the stone the review is blocking goes straight to the review
+            preview:
+              blocking && next?.slug === course.slug && next.lesson === i
+                ? undefined
+                : previewOf(lesson, track, isDone(climb, course.slug, i), `/courses/${course.slug}?lesson=${i}`),
           }));
 
           const campDone = lessons.every((_, i) => isDone(climb, course.slug, i));

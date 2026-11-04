@@ -88,6 +88,18 @@
 :where(html[data-theme='dark']) .stone-label {
     background-color: #1a2428
 }
+:where(html[data-theme='dark']) .stone-card {
+    background-color: #1a2428
+}
+:where(html[data-theme='dark']) .stone-card-arrow {
+    background-color: #1a2428
+}
+:where(html[data-theme='dark']) .stone-card-done {
+    color: color-mix(in srgb, var(--gold) 70%, #fff)
+}
+:where(html[data-theme='dark']) .stone-card-grass {
+    background-color: rgba(26, 36, 40, 0.9)
+}
 :where(html[data-theme='dark']) .summit {
     background: linear-gradient(180deg, #2a2721 0%, #1a2428 100%)
 }

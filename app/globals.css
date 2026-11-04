@@ -1375,6 +1375,153 @@ a.camp-banner:active {
   width: 74px;
 }
 
+/* What a lesson teaches, over its stone (Trail.tsx's StoneCard): its stop
+   rises above the stones further up the trail */
+.trail .trail-stop.open {
+  z-index: 6;
+}
+
+.stone-card {
+  position: absolute;
+  top: -16px;
+  z-index: 5;
+  width: min(300px, calc(100vw - 32px));
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  background-color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  text-align: left;
+  animation: stone-card-in 0.16s ease-out;
+  transform-origin: bottom center;
+  /* scrolled into view clear of the sticky camp banner */
+  scroll-margin-top: 160px;
+  scroll-margin-bottom: 24px;
+}
+
+@keyframes stone-card-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.92);
+  }
+}
+
+.stone-card-arrow {
+  position: absolute;
+  bottom: -12px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  border-right: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  background-color: #fff;
+  transform: rotate(45deg);
+}
+
+.stone-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.stone-card-head h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--text-strong);
+}
+
+.stone-card-done {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gold-shadow);
+  white-space: nowrap;
+}
+
+.stone-card-text {
+  margin: -6px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.stone-card-phrases {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 0;
+  list-style: none;
+}
+
+.stone-card-phrases li {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.stone-card-phrases strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.stone-card-roman {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.stone-card-meaning,
+.stone-card-more {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.stone-card-more {
+  font-size: 13px;
+}
+
+.stone-card-start {
+  margin-top: 4px;
+  gap: 10px;
+}
+
+.stone-card-grass {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--green-dark);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.stone-card-link {
+  align-self: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.stone-card-link:hover {
+  text-decoration: underline;
+}
+
+
 .trail-walia svg {
   max-width: none;
 }

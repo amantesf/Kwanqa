@@ -1378,9 +1378,9 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
-  // Amharic Camp 8 – The Summit: Visiting Family
+  // Amharic Camp 8 – Visiting Family
   'amharic-beginner-8': {
-    title: 'Amharic Camp 8 – The Summit: Visiting Family',
+    title: 'Amharic Camp 8 – Visiting Family',
     intro:
       'Visit family in Addis: ask who, what and why, meet the whole family, say how much you missed them, talk about the weather, and look after someone who’s sick.',
     sections: [
@@ -1581,7 +1581,7 @@ export const courseContent: Record<string, Course> = {
           { english: 'Get well soon', man: 'እግዚአብሔር ይማርህ', woman: 'እግዚአብሔር ይማርሽ', elder: 'እግዚአብሔር ይማርዎት' },
         ],
         note:
-          'Like the feelings in Camp 5, these end in -ኛል: ያመኛል is “it hurts me,” ተሽሎኛል is “it has got better for me.” You’ve reached the summit: እንኳን ደስ አላችሁ!',
+          'Like the feelings in Camp 5, these end in -ኛል: ያመኛል is “it hurts me,” ተሽሎኛል is “it has got better for me.”',
       },
     ],
   },
@@ -1660,7 +1660,7 @@ export const courseCatalog: CourseSummary[] = [
   },
   {
     slug: 'amharic-beginner-8',
-    title: 'Amharic Camp 8 – The Summit: Visiting Family',
+    title: 'Amharic Camp 8 – Visiting Family',
     description: 'Question words, the whole family, “I missed you,” the weather, and getting well.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',

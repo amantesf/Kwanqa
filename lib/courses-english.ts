@@ -659,6 +659,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: 'Parents and teachers talk often in many countries. Emailing the teacher or asking for a meeting is normal: it doesn’t mean something is wrong.',
       },
+      {
+        title: 'Lesson 2 – Neighbours & Small Talk',
+        description: 'Meet your neighbours and keep a friendly chat going.',
+        phrases: [
+          p('Hi, I just moved in next door.', 'ሰላም፣ ጎረቤትህ ነኝ፤ አሁን ነው የገባሁት።'),
+          p('Nice weather today, isn’t it?', 'ዛሬ አየሩ ጥሩ ነው፣ አይደል?'),
+          p('How was your weekend?', 'ቅዳሜና እሁድህ እንዴት ነበር?'),
+        ],
+      },
     ],
   },
 };

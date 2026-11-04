@@ -1952,6 +1952,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ኢፍጣር', transliteration: 'iftar', english: 'iftar, the meal that breaks the Ramadan fast' },
           { amharic: 'ኢድ ሙባረክ', transliteration: 'id mubarek', english: 'Eid Mubarak (blessed Eid)' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ሥጋ ትበላለህ?',
+            transliteration: 'siga tibelaleh?',
+            english: 'Do you eat meat?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ዛሬ ረቡዕ ነው፤ ጾመኛ ነኝ።',
+            transliteration: 'zare rebu new; tsomegna negn.',
+            english: 'Today is Wednesday; I’m fasting.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እሺ፣ የጾም ምግብ እናዝዝ።',
+            transliteration: 'ishi, yetsom migib inazziz.',
+            english: 'OK, let’s order fasting food.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ሽሮ ጥሩ ነው!',
+            transliteration: 'shiro tiru new!',
+            english: 'Shiro is great!',
+          },
+        ],
       },
     ],
   },

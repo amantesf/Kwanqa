@@ -1803,6 +1803,8 @@ export const courseContent: Record<string, Course> = {
         respect: [
           { english: 'Hang in there', man: 'አይዞህ', woman: 'አይዞሽ', elder: 'አይዞዎት' },
         ],
+        note:
+          'Visiting the sick matters a lot in Ethiopian culture. Amharic calls it መጠየቅ, literally “asking”: ልጠይቅህ መጣሁ is “I came to ask after you.” People often bring food or something to drink, and even a short visit means a lot.',
       },
     ],
   },

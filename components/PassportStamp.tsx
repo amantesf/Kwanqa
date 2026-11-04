@@ -110,6 +110,15 @@ const ICONS: Record<StampId, (ink: string) => ReactNode> = {
       <circle cx="80" cy="74" r="3.5" fill={ink} />
     </g>
   ),
+  // Konso: stone terraces climbing a hill, with a waka statue on top
+  konso: ink => (
+    <g>
+      <path d="M50 108 H110 V100 H50 Z M56 98 H104 V90 H56 Z M62 88 H98 V80 H62 Z M68 78 H92 V70 H68 Z" fill={ink} />
+      <path d="M50 104 H110 M56 94 H104 M62 84 H98 M68 74 H92" stroke="#fff" strokeWidth="1.4" strokeDasharray="4 3" opacity="0.7" />
+      <rect x="77" y="52" width="6" height="18" rx="2" fill={ink} />
+      <circle cx="80" cy="49" r="4.5" fill={ink} />
+    </g>
+  ),
   // the summit, with Ethiopia's flag on top
   'ras-dashen': ink => (
     <g>

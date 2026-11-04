@@ -17,6 +17,7 @@ export type StampId =
   | 'danakil'
   | 'bale'
   | 'addis'
+  | 'konso'
   | 'ras-dashen';
 
 export type Stamp = {
@@ -102,6 +103,15 @@ const PLACES: Stamp[] = [
     ink: '#c2366b',
     fact:
       'Menelik II and Empress Taytu founded the capital in 1886, and its name means “new flower.” It’s home to the African Union and Merkato, one of Africa’s largest open-air markets.',
+  },
+  {
+    id: 'konso',
+    name: 'Konso',
+    amharic: 'ኮንሶ',
+    region: 'South Ethiopia',
+    ink: '#8a5a1f',
+    fact:
+      'For over 400 years the Konso people have built stone terraces, some 5 m high, to farm dry hillsides, and carved wooden statues called waka to honour the dead. It’s a UNESCO World Heritage Site.',
   },
 ];
 

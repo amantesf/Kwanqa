@@ -651,6 +651,12 @@ export const englishCourses: Record<string, Course> = {
           p('She was sick today, so she stayed home.', 'ዛሬ ታማ ስለነበር ቤት ቀረች።'),
           p('Thank you for helping my daughter.', 'ልጄን ስለረዳህ አመሰግናለሁ።'),
         ],
+        dialogue: [
+          d('A', 'Hi, I’m Daniel’s mother. How is he doing?', 'ሰላም፣ የዳንኤል እናት ነኝ። እንዴት ነው?'),
+          d('B', 'He’s doing well, but he needs help with math.', 'ጥሩ እየሠራ ነው፣ ግን በሂሳብ እርዳታ ያስፈልገዋል።'),
+          d('A', 'What can I do at home?', 'ቤት ምን ማድረግ እችላለሁ?'),
+          d('B', 'Practice with him for ten minutes a day.', 'በቀን አሥር ደቂቃ አብረሽው ተለማመጂ።'),
+        ],
       },
     ],
   },

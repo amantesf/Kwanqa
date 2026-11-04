@@ -714,6 +714,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'How much will it cost to fix?', 'ለማስጠገን ስንት ያስከፍላል?'),
           d('B', 'About a hundred dollars. It’ll be ready tomorrow.', 'መቶ ዶላር ያህል። ነገ ዝግጁ ይሆናል።'),
         ],
+        note: 'In most of the US you pump your own gas and pay at the pump or inside. In New Jersey an attendant does it for you, so that’s where you’d say “Fill it up, please.”',
       },
     ],
   },

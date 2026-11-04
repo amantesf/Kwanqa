@@ -716,6 +716,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: 'In most of the US you pump your own gas and pay at the pump or inside. In New Jersey an attendant does it for you, so that’s where you’d say “Fill it up, please.”',
       },
+      {
+        title: 'Lesson 5 – Online Orders & Deliveries',
+        description: 'Track an order, and sort out a package that didn’t arrive.',
+        phrases: [
+          p('I ordered it online.', 'በኦንላይን ነው ያዘዝኩት።'),
+          p('Can I track my order?', 'ትዕዛዜን መከታተል እችላለሁ?'),
+          p('My package didn’t arrive.', 'ጥቅሌ አልደረሰም።'),
+        ],
+      },
     ],
   },
 };

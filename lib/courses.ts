@@ -1993,6 +1993,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'መልካም መንገድ', transliteration: 'melkam menged', english: 'Have a good trip' },
           { amharic: 'በሰላም ግባ', transliteration: 'beselam giba', english: 'Get home safely (to a man)' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ነገ ወደ አሜሪካ እመለሳለሁ።',
+            transliteration: 'nege wede amerika imelesalehu.',
+            english: 'Tomorrow I go back to America.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'መልካም መንገድ! መቼ ትመጣለህ?',
+            transliteration: 'melkam menged! meche timetaleh?',
+            english: 'Have a good trip! When will you come back?',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እግዚአብሔር ቢፈቅድ፣ በሚቀጥለው ክረምት።',
+            transliteration: 'igziabher bifeqid, bemiqetilew kiremt.',
+            english: 'God willing, next rainy season.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'እሺ፣ በሰላም ግባ!',
+            transliteration: 'ishi, beselam giba!',
+            english: 'OK, get home safely!',
+          },
+        ],
       },
     ],
   },

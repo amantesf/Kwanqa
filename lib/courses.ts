@@ -1586,6 +1586,24 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
+  // Amharic part 9
+  'amharic-beginner-9': {
+    title: 'Amharic Camp 9 – Shopping & Health',
+    sections: [
+      {
+        title: 'Lesson 1 – Clothes & Colours',
+        description:
+          'Name the colours, try things on, and ask for another size.',
+        phrases: [
+          { amharic: 'ቀለም', transliteration: 'qelem', english: 'colour' },
+          { amharic: 'ቀይ', transliteration: 'qey', english: 'red' },
+          { amharic: 'ሰማያዊ', transliteration: 'semayawi', english: 'blue' },
+          { amharic: 'ጥቁር', transliteration: 'tiqur', english: 'black' },
+        ],
+      },
+    ],
+  },
+
   // The English course lives in its own file.
   ...englishCourses,
 };

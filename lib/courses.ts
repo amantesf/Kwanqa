@@ -1978,6 +1978,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Shiro is great!',
           },
         ],
+        note:
+          'Orthodox Christians fast on most Wednesdays and Fridays and for 55 days before Easter (ሁዳዴ): no meat, milk or eggs, so fasting food is vegan. Ethiopian Muslims fast from dawn to sunset in ረመዳን and break the fast together at ኢፍጣር.',
       },
     ],
   },

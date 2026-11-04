@@ -282,10 +282,8 @@ svg {
   background-color: var(--btn-bg);
   color: var(--btn-fg);
   box-shadow: 0 4px 0 var(--btn-edge);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
   transition: filter 0.1s ease, transform 0.08s ease, box-shadow 0.08s ease;
@@ -4154,8 +4152,6 @@ body:has(.learn-app) .site-footer {
   font: inherit;
   font-size: 14px;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   border: 2px solid var(--border);
   border-bottom-width: 4px;
   background: #fff;
@@ -4864,8 +4860,6 @@ body:has(.learn-app) .site-footer {
   background-color: var(--raised, #fff);
   font-size: 16px;
   font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--primary);
   white-space: nowrap;
   animation: start-bob 1.6s ease-in-out infinite;

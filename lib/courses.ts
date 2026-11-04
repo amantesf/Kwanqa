@@ -1811,6 +1811,23 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
+  // Amharic part 10
+  'amharic-beginner-10': {
+    title: 'Amharic Camp 10 – The Summit: Life’s Big Moments',
+    sections: [
+      {
+        title: 'Lesson 1 – A Wedding',
+        description:
+          'Congratulate the couple, and get ready to dance.',
+        phrases: [
+          { amharic: 'ሠርግ', transliteration: 'serg', english: 'wedding' },
+          { amharic: 'ሙሽራ', transliteration: 'mushira', english: 'groom' },
+          { amharic: 'ሙሽሪት', transliteration: 'mushirit', english: 'bride' },
+        ],
+      },
+    ],
+  },
+
   // The English course lives in its own file.
   ...englishCourses,
 };

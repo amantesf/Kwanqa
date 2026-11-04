@@ -657,6 +657,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'What can I do at home?', 'ቤት ምን ማድረግ እችላለሁ?'),
           d('B', 'Practice with him for ten minutes a day.', 'በቀን አሥር ደቂቃ አብረሽው ተለማመጂ።'),
         ],
+        note: 'Parents and teachers talk often in many countries. Emailing the teacher or asking for a meeting is normal: it doesn’t mean something is wrong.',
       },
     ],
   },

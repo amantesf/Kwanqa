@@ -1981,6 +1981,16 @@ export const courseContent: Record<string, Course> = {
         note:
           'Orthodox Christians fast on most Wednesdays and Fridays and for 55 days before Easter (ሁዳዴ): no meat, milk or eggs, so fasting food is vegan. Ethiopian Muslims fast from dawn to sunset in ረመዳን and break the fast together at ኢፍጣር.',
       },
+      {
+        title: 'Lesson 5 – Everyday Blessings',
+        description:
+          'Thank people, wish them luck, and say goodbye the Ethiopian way.',
+        phrases: [
+          { amharic: 'እግዚአብሔር ይስጥልኝ', transliteration: 'igziabher yistilign', english: 'Thank you (literally “may God give it to you for me”)' },
+          { amharic: 'እግዚአብሔር ቢፈቅድ', transliteration: 'igziabher bifeqid', english: 'God willing (said by Christians)' },
+          { amharic: 'ኢንሻአላህ', transliteration: 'inshallah', english: 'God willing (said by Muslims)' },
+        ],
+      },
     ],
   },
 

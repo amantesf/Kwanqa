@@ -1645,6 +1645,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ጥሬ ገንዘብ', transliteration: 'tire genzeb', english: 'cash' },
           { amharic: 'ደረሰኝ', transliteration: 'deresegn', english: 'receipt' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ስኳር አለ?',
+            transliteration: 'sikwar alle?',
+            english: 'Do you have sugar?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ፣ አለ። ስንት ኪሎ?',
+            transliteration: 'awo, alle. sint kilo?',
+            english: 'Yes, we do. How many kilos?',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ሁለት ኪሎ። በካርድ መክፈል እችላለሁ?',
+            transliteration: 'hulet kilo. bekard mekfel ichilalehu?',
+            english: 'Two kilos. Can I pay by card?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ይቅርታ፣ ጥሬ ገንዘብ ብቻ ነው።',
+            transliteration: 'yiqirta, tire genzeb bicha new.',
+            english: 'Sorry, cash only.',
+          },
+        ],
       },
     ],
   },

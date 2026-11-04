@@ -1687,6 +1687,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'በቀን ስንት ጊዜ?', transliteration: 'beqen sint gize?', english: 'How many times a day?' },
           { amharic: 'ከምግብ በኋላ', transliteration: 'kemigib behuala', english: 'after meals' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ለራስ ምታት መድኃኒት አለ?',
+            transliteration: 'leras mitat medhanit alle?',
+            english: 'Do you have medicine for a headache?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አለ። በቀን ሁለት ጊዜ ውሰድ።',
+            transliteration: 'alle. beqen hulet gize wised.',
+            english: 'Yes. Take it twice a day.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ከምግብ በፊት ወይስ በኋላ?',
+            transliteration: 'kemigib befit weys behuala?',
+            english: 'Before or after meals?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ከምግብ በኋላ።',
+            transliteration: 'kemigib behuala.',
+            english: 'After meals.',
+          },
+        ],
       },
     ],
   },

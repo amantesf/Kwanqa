@@ -1755,6 +1755,9 @@ export const courseContent: Record<string, Course> = {
             english: 'Since yesterday. I fell.',
           },
         ],
+        respect: [
+          { english: 'What hurts?', man: 'ምን ያምሃል?', woman: 'ምን ያምሻል?', elder: 'ምን ያምዎታል?' },
+        ],
       },
     ],
   },

@@ -1629,6 +1629,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Yes, in black.',
           },
         ],
+        note:
+          'ሰማያዊ (blue) comes from ሰማይ, “sky”: blue is the sky’s colour. A ቀሚስ is a dress; the white dress with a woven border worn on holidays is a ሀበሻ ቀሚስ (habesha qemis).',
       },
     ],
   },

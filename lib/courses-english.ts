@@ -708,6 +708,12 @@ export const englishCourses: Record<string, Course> = {
           p('Where can I park?', 'የት ማቆም እችላለሁ?'),
           p('When will it be ready?', 'መቼ ዝግጁ ይሆናል?'),
         ],
+        dialogue: [
+          d('A', 'My car won’t start. Can you take a look?', 'መኪናዬ አልነሳ አለ። ልታየው ትችላለህ?'),
+          d('B', 'Sure. I think it’s the battery.', 'እሺ። ባትሪው ይመስለኛል።'),
+          d('A', 'How much will it cost to fix?', 'ለማስጠገን ስንት ያስከፍላል?'),
+          d('B', 'About a hundred dollars. It’ll be ready tomorrow.', 'መቶ ዶላር ያህል። ነገ ዝግጁ ይሆናል።'),
+        ],
       },
     ],
   },

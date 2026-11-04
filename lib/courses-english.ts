@@ -733,6 +733,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'It’s 4521. It says it was delivered, but I don’t have it.', 'ቁጥሩ 4521 ነው። ደርሷል ይላል፣ ግን እጄ ላይ የለም።'),
           d('B', 'Let me check. We’ll send you a new one.', 'ላጣራ። አዲስ እንልክልሃለን።'),
         ],
+        note: 'Customer service is often a typed chat, not a call. Keep messages short and put your order number first. You’ve reached the summit: እንኳን ደስ አለህ!',
       },
     ],
   },

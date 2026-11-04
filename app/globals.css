@@ -1511,10 +1511,34 @@ a.camp-banner:active {
 
 .stone-card-link {
   align-self: center;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
   font-size: 14px;
   font-weight: 800;
   color: var(--blue);
   text-decoration: none;
+  cursor: pointer;
+}
+
+.stone-card-locked {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background-color: var(--bg-soft);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.stone-card-locked svg {
+  flex-shrink: 0;
+  color: #b3a998;
 }
 
 .stone-card-link:hover {
@@ -4787,6 +4811,13 @@ body:has(.learn-app) .site-footer {
 
 .learn-app .stone.locked {
   color: var(--stone-fg);
+}
+
+/* lessons in camps skipped for the learner's level are open anytime */
+.learn-app .stone.todo {
+  --stone: var(--primary);
+  --stone-edge: var(--primary-shadow);
+  --stone-fg: #fff;
 }
 
 .learn-app .trail-walia {

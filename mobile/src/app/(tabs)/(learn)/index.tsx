@@ -41,7 +41,7 @@ const PEAK = 110; // how far below the summit card the mountain's peak (and flag
 
 type Stop = { key: string; kind: StoneKind; state: StoneState; label: string; open?: () => void; count?: number };
 /** The lesson stone whose card is open, and where it is on screen. */
-type Preview = { slug: string; lesson: number; done: boolean; spot: StoneSpot };
+type Preview = { slug: string; lesson: number; done: boolean; locked: boolean; spot: StoneSpot };
 type Box = { top: number; bottom: number };
 
 export default function Trail() {
@@ -93,10 +93,10 @@ export default function Trail() {
   const startLesson = (slug: string, lesson: number) => router.push({ pathname: '/practice', params: { slug, lesson: String(lesson) } });
 
   /** Opens the card over a lesson's stone, once we know where the stone is on screen. */
-  function showPreview(key: string, slug: string, lesson: number, done: boolean) {
+  function showPreview(key: string, slug: string, lesson: number, state: StoneState) {
     stoneViews.current[key]?.measureInWindow((x, y, w, h) => {
       feel('pick');
-      setPreview({ slug, lesson, done, spot: { x, y, width: w, height: h } });
+      setPreview({ slug, lesson, done: state === 'done', locked: state === 'locked', spot: { x, y, width: w, height: h } });
     });
   }
 
@@ -107,7 +107,7 @@ export default function Trail() {
       const isNext = next?.slug === camp.slug && next.lesson === i;
       const state: StoneState = isDone(climb, camp.slug, i) ? 'done' : isNext ? (blocking ? 'locked' : 'current') : campIdx < start && campIdx !== currentCamp ? 'todo' : 'locked';
       const key = `${camp.slug}:${i}`;
-      return { key, kind: 'lesson', state, label: lesson.title.replace(/^Lesson \d+ – /, ''), open: () => showPreview(key, camp.slug, i, state === 'done') };
+      return { key, kind: 'lesson', state, label: lesson.title.replace(/^Lesson \d+ – /, ''), open: () => showPreview(key, camp.slug, i, state) };
     });
     // a mesob of grass waits halfway through each camp
     if (lessons.length >= 3) {
@@ -224,6 +224,11 @@ export default function Trail() {
         lesson={preview ? (lessonsOf(preview.slug)[preview.lesson] ?? null) : null}
         track={track}
         done={!!preview?.done}
+        locked={!!preview?.locked}
+        onJump={() => {
+          setPreview(null);
+          if (here !== null) scroller.current?.scrollTo({ y: Math.max(0, here - viewH * 0.5), animated: true });
+        }}
         onStart={() => {
           if (!preview) return;
           setPreview(null);

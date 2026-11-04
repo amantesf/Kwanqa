@@ -31,6 +31,8 @@ export type StonePreview = {
   /** How many more phrases the lesson has. */
   more: number;
   done: boolean;
+  /** Not reached yet: the card says to keep climbing instead of offering Start. */
+  locked?: boolean;
   /** Grass earned by finishing it (again). */
   grass: number;
   /** The lesson's phrases page. */
@@ -374,13 +376,34 @@ function StoneCard({ title, preview, href, offset, onClose }: { title: string; p
           {preview.more > 0 && <li className="stone-card-more">+ {preview.more} more</li>}
         </ul>
       )}
-      <Link href={href} className="btn btn-block stone-card-start" aria-label={`${preview.done ? 'Practice again' : 'Start'}, earns ${preview.grass} grass`}>
-        {preview.done ? 'Practice again' : 'Start'}
-        <span className="stone-card-grass">
-          <GrassIcon size={18} />+{preview.grass}
-        </span>
-      </Link>
-      {preview.phrasesHref && (
+      {preview.locked ? (
+        <>
+          <p className="stone-card-locked">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
+              <path d="M2 20 L9 8 L13 14 L16 10 L22 20 Z" fill="currentColor" />
+            </svg>
+            Walia hasn’t climbed this high yet. Finish the stones below to reach this ledge.
+          </p>
+          <button
+            type="button"
+            className="stone-card-link"
+            onClick={() => {
+              document.querySelector('[data-current-stone]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              onClose();
+            }}
+          >
+            Jump to Walia
+          </button>
+        </>
+      ) : (
+        <Link href={href} className="btn btn-block stone-card-start" aria-label={`${preview.done ? 'Practice again' : 'Start'}, earns ${preview.grass} grass`}>
+          {preview.done ? 'Practice again' : 'Start'}
+          <span className="stone-card-grass">
+            <GrassIcon size={18} />+{preview.grass}
+          </span>
+        </Link>
+      )}
+      {!preview.locked && preview.phrasesHref && (
         <Link href={preview.phrasesHref} className="stone-card-link">
           See all the phrases
         </Link>

@@ -57,7 +57,7 @@ const WALIA_AT_KEY = 'kwanqa-walia-at';
 const VISIBLE_CAMPS = 7;
 
 /** What a lesson teaches, for the card over its stone: its first three phrases. */
-function previewOf(lesson: LessonSection, track: Track, done: boolean, phrasesHref: string): StonePreview {
+function previewOf(lesson: LessonSection, track: Track, done: boolean, locked: boolean, phrasesHref: string): StonePreview {
   const phrases = lesson.phrases ?? [];
   return {
     description: lesson.description,
@@ -68,6 +68,7 @@ function previewOf(lesson: LessonSection, track: Track, done: boolean, phrasesHr
     ),
     more: Math.max(0, phrases.length - 3),
     done,
+    locked,
     grass: done ? REPLAY_GRASS : LESSON_GRASS,
     phrasesHref: phrases.length || lesson.dialogue?.length ? phrasesHref : undefined,
   };
@@ -417,10 +418,9 @@ export default function CoursesRoadmap() {
           const skipped = campIdx < start && campIdx !== currentCamp && !started;
           const locked = campIdx > currentCamp && campIdx >= start && !started;
 
-          const stops: TrailStop[] = lessons.map((lesson, i) => ({
-            title: lesson.title,
-            number: i + 1,
-            state: isDone(climb, course.slug, i)
+          const stops: TrailStop[] = lessons.map((lesson, i) => {
+            const done = isDone(climb, course.slug, i);
+            const state: TrailStop['state'] = done
               ? 'done'
               : next?.slug === course.slug && next.lesson === i
                 ? blocking
@@ -428,18 +428,20 @@ export default function CoursesRoadmap() {
                   : 'current'
                 : campIdx < start && campIdx !== currentCamp
                   ? 'todo'
-                  : 'locked',
-            href:
-              blocking && next?.slug === course.slug && next.lesson === i
-                ? reviewHref(blocking.slug)
-                : `/courses/${course.slug}?lesson=${i}&practice=1`,
-            id: `${course.slug}:${i}`,
-            // the stone the review is blocking goes straight to the review
-            preview:
-              blocking && next?.slug === course.slug && next.lesson === i
+                  : 'locked';
+            const waitsForReview = !!blocking && next?.slug === course.slug && next.lesson === i;
+            return {
+              title: lesson.title,
+              number: i + 1,
+              state,
+              href: waitsForReview ? reviewHref(blocking.slug) : `/courses/${course.slug}?lesson=${i}&practice=1`,
+              id: `${course.slug}:${i}`,
+              // the stone the review is blocking goes straight to the review
+              preview: waitsForReview
                 ? undefined
-                : previewOf(lesson, track, isDone(climb, course.slug, i), `/courses/${course.slug}?lesson=${i}`),
-          }));
+                : previewOf(lesson, track, done, state === 'locked', `/courses/${course.slug}?lesson=${i}`),
+            };
+          });
 
           const campDone = lessons.every((_, i) => isDone(climb, course.slug, i));
           // A mesob of grass waits halfway through each camp.

@@ -15,8 +15,9 @@ const EDGE = 9;
 const LOOK: Record<StoneState, { face: string; edge: string; fg: string }> = {
   done: { face: colors.gold, edge: colors.goldShadow, fg: '#ffffff' },
   current: { face: colors.primary, edge: colors.primaryShadow, fg: '#ffffff' },
+  // lessons in camps skipped for the learner's level: open anytime
+  todo: { face: colors.primary, edge: colors.primaryShadow, fg: '#ffffff' },
   // grey until reached, as on the website's trail
-  todo: { face: '#e5e5e5', edge: '#cecece', fg: '#afafaf' },
   locked: { face: '#e5e5e5', edge: '#cecece', fg: '#afafaf' },
 };
 
@@ -93,7 +94,8 @@ export default function Stone({ state, kind = 'lesson', label, onPress }: Props)
   const [down, setDown] = useState(false);
   // review stones are purple whenever they're open
   const look = kind === 'review' && state !== 'locked' ? REVIEW : LOOK[state];
-  const pressable = !!onPress && state !== 'locked';
+  // locked stones can be tapped too, to see what's waiting up there
+  const pressable = !!onPress;
 
   if (kind === 'reward') {
     return (

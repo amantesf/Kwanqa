@@ -3,7 +3,7 @@ import Animated, { ZoomIn } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { LESSON_GRASS, REPLAY_GRASS } from '@/lib/climb';
 import { type LessonSection, type Track } from '@/lib/courses';
-import { Grass } from '@/components/icons';
+import { Grass, Peak } from '@/components/icons';
 import { fonts, makeStyles, useColors } from '@/theme';
 
 // What a lesson teaches, shown over its stone on the trail before you start:
@@ -20,12 +20,16 @@ type Props = {
   lesson: LessonSection | null;
   track: Track;
   done: boolean;
+  /** Not reached yet: says to keep climbing instead of offering Start. */
+  locked: boolean;
   onStart: () => void;
+  /** Scrolls the trail back to where Walia is. */
+  onJump: () => void;
   onPhrases: () => void;
   onClose: () => void;
 };
 
-export default function StoneCard({ spot, lesson, track, done, onStart, onPhrases, onClose }: Props) {
+export default function StoneCard({ spot, lesson, track, done, locked, onStart, onJump, onPhrases, onClose }: Props) {
   const styles = useStyles();
   const colors = useColors();
   const { width: screenW, height: screenH } = useWindowDimensions();
@@ -83,18 +87,32 @@ export default function StoneCard({ spot, lesson, track, done, onStart, onPhrase
           </View>
         ) : null}
 
-        <Pressable onPress={onStart} accessibilityRole="button" accessibilityLabel={`${done ? 'Practice again' : 'Start'}, earns ${grass} grass`} style={({ pressed }) => [styles.start, pressed && styles.startDown]}>
-          <Text style={styles.startText}>{done ? 'Practice again' : 'Start'}</Text>
-          <View style={styles.reward}>
-            <Grass size={18} />
-            <Text style={styles.rewardText}>+{grass}</Text>
-          </View>
-        </Pressable>
-        {phrases.length > 0 || lesson.dialogue?.length ? (
-          <Pressable onPress={onPhrases} accessibilityRole="button" hitSlop={6} style={styles.link}>
-            <Text style={styles.linkText}>See all the phrases</Text>
-          </Pressable>
-        ) : null}
+        {locked ? (
+          <>
+            <View style={styles.locked}>
+              <Peak lit={false} size={22} />
+              <Text style={styles.lockedText}>Walia hasn’t climbed this high yet. Finish the stones below to reach this ledge.</Text>
+            </View>
+            <Pressable onPress={onJump} accessibilityRole="button" hitSlop={6} style={styles.link}>
+              <Text style={styles.linkText}>Jump to Walia</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Pressable onPress={onStart} accessibilityRole="button" accessibilityLabel={`${done ? 'Practice again' : 'Start'}, earns ${grass} grass`} style={({ pressed }) => [styles.start, pressed && styles.startDown]}>
+              <Text style={styles.startText}>{done ? 'Practice again' : 'Start'}</Text>
+              <View style={styles.reward}>
+                <Grass size={18} />
+                <Text style={styles.rewardText}>+{grass}</Text>
+              </View>
+            </Pressable>
+            {phrases.length > 0 || lesson.dialogue?.length ? (
+              <Pressable onPress={onPhrases} accessibilityRole="button" hitSlop={6} style={styles.link}>
+                <Text style={styles.linkText}>See all the phrases</Text>
+              </Pressable>
+            ) : null}
+          </>
+        )}
       </Animated.View>
     </Modal>
   );
@@ -148,5 +166,7 @@ const useStyles = makeStyles(c => ({
   reward: { flexDirection: 'row', alignItems: 'center', gap: 3, paddingVertical: 2, paddingHorizontal: 8, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.9)' },
   rewardText: { fontFamily: fonts.black, fontSize: 14, color: '#3a9a28' },
   link: { alignSelf: 'center', paddingVertical: 2 },
+  locked: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginTop: 4, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 14, backgroundColor: c.bgSoft },
+  lockedText: { flex: 1, fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.muted },
   linkText: { fontFamily: fonts.heavy, fontSize: 14, color: c.blue },
 }));

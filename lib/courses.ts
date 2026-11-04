@@ -1814,6 +1814,8 @@ export const courseContent: Record<string, Course> = {
   // Amharic part 10
   'amharic-beginner-10': {
     title: 'Amharic Camp 10 – The Summit: Life’s Big Moments',
+    intro:
+      'The words for life’s big moments: celebrate a wedding and a new baby, comfort a family in mourning, talk about fasting and feasting, and bless people the Ethiopian way.',
     sections: [
       {
         title: 'Lesson 1 – A Wedding',
@@ -2115,6 +2117,14 @@ export const courseCatalog: CourseSummary[] = [
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',
     part: 9,
+  },
+  {
+    slug: 'amharic-beginner-10',
+    title: 'Amharic Camp 10 – The Summit: Life’s Big Moments',
+    description: 'Weddings, a new baby, comforting a grieving family, fasting and feasting, and everyday blessings.',
+    audience: 'Non‑Amharic speakers learning Amharic',
+    track: 'amharic',
+    part: 10,
   },
   ...englishCatalog,
 ];

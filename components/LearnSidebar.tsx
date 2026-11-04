@@ -156,7 +156,6 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         <Logo />
       </div>
       <nav className="learn-nav" aria-label="Learn">
-        <span className="learn-nav-heading">Learn</span>
         {learn.map(item => (
           <NavLink
             key={item.key}
@@ -165,11 +164,11 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
             current={active === item.key}
           />
         ))}
-        <span className="learn-nav-heading">Culture</span>
+        <span className="learn-nav-gap" aria-hidden />
         {culture.map(item => (
           <NavLink key={item.key} item={item} icon={ICONS[item.key]} />
         ))}
-        <span className="learn-nav-heading">You</span>
+        <span className="learn-nav-gap" aria-hidden />
         <NavLink item={passport} icon={ICONS.passport} current={active === 'passport'} />
         <NavLink item={profile} icon={profileIcon} current={active === 'profile'} />
       </nav>

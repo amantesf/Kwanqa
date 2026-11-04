@@ -4121,6 +4121,15 @@ body:has(.learn-app) .site-footer {
   margin-top: 0;
 }
 
+/* a thin line between the groups of links */
+.learn-nav-gap {
+  display: block;
+  height: 2px;
+  margin: 10px 14px;
+  border-radius: 2px;
+  background-color: var(--border);
+}
+
 .learn-account {
   margin-top: auto;
   display: flex;
@@ -4218,6 +4227,17 @@ body:has(.learn-app) .site-footer {
 
 .learn-nav-link:hover {
   background-color: var(--bg-soft);
+}
+
+.learn-nav-link:not([aria-current='page']) .learn-nav-tile {
+  filter: saturate(0.2) brightness(1.08);
+  transition:
+    transform 0.18s cubic-bezier(0.3, 1.6, 0.5, 1),
+    filter 0.15s ease;
+}
+
+.learn-nav-link:hover .learn-nav-tile {
+  filter: none;
 }
 
 .learn-nav-link:hover .learn-nav-tile {

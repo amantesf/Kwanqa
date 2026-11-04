@@ -750,6 +750,7 @@ export const englishCatalog: CourseSummary[] = [
   { slug: 'english-from-amharic-5', description: 'The doctor, renting a home, phone appointments, and offices.' },
   { slug: 'english-from-amharic-6', description: 'Opinions, stories, plans, natural expressions, and kind words.' },
   { slug: 'english-from-amharic-7', description: 'Job interviews, your strengths, the offer, your first day, and video calls.' },
+  { slug: 'english-from-amharic-8', description: 'Your child’s school, neighbours, emergencies, the car, and online orders.' },
 ].map((course, i) => ({
   ...course,
   title: englishCourses[course.slug].title,

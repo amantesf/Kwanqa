@@ -342,6 +342,9 @@
 :where(html[data-theme='dark']) .top-stat.horns {
     color: color-mix(in srgb, var(--gold) 70%, #fff)
 }
+:where(html[data-theme='dark']) .climb-height-meter span {
+    background: linear-gradient(90deg, #7cc35a, #a8703f 60%, #262b2f)
+}
 :where(html[data-theme='dark']) .quest-meter span {
     box-shadow: inset 0 4px 0 rgba(26, 36, 40, 0.3)
 }

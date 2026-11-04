@@ -37,6 +37,7 @@ import { courseContent, type LessonSection, type Track } from '@/lib/courses';
 import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import {
+  altitudeFor,
   BASE_ALTITUDE,
   hornLevel,
   isDone,
@@ -47,6 +48,7 @@ import {
   startCamp,
   SUMMIT_ALTITUDE,
   trackCourses,
+  trackTotals,
   useClimb,
   zoneForCamp,
 } from '@/lib/climb';
@@ -122,8 +124,6 @@ function scrollToWalia(behavior: ScrollBehavior) {
     ?.scrollIntoView({ behavior, block: 'center' });
 }
 
-const lessonName = (title: string) => title.replace(/^Lesson \d+ – /, '');
-
 
 export default function CoursesRoadmap() {
   const params = useSearchParams();
@@ -145,6 +145,8 @@ export default function CoursesRoadmap() {
   const season = useHolidaySeason();
   const courses = trackCourses(track);
   const horns = hornLevel(climb.grass);
+  const totals = trackTotals(climb, track);
+  const altitude = altitudeFor(totals.done, totals.total);
   // Questions missed in a camp are asked again before the next camp opens:
   // once every lesson in a camp is done, its review stone comes before the trophy.
   const mistakeStore = useMistakes();
@@ -288,16 +290,12 @@ export default function CoursesRoadmap() {
   }, [track, nextKey]);
 
   const myCampIdx = Math.min(currentCamp, courses.length - 1);
-  const myCamp = courses[myCampIdx];
   const shownIdx = viewCamp !== null && courses[viewCamp] ? viewCamp : myCampIdx;
   const shownCamp = courses[shownIdx];
   const shownLocked = shownIdx > currentCamp && shownIdx >= start;
   const shownPhrasebookHref = shownCamp
     ? `/phrasebook?track=${track}&camp=${shownCamp.slug}`
     : `/phrasebook?track=${track}`;
-  const phrasebookHref = `/phrasebook?track=${track}`;
-  const nextTitle = next ? courseContent[next.slug]?.sections[next.lesson]?.title : null;
-  const nextHref = next ? `/courses/${next.slug}?lesson=${next.lesson}&practice=1` : null;
   const hornProgress =
     horns.next === null ? 1 : (climb.grass - horns.from) / (horns.next - horns.from);
 
@@ -568,37 +566,38 @@ export default function CoursesRoadmap() {
           </div>
         )}
 
-        {!blocking && next && nextTitle && nextHref && (
-          <div className="rail-card rail-extra rail-promo">
-            <div className="rail-promo-text">
-              <span className="rail-badge">Up next</span>
-              <h3 className="rail-title">{lessonName(nextTitle)}</h3>
-              <p className="small">
-                Lesson {next.lesson + 1} of Camp {currentCamp + 1}. Finish it to earn grass and
-                climb higher.
-              </p>
-            </div>
-            <div className="rail-promo-art" aria-hidden>
-              <Mascot pose="wave" size={92} hornScale={horns.scale} animated />
-            </div>
-            <Link href={nextHref} className="btn btn-block">
-              Continue climbing
-            </Link>
-          </div>
-        )}
-
         <PassportRailCard track={track} />
 
+        {/* how high you've climbed, and Walia's horns */}
         <div className="rail-card rail-extra">
           <div className="rail-card-head">
-            <h3 className="rail-title">Walia’s horns</h3>
-            <span className="rail-link">Level {horns.level} of {horns.max}</span>
+            <h3 className="rail-title">Your climb</h3>
+            <span className="rail-note">
+              {totals.done} of {totals.total} lessons
+            </span>
+          </div>
+          <div className="climb-height">
+            <p>
+              <strong>{altitude.toLocaleString()} m</strong> of {SUMMIT_ALTITUDE.toLocaleString()} m
+            </p>
+            <div
+              className="climb-height-meter"
+              role="progressbar"
+              aria-label="How far up the mountain you are"
+              aria-valuemin={BASE_ALTITUDE}
+              aria-valuemax={SUMMIT_ALTITUDE}
+              aria-valuenow={altitude}
+            >
+              <span style={{ width: `${Math.round(((altitude - BASE_ALTITUDE) / (SUMMIT_ALTITUDE - BASE_ALTITUDE)) * 100)}%` }} />
+            </div>
           </div>
           <div className="quest">
             <GrassIcon size={44} />
             <div className="quest-body">
               <span className="quest-title">
-                {horns.next === null ? 'Fully grown. Gobez!' : 'Collect grass to grow a new ridge'}
+                {horns.next === null
+                  ? 'Walia’s horns are fully grown. Gobez!'
+                  : `Walia’s horns, level ${horns.level} of ${horns.max}. Collect grass to grow the next ridge.`}
               </span>
               <div className="quest-row">
                 <div
@@ -622,20 +621,6 @@ export default function CoursesRoadmap() {
           </div>
         </div>
 
-        <div className="rail-card rail-extra">
-          <div className="rail-card-head">
-            <h3 className="rail-title">Phrasebook</h3>
-            <Link href={phrasebookHref} className="rail-link">
-              Open
-            </Link>
-          </div>
-          <p className="small">
-            Every phrase from {myCamp ? `Camp ${myCampIdx + 1}` : 'this camp'}
-            {track === 'english'
-              ? ' in English, with the Amharic meaning, ready to review.'
-              : ' in Ge’ez script, transliteration, and English, ready to review.'}
-          </p>
-        </div>
       </aside>
 
       <StampCelebration track={track} />

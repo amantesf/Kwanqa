@@ -1869,6 +1869,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ስሟ ማን ነው?', transliteration: 'simwa man new?', english: 'What’s her name?' },
           { amharic: 'እግዚአብሔር ያሳድግላችሁ', transliteration: 'igziabher yasadgilachihu', english: 'May God raise the child for you' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'እንኳን ማርያም ማረችሽ! ወንድ ነው ወይስ ሴት?',
+            transliteration: 'inkwan maryam marechish! wend new weys set?',
+            english: 'Congratulations! Is it a boy or a girl?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ሴት ልጅ ናት።',
+            transliteration: 'set lij nat.',
+            english: 'It’s a girl.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ስሟ ማን ነው?',
+            transliteration: 'simwa man new?',
+            english: 'What’s her name?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ስሟ ሔራን ነው።',
+            transliteration: 'simwa heran new.',
+            english: 'Her name is Heran.',
+          },
+        ],
       },
     ],
   },

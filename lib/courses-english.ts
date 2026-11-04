@@ -637,6 +637,20 @@ export const englishCourses: Record<string, Course> = {
       },
     ],
   },
+  'english-from-amharic-8': {
+    title: 'English Camp 8 – The Summit: Life Abroad',
+    sections: [
+      {
+        title: 'Lesson 1 – Your Child’s School',
+        description: 'Talk to your child’s teacher and keep up with school.',
+        phrases: [
+          p('I’m Hana’s father.', 'የሃና አባት ነኝ።'),
+          p('How is my son doing in class?', 'ልጄ በክፍል ውስጥ እንዴት ነው?'),
+          p('He needs help with reading.', 'በንባብ እርዳታ ያስፈልገዋል።'),
+        ],
+      },
+    ],
+  },
 };
 
 const AUDIENCE = 'Amharic speakers learning English';

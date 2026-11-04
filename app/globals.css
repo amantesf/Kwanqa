@@ -4656,11 +4656,9 @@ body:has(.learn-app) .site-footer {
 }
 
 .camp-header-kicker {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .camp-header h2 {
@@ -4681,10 +4679,8 @@ body:has(.learn-app) .site-footer {
   border-radius: 16px;
   border: 2px solid rgba(0, 0, 0, 0.16);
   border-bottom-width: 5px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: #fff;
   text-decoration: none;
 }
@@ -5756,8 +5752,6 @@ body:has(.learn-app) .site-footer {
 .rail-link {
   font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--blue);
   text-decoration: none;
   white-space: nowrap;

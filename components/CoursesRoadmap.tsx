@@ -336,8 +336,7 @@ export default function CoursesRoadmap() {
             })()}
             <div className="camp-header-text" key={shownIdx}>
               <span className="camp-header-kicker">
-                Camp {shownIdx + 1} ·{' '}
-                {shownLocked ? 'Locked' : zoneForCamp(shownIdx, courses.length).name}
+                Camp {shownIdx + 1}, {shownLocked ? 'still above you' : zoneForCamp(shownIdx, courses.length).name}
               </span>
               <h2>{shownCamp.description}</h2>
             </div>
@@ -377,7 +376,6 @@ export default function CoursesRoadmap() {
               <circle cx="78" cy="20" r="20" />
             </svg>
             <div className="summit-text">
-              <span className="kicker">Above the clouds</span>
               <h2 className="h3" style={{ fontSize: 22 }}>
                 More of the mountain is up here
               </h2>
@@ -554,7 +552,6 @@ export default function CoursesRoadmap() {
         {blocking && (
           <div className="rail-card rail-extra rail-promo">
             <div className="rail-promo-text">
-              <span className="rail-badge">Review</span>
               <h3 className="rail-title">Fix your mistakes</h3>
               <p className="small">
                 You missed {pendingIn(blocking.slug)} question{pendingIn(blocking.slug) === 1 ? '' : 's'} in Camp{' '}

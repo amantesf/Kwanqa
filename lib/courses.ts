@@ -1936,6 +1936,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Amen, thank you.',
           },
         ],
+        note:
+          'When someone dies, friends and neighbours visit the family at home for several days. They sit with them, and close friends bring food and drinks so the family doesn’t have to cook. You don’t need many words: ነፍስ ይማር, and being there, are what count.',
       },
     ],
   },

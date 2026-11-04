@@ -1674,6 +1674,17 @@ export const courseContent: Record<string, Course> = {
         note:
           'አለ means “there is,” so ዳቦ አለ? is literally “Is there bread?”: that’s how you ask a shop if it has something. The answer is አለ (yes) or የለም (no). Small shops often take cash or a phone payment like telebirr more than cards.',
       },
+      {
+        title: 'Lesson 3 – At the Pharmacy',
+        description:
+          'Say what’s wrong, ask for medicine, and ask how to take it.',
+        phrases: [
+          { amharic: 'ፋርማሲ', transliteration: 'farmasi', english: 'pharmacy' },
+          { amharic: 'ራስ ምታት', transliteration: 'ras mitat', english: 'headache' },
+          { amharic: 'ጉንፋን ያዘኝ', transliteration: 'gunfan yazegn', english: 'I’ve caught a cold' },
+          { amharic: 'ሳል', transliteration: 'sal', english: 'cough' },
+        ],
+      },
     ],
   },
 

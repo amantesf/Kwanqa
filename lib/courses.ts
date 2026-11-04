@@ -1910,6 +1910,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'እግዚአብሔር ያጽናችሁ', transliteration: 'igziabher yatsnachihu', english: 'May God comfort you (to the family)' },
           { amharic: 'አይዟችሁ', transliteration: 'ayzwachihu', english: 'Take heart (to a group)' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'በጣም አዝናለሁ። ነፍስ ይማር።',
+            transliteration: 'betam aznalehu. nefs yimar.',
+            english: 'I’m so sorry. May his soul rest in peace.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አሜን። ስለመጣህ አመሰግናለሁ።',
+            transliteration: 'amen. silemetah ameseginalehu.',
+            english: 'Amen. Thank you for coming.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እግዚአብሔር ያጽናችሁ። አይዟችሁ።',
+            transliteration: 'igziabher yatsnachihu. ayzwachihu.',
+            english: 'May God comfort you all. Take heart.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አሜን፣ አመሰግናለሁ።',
+            transliteration: 'amen, ameseginalehu.',
+            english: 'Amen, thank you.',
+          },
+        ],
       },
     ],
   },

@@ -676,6 +676,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'Nice to meet you. Nice weather today, isn’t it?', 'ስለተዋወቅን ደስ ብሎኛል። ዛሬ አየሩ ጥሩ ነው፣ አይደል?'),
           d('B', 'Yes, finally some sun!', 'አዎ፣ በመጨረሻ ፀሐይ ወጣች!'),
         ],
+        note: 'Small talk about the weather or the weekend is how English speakers start a friendly chat. It isn’t nosy, and short, light answers are fine.',
       },
     ],
   },

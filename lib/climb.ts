@@ -229,11 +229,16 @@ export function trackCourses(track: Track) {
 // Placement: learners who already know some of the language start higher up
 // the trail. The camps below stay open for review.
 const PLACEMENT: Record<Level, number> = { new: 0, 'some-words': 0.2, basic: 0.4, conversational: 0.7 };
+/** How many camps each track had when placement was set: 8 Amharic, 7 English. */
+const PLACEMENT_CAMPS: Record<Track, number> = { amharic: 8, english: 7 };
 
 /** The camp (0-based) a learner starts at on a track, from their survey answer. */
 export function startCamp(track: Track, level: Level | undefined) {
   const camps = trackCourses(track).length;
-  return Math.min(Math.floor(PLACEMENT[level ?? 'new'] * camps), Math.max(camps - 1, 0));
+  // Placement counts only the camps the survey was designed around, so adding
+  // camps on top never moves where an existing learner starts.
+  const placedOver = Math.min(camps, PLACEMENT_CAMPS[track]);
+  return Math.min(Math.floor(PLACEMENT[level ?? 'new'] * placedOver), Math.max(camps - 1, 0));
 }
 
 /**

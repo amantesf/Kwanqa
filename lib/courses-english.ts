@@ -639,6 +639,7 @@ export const englishCourses: Record<string, Course> = {
   },
   'english-from-amharic-8': {
     title: 'English Camp 8 – The Summit: Life Abroad',
+    intro: 'The English you need for a new life abroad: your child’s school, neighbours, emergencies, the car, and online orders.',
     sections: [
       {
         title: 'Lesson 1 – Your Child’s School',

@@ -1895,6 +1895,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Her name is Heran.',
           },
         ],
+        note:
+          'Orthodox Christians greet a new mother with እንኳን ማርያም ማረችሽ, literally “glad Mary had mercy on you,” thanking Mary for a safe birth. Anyone can simply say እንኳን ደስ አለሽ, “congratulations.”',
       },
     ],
   },

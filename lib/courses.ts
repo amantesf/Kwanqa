@@ -1827,6 +1827,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'እግዚአብሔር ይባርካችሁ', transliteration: 'igziabher yibarkachihu', english: 'God bless you (to a couple or a group)' },
           { amharic: 'እንጨፍር!', transliteration: 'inchefir!', english: 'Let’s dance!' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ሠርጉ መቼ ነው?',
+            transliteration: 'sergu meche new?',
+            english: 'When is the wedding?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ቅዳሜ ነው። ትመጣለህ?',
+            transliteration: 'qidame new. timetaleh?',
+            english: 'It’s on Saturday. Will you come?',
+          },
+          {
+            speaker: 'A',
+            amharic: 'አዎ! እንኳን ደስ አላችሁ!',
+            transliteration: 'awo! inkwan des alachihu!',
+            english: 'Yes! Congratulations to you both!',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አመሰግናለሁ! እዚያ እንጨፍራለን።',
+            transliteration: 'ameseginalehu! iziya inchefiralen.',
+            english: 'Thank you! We’ll dance there.',
+          },
+        ],
       },
     ],
   },

@@ -4902,6 +4902,15 @@ body:has(.learn-app) .site-footer {
   color: var(--text-muted);
 }
 
+/* the trailhead's sign sits on top of its note */
+.learn-app .trailhead .trail-sign {
+  margin: -30px 0 4px;
+}
+
+.learn-app .trailhead .trail-sign::after {
+  display: none;
+}
+
 /* ---------- one mountain, from the trailhead to the summit flag ---------- */
 
 .climb {
@@ -4977,13 +4986,53 @@ body:has(.learn-app) .site-footer {
   display: none;
 }
 
-.learn-app .climb .camp-divider span {
+.learn-app .climb .camp-divider {
+  padding-bottom: 14px; /* room for the sign's post */
+}
+
+/* Wooden trail signs, painted by hand: each camp's name, the trailhead and the summit */
+.trail-sign {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
   max-width: calc(100% - 32px);
-  padding: 7px 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 3px 0 rgba(40, 60, 80, 0.12);
-  font-size: 12px;
+  padding: 8px 18px 9px;
+  border-radius: 10px;
+  border: 2px solid #7c4f28;
+  border-bottom-width: 5px;
+  background-color: #a8703f;
+  background-image: repeating-linear-gradient(180deg, transparent 0 7px, rgba(0, 0, 0, 0.06) 7px 9px);
+  color: #fff7e6;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.trail-sign strong {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.trail-sign small {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 247, 230, 0.82);
+}
+
+/* its post, down into the ground */
+.trail-sign::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 10px;
+  height: 14px;
+  margin-left: -5px;
+  border-radius: 0 0 3px 3px;
+  background-color: #7c4f28;
 }
 
 /* a sandy footpath winding up the whole mountain */
@@ -5020,8 +5069,8 @@ body:has(.learn-app) .site-footer {
 }
 
 .learn-app .climb .trailhead {
-  margin-top: 28px;
-  padding: 14px 18px;
+  margin-top: 52px;
+  padding: 0 18px 14px;
   max-width: 420px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.92);

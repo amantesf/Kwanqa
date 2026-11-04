@@ -293,9 +293,6 @@
 :where(html[data-theme='dark']) .learn-app .climb .camp-divider {
     color: #cad0d7
 }
-:where(html[data-theme='dark']) .learn-app .climb .camp-divider span {
-    background: rgba(26, 36, 40, 0.94)
-}
 :where(html[data-theme='dark']) .learn-app .trail-line path.trail-sand {
     stroke: #3d3a30
 }

@@ -389,8 +389,11 @@ export default function CoursesRoadmap() {
         ) : (
         <div className={`summit${next || blocking ? ' zone-locked' : ' reached'}`}>
           <div className="summit-text">
-            <span className="kicker">
-              Summit · ራስ ዳሽን · {SUMMIT_ALTITUDE.toLocaleString()} m
+            <span className="trail-sign">
+              <strong>
+                Ras Dashen <span lang="am">ራስ ዳሽን</span>
+              </strong>
+              <small>{SUMMIT_ALTITUDE.toLocaleString()} m</small>
             </span>
             <h2 className="h3" style={{ fontSize: 22 }}>
               {next || blocking ? 'Finish every lesson to reach the summit' : 'You made it to the top!'}
@@ -483,13 +486,19 @@ export default function CoursesRoadmap() {
               className={`zone zone-${zone.tone}${locked ? ' zone-locked' : ''}`}
               aria-label={`Camp ${campIdx + 1}: ${course.title}${locked ? ' (locked)' : ''}`}
             >
+              {/* the camp's name on a wooden trail sign */}
               <div className="camp-divider">
-                <span>
-                  {locked
-                    ? `Camp ${campIdx + 1} · Finish Camp ${campIdx} to unlock`
-                    : skipped
-                      ? `Camp ${campIdx + 1} · ${zone.name} · Skipped for your level, open anytime`
-                      : `Camp ${campIdx + 1} · ${zone.name} · ${zone.from.toLocaleString()}–${zone.to.toLocaleString()} m`}
+                <span className="trail-sign">
+                  <strong>
+                    Camp {campIdx + 1}: {zone.name}
+                  </strong>
+                  <small>
+                    {locked
+                      ? `Finish Camp ${campIdx} to open this one`
+                      : skipped
+                        ? 'Skipped for your level. Open anytime'
+                        : `${zone.from.toLocaleString()}–${zone.to.toLocaleString()} m`}
+                  </small>
                 </span>
               </div>
               <div className="trail-wrap">
@@ -507,7 +516,10 @@ export default function CoursesRoadmap() {
 
         {/* Trailhead */}
         <div className="trailhead">
-          <span className="kicker">Trailhead · {BASE_ALTITUDE.toLocaleString()} m</span>
+          <span className="trail-sign">
+            <strong>Trailhead</strong>
+            <small>{BASE_ALTITUDE.toLocaleString()} m</small>
+          </span>
           <p className="muted small">
             Your climb starts here. Finish lessons to earn grass (ሳር). It grows Walia’s horns
             and gives you energy when the climb gets tough.

@@ -1,5 +1,5 @@
 import { useId, type ReactNode } from 'react';
-import Svg, { Circle, Defs, G, Path, Rect, Text, TextPath } from 'react-native-svg';
+import Svg, { Circle, Defs, Ellipse, G, Path, Rect, Text, TextPath } from 'react-native-svg';
 import type { Stamp, StampId } from '@/lib/passport';
 import { fonts } from '@/theme';
 
@@ -85,6 +85,18 @@ const ICONS: Record<StampId, (ink: string) => ReactNode> = {
       <Circle cx={87} cy={83} r={2.6} fill="#fff" />
       <Path d="M72 94 Q80 100 88 94 L84 104 Q80 107 76 104 Z" fill="#fff" opacity={0.85} />
       <Circle cx={80} cy={104} r={2.6} fill={ink} />
+    </G>
+  ),
+  // Addis Ababa, the "new flower": a six-petal flower on its stem
+  addis: ink => (
+    <G>
+      <Path d="M80 92 V112" stroke={ink} strokeWidth={3.5} strokeLinecap="round" />
+      <Path d="M80 104 Q70 98 64 104 Q72 110 80 106 Z" fill={ink} />
+      {[0, 60, 120, 180, 240, 300].map(a => (
+        <Ellipse key={a} cx={80} cy={62} rx={7} ry={13} fill={ink} transform={`rotate(${a} 80 74)`} />
+      ))}
+      <Circle cx={80} cy={74} r={7} fill="#fff" />
+      <Circle cx={80} cy={74} r={3.5} fill={ink} />
     </G>
   ),
   // the summit, with Ethiopia's flag on top

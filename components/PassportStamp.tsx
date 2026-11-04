@@ -98,6 +98,18 @@ const ICONS: Record<StampId, (ink: string) => ReactNode> = {
       <circle cx="80" cy="104" r="2.6" fill={ink} />
     </g>
   ),
+  // Addis Ababa, the "new flower": a six-petal flower on its stem
+  addis: ink => (
+    <g>
+      <path d="M80 92 V112" stroke={ink} strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M80 104 Q70 98 64 104 Q72 110 80 106 Z" fill={ink} />
+      {[0, 60, 120, 180, 240, 300].map(a => (
+        <ellipse key={a} cx="80" cy="62" rx="7" ry="13" fill={ink} transform={`rotate(${a} 80 74)`} />
+      ))}
+      <circle cx="80" cy="74" r="7" fill="#fff" />
+      <circle cx="80" cy="74" r="3.5" fill={ink} />
+    </g>
+  ),
   // the summit, with Ethiopia's flag on top
   'ras-dashen': ink => (
     <g>

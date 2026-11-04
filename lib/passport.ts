@@ -6,7 +6,7 @@ import { isDone, trackCourses, type Climb } from '@/lib/climb';
 // last camp of a course is always the summit, Ras Dashen.
 //
 // Facts were checked against UNESCO, Britannica, Wikipedia, the Met Museum and
-// Al Jazeera.
+// Al Jazeera (Addis Ababa and Konso: UNESCO and africamap.net).
 
 export type StampId =
   | 'lalibela'
@@ -16,6 +16,7 @@ export type StampId =
   | 'harar'
   | 'danakil'
   | 'bale'
+  | 'addis'
   | 'ras-dashen';
 
 export type Stamp = {
@@ -92,6 +93,15 @@ const PLACES: Stamp[] = [
     ink: '#3f7d3a',
     fact:
       'More than half of all Ethiopian wolves live here. With fewer than 500 left, they’re the rarest wild dogs in the world.',
+  },
+  {
+    id: 'addis',
+    name: 'Addis Ababa',
+    amharic: 'አዲስ አበባ',
+    region: 'Capital city',
+    ink: '#c2366b',
+    fact:
+      'Menelik II and Empress Taytu founded the capital in 1886, and its name means “new flower.” It’s home to the African Union and Merkato, one of Africa’s largest open-air markets.',
   },
 ];
 

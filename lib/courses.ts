@@ -1800,6 +1800,9 @@ export const courseContent: Record<string, Course> = {
             english: 'Nothing, you coming is enough.',
           },
         ],
+        respect: [
+          { english: 'Hang in there', man: 'አይዞህ', woman: 'አይዞሽ', elder: 'አይዞዎት' },
+        ],
       },
     ],
   },

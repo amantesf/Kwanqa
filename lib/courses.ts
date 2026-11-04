@@ -1603,6 +1603,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ልለካው?', transliteration: 'lilekaw?', english: 'Can I try it on?' },
           { amharic: 'ትልቅ ነው', transliteration: 'tilliq new', english: 'It’s big' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ይህን ቀሚስ ልለካው?',
+            transliteration: 'yihin qemis lilekaw?',
+            english: 'Can I try on this dress?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ፣ ለኪው።',
+            transliteration: 'awo, lekiw.',
+            english: 'Yes, try it on. (to a woman)',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ትልቅ ነው። ያነሰ አለ?',
+            transliteration: 'tilliq new. yanese alle?',
+            english: 'It’s big. Is there a smaller one?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አለ፣ በጥቁር ቀለም።',
+            transliteration: 'alle, betiqur qelem.',
+            english: 'Yes, in black.',
+          },
+        ],
       },
     ],
   },

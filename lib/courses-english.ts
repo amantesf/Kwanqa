@@ -695,6 +695,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'What’s your address?', 'አድራሻህ ምንድን ነው?'),
           d('B', '25 Main Street. Please hurry!', '25 ሜይን ስትሪት። እባክህ ፍጠን!'),
         ],
+        note: 'The emergency number is 911 in the US and Canada, 999 in the UK, and 112 across Europe. Say where you are first, then what happened, and stay on the line.',
       },
     ],
   },

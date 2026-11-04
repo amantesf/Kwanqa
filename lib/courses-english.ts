@@ -697,6 +697,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: 'The emergency number is 911 in the US and Canada, 999 in the UK, and 112 across Europe. Say where you are first, then what happened, and stay on the line.',
       },
+      {
+        title: 'Lesson 4 – Cars & Getting Gas',
+        description: 'Fill up, get help when the car breaks down, and park.',
+        phrases: [
+          p('Fill it up, please.', 'እባክህ ሙላው።'),
+          p('My car won’t start.', 'መኪናዬ አልነሳ አለ።'),
+          p('I have a flat tire.', 'ጎማዬ ተንፍሷል።'),
+        ],
+      },
     ],
   },
 };

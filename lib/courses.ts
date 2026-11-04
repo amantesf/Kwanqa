@@ -1774,6 +1774,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ምን ላምጣልህ?', transliteration: 'min lamtalih?', english: 'What can I bring you? (to a man)' },
           { amharic: 'ስለመጣህ አመሰግናለሁ', transliteration: 'silemetah ameseginalehu', english: 'Thank you for coming (to a man)' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ልጠይቅህ መጣሁ። አሁን እንዴት ነህ?',
+            transliteration: 'litiyiqih metahu. ahun indet neh?',
+            english: 'I came to visit you. How are you now?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ትንሽ ተሽሎኛል። ስለመጣህ አመሰግናለሁ።',
+            transliteration: 'tinish teshlognal. silemetah ameseginalehu.',
+            english: 'I’m a little better. Thank you for coming.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'አይዞህ! ምን ላምጣልህ?',
+            transliteration: 'ayzoh! min lamtalih?',
+            english: 'Hang in there! What can I bring you?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ምንም፣ መምጣትህ ይበቃል።',
+            transliteration: 'minim, memtatih yibeqal.',
+            english: 'Nothing, you coming is enough.',
+          },
+        ],
       },
     ],
   },

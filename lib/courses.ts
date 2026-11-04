@@ -1758,6 +1758,8 @@ export const courseContent: Record<string, Course> = {
         respect: [
           { english: 'What hurts?', man: 'ምን ያምሃል?', woman: 'ምን ያምሻል?', elder: 'ምን ያምዎታል?' },
         ],
+        note:
+          'The pattern from Camp 8: the body part with -ን, then ያመኛል, “it hurts me”: እግሬን ያመኛል, ጥርሴን ያመኛል. እግር means both leg and foot, and እጅ both hand and arm.',
       },
     ],
   },

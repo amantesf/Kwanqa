@@ -524,9 +524,16 @@ export default function Practice() {
       </Modal>
 
       <View style={styles.top}>
-        <Pressable onPress={() => (solved.size > 0 || mistakes > 0 ? setLeaving(true) : exit())} accessibilityLabel="Leave practice" hitSlop={10}>
+        {/* a full-size tap target, clear of the screen's rounded corner */}
+        <Pressable
+          onPress={() => (solved.size > 0 || mistakes > 0 ? setLeaving(true) : exit())}
+          accessibilityRole="button"
+          accessibilityLabel="Leave practice"
+          hitSlop={8}
+          style={({ pressed }) => [styles.close, pressed && styles.closeDown]}
+        >
           <Svg viewBox="0 0 24 24" width={26} height={26}>
-            <Path d="M6 6l12 12M18 6L6 18" stroke="#afafaf" strokeWidth={3} strokeLinecap="round" />
+            <Path d="M6 6l12 12M18 6L6 18" stroke={colors.muted} strokeWidth={3} strokeLinecap="round" />
           </Svg>
         </Pressable>
         <View style={styles.meter}>
@@ -765,7 +772,9 @@ const useStyles = makeStyles(c => ({
   badText: { color: '#d9443a' },
   safe: { flex: 1, backgroundColor: c.bg },
   center: { alignItems: 'center', justifyContent: 'center', padding: 24, gap: 14 },
-  top: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10 },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 12, paddingRight: 16, paddingTop: 6, paddingBottom: 10 },
+  close: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  closeDown: { backgroundColor: c.line },
   meter: { flex: 1, height: 16, borderRadius: 8, backgroundColor: c.line, overflow: 'hidden' },
   meterFill: { height: '100%', borderRadius: 8, backgroundColor: c.primary },
   stamina: { flexDirection: 'row' },

@@ -1713,6 +1713,8 @@ export const courseContent: Record<string, Course> = {
             english: 'After meals.',
           },
         ],
+        note:
+          'A pharmacy is also called መድኃኒት ቤት, “medicine house.” Pharmacists are used to explaining how to take medicine, so don’t be shy to ask: በቀን ስንት ጊዜ?',
       },
     ],
   },

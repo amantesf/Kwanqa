@@ -188,6 +188,32 @@ export const PLACE_LESSONS: Record<string, PlaceLesson> = {
       why: 'More than half of all Ethiopian wolves live in Bale.',
     },
   },
+  addis: {
+    cards: [
+      {
+        text: 'Addis Ababa is Ethiopia’s capital. Emperor Menelik II and Empress Taytu founded it in 1886.',
+        word: { am: 'ከተማ', tr: 'ketema', en: 'city' },
+      },
+      {
+        text: 'Its name means “new flower”: አዲስ is “new” and አበባ is “flower.” Taytu is said to have named it after the flowers growing there.',
+        word: { am: 'አዲስ', tr: 'addis', en: 'new' },
+      },
+      {
+        text: 'Merkato, in the west of the city, is one of the biggest open-air markets in Africa. You can buy almost anything there.',
+        word: { am: 'ገበያ', tr: 'gebeya', en: 'market' },
+      },
+      {
+        text: 'The African Union has its headquarters here, so leaders from all over Africa meet in Addis.',
+        word: { am: 'አፍሪካ', tr: 'afrika', en: 'Africa' },
+      },
+    ],
+    question: {
+      q: 'What does “Addis Ababa” mean?',
+      options: ['Big mountain', 'New flower', 'Old river'],
+      answer: 1,
+      why: 'አዲስ means “new” and አበባ means “flower.”',
+    },
+  },
   'ras-dashen': {
     cards: [
       {

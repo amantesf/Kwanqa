@@ -1729,6 +1729,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ከትናንት ጀምሮ', transliteration: 'ketinant jemiro', english: 'Since yesterday' },
           { amharic: 'ቀጠሮ አለኝ', transliteration: 'qetero alegn', english: 'I have an appointment' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ምን ያምሃል?',
+            transliteration: 'min yamihal?',
+            english: 'What hurts?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'እግሬን ያመኛል።',
+            transliteration: 'igren yamegnal.',
+            english: 'My leg hurts.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ከመቼ ጀምሮ?',
+            transliteration: 'kemeche jemiro?',
+            english: 'Since when?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ከትናንት ጀምሮ። ወደቅኩ።',
+            transliteration: 'ketinant jemiro. wedeqku.',
+            english: 'Since yesterday. I fell.',
+          },
+        ],
       },
     ],
   },

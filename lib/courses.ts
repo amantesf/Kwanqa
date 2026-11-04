@@ -1671,6 +1671,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Sorry, cash only.',
           },
         ],
+        note:
+          'አለ means “there is,” so ዳቦ አለ? is literally “Is there bread?”: that’s how you ask a shop if it has something. The answer is አለ (yes) or የለም (no). Small shops often take cash or a phone payment like telebirr more than cards.',
       },
     ],
   },

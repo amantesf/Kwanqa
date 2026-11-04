@@ -214,6 +214,28 @@ export const PLACE_LESSONS: Record<string, PlaceLesson> = {
       why: 'አዲስ means “new” and አበባ means “flower.”',
     },
   },
+  konso: {
+    cards: [
+      {
+        text: 'The Konso people live in the dry highlands of southern Ethiopia, in walled towns on the hilltops.',
+        word: { am: 'ግድግዳ', tr: 'gidgida', en: 'wall' },
+      },
+      {
+        text: 'To farm the steep, dry hills, they built stone terraces, some as tall as 5 m. The terraces hold the soil and the rain.',
+        word: { am: 'እርከን', tr: 'irken', en: 'terrace' },
+      },
+      {
+        text: 'They carve wooden statues called waka to honour people who have died, showing them and their brave deeds.',
+        word: { am: 'ሐውልት', tr: 'hawilt', en: 'statue, monument' },
+      },
+    ],
+    question: {
+      q: 'Why did the Konso build stone terraces?',
+      options: ['To farm the steep, dry hills', 'To keep out lions', 'To mark the roads'],
+      answer: 0,
+      why: 'The terraces hold soil and water, so crops can grow on the hillsides.',
+    },
+  },
   'ras-dashen': {
     cards: [
       {

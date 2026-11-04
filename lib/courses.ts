@@ -1761,6 +1761,17 @@ export const courseContent: Record<string, Course> = {
         note:
           'The pattern from Camp 8: the body part with -ን, then ያመኛል, “it hurts me”: እግሬን ያመኛል, ጥርሴን ያመኛል. እግር means both leg and foot, and እጅ both hand and arm.',
       },
+      {
+        title: 'Lesson 5 – Visiting Someone Who’s Sick',
+        description:
+          'Visit a sick friend: ask how they are, cheer them up, and offer help.',
+        phrases: [
+          { amharic: 'ልጠይቅህ መጣሁ', transliteration: 'litiyiqih metahu', english: 'I came to visit you (to a man)' },
+          { amharic: 'አሁን እንዴት ነህ?', transliteration: 'ahun indet neh?', english: 'How are you now? (to a man)' },
+          { amharic: 'አይዞህ', transliteration: 'ayzoh', english: 'Hang in there (to a man)' },
+          { amharic: 'ብዙ ውሃ ጠጣ', transliteration: 'bizu wiha tetta', english: 'Drink lots of water (to a man)' },
+        ],
+      },
     ],
   },
 

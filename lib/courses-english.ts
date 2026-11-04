@@ -727,6 +727,12 @@ export const englishCourses: Record<string, Course> = {
           p('It arrived damaged.', 'ተበላሽቶ ደረሰ።'),
           p('Thanks for your help!', 'ስለረዳኸኝ አመሰግናለሁ!'),
         ],
+        dialogue: [
+          d('A', 'Hi, my package didn’t arrive.', 'ሰላም፣ ጥቅሌ አልደረሰም።'),
+          d('B', 'I’m sorry about that. What’s your order number?', 'ይቅርታ። የትዕዛዝህ ቁጥር ስንት ነው?'),
+          d('A', 'It’s 4521. It says it was delivered, but I don’t have it.', 'ቁጥሩ 4521 ነው። ደርሷል ይላል፣ ግን እጄ ላይ የለም።'),
+          d('B', 'Let me check. We’ll send you a new one.', 'ላጣራ። አዲስ እንልክልሃለን።'),
+        ],
       },
     ],
   },

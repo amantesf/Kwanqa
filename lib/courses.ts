@@ -1853,6 +1853,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Thank you! We’ll dance there.',
           },
         ],
+        note:
+          'At Ethiopian weddings the groom’s best men (ሚዜዎች, mizewoch) sing and dance with the couple. Guests say እንኳን ደስ አላችሁ, with the plural “you,” for both of them.',
       },
     ],
   },

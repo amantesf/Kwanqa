@@ -2019,6 +2019,9 @@ export const courseContent: Record<string, Course> = {
             english: 'OK, get home safely!',
           },
         ],
+        respect: [
+          { english: 'Good luck', man: 'ይቅናህ', woman: 'ይቅናሽ', elder: 'ይቅናዎት' },
+        ],
       },
     ],
   },

@@ -1939,6 +1939,17 @@ export const courseContent: Record<string, Course> = {
         note:
           'When someone dies, friends and neighbours visit the family at home for several days. They sit with them, and close friends bring food and drinks so the family doesn’t have to cook. You don’t need many words: ነፍስ ይማር, and being there, are what count.',
       },
+      {
+        title: 'Lesson 4 – Fasting & Feasting',
+        description:
+          'Talk about fasting, Ramadan and Eid, and what you can eat.',
+        phrases: [
+          { amharic: 'ጾም', transliteration: 'tsom', english: 'fasting; a fast' },
+          { amharic: 'ጾመኛ ነኝ', transliteration: 'tsomegna negn', english: 'I’m fasting' },
+          { amharic: 'ሥጋ', transliteration: 'siga', english: 'meat' },
+          { amharic: 'ሁዳዴ', transliteration: 'hudade', english: 'Great Lent, the long fast before Easter' },
+        ],
+      },
     ],
   },
 

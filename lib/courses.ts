@@ -2022,6 +2022,8 @@ export const courseContent: Record<string, Course> = {
         respect: [
           { english: 'Good luck', man: 'ይቅናህ', woman: 'ይቅናሽ', elder: 'ይቅናዎት' },
         ],
+        note:
+          'You’ll hear God in many everyday phrases: እግዚአብሔር ይስጥልኝ is a warm “thank you,” and Christians say እግዚአብሔር ቢፈቅድ where Muslims say ኢንሻአላህ, both “God willing.” ክረምት, the rainy season, is when many in the diaspora visit home. You’ve reached the summit: እንኳን ደስ አላችሁ!',
       },
     ],
   },

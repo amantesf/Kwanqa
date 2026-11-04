@@ -1898,6 +1898,16 @@ export const courseContent: Record<string, Course> = {
         note:
           'Orthodox Christians greet a new mother with እንኳን ማርያም ማረችሽ, literally “glad Mary had mercy on you,” thanking Mary for a safe birth. Anyone can simply say እንኳን ደስ አለሽ, “congratulations.”',
       },
+      {
+        title: 'Lesson 3 – Comforting a Grieving Family',
+        description:
+          'What to say when someone has died, and how to show you care.',
+        phrases: [
+          { amharic: 'ለቅሶ', transliteration: 'leqso', english: 'mourning; visiting a grieving family' },
+          { amharic: 'ሐዘን', transliteration: 'hazen', english: 'grief, sorrow' },
+          { amharic: 'በጣም አዝናለሁ', transliteration: 'betam aznalehu', english: 'I’m so sorry' },
+        ],
+      },
     ],
   },
 

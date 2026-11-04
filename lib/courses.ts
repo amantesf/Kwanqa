@@ -1716,6 +1716,17 @@ export const courseContent: Record<string, Course> = {
         note:
           'A pharmacy is also called መድኃኒት ቤት, “medicine house.” Pharmacists are used to explaining how to take medicine, so don’t be shy to ask: በቀን ስንት ጊዜ?',
       },
+      {
+        title: 'Lesson 4 – At the Clinic',
+        description:
+          'Tell a doctor what hurts and since when.',
+        phrases: [
+          { amharic: 'ምን ያምሃል?', transliteration: 'min yamihal?', english: 'What hurts? (to a man)' },
+          { amharic: 'እግሬን ያመኛል', transliteration: 'igren yamegnal', english: 'My leg hurts' },
+          { amharic: 'ጥርሴን ያመኛል', transliteration: 'tirsen yamegnal', english: 'My tooth hurts' },
+          { amharic: 'ዓይኔን ያመኛል', transliteration: 'aynen yamegnal', english: 'My eye hurts' },
+        ],
+      },
     ],
   },
 

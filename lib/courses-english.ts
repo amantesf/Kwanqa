@@ -678,6 +678,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: 'Small talk about the weather or the weekend is how English speakers start a friendly chat. It isn’t nosy, and short, light answers are fine.',
       },
+      {
+        title: 'Lesson 3 – Emergencies',
+        description: 'Call for help and give the key facts quickly.',
+        phrases: [
+          p('Call 911!', 'ወደ 911 ደውል!'),
+          p('I need an ambulance.', 'አምቡላንስ እፈልጋለሁ።'),
+          p('Someone is hurt.', 'አንድ ሰው ተጎድቷል።'),
+        ],
+      },
     ],
   },
 };

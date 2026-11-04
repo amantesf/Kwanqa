@@ -1856,6 +1856,17 @@ export const courseContent: Record<string, Course> = {
         note:
           'At Ethiopian weddings the groom’s best men (ሚዜዎች, mizewoch) sing and dance with the couple. Guests say እንኳን ደስ አላችሁ, with the plural “you,” for both of them.',
       },
+      {
+        title: 'Lesson 2 – A New Baby',
+        description:
+          'Congratulate new parents, and ask about the baby.',
+        phrases: [
+          { amharic: 'ሕፃን', transliteration: 'hitsan', english: 'baby' },
+          { amharic: 'ወንድ ልጅ', transliteration: 'wend lij', english: 'a boy' },
+          { amharic: 'ሴት ልጅ', transliteration: 'set lij', english: 'a girl' },
+          { amharic: 'እንኳን ማርያም ማረችሽ', transliteration: 'inkwan maryam marechish', english: 'congratulations (to a new mother)' },
+        ],
+      },
     ],
   },
 

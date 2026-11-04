@@ -1632,6 +1632,17 @@ export const courseContent: Record<string, Course> = {
         note:
           'ሰማያዊ (blue) comes from ሰማይ, “sky”: blue is the sky’s colour. A ቀሚስ is a dress; the white dress with a woven border worn on holidays is a ሀበሻ ቀሚስ (habesha qemis).',
       },
+      {
+        title: 'Lesson 2 – At the Shop',
+        description:
+          'Ask if a shop has something, the price, and how to pay.',
+        phrases: [
+          { amharic: 'ዳቦ አለ?', transliteration: 'dabo alle?', english: 'Do you have bread?' },
+          { amharic: 'አለ', transliteration: 'alle', english: 'Yes, we have it' },
+          { amharic: 'የለም', transliteration: 'yelem', english: 'No, we don’t have it' },
+          { amharic: 'ዋጋው ስንት ነው?', transliteration: 'wagaw sint new?', english: 'What’s the price?' },
+        ],
+      },
     ],
   },
 

@@ -2128,6 +2128,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'የመግቢያ ዋጋ', transliteration: 'yemegbiya waga', english: 'entrance fee' },
           { amharic: 'በጣም ያምራል', transliteration: 'betam yamral', english: 'It’s very beautiful' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ይቅርታ፣ ፎቶ ማንሳት ይቻላል?',
+            transliteration: 'yiqirta, foto mansat yichalal?',
+            english: 'Excuse me, is it OK to take photos?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ፣ ይቻላል። ግን መጀመሪያ ጫማህን አውልቅ።',
+            transliteration: 'awo, yichalal. gin mejemerya chamahin awliq.',
+            english: 'Yes, it is. But first, take off your shoes.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እሺ። ቤተ ጊዮርጊስ በጣም ያምራል!',
+            transliteration: 'eshi. bete giyorgis betam yamral!',
+            english: 'Okay. Bete Giyorgis is so beautiful!',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ፣ ከአንድ ድንጋይ ተፈልፍሎ ነው የተሠራው።',
+            transliteration: 'awo, ke\'and dingay tefelfilo new yeteseraw.',
+            english: 'Yes, it was carved out of a single rock.',
+          },
+        ],
       },
     ],
   },

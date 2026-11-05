@@ -2046,6 +2046,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'መቼ ይነሳል?', transliteration: 'meche yinesal?', english: 'When does it leave?' },
           { amharic: 'ስንት ሰዓት ይፈጃል?', transliteration: 'sint se\'at yifejal?', english: 'How many hours does it take?' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ወደ ባሕር ዳር አንድ ትኬት እፈልጋለሁ።',
+            transliteration: 'wede bahir dar and tiket ifeligalehu.',
+            english: 'I’d like one ticket to Bahir Dar.',
+          },
+          {
+            speaker: 'B',
+            amharic: 'እሺ። አውቶቡሱ ከሌሊቱ አሥራ አንድ ሰዓት ይነሳል።',
+            transliteration: 'eshi. awtobusu kelelitu asra and se\'at yinesal.',
+            english: 'Okay. The bus leaves at 5 a.m. (11 o’clock, Ethiopian time).',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ስንት ሰዓት ይፈጃል?',
+            transliteration: 'sint se\'at yifejal?',
+            english: 'How many hours does it take?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አሥር ሰዓት ገደማ። መልካም መንገድ!',
+            transliteration: 'asir se\'at gedema. melkam menged!',
+            english: 'About ten hours. Have a good trip!',
+          },
+        ],
       },
     ],
   },

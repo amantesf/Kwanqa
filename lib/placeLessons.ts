@@ -2,7 +2,8 @@
 // each with an Amharic word to hear, then one quick question. It's offered
 // when the stamp is earned, and can be replayed from the passport.
 //
-// Facts were checked against UNESCO, Britannica and Wikipedia.
+// Facts were checked against UNESCO, Britannica and Wikipedia (Sof Omar:
+// UNESCO's tentative list and showcaves.com).
 
 export type PlaceWord = { am: string; tr: string; en: string };
 export type PlaceCard = { text: string; word: PlaceWord };
@@ -234,6 +235,28 @@ export const PLACE_LESSONS: Record<string, PlaceLesson> = {
       options: ['To farm the steep, dry hills', 'To keep out lions', 'To mark the roads'],
       answer: 0,
       why: 'The terraces hold soil and water, so crops can grow on the hillsides.',
+    },
+  },
+  'sof-omar': {
+    cards: [
+      {
+        text: 'The Sof Omar Caves are in the Bale lowlands of Oromia, where the Weyib River runs underground through soft limestone.',
+        word: { am: 'ዋሻ', tr: 'washa', en: 'cave' },
+      },
+      {
+        text: 'Over millions of years the river carved more than 15 km of tunnels, halls and stone pillars. It’s the longest cave in Ethiopia.',
+        word: { am: 'ወንዝ', tr: 'wenz', en: 'river' },
+      },
+      {
+        text: 'The caves are named after Sheikh Sof Omar, a holy man who took shelter here about 1,000 years ago. Muslim pilgrims still come to pray.',
+        word: { am: 'ጸሎት', tr: 'tselot', en: 'prayer' },
+      },
+    ],
+    question: {
+      q: 'What carved the Sof Omar Caves?',
+      options: ['The Weyib River', 'Ancient miners', 'An earthquake'],
+      answer: 0,
+      why: 'The river cut its way through the soft limestone over millions of years.',
     },
   },
   'ras-dashen': {

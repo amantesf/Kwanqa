@@ -2213,6 +2213,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'በጣም ደስ የሚል ነበር', transliteration: 'betam des yemil neber', english: 'It was really lovely' },
           { amharic: 'እንደገና መሄድ እፈልጋለሁ', transliteration: 'indegena mehed ifeligalehu', english: 'I want to go again' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'እንኳን ደህና መጣህ! ጉዞው እንዴት ነበር?',
+            transliteration: 'inkwan dehna metah! guzow indet neber?',
+            english: 'Welcome back! How was the trip?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'በጣም ደስ የሚል ነበር! ወደ ላሊበላ እና ጎንደር ሄድኩ።',
+            transliteration: 'betam des yemil neber! wede lalibela ina gonder hedku.',
+            english: 'It was really lovely! I went to Lalibela and Gondar.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'በአውሮፕላን ነው የሄድከው?',
+            transliteration: 'be\'awroplan new yehedkew?',
+            english: 'Did you go by plane?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አይ፣ በአውቶቡስ። እንደገና መሄድ እፈልጋለሁ!',
+            transliteration: 'ay, be\'awtobus. indegena mehed ifeligalehu!',
+            english: 'No, by bus. I want to go again!',
+          },
+        ],
       },
     ],
   },

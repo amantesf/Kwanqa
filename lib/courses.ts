@@ -2030,6 +2030,23 @@ export const courseContent: Record<string, Course> = {
     ],
   },
 
+  // Amharic part 11
+  'amharic-beginner-11': {
+    title: 'Amharic Camp 11 – The Summit: Travel in Ethiopia',
+    sections: [
+      {
+        title: 'Lesson 1 – At the Bus Station',
+        description:
+          'Buy a ticket, and find out when the bus leaves.',
+        phrases: [
+          { amharic: 'መናኸሪያ', transliteration: 'menahariya', english: 'bus station' },
+          { amharic: 'አውቶቡስ', transliteration: 'awtobus', english: 'bus' },
+          { amharic: 'ትኬት', transliteration: 'tiket', english: 'ticket' },
+        ],
+      },
+    ],
+  },
+
   // The English course lives in its own file.
   ...englishCourses,
 };

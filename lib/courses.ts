@@ -2198,6 +2198,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Afaan Oromo and Amharic.',
           },
         ],
+        note:
+          'Ethiopia has more than 80 languages. Since 2020, Afaan Oromo, Tigrinya, Somali and Afar have been federal working languages alongside Amharic. In Oromia, try Akkam? (“How are you?” in Afaan Oromo) and watch people smile.',
       },
     ],
   },

@@ -2239,6 +2239,9 @@ export const courseContent: Record<string, Course> = {
             english: 'No, by bus. I want to go again!',
           },
         ],
+        respect: [
+          { english: 'Welcome back', man: 'እንኳን ደህና መጣህ', woman: 'እንኳን ደህና መጣሽ', elder: 'እንኳን ደህና መጡ' },
+        ],
       },
     ],
   },

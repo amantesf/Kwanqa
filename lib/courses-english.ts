@@ -834,6 +834,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'It’s asking for my password.', 'የይለፍ ቃሌን እየጠየቀ ነው።'),
           d('B', 'Never share your password. Call the bank yourself.', 'የይለፍ ቃልህን ለማንም አታጋራ። ለባንኩ ራስህ ደውል።'),
         ],
+        note: 'Your bank will never ask for your password in a text, and no real company or government office asks you to pay with gift cards. If a message rushes you, stop and call the number on the back of your card. You’ve reached the summit: እንኳን ደስ አለህ!',
       },
     ],
   },

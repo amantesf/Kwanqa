@@ -25,6 +25,7 @@ import OrderLines from '@/components/order-lines';
 import { siteUrl } from '@/site';
 import { fonts, makeStyles, useColors } from '@/theme';
 import OfflineNote from '@/components/offline-note';
+import { useTopInset } from '@/safe-top';
 
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
@@ -214,6 +215,7 @@ function MatchRound({ exercise, onMistake, onSolved, onSay }: { exercise: MatchE
 
 export default function Practice() {
   const styles = useStyles();
+  const topInset = useTopInset();
   const colors = useColors();
   const params = useLocalSearchParams<{ slug?: string; lesson?: string; review?: string; holiday?: string; track?: Track }>();
   const review = params.review === '1';
@@ -518,7 +520,7 @@ export default function Practice() {
   const feedback = phase === 'feedback';
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <View style={[styles.safe, { paddingTop: topInset }]}>
       <Modal visible={leaving} transparent animationType="fade" onRequestClose={() => setLeaving(false)}>
         <Pressable style={styles.backdrop} onPress={() => setLeaving(false)}>
           <Pressable style={styles.dialog} onPress={() => {}}>
@@ -801,7 +803,7 @@ export default function Practice() {
           )}
         </SafeAreaView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 

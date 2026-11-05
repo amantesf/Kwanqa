@@ -13,6 +13,7 @@ import Button from '@/components/button';
 import { Grass } from '@/components/icons';
 import { play, playEffect, stopVoice } from '@/components/sound';
 import Walia, { type Mood } from '@/components/walia';
+import { useTopInset } from '@/safe-top';
 import { SITE } from '@/site';
 import { supabase } from '@/supabase';
 import { fonts, makeStyles, useColors } from '@/theme';
@@ -163,6 +164,7 @@ function LineText({ line, meaning, englishCall }: { line: Line; meaning: boolean
 
 export default function Call() {
   const styles = useStyles();
+  const topInset = useTopInset();
   const colors = useColors();
   const params = useLocalSearchParams<{ slug: string; gender?: string }>();
   const conversation = allConversations.find(c => c.slug === params.slug) ?? allConversations[0];
@@ -448,7 +450,7 @@ export default function Call() {
           <Path d="M0 78 L22 52 L36 64 L55 38 L74 60 L100 44 L100 100 L0 100 Z" fill="#c5dbee" />
           <Path d="M0 88 Q30 76 55 86 T100 82 L100 100 L0 100 Z" fill="#93cf58" />
         </Svg>
-        <SafeAreaView edges={['top']} style={styles.top}>
+        <View style={[styles.top, { paddingTop: topInset + 8 }]}>
           <View>
             <Text style={styles.who}>Walia</Text>
             <Text style={styles.whoSub}>
@@ -465,7 +467,7 @@ export default function Call() {
               </View>
             ) : null}
           </View>
-        </SafeAreaView>
+        </View>
         <View style={styles.waliaBox} pointerEvents="none">
           <Walia mood={mood} pose={speaking && !mood ? 'wave' : 'happy'} size={190} />
         </View>

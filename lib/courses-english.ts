@@ -809,6 +809,12 @@ export const englishCourses: Record<string, Course> = {
           p('I put a little aside every month.', 'በየወሩ ትንሽ ገንዘብ አስቀምጣለሁ።'),
           p('Let’s split the bill.', 'ሂሳቡን እንካፈል።'),
         ],
+        dialogue: [
+          d('A', 'Do you want to go to the concert on Friday?', 'ዓርብ ወደ ኮንሰርቱ መሄድ ትፈልጋለህ?'),
+          d('B', 'I’d love to, but I can’t afford it right now.', 'ደስ ይለኝ ነበር፣ ግን አሁን አቅሜ አይፈቅድም።'),
+          d('A', 'No problem. How about dinner at my place instead?', 'ችግር የለም። በምትኩ እኔ ቤት እራት ብንበላስ?'),
+          d('B', 'That sounds perfect. I’m trying to save money.', 'በጣም ጥሩ። ገንዘብ ለመቆጠብ እየሞከርኩ ነው።'),
+        ],
       },
     ],
   },

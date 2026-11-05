@@ -11,7 +11,7 @@ import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
-import { interactiveQuestions, typedRight, type ChatExercise, type OrderExercise, type TypeExercise } from '@/lib/interactive';
+import { interactiveQuestions, typedRight, type ChatExercise, type OrderExercise, type SpeakExercise, type TypeExercise } from '@/lib/interactive';
 import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
 import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
@@ -22,11 +22,14 @@ import Speaker from '@/components/speaker';
 import Walia, { type Mood } from '@/components/walia';
 import LetterTrace from '@/components/letter-trace';
 import OrderLines from '@/components/order-lines';
+import SpeakQuestion from '@/components/speak-question';
 import WaliaChat from '@/components/walia-chat';
 import { siteUrl } from '@/site';
 import { fonts, makeStyles, useColors } from '@/theme';
 import OfflineNote from '@/components/offline-note';
 import { useTopInset } from '@/safe-top';
+import { useAuth } from '@/auth';
+import { canRecord } from '@/listen';
 
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
@@ -38,9 +41,14 @@ import { useTopInset } from '@/safe-top';
 /**
  * A question in a lesson: the shared kinds, plus the ones from the website's
  * interactive set that this screen can show: "Trace the new letter", "Type
- * what you hear", "Put the conversation in order" and "Chat with Walia".
+ * what you hear", "Put the conversation in order", "Chat with Walia" and
+ * "Speak this".
  */
-type Question = Exercise | TraceExercise | TypeExercise | OrderExercise | ChatExercise;
+type Question = Exercise | TraceExercise | TypeExercise | OrderExercise | ChatExercise | SpeakExercise;
+
+/** "Can't speak now" (or no microphone) skips speaking questions for an hour, as on the website. */
+let speakingPausedUntil = 0;
+const speakingPaused = () => speakingPausedUntil > Date.now();
 
 const MAX_STAMINA = 5;
 const STREAK_TO_RECOVER = 3;
@@ -64,6 +72,8 @@ function uiText(track: Track) {
     bad: both('Walia slipped!', 'ዋሊያ ተንሸራተተ!'),
     correctAnswer: both('Correct answer:', 'ትክክለኛው መልስ፡'),
     correctOrder: both('The right order:', 'ትክክለኛው ቅደም ተከተል፡'),
+    cantSpeak: both('Can’t speak now', 'አሁን መናገር አልችልም'),
+    keepPractising: both('Keep practising this one out loud!', 'ይህን ጮክ ብለው መለማመድ ይቀጥሉ!'),
     comeBack: both('This one will come back later.', 'ይህ ጥያቄ እንደገና ይመጣል።'),
     previous: both('Previous mistake', 'ያለፈው ስህተት'),
     listenCue: both('Listen, then tap what you heard', 'ያዳምጡ፣ ከዚያ የሰሙትን ይንኩ'),
@@ -231,6 +241,7 @@ export default function Practice() {
   const ui = uiText(track);
   // What the learner said they know in the survey sets how hard the questions are.
   const level = useProfile()?.levels[track];
+  const { user, enabled: accountsEnabled } = useAuth();
 
   // a review asks the camp's saved mistakes instead of a lesson's own questions
   const [session] = useState<{ exercises: Question[]; keys: string[] }>(() => {
@@ -250,12 +261,14 @@ export default function Practice() {
     if (trace) exercises.splice(Math.min(1, exercises.length), 0, trace);
     // Typing what you hear (mid-lesson), putting the conversation in order
     // (later on) and the chat with Walia (last) go before the final matching
-    // round, as on the website. (Beginners in Camp 1 don't type or order yet.)
-    // Speaking isn't here yet.
+    // round, as on the website, with speaking early on. (Beginners in Camp 1
+    // don't type or order yet.) Speaking needs an iPhone's microphone and,
+    // with accounts on, a signed-in learner (the listening service is for learners).
     const firstCamp = !holiday && courseCatalog.find(c => c.slug === slug)?.part === 1;
-    const place = { type: 0.5, order: 0.7, chat: 1 };
-    for (const q of interactiveQuestions(lesson, lessons, track, { level, canHear, speaking: false, firstCamp })) {
-      if (q.kind !== 'type' && q.kind !== 'order' && q.kind !== 'chat') continue;
+    const speaking = canRecord && (!accountsEnabled || !!user) && !speakingPaused();
+    const place = { speak: 0.3, type: 0.5, order: 0.7, chat: 1 };
+    for (const q of interactiveQuestions(lesson, lessons, track, { level, canHear, speaking, firstCamp })) {
+      if (q.kind === 'intro') continue;
       const matchAt = exercises.findIndex(x => x.kind === 'match');
       const end = matchAt >= 0 ? matchAt : exercises.length;
       exercises.splice(Math.max(1, Math.min(end, Math.round(end * place[q.kind]))), 0, q);
@@ -278,6 +291,7 @@ export default function Practice() {
   const [choice, setChoice] = useState<string | null>(null);
   const [picked, setPicked] = useState<number[]>([]);
   const [typed, setTyped] = useState(''); // "Type what you hear"
+  const [soft, setSoft] = useState(false); // "Speak this" didn't match twice: no stamina lost
   const [lastCorrect, setLastCorrect] = useState(true);
   const [reaction, setReaction] = useState<'slip' | 'hop' | null>(null);
 
@@ -298,7 +312,7 @@ export default function Practice() {
 
   // Fill-in-the-blank questions keep quiet until answered, then say the whole line.
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
-  const promptAudio = !current || current.kind === 'match' || current.kind === 'trace' || current.kind === 'order' || current.kind === 'chat' ? null : reveal && phase === 'feedback' ? (soundFor(reveal) ?? soundFor(current.prompt)) : soundFor(current.prompt);
+  const promptAudio = !current || current.kind === 'match' || current.kind === 'trace' || current.kind === 'order' || current.kind === 'chat' || current.kind === 'speak' ? null : reveal && phase === 'feedback' ? (soundFor(reveal) ?? soundFor(current.prompt)) : soundFor(current.prompt);
   const promptKey = !promptAudio ? null : phase === 'question' ? `${current.id}:${queue.length}` : reveal && phase === 'feedback' ? `${current.id}:${queue.length}:reveal` : null;
 
   // the question's sound plays by itself once when it appears
@@ -318,7 +332,7 @@ export default function Practice() {
 
   // Once a question is answered, Walia says the right answer (the whole line,
   // in the language being learned), just after the right/wrong sound.
-  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && !reveal ? (current.answerAudio ?? null) : null;
+  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && !reveal && !soft ? (current.answerAudio ?? null) : null;
   const answerKey = answerLine ? `${current.id}:${queue.length}:answer` : null;
   useEffect(() => {
     if (!answerKey || !answerLine) return;
@@ -327,7 +341,7 @@ export default function Practice() {
   }, [answerKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // "Tap what you hear": the line stays hidden until it's answered.
-  const listening = !!current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && !!current.listen && phase !== 'feedback';
+  const listening = !!current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && current.kind !== 'speak' && !!current.listen && phase !== 'feedback';
 
   const progress = initial.length ? solved.size / initial.length : 1;
   useEffect(() => {
@@ -407,6 +421,27 @@ export default function Practice() {
     setPhase('feedback');
   }
 
+  /** "Speak this" didn't match after two tries: no stamina lost, and on we go. */
+  function speakGiveUp() {
+    setSoft(true);
+    setLastCorrect(true);
+    setPhase('feedback');
+  }
+
+  /** "Can't speak now", or no microphone: drop this lesson's speaking questions (and pause them for an hour). */
+  function skipSpeaking() {
+    speakingPausedUntil = Date.now() + 60 * 60 * 1000;
+    const skipped = queue.filter(q => q.kind === 'speak');
+    const rest = queue.filter(q => q.kind !== 'speak');
+    setSolved(prev => new Set([...prev, ...skipped.map(q => q.id)]));
+    setQueue(rest);
+    if (rest.length === 0) {
+      setEarned(finish());
+      playEffect('complete');
+      setPhase('done');
+    } else setPhase('question');
+  }
+
   function advance() {
     if (!current) return;
     const nextSolved = new Set(solved);
@@ -421,6 +456,7 @@ export default function Practice() {
     setChoice(null);
     setPicked([]);
     setTyped('');
+    setSoft(false);
     setReaction(null);
 
     if (nextQueue.length === 0) {
@@ -579,7 +615,7 @@ export default function Practice() {
               {missed.has(current.id) ? <Text style={styles.retry}>{ui.previous}</Text> : null}
               <Text style={styles.instruction}>{current.instruction}</Text>
 
-              {!(current.kind === 'choice' && current.id === 'picture-see') && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && (
+              {!(current.kind === 'choice' && current.id === 'picture-see') && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && current.kind !== 'speak' && (
                 <View style={styles.ask}>
                   <Walia mood={mood} size={96} />
                   {current.kind !== 'match' && (
@@ -719,6 +755,20 @@ export default function Practice() {
                   accessibilityLabel="Your answer"
                   style={[styles.typeAnswer, feedback && (lastCorrect ? styles.typeGood : styles.typeBad)]}
                 />
+              ) : current.kind === 'speak' ? (
+                <SpeakQuestion
+                  key={current.id + queue.length}
+                  exercise={current}
+                  english={track === 'english'}
+                  onSay={sayAloud}
+                  onCorrect={() => {
+                    if (phase === 'question') solveMatch();
+                  }}
+                  onGiveUp={() => {
+                    if (phase === 'question') speakGiveUp();
+                  }}
+                  onUnavailable={skipSpeaking}
+                />
               ) : current.kind === 'chat' ? (
                 <WaliaChat
                   key={current.id + solved.size + queue.length}
@@ -784,8 +834,8 @@ export default function Practice() {
                   <Mark good={lastCorrect} />
                 </Animated.View>
                 <View style={styles.feedbackText}>
-                  <Text style={[styles.feedbackTitle, lastCorrect ? styles.goodText : styles.badText]}>{lastCorrect ? ui.good : ui.bad}</Text>
-                  {(current.kind === 'trace' || current.kind === 'chat') && <Text style={[styles.feedbackBody, styles.goodText]}>{current.explain}</Text>}
+                  <Text style={[styles.feedbackTitle, lastCorrect ? styles.goodText : styles.badText]}>{soft ? ui.keepPractising : lastCorrect ? ui.good : ui.bad}</Text>
+                  {(current.kind === 'trace' || current.kind === 'chat' || current.kind === 'speak') && <Text style={[styles.feedbackBody, styles.goodText]}>{current.explain}</Text>}
                   {current.kind === 'order' && (
                     <Text style={[styles.feedbackBody, lastCorrect ? styles.goodText : styles.badText]}>
                       {lastCorrect ? current.explain : `${ui.correctOrder} ${current.lines.map((l, i) => `${i + 1}. ${l.text}`).join('  ')}`}
@@ -796,7 +846,7 @@ export default function Practice() {
                       {lastCorrect ? current.explain : `${ui.correctAnswer} ${current.explain}`}
                     </Text>
                   )}
-                  {current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'type' && current.kind !== 'chat' && (
+                  {current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'type' && current.kind !== 'chat' && current.kind !== 'speak' && (
                     <Text style={[styles.feedbackBody, lastCorrect ? styles.goodText : styles.badText]}>
                       {lastCorrect ? current.explain : `${ui.correctAnswer} ${sentence(current.kind === 'build' ? current.answer.join(' ') : current.answer)} ${current.explain}`}
                     </Text>
@@ -812,6 +862,9 @@ export default function Practice() {
               {current.kind === 'trace' ? (
                 // skip writing (on a bus with one hand, say), like on the website
                 <Button label="Skip" tone="plain" onPress={solveMatch} />
+              ) : current.kind === 'speak' ? (
+                // on the bus, or somewhere quiet: skip speaking for a while
+                <Button label={ui.cantSpeak} tone="plain" onPress={skipSpeaking} />
               ) : (
                 current.kind !== 'match' && current.kind !== 'chat' && <Button label={ui.check} onPress={check} disabled={!canCheck} />
               )}

@@ -2075,6 +2075,16 @@ export const courseContent: Record<string, Course> = {
         note:
           'Long-distance buses leave early, around 5 or 6 a.m., so get to the መናኸሪያ before dawn. Times are often said in Ethiopian time: ከሌሊቱ አሥራ አንድ ሰዓት is 5 a.m. Seats on the big buses can be booked the day before.',
       },
+      {
+        title: 'Lesson 2 – At the Hotel',
+        description:
+          'Ask for a room, and check what comes with it.',
+        phrases: [
+          { amharic: 'ሆቴል', transliteration: 'hotel', english: 'hotel' },
+          { amharic: 'ክፍል አላችሁ?', transliteration: 'kifil alachihu?', english: 'Do you have a room?' },
+          { amharic: 'ለአንድ ሌሊት', transliteration: 'le\'and lelit', english: 'for one night' },
+        ],
+      },
     ],
   },
 

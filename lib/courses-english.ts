@@ -752,6 +752,12 @@ export const englishCourses: Record<string, Course> = {
           p('Is there a late fee?', 'የመዘግየት ቅጣት አለ?'),
           p('Can I pay a little each month?', 'በየወሩ ትንሽ ትንሽ መክፈል እችላለሁ?'),
         ],
+        dialogue: [
+          d('A', 'Hi, I think there’s a mistake on my bill.', 'ሰላም፣ ሂሳቤ ላይ ስሕተት ያለ ይመስለኛል።'),
+          d('B', 'I can check that for you. What’s your account number?', 'ላጣራልህ እችላለሁ። የደንበኛ ቁጥርህ ስንት ነው?'),
+          d('A', 'It’s 30815. I was charged twice this month.', 'ቁጥሩ 30815 ነው። በዚህ ወር ሁለት ጊዜ ተቆርጦብኛል።'),
+          d('B', 'You’re right. I’ll take off the extra charge.', 'ልክ ነህ። ተጨማሪውን ክፍያ አነሳልሃለሁ።'),
+        ],
       },
     ],
   },

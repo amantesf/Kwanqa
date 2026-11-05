@@ -108,6 +108,15 @@ const ICONS: Record<StampId, (ink: string) => ReactNode> = {
       <Circle cx={80} cy={49} r={4.5} fill={ink} />
     </G>
   ),
+  // Sof Omar: a cave mouth in the cliff, with the river flowing out
+  'sof-omar': ink => (
+    <G>
+      <Path d="M50 108 V78 Q58 58 80 56 Q102 58 110 78 V108 Z" fill={ink} />
+      <Path d="M64 108 V88 Q64 71 80 71 Q96 71 96 88 V108 Z" fill="#fff" />
+      <Path d="M72 72 L74.5 80 L77 71.5 Z M83 71.5 L85.5 79 L88 72.5 Z" fill={ink} />
+      <Path d="M67 95 Q71 92 75 95 T83 95 T91 95 M65 103 Q70 100 75 103 T85 103 T95 103" stroke={ink} strokeWidth={2} fill="none" strokeLinecap="round" />
+    </G>
+  ),
   // the summit, with Ethiopia's flag on top
   'ras-dashen': ink => (
     <G>

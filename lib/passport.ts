@@ -6,7 +6,8 @@ import { isDone, trackCourses, type Climb } from '@/lib/climb';
 // last camp of a course is always the summit, Ras Dashen.
 //
 // Facts were checked against UNESCO, Britannica, Wikipedia, the Met Museum and
-// Al Jazeera (Addis Ababa and Konso: UNESCO and africamap.net).
+// Al Jazeera (Addis Ababa and Konso: UNESCO and africamap.net; Sof Omar:
+// UNESCO's tentative list and showcaves.com).
 
 export type StampId =
   | 'lalibela'
@@ -18,6 +19,7 @@ export type StampId =
   | 'bale'
   | 'addis'
   | 'konso'
+  | 'sof-omar'
   | 'ras-dashen';
 
 export type Stamp = {
@@ -112,6 +114,15 @@ const PLACES: Stamp[] = [
     ink: '#8a5a1f',
     fact:
       'For over 400 years the Konso people have built stone terraces, some 5 m high, to farm dry hillsides, and carved wooden statues called waka to honour the dead. It’s a UNESCO World Heritage Site.',
+  },
+  {
+    id: 'sof-omar',
+    name: 'Sof Omar Caves',
+    amharic: 'ሶፍ ዑመር',
+    region: 'Oromia',
+    ink: '#2a7f8a',
+    fact:
+      'Ethiopia’s longest cave, over 15 km, was carved by the Weyib River. It’s named after Sheikh Sof Omar, a holy man who sheltered here about 1,000 years ago, and Muslim pilgrims still come to pray.',
   },
 ];
 

@@ -828,6 +828,12 @@ export const englishCourses: Record<string, Course> = {
           p('I’ll call the bank myself.', 'ለባንኩ ራሴ እደውላለሁ።'),
           p('Someone used my card.', 'አንድ ሰው ካርዴን ተጠቅሞበታል።'),
         ],
+        dialogue: [
+          d('A', 'I got a text saying my bank account is locked.', 'የባንክ ሂሳቤ ተቆልፏል የሚል መልእክት ደረሰኝ።'),
+          d('B', 'Don’t click on the link. It might be a scam.', 'ሊንኩን አትጫን። ማጭበርበር ሊሆን ይችላል።'),
+          d('A', 'It’s asking for my password.', 'የይለፍ ቃሌን እየጠየቀ ነው።'),
+          d('B', 'Never share your password. Call the bank yourself.', 'የይለፍ ቃልህን ለማንም አታጋራ። ለባንኩ ራስህ ደውል።'),
+        ],
       },
     ],
   },

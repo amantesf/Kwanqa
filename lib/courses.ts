@@ -2201,6 +2201,16 @@ export const courseContent: Record<string, Course> = {
         note:
           'Ethiopia has more than 80 languages. Since 2020, Afaan Oromo, Tigrinya, Somali and Afar have been federal working languages alongside Amharic. In Oromia, try Akkam? (“How are you?” in Afaan Oromo) and watch people smile.',
       },
+      {
+        title: 'Lesson 5 – Telling About Your Trip',
+        description:
+          'Say where you went, how you got there, and how it was.',
+        phrases: [
+          { amharic: 'ጉዞ', transliteration: 'guzo', english: 'trip / journey' },
+          { amharic: 'ጉዞው እንዴት ነበር?', transliteration: 'guzow indet neber?', english: 'How was the trip?' },
+          { amharic: 'ወደ ላሊበላ ሄድኩ', transliteration: 'wede lalibela hedku', english: 'I went to Lalibela' },
+        ],
+      },
     ],
   },
 

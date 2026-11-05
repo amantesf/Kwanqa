@@ -740,6 +740,7 @@ export const englishCourses: Record<string, Course> = {
   },
   'english-from-amharic-9': {
     title: 'English Camp 9 – The Summit: Money & Bills',
+    intro: 'Handle money in English: pay your bills, pick a phone plan, send money home, stick to a budget, and spot a scam.',
     sections: [
       {
         title: 'Lesson 1 – Paying Bills',

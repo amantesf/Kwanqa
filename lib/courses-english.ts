@@ -777,6 +777,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'How much data does it come with? Can I cancel anytime?', 'ስንት ዳታ አለው? በፈለግኩት ጊዜ ማቋረጥ እችላለሁ?'),
           d('B', 'Twenty gigabytes, and yes, there’s no contract.', 'ሃያ ጊጋባይት፣ አዎ፣ ውል የለውም።'),
         ],
+        note: '“Unlimited” means there’s no limit. “No contract” means you can stop anytime without paying extra. With a prepaid plan you pay first, so there are no surprise bills.',
       },
     ],
   },

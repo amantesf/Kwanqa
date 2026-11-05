@@ -779,6 +779,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: '“Unlimited” means there’s no limit. “No contract” means you can stop anytime without paying extra. With a prepaid plan you pay first, so there are no surprise bills.',
       },
+      {
+        title: 'Lesson 3 – Sending Money Home',
+        description: 'Send money to family, and check the fee and the rate.',
+        phrases: [
+          p('I want to send money to Ethiopia.', 'ወደ ኢትዮጵያ ገንዘብ መላክ እፈልጋለሁ።'),
+          p('What’s the exchange rate today?', 'የዛሬው የምንዛሪ ዋጋ ስንት ነው?'),
+          p('How much is the fee?', 'የአገልግሎት ክፍያው ስንት ነው?'),
+        ],
+      },
     ],
   },
 };

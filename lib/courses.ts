@@ -2242,6 +2242,8 @@ export const courseContent: Record<string, Course> = {
         respect: [
           { english: 'Welcome back', man: 'እንኳን ደህና መጣህ', woman: 'እንኳን ደህና መጣሽ', elder: 'እንኳን ደህና መጡ' },
         ],
+        note:
+          'Add ነበር (neber, “was”) to talk about the past: ጉዞው ጥሩ ነበር means “the trip was good.” Ethiopian Airlines flies to Lalibela, Gondar, Axum and Bahir Dar, so a long bus ride can become about an hour in the air. You’ve reached the summit: እንኳን ደስ አላችሁ!',
       },
     ],
   },

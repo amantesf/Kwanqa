@@ -2157,6 +2157,8 @@ export const courseContent: Record<string, Course> = {
         respect: [
           { english: 'Take off your shoes', man: 'ጫማህን አውልቅ', woman: 'ጫማሽን አውልቂ', elder: 'ጫማዎን ያውልቁ' },
         ],
+        note:
+          'Take off your shoes before you step into an Ethiopian Orthodox church, and dress modestly; women usually cover their hair with a ነጠላ (netela). Ask before you photograph a priest (ካህን) or anyone praying.',
       },
     ],
   },

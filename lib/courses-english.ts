@@ -815,6 +815,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'No problem. How about dinner at my place instead?', 'ችግር የለም። በምትኩ እኔ ቤት እራት ብንበላስ?'),
           d('B', 'That sounds perfect. I’m trying to save money.', 'በጣም ጥሩ። ገንዘብ ለመቆጠብ እየሞከርኩ ነው።'),
         ],
+        note: '“I can’t afford it” is a normal, honest thing to say in English, and nobody will think less of you. “Split the bill” means everyone pays their own part.',
       },
     ],
   },

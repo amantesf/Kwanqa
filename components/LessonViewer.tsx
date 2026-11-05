@@ -1,7 +1,7 @@
 'use client';
 
 import SayButton from '@/components/SayButton';
-import { useRef, useState, useSyncExternalStore } from 'react';
+import { Fragment, useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
 import Practice from '@/components/Practice';
@@ -9,6 +9,7 @@ import Trail from '@/components/Trail';
 import { hornLevel, isDone, useClimb } from '@/lib/climb';
 import { reviewSession, useMistakes } from '@/lib/mistakes';
 import type { LessonSection, Track } from '@/lib/courses';
+import { grammarFor, wordsOf, type GrammarCard } from '@/lib/grammar';
 import { pictureFor } from '@/lib/pictures';
 
 type Props = {
@@ -31,6 +32,116 @@ function sides(phrase: Phrase, track: Track) {
     : { learn: phrase.amharic, say: phrase.transliteration, meaning: phrase.english };
 }
 
+/**
+ * An Amharic line with its words tappable: a word we know the pieces of shows
+ * them underneath (ስምህ → səmm-əh, name-your).
+ */
+function BrokenDownLine({ text }: { text: string }) {
+  const [open, setOpen] = useState<number | null>(null);
+  const words = wordsOf(text);
+  const shown = open !== null ? words[open]?.parts : null;
+  return (
+    <>
+      <span className="phrase-am">
+        {words.map((w, i) => (
+          <Fragment key={i}>
+            {i > 0 && ' '}
+            {w.parts ? (
+              <button
+                type="button"
+                className={`word-tap${open === i ? ' open' : ''}`}
+                onClick={() => setOpen(open === i ? null : i)}
+                aria-expanded={open === i}
+                aria-label={`${w.word}: show its parts`}
+              >
+                {w.word}
+              </button>
+            ) : (
+              w.word
+            )}
+          </Fragment>
+        ))}
+      </span>
+      {shown && (
+        <span className="word-parts" aria-live="polite">
+          {shown.map((part, i) => (
+            <span key={i} className="word-part">
+              <b>{part.roman}</b>
+              <small>{part.gloss}</small>
+            </span>
+          ))}
+        </span>
+      )}
+    </>
+  );
+}
+
+/** A table cell like "ስሜ səme": the Amharic, with how it's said underneath. */
+function TableCell({ text }: { text: string }) {
+  const [first, ...rest] = text.split(' ');
+  if (!/[ሀ-፿]/.test(first) || !rest.length) return <>{text}</>;
+  return (
+    <>
+      <span lang="am">{first}</span>
+      <small>{rest.join(' ')}</small>
+    </>
+  );
+}
+
+/** "How it works": one grammar rule, a small table and examples from the lesson. */
+function GrammarCards({ cards }: { cards: GrammarCard[] }) {
+  return (
+    <div className="stack">
+      <h3 className="h3">How it works</h3>
+      {cards.map(card => (
+        <section key={card.title} className="grammar-card">
+          <h4>{card.title}</h4>
+          <p>{card.rule}</p>
+          {card.table && (
+            <table className="grammar-table">
+              <thead>
+                <tr>
+                  {card.table[0].map((cell, i) => (
+                    <th key={i}>
+                      <TableCell text={cell} />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {card.table.slice(1).map((row, r) => (
+                  <tr key={r}>
+                    {row.map((cell, i) =>
+                      i === 0 ? (
+                        <th key={i}>{cell}</th>
+                      ) : (
+                        <td key={i}>
+                          <TableCell text={cell} />
+                        </td>
+                      ),
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <ul className="grammar-examples">
+            {card.examples.map(ex => (
+              <li key={ex.amharic}>
+                <span lang="am">{ex.amharic}</span>
+                <small>
+                  {ex.transliteration} · {ex.english}
+                </small>
+              </li>
+            ))}
+          </ul>
+          {card.tip && <p className="grammar-tip">{card.tip}</p>}
+        </section>
+      ))}
+    </div>
+  );
+}
+
 function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolean; track: Track }) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
@@ -51,7 +162,8 @@ function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolea
               // eslint-disable-next-line @next/next/no-img-element -- small local pictures
               <img className={`phrase-picture${hidden ? ' hidden' : ''}`} src={picture.src} alt="" />
             )}
-            <span className="phrase-am">{side.learn}</span>
+            {/* Amharic words can be tapped to see their parts (not in the quiz: the card is one button) */}
+            {track === 'amharic' && !quiz ? <BrokenDownLine text={side.learn} /> : <span className="phrase-am">{side.learn}</span>}
             {side.say && <span className="phrase-tr">{side.say}</span>}
             <span className={`phrase-en${hidden ? ' hidden' : ''}`}>
               {hidden ? 'Tap to reveal' : side.meaning}
@@ -215,6 +327,8 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
                 <PhraseCards key={`${active}-${quiz}`} phrases={lesson.phrases} quiz={quiz} track={track} />
               </div>
             )}
+
+            {track === 'amharic' && grammarFor(slug, active).length > 0 && <GrammarCards cards={grammarFor(slug, active)} />}
 
             {lesson.dialogue && (
               <div className="stack">

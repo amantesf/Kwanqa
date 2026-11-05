@@ -2267,6 +2267,152 @@ a.camp-banner:active {
   transform: translateX(18px);
 }
 
+.word-tap {
+  padding: 0;
+  border: none;
+  border-bottom: 2px dotted var(--primary-border);
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.word-tap:hover,
+.word-tap.open {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+/* a word's pieces: how each is said, and what it adds */
+.word-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 2px;
+}
+
+.word-part {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background-color: var(--primary-soft);
+  line-height: 1.25;
+}
+
+.word-part b {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.word-part small {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* "How it works": a lesson's grammar, one rule at a time */
+.grammar-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 2px solid var(--border);
+  border-bottom-width: 5px;
+  background: #fff;
+}
+
+.grammar-card h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.grammar-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.grammar-table {
+  width: 100%;
+  max-width: 460px;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.grammar-table th,
+.grammar-table td {
+  padding: 6px 10px;
+  border-bottom: 2px solid var(--border);
+  text-align: left;
+}
+
+.grammar-table thead th {
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.grammar-table tbody th {
+  font-weight: 800;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.grammar-table td {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.grammar-table td small,
+.grammar-table th small {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.grammar-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grammar-examples li {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background-color: var(--bg-soft);
+}
+
+.grammar-examples span {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.grammar-examples small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.grammar-card .grammar-tip {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background-color: var(--primary-soft);
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .phrase-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

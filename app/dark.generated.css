@@ -140,6 +140,9 @@
 :where(html[data-theme='dark']) .toggle input::after {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .grammar-card {
+    background: #1a2428
+}
 :where(html[data-theme='dark']) .say-btn {
     background: #1a2428
 }

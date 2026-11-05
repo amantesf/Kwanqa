@@ -2116,6 +2116,16 @@ export const courseContent: Record<string, Course> = {
         note:
           'In small hotels hot water isn’t always on, so it’s worth asking: ሙቅ ውሃ አለ? In simple guesthouses people often ask for a “bed” instead of a room: አልጋ አለ? (alga alle?).',
       },
+      {
+        title: 'Lesson 3 – Visiting a Church',
+        description:
+          'Ask before you take photos, and know the church manners.',
+        phrases: [
+          { amharic: 'ጫማ', transliteration: 'chama', english: 'shoes' },
+          { amharic: 'ፎቶ ማንሳት ይቻላል?', transliteration: 'foto mansat yichalal?', english: 'Is it OK to take photos?' },
+          { amharic: 'አስጎብኚ', transliteration: 'asgobnyi', english: 'tour guide' },
+        ],
+      },
     ],
   },
 

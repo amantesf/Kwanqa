@@ -2154,6 +2154,9 @@ export const courseContent: Record<string, Course> = {
             english: 'Yes, it was carved out of a single rock.',
           },
         ],
+        respect: [
+          { english: 'Take off your shoes', man: 'ጫማህን አውልቅ', woman: 'ጫማሽን አውልቂ', elder: 'ጫማዎን ያውልቁ' },
+        ],
       },
     ],
   },

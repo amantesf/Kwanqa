@@ -798,6 +798,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: 'Check both the fee and the exchange rate: a “free” transfer can still give you fewer birr. Keep the receipt until your family has the money.',
       },
+      {
+        title: 'Lesson 4 – Saving & Budgeting',
+        description: 'Talk about saving money, and say no without feeling awkward.',
+        phrases: [
+          p('I’m trying to save money.', 'ገንዘብ ለመቆጠብ እየሞከርኩ ነው።'),
+          p('I can’t afford it right now.', 'አሁን አቅሜ አይፈቅድም።'),
+          p('That’s a good deal.', 'ጥሩ ዋጋ ነው።'),
+        ],
+      },
     ],
   },
 };

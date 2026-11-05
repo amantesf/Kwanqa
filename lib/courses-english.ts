@@ -758,6 +758,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'It’s 30815. I was charged twice this month.', 'ቁጥሩ 30815 ነው። በዚህ ወር ሁለት ጊዜ ተቆርጦብኛል።'),
           d('B', 'You’re right. I’ll take off the extra charge.', 'ልክ ነህ። ተጨማሪውን ክፍያ አነሳልሃለሁ።'),
         ],
+        note: 'The “due date” is the last day to pay before a late fee. “Charged twice” means they took your money two times. Billing mistakes happen, so it’s normal to call and ask them to check.',
       },
     ],
   },

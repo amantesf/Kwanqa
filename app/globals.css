@@ -6406,6 +6406,8 @@ body:has(.practice-screen) {
 
 .practice-screen .practice-question {
   gap: 28px;
+  /* never wider than the screen: the 600px chats and order cards shrink to fit phones */
+  max-width: 100%;
 }
 
 .practice-instruction {

@@ -2033,6 +2033,8 @@ export const courseContent: Record<string, Course> = {
   // Amharic part 11
   'amharic-beginner-11': {
     title: 'Amharic Camp 11 – The Summit: Travel in Ethiopia',
+    intro:
+      'Travel around Ethiopia: buy a bus ticket, get a hotel room, visit a rock-cut church, chat with locals, and tell your friends about the trip.',
     sections: [
       {
         title: 'Lesson 1 – At the Bus Station',
@@ -2343,6 +2345,14 @@ export const courseCatalog: CourseSummary[] = [
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',
     part: 10,
+  },
+  {
+    slug: 'amharic-beginner-11',
+    title: 'Amharic Camp 11 – The Summit: Travel in Ethiopia',
+    description: 'Bus tickets, hotels, visiting a church, asking the locals, and telling about your trip.',
+    audience: 'Non‑Amharic speakers learning Amharic',
+    track: 'amharic',
+    part: 11,
   },
   ...englishCatalog,
 ];

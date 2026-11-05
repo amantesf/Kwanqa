@@ -738,6 +738,20 @@ export const englishCourses: Record<string, Course> = {
       },
     ],
   },
+  'english-from-amharic-9': {
+    title: 'English Camp 9 – The Summit: Money & Bills',
+    sections: [
+      {
+        title: 'Lesson 1 – Paying Bills',
+        description: 'Pay a bill, and fix a mistake on one.',
+        phrases: [
+          p('I’d like to pay my electricity bill.', 'የመብራት ሂሳቤን መክፈል እፈልጋለሁ።'),
+          p('When is the bill due?', 'ሂሳቡ መከፈል ያለበት መቼ ነው?'),
+          p('Can I pay online?', 'በኦንላይን መክፈል እችላለሁ?'),
+        ],
+      },
+    ],
+  },
 };
 
 const AUDIENCE = 'Amharic speakers learning English';

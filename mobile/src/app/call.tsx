@@ -1,9 +1,9 @@
-import { IOSOutputFormat, AudioQuality, requestRecordingPermissionsAsync, setAudioModeAsync, useAudioRecorder, useAudioRecorderState, type RecordingOptions } from 'expo-audio';
+import { requestRecordingPermissionsAsync, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio';
 import { File, Paths } from 'expo-file-system';
 import { FileSystemUploadType, uploadAsync } from 'expo-file-system/legacy';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type ScrollViewInstance } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { completeCall } from '@/lib/climb';
@@ -13,9 +13,9 @@ import Button from '@/components/button';
 import { Grass } from '@/components/icons';
 import { play, playEffect, stopVoice } from '@/components/sound';
 import Walia, { type Mood } from '@/components/walia';
+import { authHeaders, canRecord, WAV, withTimeout } from '@/listen';
 import { useTopInset } from '@/safe-top';
 import { SITE } from '@/site';
-import { supabase } from '@/supabase';
 import { fonts, makeStyles, useColors } from '@/theme';
 
 // A call with Walia, like the website's (components/TalkCall.tsx). Walia says a
@@ -27,27 +27,8 @@ import { fonts, makeStyles, useColors } from '@/theme';
 type Phase = 'walia' | 'ready' | 'listening' | 'checking' | 'verdict' | 'done';
 type Answer = { verdict: TutorVerdict; reply: Line | null; note: string };
 
-// 16 kHz mono 16-bit WAV, which is what /api/listen hands to Azure.
-const WAV: RecordingOptions = {
-  extension: '.wav',
-  sampleRate: 16000,
-  numberOfChannels: 1,
-  bitRate: 256000,
-  isMeteringEnabled: true,
-  ios: { extension: '.wav', outputFormat: IOSOutputFormat.LINEARPCM, audioQuality: AudioQuality.MAX, sampleRate: 16000, linearPCMBitDepth: 16, linearPCMIsBigEndian: false, linearPCMIsFloat: false },
-  // Android can't record WAV, so its calls are typed for now
-  android: { extension: '.m4a', outputFormat: 'mpeg4', audioEncoder: 'aac', sampleRate: 16000 },
-  web: {},
-};
-const canRecord = Platform.OS === 'ios';
-
 function speakPath(text: string, slow = false, lang?: 'en') {
   return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}${lang ? `&lang=${lang}` : ''}`;
-}
-
-async function authHeaders(): Promise<Record<string, string>> {
-  const token = (await supabase?.auth.getSession())?.data.session?.access_token;
-  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 /** The words on the call screen. English calls are for Amharic speakers: Amharic first. */
@@ -109,22 +90,6 @@ let clips = 0;
 const clipFile = () => new File(Paths.cache, `walia-${Date.now()}-${clips++}.mp3`);
 
 /** Gives up on a step that takes too long, so a call never hangs silently. */
-function withTimeout<T>(work: Promise<T>, ms: number, message: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(message)), ms);
-    work.then(
-      value => {
-        clearTimeout(timer);
-        resolve(value);
-      },
-      error => {
-        clearTimeout(timer);
-        reject(error);
-      },
-    );
-  });
-}
-
 const formatTime = (total: number) => `${Math.floor(total / 60)}:${(total % 60).toString().padStart(2, '0')}`;
 
 function Icon({ d, size = 28, color = '#ffffff', fill }: { d: string; size?: number; color?: string; fill?: boolean }) {

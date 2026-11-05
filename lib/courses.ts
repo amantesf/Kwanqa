@@ -2160,6 +2160,16 @@ export const courseContent: Record<string, Course> = {
         note:
           'Take off your shoes before you step into an Ethiopian Orthodox church, and dress modestly; women usually cover their hair with a ነጠላ (netela). Ask before you photograph a priest (ካህን) or anyone praying.',
       },
+      {
+        title: 'Lesson 4 – Asking the Locals',
+        description:
+          'Ask what a place is called, and which languages people speak.',
+        phrases: [
+          { amharic: 'ይህ ከተማ ምን ይባላል?', transliteration: 'yih ketema min yibalal?', english: 'What is this town called?' },
+          { amharic: 'ቋንቋ', transliteration: 'qwanqwa', english: 'language' },
+          { amharic: 'እዚህ ምን ቋንቋ ይናገራሉ?', transliteration: 'izih min qwanqwa yinageralu?', english: 'What language do people speak here?' },
+        ],
+      },
     ],
   },
 

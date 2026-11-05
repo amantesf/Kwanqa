@@ -2087,6 +2087,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ቁርስ አለ?', transliteration: 'qurs alle?', english: 'Is there breakfast?' },
           { amharic: 'ሙቅ ውሃ', transliteration: 'muq wuha', english: 'hot water' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ጤና ይስጥልኝ። ክፍል አላችሁ?',
+            transliteration: 'tena yistilign. kifil alachihu?',
+            english: 'Hello. Do you have a room?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ። ለስንት ሌሊት?',
+            transliteration: 'awo. lesint lelit?',
+            english: 'Yes. For how many nights?',
+          },
+          {
+            speaker: 'A',
+            amharic: 'ለሁለት ሌሊት። ቁርስ አለ?',
+            transliteration: 'lehulet lelit. qurs alle?',
+            english: 'For two nights. Is there breakfast?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዎ፣ አለ። ይኸው ቁልፉ።',
+            transliteration: 'awo, alle. yihew qulfu.',
+            english: 'Yes, there is. Here’s the key.',
+          },
+        ],
       },
     ],
   },

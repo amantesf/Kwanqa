@@ -796,6 +796,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'How long will it take to arrive?', 'ለመድረስ ምን ያህል ጊዜ ይወስዳል?'),
           d('B', 'Just a few minutes. She can pick it up at the bank.', 'ጥቂት ደቂቃዎች ብቻ። ከባንክ ልትቀበለው ትችላለች።'),
         ],
+        note: 'Check both the fee and the exchange rate: a “free” transfer can still give you fewer birr. Keep the receipt until your family has the money.',
       },
     ],
   },

@@ -760,6 +760,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: 'The “due date” is the last day to pay before a late fee. “Charged twice” means they took your money two times. Billing mistakes happen, so it’s normal to call and ask them to check.',
       },
+      {
+        title: 'Lesson 2 – Phone & Internet Plans',
+        description: 'Pick a phone plan, and ask the right questions.',
+        phrases: [
+          p('I’d like a new phone plan.', 'አዲስ የስልክ ፓኬጅ እፈልጋለሁ።'),
+          p('How much data does it come with?', 'ስንት ዳታ አለው?'),
+          p('Is that the price every month?', 'ይሄ የየወሩ ዋጋ ነው?'),
+        ],
+      },
     ],
   },
 };

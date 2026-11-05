@@ -1813,7 +1813,7 @@ export const courseContent: Record<string, Course> = {
 
   // Amharic part 10
   'amharic-beginner-10': {
-    title: 'Amharic Camp 10 – The Summit: Life’s Big Moments',
+    title: 'Amharic Camp 10 – Life’s Big Moments',
     intro:
       'The words for life’s big moments: celebrate a wedding and a new baby, comfort a family in mourning, talk about fasting and feasting, and bless people the Ethiopian way.',
     sections: [
@@ -2025,7 +2025,7 @@ export const courseContent: Record<string, Course> = {
           { english: 'Good luck', man: 'ይቅናህ', woman: 'ይቅናሽ', elder: 'ይቅናዎት' },
         ],
         note:
-          'You’ll hear God in many everyday phrases: እግዚአብሔር ይስጥልኝ is a warm “thank you,” and Christians say እግዚአብሔር ቢፈቅድ where Muslims say ኢንሻአላህ, both “God willing.” ክረምት, the rainy season, is when many in the diaspora visit home. You’ve reached the summit: እንኳን ደስ አላችሁ!',
+          'You’ll hear God in many everyday phrases: እግዚአብሔር ይስጥልኝ is a warm “thank you,” and Christians say እግዚአብሔር ቢፈቅድ where Muslims say ኢንሻአላህ, both “God willing.” ክረምት, the rainy season, is when many in the diaspora visit home.',
       },
     ],
   },
@@ -2120,7 +2120,7 @@ export const courseCatalog: CourseSummary[] = [
   },
   {
     slug: 'amharic-beginner-10',
-    title: 'Amharic Camp 10 – The Summit: Life’s Big Moments',
+    title: 'Amharic Camp 10 – Life’s Big Moments',
     description: 'Weddings, a new baby, comforting a grieving family, fasting and feasting, and everyday blessings.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',

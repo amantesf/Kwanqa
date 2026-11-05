@@ -790,6 +790,12 @@ export const englishCourses: Record<string, Course> = {
           p('She can pick it up at the bank.', 'ከባንክ ልትቀበለው ትችላለች።'),
           p('Can I have a receipt, please?', 'እባክህ ደረሰኝ ልትሰጠኝ ትችላለህ?'),
         ],
+        dialogue: [
+          d('A', 'Hi, I want to send two hundred dollars to my mother in Ethiopia.', 'ሰላም፣ ኢትዮጵያ ላለችው እናቴ ሁለት መቶ ዶላር መላክ እፈልጋለሁ።'),
+          d('B', 'Okay. The fee is five dollars.', 'እሺ። የአገልግሎት ክፍያው አምስት ዶላር ነው።'),
+          d('A', 'How long will it take to arrive?', 'ለመድረስ ምን ያህል ጊዜ ይወስዳል?'),
+          d('B', 'Just a few minutes. She can pick it up at the bank.', 'ጥቂት ደቂቃዎች ብቻ። ከባንክ ልትቀበለው ትችላለች።'),
+        ],
       },
     ],
   },

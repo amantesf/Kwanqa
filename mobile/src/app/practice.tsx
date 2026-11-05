@@ -11,7 +11,7 @@ import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
-import { interactiveQuestions, typedRight, type OrderExercise, type TypeExercise } from '@/lib/interactive';
+import { interactiveQuestions, typedRight, type ChatExercise, type OrderExercise, type TypeExercise } from '@/lib/interactive';
 import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
 import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
@@ -22,6 +22,7 @@ import Speaker from '@/components/speaker';
 import Walia, { type Mood } from '@/components/walia';
 import LetterTrace from '@/components/letter-trace';
 import OrderLines from '@/components/order-lines';
+import WaliaChat from '@/components/walia-chat';
 import { siteUrl } from '@/site';
 import { fonts, makeStyles, useColors } from '@/theme';
 import OfflineNote from '@/components/offline-note';
@@ -37,9 +38,9 @@ import { useTopInset } from '@/safe-top';
 /**
  * A question in a lesson: the shared kinds, plus the ones from the website's
  * interactive set that this screen can show: "Trace the new letter", "Type
- * what you hear" and "Put the conversation in order".
+ * what you hear", "Put the conversation in order" and "Chat with Walia".
  */
-type Question = Exercise | TraceExercise | TypeExercise | OrderExercise;
+type Question = Exercise | TraceExercise | TypeExercise | OrderExercise | ChatExercise;
 
 const MAX_STAMINA = 5;
 const STREAK_TO_RECOVER = 3;
@@ -247,14 +248,14 @@ export default function Practice() {
     // and new learners trace each lesson's first new letter, early on
     const trace = track === 'amharic' ? traceQuestion(lesson, level) : null;
     if (trace) exercises.splice(Math.min(1, exercises.length), 0, trace);
-    // Typing what you hear (mid-lesson) and putting the conversation in order
-    // (later on) go before the final matching round, as on the website.
-    // (Beginners in Camp 1 don't get them yet.) Speaking and the chat with
-    // Walia aren't here yet.
+    // Typing what you hear (mid-lesson), putting the conversation in order
+    // (later on) and the chat with Walia (last) go before the final matching
+    // round, as on the website. (Beginners in Camp 1 don't type or order yet.)
+    // Speaking isn't here yet.
     const firstCamp = !holiday && courseCatalog.find(c => c.slug === slug)?.part === 1;
-    const place = { type: 0.5, order: 0.7 };
+    const place = { type: 0.5, order: 0.7, chat: 1 };
     for (const q of interactiveQuestions(lesson, lessons, track, { level, canHear, speaking: false, firstCamp })) {
-      if (q.kind !== 'type' && q.kind !== 'order') continue;
+      if (q.kind !== 'type' && q.kind !== 'order' && q.kind !== 'chat') continue;
       const matchAt = exercises.findIndex(x => x.kind === 'match');
       const end = matchAt >= 0 ? matchAt : exercises.length;
       exercises.splice(Math.max(1, Math.min(end, Math.round(end * place[q.kind]))), 0, q);
@@ -297,7 +298,7 @@ export default function Practice() {
 
   // Fill-in-the-blank questions keep quiet until answered, then say the whole line.
   const reveal = current?.kind === 'choice' && current.revealAudio ? current.revealAudio : null;
-  const promptAudio = !current || current.kind === 'match' || current.kind === 'trace' || current.kind === 'order' ? null : reveal && phase === 'feedback' ? (soundFor(reveal) ?? soundFor(current.prompt)) : soundFor(current.prompt);
+  const promptAudio = !current || current.kind === 'match' || current.kind === 'trace' || current.kind === 'order' || current.kind === 'chat' ? null : reveal && phase === 'feedback' ? (soundFor(reveal) ?? soundFor(current.prompt)) : soundFor(current.prompt);
   const promptKey = !promptAudio ? null : phase === 'question' ? `${current.id}:${queue.length}` : reveal && phase === 'feedback' ? `${current.id}:${queue.length}:reveal` : null;
 
   // the question's sound plays by itself once when it appears
@@ -317,7 +318,7 @@ export default function Practice() {
 
   // Once a question is answered, Walia says the right answer (the whole line,
   // in the language being learned), just after the right/wrong sound.
-  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && !reveal ? (current.answerAudio ?? null) : null;
+  const answerLine = phase === 'feedback' && current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && !reveal ? (current.answerAudio ?? null) : null;
   const answerKey = answerLine ? `${current.id}:${queue.length}:answer` : null;
   useEffect(() => {
     if (!answerKey || !answerLine) return;
@@ -326,7 +327,7 @@ export default function Practice() {
   }, [answerKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // "Tap what you hear": the line stays hidden until it's answered.
-  const listening = !!current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && !!current.listen && phase !== 'feedback';
+  const listening = !!current && current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && !!current.listen && phase !== 'feedback';
 
   const progress = initial.length ? solved.size / initial.length : 1;
   useEffect(() => {
@@ -578,7 +579,7 @@ export default function Practice() {
               {missed.has(current.id) ? <Text style={styles.retry}>{ui.previous}</Text> : null}
               <Text style={styles.instruction}>{current.instruction}</Text>
 
-              {!(current.kind === 'choice' && current.id === 'picture-see') && current.kind !== 'trace' && current.kind !== 'order' && (
+              {!(current.kind === 'choice' && current.id === 'picture-see') && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'chat' && (
                 <View style={styles.ask}>
                   <Walia mood={mood} size={96} />
                   {current.kind !== 'match' && (
@@ -718,6 +719,21 @@ export default function Practice() {
                   accessibilityLabel="Your answer"
                   style={[styles.typeAnswer, feedback && (lastCorrect ? styles.typeGood : styles.typeBad)]}
                 />
+              ) : current.kind === 'chat' ? (
+                <WaliaChat
+                  key={current.id + solved.size + queue.length}
+                  exercise={current}
+                  onSay={sayAloud}
+                  onMistake={() => {
+                    // a wrong reply costs stamina, but the chat carries on:
+                    // resting now would start it over, so any rest comes after it
+                    playEffect('wrong');
+                    loseStamina();
+                  }}
+                  onDone={() => {
+                    if (phase === 'question') solveMatch();
+                  }}
+                />
               ) : current.kind === 'order' ? (
                 <OrderLines
                   key={current.id + queue.length}
@@ -769,7 +785,7 @@ export default function Practice() {
                 </Animated.View>
                 <View style={styles.feedbackText}>
                   <Text style={[styles.feedbackTitle, lastCorrect ? styles.goodText : styles.badText]}>{lastCorrect ? ui.good : ui.bad}</Text>
-                  {current.kind === 'trace' && <Text style={[styles.feedbackBody, styles.goodText]}>{current.explain}</Text>}
+                  {(current.kind === 'trace' || current.kind === 'chat') && <Text style={[styles.feedbackBody, styles.goodText]}>{current.explain}</Text>}
                   {current.kind === 'order' && (
                     <Text style={[styles.feedbackBody, lastCorrect ? styles.goodText : styles.badText]}>
                       {lastCorrect ? current.explain : `${ui.correctOrder} ${current.lines.map((l, i) => `${i + 1}. ${l.text}`).join('  ')}`}
@@ -780,7 +796,7 @@ export default function Practice() {
                       {lastCorrect ? current.explain : `${ui.correctAnswer} ${current.explain}`}
                     </Text>
                   )}
-                  {current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'type' && (
+                  {current.kind !== 'match' && current.kind !== 'trace' && current.kind !== 'order' && current.kind !== 'type' && current.kind !== 'chat' && (
                     <Text style={[styles.feedbackBody, lastCorrect ? styles.goodText : styles.badText]}>
                       {lastCorrect ? current.explain : `${ui.correctAnswer} ${sentence(current.kind === 'build' ? current.answer.join(' ') : current.answer)} ${current.explain}`}
                     </Text>
@@ -797,7 +813,7 @@ export default function Practice() {
                 // skip writing (on a bus with one hand, say), like on the website
                 <Button label="Skip" tone="plain" onPress={solveMatch} />
               ) : (
-                current.kind !== 'match' && <Button label={ui.check} onPress={check} disabled={!canCheck} />
+                current.kind !== 'match' && current.kind !== 'chat' && <Button label={ui.check} onPress={check} disabled={!canCheck} />
               )}
             </>
           )}

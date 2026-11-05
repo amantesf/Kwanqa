@@ -2172,6 +2172,32 @@ export const courseContent: Record<string, Course> = {
           { amharic: 'ትግርኛ', transliteration: 'tigrigna', english: 'Tigrinya' },
           { amharic: 'ሰዎቹ ደግ ናቸው', transliteration: 'sewochu deg nachew', english: 'The people are kind' },
         ],
+        dialogue: [
+          {
+            speaker: 'A',
+            amharic: 'ይቅርታ፣ ይህ ከተማ ምን ይባላል?',
+            transliteration: 'yiqirta, yih ketema min yibalal?',
+            english: 'Excuse me, what is this town called?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'አዳማ ይባላል። ናዝሬትም ይሉታል።',
+            transliteration: 'adama yibalal. nazretim yilutal.',
+            english: 'It’s called Adama. People also call it Nazret.',
+          },
+          {
+            speaker: 'A',
+            amharic: 'እዚህ ምን ቋንቋ ይናገራሉ?',
+            transliteration: 'izih min qwanqwa yinageralu?',
+            english: 'What language do people speak here?',
+          },
+          {
+            speaker: 'B',
+            amharic: 'ኦሮምኛ እና አማርኛ።',
+            transliteration: 'oromigna ina amarigna.',
+            english: 'Afaan Oromo and Amharic.',
+          },
+        ],
       },
     ],
   },

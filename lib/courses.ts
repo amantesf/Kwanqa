@@ -2072,6 +2072,8 @@ export const courseContent: Record<string, Course> = {
             english: 'About ten hours. Have a good trip!',
           },
         ],
+        note:
+          'Long-distance buses leave early, around 5 or 6 a.m., so get to the መናኸሪያ before dawn. Times are often said in Ethiopian time: ከሌሊቱ አሥራ አንድ ሰዓት is 5 a.m. Seats on the big buses can be booked the day before.',
       },
     ],
   },

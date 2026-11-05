@@ -2113,6 +2113,8 @@ export const courseContent: Record<string, Course> = {
             english: 'Yes, there is. Here’s the key.',
           },
         ],
+        note:
+          'In small hotels hot water isn’t always on, so it’s worth asking: ሙቅ ውሃ አለ? In simple guesthouses people often ask for a “bed” instead of a room: አልጋ አለ? (alga alle?).',
       },
     ],
   },

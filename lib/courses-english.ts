@@ -771,6 +771,12 @@ export const englishCourses: Record<string, Course> = {
           p('My internet keeps cutting out.', 'ኢንተርኔቴ በየጊዜው ይቋረጣል።'),
           p('What’s the Wi-Fi password?', 'የዋይፋዩ ፓስወርድ ምንድን ነው?'),
         ],
+        dialogue: [
+          d('A', 'Hi, I’d like a new phone plan.', 'ሰላም፣ አዲስ የስልክ ፓኬጅ እፈልጋለሁ።'),
+          d('B', 'This one is thirty dollars a month, with unlimited calls.', 'ይሄኛው በወር ሠላሳ ዶላር ነው፣ ያልተገደበ ጥሪ አለው።'),
+          d('A', 'How much data does it come with? Can I cancel anytime?', 'ስንት ዳታ አለው? በፈለግኩት ጊዜ ማቋረጥ እችላለሁ?'),
+          d('B', 'Twenty gigabytes, and yes, there’s no contract.', 'ሃያ ጊጋባይት፣ አዎ፣ ውል የለውም።'),
+        ],
       },
     ],
   },

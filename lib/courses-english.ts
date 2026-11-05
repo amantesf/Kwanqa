@@ -638,7 +638,7 @@ export const englishCourses: Record<string, Course> = {
     ],
   },
   'english-from-amharic-8': {
-    title: 'English Camp 8 – The Summit: Life Abroad',
+    title: 'English Camp 8 – Life Abroad',
     intro: 'The English you need for a new life abroad: your child’s school, neighbours, emergencies, the car, and online orders.',
     sections: [
       {
@@ -734,7 +734,7 @@ export const englishCourses: Record<string, Course> = {
           d('A', 'It’s 4521. It says it was delivered, but I don’t have it.', 'ቁጥሩ 4521 ነው። ደርሷል ይላል፣ ግን እጄ ላይ የለም።'),
           d('B', 'Let me check. We’ll send you a new one.', 'ላጣራ። አዲስ እንልክልሃለን።'),
         ],
-        note: 'Customer service is often a typed chat, not a call. Keep messages short and put your order number first. You’ve reached the summit: እንኳን ደስ አለህ!',
+        note: 'Customer service is often a typed chat, not a call. Keep messages short and put your order number first.',
       },
     ],
   },

@@ -817,6 +817,15 @@ export const englishCourses: Record<string, Course> = {
         ],
         note: '“I can’t afford it” is a normal, honest thing to say in English, and nobody will think less of you. “Split the bill” means everyone pays their own part.',
       },
+      {
+        title: 'Lesson 5 – Spotting a Scam',
+        description: 'Spot a fake message, and keep your money safe.',
+        phrases: [
+          p('Is this a scam?', 'ይሄ ማጭበርበር ነው?'),
+          p('Never share your password.', 'የይለፍ ቃልህን ለማንም አታጋራ።'),
+          p('I didn’t order this.', 'ይሄን አላዘዝኩም።'),
+        ],
+      },
     ],
   },
 };

@@ -32,6 +32,8 @@ import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
 import LetterTrace from '@/components/LetterTrace';
 import { ChatRound, OrderQuestion, SpeakQuestion, TypeAnswer } from '@/components/InteractiveQuestions';
 import { useAuth } from '@/components/AuthProvider';
+import { learnerName, personalizeChat } from '@/lib/learnerName';
+import { supabase } from '@/lib/supabase';
 import { interactiveQuestions, introCards, typedRight, type InteractiveExercise } from '@/lib/interactive';
 import { pictureFor } from '@/lib/pictures';
 
@@ -434,17 +436,38 @@ export default function Practice({
   }
 
   const current = queue[0];
+  // In the Amharic course's chats Walia says his own name, and a logged-in
+  // learner's reply says theirs ("ስሜ ናሆም ነው።") instead of Alex.
+  const who = useMemo(() => {
+    if (!user || track !== 'amharic') return null;
+    let female = false;
+    try {
+      female = localStorage.getItem('kwanqa-talk-gender') === 'f';
+    } catch {
+      // storage blocked: Walia says ስምህ
+    }
+    return learnerName(user.user_metadata, female);
+  }, [user, track]);
+  const chat = useMemo(() => (current?.kind === 'chat' ? personalizeChat(current, who) : null), [current, who]);
+  const ownLines = useMemo(() => {
+    if (!chat || chat === current) return new Set<string>();
+    const lines = chat.turns.flatMap(t => [t.walia, ...t.options]);
+    return new Set(lines.filter(l => !amharicAudio(l)));
+  }, [chat, current]);
   const ui = uiText(track);
 
   // The language being learned is the one that's spoken: Amharic recordings in
   // the Amharic course, an English voice in the English course (Amharic, the
   // English learner's own language, stays quiet).
-  type Sound = { src: string; say?: string } | null;
+  // `own`: a line with the learner's own name in it, read by Walia's voice
+  // just for them (lib/learnerName.ts), since it can't be made ahead of time.
+  type Sound = { src: string; say?: string; own?: string } | null;
   function soundFor(text: string | null | undefined): Sound {
     if (!text) return null;
     if (track === 'english') return isSpeakableEnglish(text) ? { src: englishAudioUrl(text), say: text } : null;
     const src = amharicAudio(text);
-    return src ? { src } : null;
+    if (src) return { src };
+    return ownLines.has(text) ? { src: '', own: text } : null;
   }
 
   // The question's sound plays by itself when the question appears (unless
@@ -461,8 +484,31 @@ export default function Practice({
         ? (soundFor(reveal) ?? soundFor(current.prompt))
         : soundFor(current.prompt);
   const voice = useRef<HTMLAudioElement | null>(null);
+  const ownClips = useRef(new Map<string, string>());
+  async function playOwn(text: string) {
+    let url = ownClips.current.get(text);
+    if (!url) {
+      const token = (await supabase?.auth.getSession())?.data.session?.access_token;
+      const res = await fetch('/api/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ text }),
+      }).catch(() => null);
+      if (!res?.ok) return; // the words are on screen either way
+      url = URL.createObjectURL(await res.blob());
+      ownClips.current.set(text, url);
+    }
+    voice.current?.pause();
+    const el = new Audio(url);
+    voice.current = el;
+    el.play().catch(() => {});
+  }
   function playClip(sound: Sound) {
     if (!sound) return;
+    if (sound.own) {
+      void playOwn(sound.own);
+      return;
+    }
     voice.current?.pause();
     const el = new Audio(sound.src);
     voice.current = el;
@@ -1119,7 +1165,7 @@ export default function Practice({
           ) : current.kind === 'chat' ? (
             <ChatRound
               key={current.id + solved.size + queue.length}
-              exercise={current}
+              exercise={chat ?? current}
               onSay={sayAloud}
               onMistake={() => {
                 // a wrong reply costs a heart, but the chat carries on: resting

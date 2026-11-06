@@ -25,6 +25,7 @@ import {
 import { courseContent, type Track } from '@/lib/courses';
 import { useProfile, type Profile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
+import { amharicName, learnerName } from '@/lib/learnerName';
 
 const LANGUAGE: Record<string, string> = {
   amharic: 'Amharic',
@@ -182,6 +183,7 @@ export default function ProfileView() {
   const profile = useProfile();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
+  const [nameAm, setNameAm] = useState('');
   const [saving, setSaving] = useState(false);
 
   if (enabled && loading) {
@@ -323,6 +325,8 @@ export default function ProfileView() {
     },
   ];
   const fullName = (user.user_metadata?.name as string) || displayName(user);
+  // how Walia writes your name in the Amharic chats (lib/learnerName.ts)
+  const inAmharic = learnerName(user.user_metadata)?.amharic ?? '';
 
   async function invite() {
     const url = 'https://kwanqa.vercel.app';
@@ -344,7 +348,8 @@ export default function ProfileView() {
     const trimmed = name.trim();
     if (!trimmed || !supabase) return;
     setSaving(true);
-    const { error } = await supabase.auth.updateUser({ data: { name: trimmed } });
+    // a blank Amharic spelling goes back to the one made from the name
+    const { error } = await supabase.auth.updateUser({ data: { name: trimmed, name_am: nameAm.trim() || null } });
     setSaving(false);
     if (error) return showToast('Couldn’t save your name. Please try again.', 'bad');
     setEditing(false);
@@ -368,6 +373,7 @@ export default function ProfileView() {
             className="pf-edit"
             onClick={() => {
               setName((user.user_metadata?.name as string) || '');
+              setNameAm((user.user_metadata?.name_am as string) || '');
               setEditing(true);
             }}
             aria-label="Edit name"
@@ -392,6 +398,16 @@ export default function ProfileView() {
                   autoFocus
                   aria-label="Your name"
                 />
+                <input
+                  className="input"
+                  lang="am"
+                  value={nameAm}
+                  onChange={e => setNameAm(e.target.value)}
+                  maxLength={40}
+                  placeholder={amharicName(name.trim().split(/\s+/)[0] ?? '') || 'ስምዎ በአማርኛ'}
+                  aria-label="Your first name in Amharic letters"
+                  title="Your first name in Amharic letters, as Walia writes it in the chats"
+                />
                 <button type="submit" className="btn btn-sm" disabled={saving}>
                   {saving ? 'Saving…' : 'Save'}
                 </button>
@@ -401,6 +417,11 @@ export default function ProfileView() {
               </form>
             ) : (
               <h1 className="pf-name">{fullName}</h1>
+            )}
+            {!editing && inAmharic && (
+              <p className="pf-handle" lang="am" title="How Walia writes your name in the Amharic chats. Tap the pencil to fix it.">
+                {inAmharic}
+              </p>
             )}
             <p className="pf-handle">{user.email}</p>
             {joined && <p className="pf-joined">Joined {joined}</p>}

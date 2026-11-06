@@ -34,7 +34,7 @@ import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
 import Trail, { type StonePreview, type TrailStop } from '@/components/Trail';
 import { courseContent, type LessonSection, type Track } from '@/lib/courses';
-import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
+import { pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import {
   altitudeFor,
@@ -150,7 +150,7 @@ export default function CoursesRoadmap() {
   // Questions missed in a camp are asked again before the next camp opens:
   // once every lesson in a camp is done, its review stone comes before the trophy.
   const mistakeStore = useMistakes();
-  const pendingIn = (slug: string) => (hydrated ? (mistakeStore[slug]?.length ?? 0) : 0);
+  const pendingIn = (slug: string) => (hydrated ? pendingCount(mistakeStore[slug]) : 0);
   const campDoneAt = (idx: number) => {
     const slug = courses[idx]?.slug;
     const lessons = slug ? (courseContent[slug]?.sections ?? []) : [];

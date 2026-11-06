@@ -7,7 +7,7 @@ import Mascot from '@/components/Mascot';
 import Practice from '@/components/Practice';
 import Trail from '@/components/Trail';
 import { hornLevel, isDone, useClimb } from '@/lib/climb';
-import { reviewSession, useMistakes } from '@/lib/mistakes';
+import { pendingCount, reviewSession, useMistakes } from '@/lib/mistakes';
 import type { LessonSection, Track } from '@/lib/courses';
 import { familiesFor, grammarFor, wordsOf, type GrammarCard, type WordFamily } from '@/lib/grammar';
 import { pictureFor } from '@/lib/pictures';
@@ -252,7 +252,7 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
   const [review, setReview] = useState<ReturnType<typeof reviewSession> | null>(null);
   // Pick the questions once, when the saved mistakes first load, and keep them
   // for the whole session (finishing clears them from storage).
-  if (wantsReview && !review && mistakes.length > 0) setReview(reviewSession(mistakes));
+  if (wantsReview && !review && pendingCount(mistakes) > 0) setReview(reviewSession(mistakes));
   const [quiz, setQuiz] = useState(false);
   const [session, setSession] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);

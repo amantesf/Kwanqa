@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { BASE_ALTITUDE, climbStreak, hornLevel, isDone, nextLesson, startCamp, SUMMIT_ALTITUDE, trackCourses, useClimb, zoneForCamp } from '@/lib/climb';
 import { courseContent, type Track } from '@/lib/courses';
-import { REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
+import { pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
 import CampArt from '@/components/camp-art';
@@ -79,7 +79,7 @@ export default function Trail() {
   // Questions missed in a camp are asked again before the next camp opens.
   const lessonsOf = (slug: string) => courseContent[slug]?.sections ?? [];
   const campDone = (slug: string) => lessonsOf(slug).length > 0 && lessonsOf(slug).every((_, i) => isDone(climb, slug, i));
-  const pendingIn = (slug: string) => mistakes[slug]?.length ?? 0;
+  const pendingIn = (slug: string) => pendingCount(mistakes[slug]);
   const currentCamp = next ? camps.findIndex(c => c.slug === next.slug) : camps.length;
   const lastCamp = camps[currentCamp - 1];
   const blocking = lastCamp && campDone(lastCamp.slug) && pendingIn(lastCamp.slug) > 0 ? lastCamp : null;

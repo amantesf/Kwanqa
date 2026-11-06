@@ -13,7 +13,7 @@ import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 import { interactiveQuestions, typedRight, type ChatExercise, type OrderExercise, type SpeakExercise, type TypeExercise } from '@/lib/interactive';
 import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
-import { clearMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
+import { fixMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import { play, playEffect } from '@/components/sound';
 import { feel } from '@/haptics';
@@ -415,7 +415,7 @@ export default function Practice() {
     // every question was answered correctly once, plus each wrong try along the way
     const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
     if (review) {
-      clearMistakes(slug, session.keys);
+      fixMistakes(slug, session.keys);
       return completeReview(work);
     }
     return completeLesson(slug, lessonIndex, mistakes, work);

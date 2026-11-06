@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { amharicAudio } from '@/lib/amharicAudio';
 import SayButton from '@/components/SayButton';
-import { clearMistakes, recordMistake } from '@/lib/mistakes';
+import { fixMistakes, recordMistake, settlePractice } from '@/lib/mistakes';
 import { countFinished } from '@/components/SiteAnalytics';
 import { logLessonFinish, logLessonQuit, logLessonStart } from '@/lib/events';
 import { englishAudioUrl, isSpeakableEnglish, speakWithBrowser } from '@/lib/englishAudio';
@@ -325,9 +325,11 @@ export default function Practice({
   track?: Track;
   /**
    * A mistakes review: these saved questions instead of the lesson's own.
-   * Finishing forgets them (`keys`) and doesn't mark any lesson done.
+   * Finishing puts them right (`keys`, spaced out for later practice) and
+   * doesn't mark any lesson done. `practice`: the learner's own practice
+   * across camps (lib/mistakes.ts practiceSession).
    */
-  review?: { exercises: Exercise[]; keys: string[] };
+  review?: { exercises: Exercise[]; keys: string[]; practice?: boolean };
 }) {
   const climb = useClimb();
   const { user, enabled: accountsEnabled } = useAuth();
@@ -695,7 +697,9 @@ export default function Practice({
     // Every question was answered correctly once, plus each wrong try along the way.
     const work = { answers: graded + mistakes, correct: graded, seconds: (Date.now() - startedAt) / 1000 };
     if (review) {
-      clearMistakes(slug, review.keys);
+      // personal practice spaces each question out further; a camp's review puts its questions right
+      if (review.practice) settlePractice(review.keys, missed);
+      else fixMistakes(slug, review.keys);
       setEarned(completeReview(work));
     } else {
       setEarned(completeLesson(slug, lessonIndex, mistakes, work));

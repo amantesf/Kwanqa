@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useClimb } from '@/lib/climb';
 import type { Track } from '@/lib/courses';
-import { useMistakes } from '@/lib/mistakes';
+import { pendingCount, useMistakes } from '@/lib/mistakes';
 import { campComplete, stampsFor, type Stamp } from '@/lib/passport';
 import { markSeen, readSeen, writeSeen } from '@/lib/stampsSeen';
 import StampReveal from '@/components/stamp-reveal';
@@ -19,7 +19,7 @@ export type PassportEntry = { stamp: Stamp; slug: string; camp: number; earned: 
 export function usePassport(track: Track): PassportEntry[] {
   const climb = useClimb();
   const mistakes = useMistakes();
-  return stampsFor(track).map(s => ({ ...s, earned: campComplete(climb, s.slug, mistakes[s.slug]?.length ?? 0) }));
+  return stampsFor(track).map(s => ({ ...s, earned: campComplete(climb, s.slug, pendingCount(mistakes[s.slug])) }));
 }
 
 const seenKey = (track: Track, e: PassportEntry) => `${track}:${e.slug}`;

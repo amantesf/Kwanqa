@@ -2,6 +2,7 @@ import type { Climb } from '@/lib/climb';
 import {
   clearAllMistakes,
   cleanMistakes,
+  pendingCount,
   MAX_PER_CAMP,
   readMistakes,
   replaceMistakes,
@@ -91,7 +92,7 @@ function earnedStamps(climb: Climb, mistakes: MistakeStore) {
   const keys = new Set<string>();
   for (const track of ['amharic', 'english'] as const) {
     for (const s of stampsFor(track)) {
-      if (campComplete(climb, s.slug, mistakes[s.slug]?.length ?? 0)) keys.add(`${track}:${s.slug}`);
+      if (campComplete(climb, s.slug, pendingCount(mistakes[s.slug]))) keys.add(`${track}:${s.slug}`);
     }
   }
   return keys;

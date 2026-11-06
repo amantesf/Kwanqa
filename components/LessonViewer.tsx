@@ -76,14 +76,22 @@ function BrokenDownLine({ text }: { text: string }) {
   );
 }
 
+/** Splits "መንገድ ላይ menged lay" into its Amharic words and how they're said. */
+function splitCell(text: string) {
+  const words = text.split(' ');
+  const amharic = words.findIndex(w => !/[ሀ-፿]/.test(w));
+  const cut = amharic === -1 ? words.length : amharic;
+  return { amharic: words.slice(0, cut).join(' '), roman: words.slice(cut).join(' ') };
+}
+
 /** A table cell like "ስሜ səme": the Amharic, with how it's said underneath. */
 function TableCell({ text }: { text: string }) {
-  const [first, ...rest] = text.split(' ');
-  if (!/[ሀ-፿]/.test(first) || !rest.length) return <>{text}</>;
+  const { amharic, roman } = splitCell(text);
+  if (!amharic || !roman) return <>{text}</>;
   return (
     <>
-      <span lang="am">{first}</span>
-      <small>{rest.join(' ')}</small>
+      <span lang="am">{amharic}</span>
+      <small>{roman}</small>
     </>
   );
 }

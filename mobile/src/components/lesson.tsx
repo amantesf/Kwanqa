@@ -66,12 +66,15 @@ function BrokenDownLine({ text }: { text: string }) {
 /** A table cell like "ስሜ səme": the Amharic, with how it's said underneath. */
 function Cell({ text, head }: { text: string; head?: boolean }) {
   const styles = useStyles();
-  const [first, ...rest] = text.split(' ');
-  const split = ETHIOPIC.test(first) && rest.length > 0;
+  // the Amharic words first ("መንገድ ላይ"), then how they're said ("menged lay")
+  const words = text.split(' ');
+  const end = words.findIndex(w => !ETHIOPIC.test(w));
+  const cut = end === -1 ? words.length : end;
+  const split = cut > 0 && cut < words.length;
   return (
     <View style={styles.cell}>
-      <Text style={head ? styles.cellHead : split ? styles.cellAmharic : styles.cellText}>{split ? first : text}</Text>
-      {split ? <Text style={styles.cellRoman}>{rest.join(' ')}</Text> : null}
+      <Text style={head ? styles.cellHead : split ? styles.cellAmharic : styles.cellText}>{split ? words.slice(0, cut).join(' ') : text}</Text>
+      {split ? <Text style={styles.cellRoman}>{words.slice(cut).join(' ')}</Text> : null}
     </View>
   );
 }

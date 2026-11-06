@@ -3,6 +3,8 @@
 //   the lesson, shown on the lesson page after its phrases.
 // - Word breakdowns: tap a word in a phrase to see the pieces it's built from
 //   (ስምህ = səmm-əh, name-your), so a phrase becomes a pattern you can reuse.
+// - Word families: Amharic builds words from a few shared consonants (a root),
+//   so ገባኝ "I understand", ግባ "come in" and መግቢያ "entrance" are all "enter".
 //
 // Shared by the website and the phone app. Everything here should be checked
 // by a native speaker before it goes out: a wrong rule teaches a wrong habit.
@@ -18,6 +20,18 @@ export type GrammarCard = {
   /** Lines from the lesson that show the rule. */
   examples: { amharic: string; transliteration: string; english: string }[];
   /** An extra hint, e.g. how it connects to an earlier lesson. */
+  tip?: string;
+};
+
+/** Words built from the same consonants, shown in the lesson where one of them first comes up. */
+export type WordFamily = {
+  /** The plain past “he …” form the family is named after. */
+  word: string;
+  roman: string;
+  meaning: string;
+  /** The consonants the words share. */
+  root: string;
+  members: { amharic: string; transliteration: string; english: string }[];
   tip?: string;
 };
 
@@ -1012,6 +1026,246 @@ const CARDS: Record<string, GrammarCard[]> = {
       ],
       examples: [{ amharic: 'በጣም ደስ የሚል ነበር!', transliteration: 'betam des yemil neber!', english: 'It was really lovely!' }],
       tip: 'እንደገና (indegena) means “again”: እንደገና መሄድ እፈልጋለሁ, “I want to go again”.',
+    },
+  ],
+};
+
+/** Word families by lesson: "<course slug>:<lesson index>". */
+const FAMILIES: Record<string, WordFamily[]> = {
+  'amharic-beginner-1:0': [
+    {
+      word: 'ሰላም',
+      roman: 'selam',
+      meaning: 'peace',
+      root: 's · l · m',
+      members: [
+        { amharic: 'ሰላም', transliteration: 'selam', english: 'peace; hello' },
+        { amharic: 'ሰላምታ', transliteration: 'selamta', english: 'a greeting' },
+        { amharic: 'በሰላም', transliteration: 'beselam', english: 'in peace, safely' },
+      ],
+      tip: 'Arabic salaam and Hebrew shalom come from the same old root.',
+    },
+  ],
+  'amharic-beginner-1:3': [
+    {
+      word: 'ገባ',
+      roman: 'geba',
+      meaning: 'he entered',
+      root: 'g · b',
+      members: [
+        { amharic: 'ገባኝ', transliteration: 'gebagn', english: 'I understand (it entered me)' },
+        { amharic: 'ግባ', transliteration: 'giba', english: 'come in! (to a man)' },
+        { amharic: 'መግቢያ', transliteration: 'megbiya', english: 'entrance' },
+      ],
+    },
+  ],
+  'amharic-beginner-1:5': [
+    {
+      word: 'ተቀመጠ',
+      roman: 'teqemete',
+      meaning: 'he sat down',
+      root: 'q · m · t',
+      members: [
+        { amharic: 'ተቀመጥ', transliteration: 'teqemet', english: 'sit down! (to a man)' },
+        { amharic: 'ይቀመጡ', transliteration: 'yiqemetu', english: 'please sit (polite)' },
+        { amharic: 'መቀመጫ', transliteration: 'meqemecha', english: 'a seat' },
+      ],
+    },
+  ],
+  'amharic-beginner-2:0': [
+    {
+      word: 'ቆጠረ',
+      roman: 'qotere',
+      meaning: 'he counted',
+      root: 'q · t · r',
+      members: [
+        { amharic: 'ቁጥር', transliteration: 'qutir', english: 'number' },
+        { amharic: 'መቁጠር', transliteration: 'mequter', english: 'to count' },
+        { amharic: 'አቆጣጠር', transliteration: 'aqotater', english: 'calendar (way of counting)' },
+      ],
+    },
+  ],
+  'amharic-beginner-2:2': [
+    {
+      word: 'ተናገረ',
+      roman: 'tenagere',
+      meaning: 'he spoke',
+      root: 'n · g · r',
+      members: [
+        { amharic: 'ተናገር', transliteration: 'tenager', english: 'speak! (to a man)' },
+        { amharic: 'ነገረ', transliteration: 'negere', english: 'he told' },
+        { amharic: 'ንግግር', transliteration: 'niggigir', english: 'a speech, a conversation' },
+        { amharic: 'ነገር', transliteration: 'neger', english: 'a thing, a matter' },
+      ],
+    },
+  ],
+  'amharic-beginner-3:1': [
+    {
+      word: 'ፈለገ',
+      roman: 'felege',
+      meaning: 'he wanted, looked for',
+      root: 'f · l · g',
+      members: [
+        { amharic: 'እፈልጋለሁ', transliteration: 'ifeligalehu', english: 'I want' },
+        { amharic: 'ፍላጎት', transliteration: 'filagot', english: 'a need, a wish' },
+        { amharic: 'ፍለጋ', transliteration: 'filliga', english: 'a search' },
+      ],
+    },
+  ],
+  'amharic-beginner-3:3': [
+    {
+      word: 'ወደደ',
+      roman: 'wedede',
+      meaning: 'he loved, liked',
+      root: 'w · d · d',
+      members: [
+        { amharic: 'ውድ', transliteration: 'wid', english: 'expensive; dear' },
+        { amharic: 'ወዳጅ', transliteration: 'wedaj', english: 'a close friend' },
+        { amharic: 'እወዳለሁ', transliteration: 'iwedalehu', english: 'I like, I love' },
+      ],
+      tip: 'Something ውድ is “dear” both ways, like in English: it costs a lot, or it’s loved.',
+    },
+    {
+      word: 'ገዛ · ሸጠ',
+      roman: 'geza · shete',
+      meaning: 'he bought · he sold',
+      root: 'g · z  and  sh · t',
+      members: [
+        { amharic: 'ገዢ', transliteration: 'gezhi', english: 'a buyer' },
+        { amharic: 'ግዢ', transliteration: 'gizhi', english: 'shopping, a purchase' },
+        { amharic: 'ሻጭ', transliteration: 'shach', english: 'a seller' },
+      ],
+    },
+  ],
+  'amharic-beginner-4:4': [
+    {
+      word: 'ተማረ',
+      roman: 'temare',
+      meaning: 'he learned',
+      root: 'm · h · r',
+      members: [
+        { amharic: 'ተማሪ', transliteration: 'temari', english: 'a student' },
+        { amharic: 'መምህር', transliteration: 'memhir', english: 'a teacher' },
+        { amharic: 'ትምህርት', transliteration: 'timhirt', english: 'a lesson, education' },
+        { amharic: 'ትምህርት ቤት', transliteration: 'timhirt bet', english: 'school (learning house)' },
+      ],
+    },
+  ],
+  'amharic-beginner-5:0': [
+    {
+      word: 'ሠራ',
+      roman: 'serra',
+      meaning: 'he worked, made',
+      root: 's · r',
+      members: [
+        { amharic: 'ሥራ', transliteration: 'sira', english: 'work, a job' },
+        { amharic: 'ሠራተኛ', transliteration: 'serategna', english: 'a worker' },
+        { amharic: 'መሥሪያ ቤት', transliteration: 'mesriya bet', english: 'an office (work house)' },
+      ],
+    },
+    {
+      word: 'ጠጣ',
+      roman: 'tetta',
+      meaning: 'he drank',
+      root: 't · t',
+      members: [
+        { amharic: 'ጠጣሁ', transliteration: 'tetahu', english: 'I drank' },
+        { amharic: 'መጠጥ', transliteration: 'metet', english: 'a drink' },
+        { amharic: 'ቡና ጠጡ', transliteration: 'buna tetu', english: 'come have coffee!' },
+      ],
+    },
+  ],
+  'amharic-beginner-5:3': [
+    {
+      word: 'ከፈለ',
+      roman: 'keffele',
+      meaning: 'he divided; he paid',
+      root: 'k · f · l',
+      members: [
+        { amharic: 'ክፍል', transliteration: 'kifil', english: 'a room, a part, a class' },
+        { amharic: 'መክፈል', transliteration: 'mekfel', english: 'to pay' },
+        { amharic: 'ክፍያ', transliteration: 'kiffiya', english: 'a payment' },
+      ],
+      tip: 'A room is a part of a house, and paying is handing over your part: both come from “divide”.',
+    },
+  ],
+  'amharic-beginner-7:3': [
+    {
+      word: 'ወለደ',
+      roman: 'welede',
+      meaning: 'she gave birth, he fathered',
+      root: 'w · l · d',
+      members: [
+        { amharic: 'ልደት', transliteration: 'lidet', english: 'birth; birthday' },
+        { amharic: 'ልጅ', transliteration: 'lij', english: 'a child' },
+        { amharic: 'ወላጅ', transliteration: 'welaj', english: 'a parent' },
+      ],
+      tip: 'ገና (Christmas) is also called ልደት: the Birth.',
+    },
+  ],
+  'amharic-beginner-8:4': [
+    {
+      word: 'ታመመ',
+      roman: 'tammeme',
+      meaning: 'he got sick',
+      root: 'h · m · m',
+      members: [
+        { amharic: 'ሕመም', transliteration: 'himem', english: 'pain, illness' },
+        { amharic: 'ያመኛል', transliteration: 'yamegnal', english: 'it hurts me' },
+        { amharic: 'ታማሚ', transliteration: 'tamami', english: 'a sick person, a patient' },
+      ],
+    },
+  ],
+  'amharic-beginner-9:1': [
+    {
+      word: 'ደረሰ',
+      roman: 'derese',
+      meaning: 'he arrived, reached',
+      root: 'd · r · s',
+      members: [
+        { amharic: 'ደረሰኝ', transliteration: 'deresegn', english: 'a receipt (“it reached me”)' },
+        { amharic: 'መድረሻ', transliteration: 'medresha', english: 'a destination' },
+        { amharic: 'እንኳን አደረሳችሁ', transliteration: 'inkwan aderesachihu', english: 'happy holiday (glad it brought you to it)' },
+      ],
+    },
+  ],
+  'amharic-beginner-9:4': [
+    {
+      word: 'ጠየቀ',
+      roman: 'teyyeqe',
+      meaning: 'he asked',
+      root: 't · y · q',
+      members: [
+        { amharic: 'ጥያቄ', transliteration: 'tiyaqe', english: 'a question' },
+        { amharic: 'መጠየቅ', transliteration: 'meteyeq', english: 'to ask; to visit someone who’s sick' },
+        { amharic: 'ልጠይቅህ', transliteration: 'litiyiqih', english: 'so I can ask after you (to a man)' },
+      ],
+    },
+  ],
+  'amharic-beginner-10:0': [
+    {
+      word: 'ባረከ',
+      roman: 'barreke',
+      meaning: 'he blessed',
+      root: 'b · r · k',
+      members: [
+        { amharic: 'በረከት', transliteration: 'bereket', english: 'a blessing' },
+        { amharic: 'ይባርካችሁ', transliteration: 'yibarkachihu', english: 'may (God) bless you all' },
+        { amharic: 'በረካ', transliteration: 'bereka', english: 'the third round of coffee' },
+      ],
+      tip: 'The coffee ceremony’s last round, በረካ, is the round of blessing. Now you know why leaving early is rude!',
+    },
+  ],
+  'amharic-beginner-11:4': [
+    {
+      word: 'ተጓዘ',
+      roman: 'tegwaze',
+      meaning: 'he travelled',
+      root: 'g · w · z',
+      members: [
+        { amharic: 'ጉዞ', transliteration: 'guzo', english: 'a trip, a journey' },
+        { amharic: 'ተጓዥ', transliteration: 'tegwazh', english: 'a traveller' },
+      ],
     },
   ],
 };
@@ -2145,6 +2399,10 @@ const PUNCTUATION = /[።፣፤፥፦፧?!.,…]/g;
 
 export function grammarFor(slug: string, lessonIndex: number): GrammarCard[] {
   return CARDS[`${slug}:${lessonIndex}`] ?? [];
+}
+
+export function familiesFor(slug: string, lessonIndex: number): WordFamily[] {
+  return FAMILIES[`${slug}:${lessonIndex}`] ?? [];
 }
 
 /** The pieces of one written word (punctuation ignored), if we know them. */

@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { amharicAudio } from '@/lib/amharicAudio';
 import type { LessonSection, Track } from '@/lib/courses';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
-import { wordsOf, type GrammarCard } from '@/lib/grammar';
+import { wordsOf, type GrammarCard, type WordFamily } from '@/lib/grammar';
 import { feel } from '@/haptics';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
@@ -128,7 +128,33 @@ function LineCard({ line, track }: { line: Line; track: Track }) {
   );
 }
 
-export default function Lesson({ lesson, number, track, grammar = [] }: { lesson: LessonSection; number?: number; track: Track; grammar?: GrammarCard[] }) {
+/** Words built from the same consonants: learn one, guess the rest. */
+function Family({ family }: { family: WordFamily }) {
+  const styles = useStyles();
+  return (
+    <View style={styles.grammar}>
+      <Text style={styles.grammarTitle}>
+        Word family: <Text style={styles.familyWord}>{family.word}</Text> <Text style={styles.familyRoman}>{family.roman}</Text>
+      </Text>
+      <Text style={styles.grammarRule}>
+        These words share the consonants <Text style={styles.familyRoot}>{family.root}</Text>, from “{family.meaning}”. Know one, and you can guess the others.
+      </Text>
+      {family.members.map(m => (
+        <View key={m.amharic} style={styles.example}>
+          <Text style={styles.exampleAmharic}>{m.amharic}</Text>
+          <Text style={styles.exampleText}>
+            <Text style={styles.familyRoot}>{m.transliteration}</Text> · {m.english}
+          </Text>
+        </View>
+      ))}
+      {family.tip ? <Text style={styles.grammarTip}>{family.tip}</Text> : null}
+    </View>
+  );
+}
+
+type LessonProps = { lesson: LessonSection; number?: number; track: Track; grammar?: GrammarCard[]; families?: WordFamily[] };
+
+export default function Lesson({ lesson, number, track, grammar = [], families = [] }: LessonProps) {
   const styles = useStyles();
   return (
     <View style={styles.lesson}>
@@ -138,9 +164,12 @@ export default function Lesson({ lesson, number, track, grammar = [] }: { lesson
       {(lesson.phrases ?? []).map(p => (
         <LineCard key={p.amharic + p.english} line={p} track={track} />
       ))}
-      {grammar.length ? <Text style={styles.subhead}>How it works</Text> : null}
+      {grammar.length || families.length ? <Text style={styles.subhead}>How it works</Text> : null}
       {grammar.map(card => (
         <Grammar key={card.title} card={card} />
+      ))}
+      {families.map(family => (
+        <Family key={family.word} family={family} />
       ))}
       {lesson.dialogue?.length ? <Text style={styles.subhead}>Conversation</Text> : null}
       {(lesson.dialogue ?? []).map((d, i) => (
@@ -193,5 +222,8 @@ const useStyles = makeStyles(c => ({
   example: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, backgroundColor: c.bgSoft },
   exampleAmharic: { fontFamily: fonts.amharicBold, fontSize: 18, lineHeight: 26, color: c.ink },
   exampleText: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
+  familyWord: { fontFamily: fonts.amharicBold },
+  familyRoman: { fontFamily: fonts.bold, fontSize: 15, color: c.muted },
+  familyRoot: { fontFamily: fonts.heavy, color: c.primary },
   grammarTip: { padding: 12, borderRadius: 12, overflow: 'hidden', backgroundColor: c.primarySoft, fontFamily: fonts.bold, fontSize: 14, lineHeight: 20, color: c.ink },
 }));

@@ -2405,6 +2405,53 @@ a.camp-banner:active {
   color: var(--text-muted);
 }
 
+/* a word family: the shared consonants, then each word built from them */
+.family-card h4 small {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.family-card p b {
+  color: var(--primary);
+}
+
+.family-members {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.family-members li {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background-color: var(--bg-soft);
+}
+
+.family-members span {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.family-members small {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.family-members em {
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
 .grammar-card .grammar-tip {
   padding: 10px 12px;
   border-radius: 12px;

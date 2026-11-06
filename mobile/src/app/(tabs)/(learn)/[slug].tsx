@@ -2,7 +2,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { courseCatalog, courseContent } from '@/lib/courses';
-import { grammarFor } from '@/lib/grammar';
+import { familiesFor, grammarFor } from '@/lib/grammar';
 import Lesson from '@/components/lesson';
 import { campColors, fonts, makeStyles } from '@/theme';
 
@@ -30,7 +30,14 @@ export default function Camp() {
           <Text style={styles.bannerTitle}>{camp.description}</Text>
         </View>
         {shown.map(i => (
-          <Lesson key={i} lesson={course.sections[i]} number={i + 1} track={camp.track} grammar={camp.track === 'amharic' ? grammarFor(slug, i) : []} />
+          <Lesson
+            key={i}
+            lesson={course.sections[i]}
+            number={i + 1}
+            track={camp.track}
+            grammar={camp.track === 'amharic' ? grammarFor(slug, i) : []}
+            families={camp.track === 'amharic' ? familiesFor(slug, i) : []}
+          />
         ))}
       </ScrollView>
       {one !== null ? (

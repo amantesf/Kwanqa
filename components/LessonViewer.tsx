@@ -9,7 +9,7 @@ import Trail from '@/components/Trail';
 import { hornLevel, isDone, useClimb } from '@/lib/climb';
 import { reviewSession, useMistakes } from '@/lib/mistakes';
 import type { LessonSection, Track } from '@/lib/courses';
-import { grammarFor, wordsOf, type GrammarCard } from '@/lib/grammar';
+import { familiesFor, grammarFor, wordsOf, type GrammarCard, type WordFamily } from '@/lib/grammar';
 import { pictureFor } from '@/lib/pictures';
 
 type Props = {
@@ -96,8 +96,32 @@ function TableCell({ text }: { text: string }) {
   );
 }
 
-/** "How it works": one grammar rule, a small table and examples from the lesson. */
-function GrammarCards({ cards }: { cards: GrammarCard[] }) {
+/** Words built from the same consonants: learn one, guess the rest. */
+function FamilyCard({ family }: { family: WordFamily }) {
+  return (
+    <section className="grammar-card family-card">
+      <h4>
+        Word family: <span lang="am">{family.word}</span> <small>{family.roman}</small>
+      </h4>
+      <p>
+        These words share the consonants <b>{family.root}</b>, from “{family.meaning}”. Know one, and you can guess the others.
+      </p>
+      <ul className="family-members">
+        {family.members.map(m => (
+          <li key={m.amharic}>
+            <span lang="am">{m.amharic}</span>
+            <small>{m.transliteration}</small>
+            <em>{m.english}</em>
+          </li>
+        ))}
+      </ul>
+      {family.tip && <p className="grammar-tip">{family.tip}</p>}
+    </section>
+  );
+}
+
+/** "How it works": the lesson's grammar rules, then its word families. */
+function GrammarCards({ cards, families }: { cards: GrammarCard[]; families: WordFamily[] }) {
   return (
     <div className="stack">
       <h3 className="h3">How it works</h3>
@@ -145,6 +169,9 @@ function GrammarCards({ cards }: { cards: GrammarCard[] }) {
           </ul>
           {card.tip && <p className="grammar-tip">{card.tip}</p>}
         </section>
+      ))}
+      {families.map(family => (
+        <FamilyCard key={family.word} family={family} />
       ))}
     </div>
   );
@@ -336,7 +363,9 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
               </div>
             )}
 
-            {track === 'amharic' && grammarFor(slug, active).length > 0 && <GrammarCards cards={grammarFor(slug, active)} />}
+            {track === 'amharic' && grammarFor(slug, active).length + familiesFor(slug, active).length > 0 && (
+              <GrammarCards cards={grammarFor(slug, active)} families={familiesFor(slug, active)} />
+            )}
 
             {lesson.dialogue && (
               <div className="stack">

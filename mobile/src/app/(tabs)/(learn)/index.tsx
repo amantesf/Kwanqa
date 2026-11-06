@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useEffect, useRef, useState, type ComponentRef } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { BASE_ALTITUDE, climbStreak, hornLevel, isDone, nextLesson, startCamp, SUMMIT_ALTITUDE, trackCourses, useClimb, zoneForCamp } from '@/lib/climb';
 import { courseContent, type Track } from '@/lib/courses';
-import { pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
+import { dueForPractice, pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
 import CampArt from '@/components/camp-art';
@@ -217,6 +218,28 @@ export default function Trail() {
         </View>
       </View>
       <OfflineNote />
+      {/* spaced practice of the questions you got wrong, when some are due */}
+      {(() => {
+        const due = dueForPractice(mistakes, camps.map(c => c.slug)).length;
+        if (!due) return null;
+        return (
+          <Pressable
+            onPress={() => router.push({ pathname: '/practice', params: { practice: '1', track } })}
+            accessibilityRole="button"
+            accessibilityLabel={`Practise your mistakes: ${Math.min(due, REVIEW_SIZE)} ready`}
+            style={({ pressed }) => [styles.practice, pressed && styles.practiceDown]}
+          >
+            <SymbolView name={{ ios: 'arrow.triangle.2.circlepath', android: 'sync', web: 'sync' }} tintColor="#8e5cc4" size={22} />
+            <View style={styles.flex}>
+              <Text style={styles.practiceTitle}>Practise your mistakes</Text>
+              <Text style={styles.practiceText}>
+                {Math.min(due, REVIEW_SIZE)} ready · they come back until you’ve got them for good
+              </Text>
+            </View>
+            <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor="#8e5cc4" size={16} />
+          </Pressable>
+        );
+      })()}
 
       {/* what a lesson teaches, over the stone you tapped */}
       <StoneCard
@@ -417,6 +440,10 @@ const useStyles = makeStyles(c => ({
   grassText: { color: '#3a9a28' },
   hornText: { color: '#843a18' },
   safe: { flex: 1, backgroundColor: c.bg },
+  practice: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 12, marginTop: 10, paddingVertical: 10, paddingHorizontal: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: '#e2cdf6', backgroundColor: '#f7f0fd' },
+  practiceDown: { borderBottomWidth: 2, marginTop: 12 },
+  practiceTitle: { fontFamily: fonts.black, fontSize: 15, color: '#6b3f9e' },
+  practiceText: { fontFamily: fonts.bold, fontSize: 13, color: c.muted },
   flex: { flex: 1 },
   top: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 2, borderBottomColor: c.line, backgroundColor: c.bg },
   course: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 4, paddingHorizontal: 6, borderRadius: 10 },

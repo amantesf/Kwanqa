@@ -6,14 +6,14 @@ import Animated, { Easing, FadeInDown, useAnimatedStyle, useSharedValue, withSeq
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { amharicAudio } from '@/lib/amharicAudio';
-import { completeLesson, completeReview, REST_COST, spendGrass, useClimb } from '@/lib/climb';
+import { completeLesson, completeReview, REST_COST, spendGrass, trackCourses, useClimb } from '@/lib/climb';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
 import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
 import { interactiveQuestions, typedRight, type ChatExercise, type OrderExercise, type SpeakExercise, type TypeExercise } from '@/lib/interactive';
 import { traceQuestion, type TraceExercise } from '@/lib/letterLessons';
-import { fixMistakes, readMistakes, recordMistake, reviewSession } from '@/lib/mistakes';
+import { fixMistakes, practiceSession, readMistakes, recordMistake, reviewSession, settlePractice } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import { play, playEffect } from '@/components/sound';
 import { feel } from '@/haptics';
@@ -37,7 +37,8 @@ import { learnerName, personalizeChat } from '@/lib/learnerName';
 // back at the end; a mistake costs a hoof of stamina and three right answers in
 // a row win one back. Finishing earns grass and marks the stone done, and
 // wrong answers are saved for the camp's review (lib/climb.ts, lib/mistakes.ts),
-// all the same as on the website. With review=1 it asks those saved questions.
+// all the same as on the website. With review=1 it asks those saved questions;
+// with practice=1 (and track), the ones due for spaced practice across the course.
 
 /**
  * A question in a lesson: the shared kinds, plus the ones from the website's
@@ -232,8 +233,10 @@ export default function Practice() {
   const styles = useStyles();
   const topInset = useTopInset();
   const colors = useColors();
-  const params = useLocalSearchParams<{ slug?: string; lesson?: string; review?: string; holiday?: string; track?: Track }>();
-  const review = params.review === '1';
+  const params = useLocalSearchParams<{ slug?: string; lesson?: string; review?: string; practice?: string; holiday?: string; track?: Track }>();
+  // personal practice is a review too, just across every camp of the course
+  const practice = params.practice === '1';
+  const review = params.review === '1' || practice;
   // A holiday's lesson is saved as "holiday-<id>-<track>", as on the website.
   const holiday = params.holiday ? holidayById(params.holiday) : null;
   const holidayTrack: Track = params.track === 'english' ? 'english' : 'amharic';
@@ -241,7 +244,7 @@ export default function Practice() {
   const lessonIndex = holiday ? 0 : Number(params.lesson ?? 0);
   const lessons = holiday ? [holiday.lessons[holidayTrack]] : (courseContent[slug]?.sections ?? []);
   const lesson = lessons[lessonIndex];
-  const track: Track = holiday ? holidayTrack : (courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic');
+  const track: Track = holiday || practice ? holidayTrack : (courseCatalog.find(c => c.slug === slug)?.track ?? 'amharic');
   const ui = uiText(track);
   // What the learner said they know in the survey sets how hard the questions are.
   const level = useProfile()?.levels[track];
@@ -252,6 +255,7 @@ export default function Practice() {
 
   // a review asks the camp's saved mistakes instead of a lesson's own questions
   const [session] = useState<{ exercises: Question[]; keys: string[] }>(() => {
+    if (practice) return practiceSession(readMistakes(), trackCourses(track).map(c => c.slug));
     if (review) return reviewSession(readMistakes()[slug] ?? []);
     if (!lesson) return { exercises: [], keys: [] };
     const canHear = (text: string) => (track === 'english' ? isSpeakableEnglish(text) : !!amharicAudio(text));
@@ -415,7 +419,9 @@ export default function Practice() {
     // every question was answered correctly once, plus each wrong try along the way
     const work = { answers: initial.length + mistakes, correct: initial.length, seconds: (Date.now() - startedAt) / 1000 };
     if (review) {
-      fixMistakes(slug, session.keys);
+      // personal practice spaces each question out further; a camp's review puts its questions right
+      if (practice) settlePractice(session.keys, missed);
+      else fixMistakes(slug, session.keys);
       return completeReview(work);
     }
     return completeLesson(slug, lessonIndex, mistakes, work);

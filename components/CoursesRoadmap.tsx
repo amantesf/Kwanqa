@@ -34,7 +34,7 @@ import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
 import Trail, { type StonePreview, type TrailStop } from '@/components/Trail';
 import { courseContent, type LessonSection, type Track } from '@/lib/courses';
-import { pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
+import { dueForPractice, pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mistakes';
 import { useProfile } from '@/lib/profile';
 import {
   altitudeFor,
@@ -565,6 +565,26 @@ export default function CoursesRoadmap() {
             </Link>
           </div>
         )}
+
+        {/* spaced practice of the questions got wrong, when some are due */}
+        {(() => {
+          const due = hydrated ? dueForPractice(mistakeStore, courses.map(c => c.slug)).length : 0;
+          if (!due) return null;
+          return (
+            <div className="rail-card rail-extra">
+              <div className="rail-card-head">
+                <h3 className="rail-title">Practise your mistakes</h3>
+                <span className="rail-note">{Math.min(due, REVIEW_SIZE)} ready</span>
+              </div>
+              <p className="small">
+                Questions you got wrong come back after a day, then 3, 7 and 16 days, until you’ve got them for good.
+              </p>
+              <Link href={`/practice?track=${track}`} className="btn btn-block">
+                Practise now
+              </Link>
+            </div>
+          );
+        })()}
 
         <PassportRailCard track={track} />
 

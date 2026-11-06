@@ -30,6 +30,7 @@ import OfflineNote from '@/components/offline-note';
 import { useTopInset } from '@/safe-top';
 import { useAuth } from '@/auth';
 import { canRecord } from '@/listen';
+import { learnerName, personalizeChat } from '@/lib/learnerName';
 
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
@@ -772,7 +773,7 @@ export default function Practice() {
               ) : current.kind === 'chat' ? (
                 <WaliaChat
                   key={current.id + solved.size + queue.length}
-                  exercise={current}
+                  exercise={track === 'amharic' ? personalizeChat(current, learnerName(user?.user_metadata)) : current}
                   onSay={sayAloud}
                   onMistake={() => {
                     // a wrong reply costs stamina, but the chat carries on:

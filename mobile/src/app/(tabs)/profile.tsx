@@ -13,6 +13,7 @@ import Flag from '@/components/flag';
 import { Grass, Peak } from '@/components/icons';
 import MountainScene from '@/components/mountain-scene';
 import Walia from '@/components/walia';
+import { REMINDER_HOURS, setReminders, useReminders, type ReminderSettings } from '@/reminders';
 import { SITE } from '@/site';
 import { supabase } from '@/supabase';
 import { fonts, makeStyles, tabBarTop, useColors, useThemeSetting, type ThemeSetting } from '@/theme';
@@ -144,6 +145,52 @@ function Appearance() {
           );
         })}
       </View>
+    </View>
+  );
+}
+
+const HOUR_LABELS: Record<number, string> = { 8: '8 am', 12: 'Noon', 19: '7 pm', 21: '9 pm' };
+
+/** Streak reminders on this phone: a notification at the chosen time, only on days without a lesson yet. */
+function PhoneReminders() {
+  const styles = useStyles();
+  const colors = useColors();
+  const settings = useReminders();
+  const [refused, setRefused] = useState(false);
+
+  async function change(next: ReminderSettings) {
+    const ok = await setReminders(next);
+    setRefused(next.on && !ok);
+  }
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.switchRow}>
+        <View style={styles.flex}>
+          <Text style={styles.switchTitle}>Streak reminders</Text>
+          <Text style={styles.switchText}>A nudge on this phone if you haven’t climbed yet that day. Never after you’ve done a lesson.</Text>
+        </View>
+        <Switch
+          value={settings.on}
+          onValueChange={on => void change({ ...settings, on })}
+          trackColor={{ true: colors.primary, false: colors.line }}
+          thumbColor="#ffffff"
+          accessibilityLabel="Streak reminders"
+        />
+      </View>
+      {settings.on ? (
+        <View style={styles.segments} accessibilityRole="radiogroup" accessibilityLabel="Reminder time">
+          {REMINDER_HOURS.map(hour => {
+            const on = settings.hour === hour;
+            return (
+              <Pressable key={hour} onPress={() => void change({ ...settings, hour })} accessibilityRole="radio" accessibilityState={{ selected: on }} style={[styles.segment, on && styles.segmentOn]}>
+                <Text style={[styles.segmentText, on && styles.segmentTextOn]}>{HOUR_LABELS[hour]}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
+      {refused ? <Text style={styles.switchText}>Notifications are off for Kwanqa. Turn them on in your phone’s Settings → Kwanqa → Notifications.</Text> : null}
     </View>
   );
 }
@@ -347,6 +394,7 @@ export default function Profile() {
 
         <Text style={styles.title}>Settings</Text>
         <Appearance />
+        <PhoneReminders />
 
         {user ? (
           <>

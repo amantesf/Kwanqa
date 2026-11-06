@@ -4,9 +4,12 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { AuthProvider } from '@/auth';
 import Intro from '@/components/intro';
+import { useClimb } from '@/lib/climb';
 import { loadProgress } from '@/progress';
+import { scheduleReminders, useReminders } from '@/reminders';
 import { ThemeProvider, useColors, useScheme } from '@/theme';
 
 // keep the splash screen up until the fonts and saved progress are ready
@@ -39,10 +42,27 @@ export default function RootLayout() {
     <ThemeProvider>
       <AuthProvider>
         <Screens />
+        <ReminderScheduler />
         <Intro />
       </AuthProvider>
     </ThemeProvider>
   );
+}
+
+/** Keeps the streak reminders in step: on start, after each lesson, and when the app comes back. */
+function ReminderScheduler() {
+  const days = useClimb().days.join(',');
+  const { on, hour } = useReminders();
+  useEffect(() => {
+    void scheduleReminders();
+  }, [days, on, hour]);
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active') void scheduleReminders();
+    });
+    return () => sub.remove();
+  }, []);
+  return null;
 }
 
 /** Every screen, on the page colour of the theme (light or dark, chosen on Profile). */

@@ -74,6 +74,9 @@ function uiText(track: Track) {
     correctAnswer: both('Correct answer:', 'ትክክለኛው መልስ፡'),
     correctOrder: both('The right order:', 'ትክክለኛው ቅደም ተከተል፡'),
     cantSpeak: both('Can’t speak now', 'አሁን መናገር አልችልም'),
+    safeZone: both('Camp 1 is a safe zone: mistakes don’t cost stamina.', 'ካምፕ 1 ላይ ስህተት ጉልበት አይቀንስም'),
+    breather: both('Catch your breath (free)', 'ትንሽ አረፍ በል (በነፃ)'),
+    breatherNote: both('Out of grass? Walia can catch his breath once per lesson for free.', 'ሳር ከሌለ፣ ዋሊያ በአንድ ትምህርት አንድ ጊዜ በነፃ ያርፋል።'),
     keepPractising: both('Keep practising this one out loud!', 'ይህን ጮክ ብለው መለማመድ ይቀጥሉ!'),
     comeBack: both('This one will come back later.', 'ይህ ጥያቄ እንደገና ይመጣል።'),
     previous: both('Previous mistake', 'ያለፈው ስህተት'),
@@ -243,6 +246,9 @@ export default function Practice() {
   // What the learner said they know in the survey sets how hard the questions are.
   const level = useProfile()?.levels[track];
   const { user, enabled: accountsEnabled } = useAuth();
+  // Camp 1 is a safe zone, as on the website: mistakes there never cost
+  // stamina, so a brand-new learner can't get stuck in their first lessons.
+  const firstCamp = !holiday && courseCatalog.find(c => c.slug === slug)?.part === 1;
 
   // a review asks the camp's saved mistakes instead of a lesson's own questions
   const [session] = useState<{ exercises: Question[]; keys: string[] }>(() => {
@@ -265,7 +271,6 @@ export default function Practice() {
     // round, as on the website, with speaking early on. (Beginners in Camp 1
     // don't type or order yet.) Speaking needs an iPhone's microphone and,
     // with accounts on, a signed-in learner (the listening service is for learners).
-    const firstCamp = !holiday && courseCatalog.find(c => c.slug === slug)?.part === 1;
     const speaking = canRecord && (!accountsEnabled || !!user) && !speakingPaused();
     const place = { speak: 0.3, type: 0.5, order: 0.7, chat: 1 };
     for (const q of interactiveQuestions(lesson, lessons, track, { level, canHear, speaking, firstCamp })) {
@@ -293,6 +298,7 @@ export default function Practice() {
   const [picked, setPicked] = useState<number[]>([]);
   const [typed, setTyped] = useState(''); // "Type what you hear"
   const [soft, setSoft] = useState(false); // "Speak this" didn't match twice: no stamina lost
+  const [breatherUsed, setBreatherUsed] = useState(false); // one free rest per lesson
   const [lastCorrect, setLastCorrect] = useState(true);
   const [reaction, setReaction] = useState<'slip' | 'hop' | null>(null);
 
@@ -355,7 +361,7 @@ export default function Practice() {
     setMistakes(m => m + 1);
     setStreak(0);
     setReaction('slip');
-    setStamina(s => Math.max(0, s - 1));
+    if (!firstCamp) setStamina(s => Math.max(0, s - 1));
   }
 
   function gainStreak() {
@@ -533,24 +539,40 @@ export default function Practice() {
         <Text style={styles.doneTitle}>{ui.restTitle}</Text>
         <Text style={styles.restText}>{ui.restText}</Text>
         <View style={styles.doneButton}>
-          <Button
-            label={ui.eat(REST_COST)}
-            disabled={climb.grass < REST_COST}
-            onPress={() => {
-              if (spendGrass(REST_COST)) {
+          {climb.grass >= REST_COST || breatherUsed ? (
+            <Button
+              label={ui.eat(REST_COST)}
+              disabled={climb.grass < REST_COST}
+              onPress={() => {
+                if (spendGrass(REST_COST)) {
+                  setStamina(MAX_STAMINA);
+                  setPhase('question');
+                }
+              }}
+            />
+          ) : (
+            // out of grass too: never a dead end. Once per lesson, Walia rests for free
+            <Button
+              label={ui.breather}
+              onPress={() => {
+                setBreatherUsed(true);
                 setStamina(MAX_STAMINA);
                 setPhase('question');
-              }
-            }}
-          />
+              }}
+            />
+          )}
           <Button label={ui.review} tone="plain" onPress={exit} />
         </View>
-        <View style={styles.statRow}>
-          <Grass size={18} />
-          <Text style={styles.grassLeft}>
-            You have {climb.grass} grass{climb.grass >= REST_COST ? '' : '. Finish lessons to earn more'}.
-          </Text>
-        </View>
+        {climb.grass < REST_COST && !breatherUsed ? (
+          <Text style={[styles.grassLeft, styles.breatherNote]}>{ui.breatherNote}</Text>
+        ) : (
+          <View style={styles.statRow}>
+            <Grass size={18} />
+            <Text style={styles.grassLeft}>
+              You have {climb.grass} grass{climb.grass >= REST_COST ? '' : '. Finish lessons to earn more'}.
+            </Text>
+          </View>
+        )}
       </SafeAreaView>
     );
   }
@@ -804,7 +826,7 @@ export default function Practice() {
                   onMistake={() => {
                     playEffect('wrong');
                     loseStamina();
-                    if (stamina <= 1) setPhase('rest');
+                    if (!firstCamp && stamina <= 1) setPhase('rest');
                   }}
                   onSolved={solveMatch}
                 />
@@ -859,7 +881,11 @@ export default function Practice() {
             </>
           ) : (
             <>
-              {streak > 0 ? <Text style={styles.streak}>{ui.inARow(streak, STREAK_TO_RECOVER - streak)}</Text> : null}
+              {firstCamp ? (
+              <Text style={styles.streak}>{ui.safeZone}</Text>
+            ) : streak > 0 ? (
+              <Text style={styles.streak}>{ui.inARow(streak, STREAK_TO_RECOVER - streak)}</Text>
+            ) : null}
               {current.kind === 'trace' ? (
                 // skip writing (on a bus with one hand, say), like on the website
                 <Button label="Skip" tone="plain" onPress={solveMatch} />
@@ -964,6 +990,7 @@ const useStyles = makeStyles(c => ({
   statHead: { alignSelf: 'stretch', textAlign: 'center', paddingVertical: 4, fontFamily: fonts.black, fontSize: 13, color: '#ffffff', textTransform: 'uppercase' },
   statRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   grassLeft: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
+  breatherNote: { maxWidth: 320, textAlign: 'center', lineHeight: 20 },
   statValue: { fontFamily: fonts.black, fontSize: 24, paddingVertical: 10 },
   doneNote: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.ink, backgroundColor: c.primarySoft, padding: 14, borderRadius: 16, overflow: 'hidden', maxWidth: 420 },
   doneButton: { alignSelf: 'stretch', gap: 10, maxWidth: 420, width: '100%', marginTop: 8 },

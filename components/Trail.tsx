@@ -493,14 +493,21 @@ export default function Trail({
           const won = stop.state === 'done';
           return (
             <div key={stop.title} className="trail-stop" style={{ top: rowOf(i) * ROW, left: WIDTH / 2 + offset }}>
-              <span
-                className={`stone trophy ${won ? 'done' : 'locked'}`}
-                role="img"
-                aria-label={won ? `${label} (earned)` : `${label} (finish the camp to earn it)`}
-                title={won ? 'Camp complete!' : 'Finish every lesson in this camp to win the trophy'}
-              >
-                <TrophyIcon won={won} />
-              </span>
+              {won && stop.onSelect ? (
+                // a won trophy opens the camp's recap
+                <button type="button" className="stone trophy done" onClick={stop.onSelect} aria-label={`${label}: see what you learned`} title="Camp complete! See what you learned">
+                  <TrophyIcon won />
+                </button>
+              ) : (
+                <span
+                  className={`stone trophy ${won ? 'done' : 'locked'}`}
+                  role="img"
+                  aria-label={won ? `${label} (earned)` : `${label} (finish the camp to earn it)`}
+                  title={won ? 'Camp complete!' : 'Finish every lesson in this camp to win the trophy'}
+                >
+                  <TrophyIcon won={won} />
+                </span>
+              )}
             </div>
           );
         }

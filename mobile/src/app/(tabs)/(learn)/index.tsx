@@ -10,6 +10,7 @@ import { dueForPractice, pendingCount, REVIEW_SIZE, useMistakes } from '@/lib/mi
 import { switchTrack, useProfile } from '@/lib/profile';
 import { Grass, Peak } from '@/components/icons';
 import CampArt from '@/components/camp-art';
+import CampRecap from '@/components/camp-recap';
 import Flag from '@/components/flag';
 import Mountain, { mountainHalfWidth, type MountainCamp } from '@/components/mountain';
 import { StampCelebration } from '@/components/passport';
@@ -76,6 +77,8 @@ export default function Trail() {
   const scrolledFor = useRef<string | null>(null);
   const stoneViews = useRef<Record<string, ComponentRef<typeof View> | null>>({});
   const [preview, setPreview] = useState<Preview | null>(null);
+  // the camp whose recap ("I can …") is open, from its trophy
+  const [recapCamp, setRecapCamp] = useState<number | null>(null);
 
   // Questions missed in a camp are asked again before the next camp opens.
   const lessonsOf = (slug: string) => courseContent[slug]?.sections ?? [];
@@ -128,7 +131,15 @@ export default function Trail() {
       });
     }
     // a trophy marks the top of every camp
-    stops.push({ key: `${camp.slug}:trophy`, kind: 'trophy', state: campDone(camp.slug) && pending === 0 ? 'done' : 'locked', label: `Camp ${campIdx + 1} trophy` });
+    const won = campDone(camp.slug) && pending === 0;
+    stops.push({
+      key: `${camp.slug}:trophy`,
+      kind: 'trophy',
+      state: won ? 'done' : 'locked',
+      label: won ? `Camp ${campIdx + 1} trophy: see what you learned` : `Camp ${campIdx + 1} trophy`,
+      // a won trophy opens the camp's recap
+      open: won ? () => setRecapCamp(campIdx) : undefined,
+    });
     return stops;
   }
 
@@ -192,6 +203,7 @@ export default function Trail() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       {/* "New stamp!" when a camp is finished */}
       <StampCelebration track={track} />
+      {recapCamp !== null && camps[recapCamp] ? <CampRecap slug={camps[recapCamp].slug} camp={recapCamp + 1} track={track} onClose={() => setRecapCamp(null)} /> : null}
       {/* one row like the website's top stats: the course, then streak, grass and horns */}
       <View style={styles.top}>
         <Pressable onPress={() => setPicking(true)} style={styles.course} accessibilityLabel={`Course: ${current.label}. Change course`} accessibilityRole="button">

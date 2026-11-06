@@ -4,6 +4,7 @@ import type { Track } from '@/lib/courses';
 import { pendingCount, useMistakes } from '@/lib/mistakes';
 import { campComplete, stampsFor, type Stamp } from '@/lib/passport';
 import { markSeen, readSeen, writeSeen } from '@/lib/stampsSeen';
+import CampRecap from '@/components/camp-recap';
 import StampReveal from '@/components/stamp-reveal';
 
 // The Kwanqa passport, like the website's (components/Passport.tsx): a stamp
@@ -28,6 +29,8 @@ const seenKey = (track: Track, e: PassportEntry) => `${track}:${e.slug}`;
 export function StampCelebration({ track }: { track: Track }) {
   const entries = usePassport(track);
   const [showing, setShowing] = useState<PassportEntry | null>(null);
+  // after the stamp: what the camp taught ("I can …")
+  const [recap, setRecap] = useState<PassportEntry | null>(null);
   const earnedKeys = entries.filter(e => e.earned).map(e => seenKey(track, e));
   const earnedSig = earnedKeys.join('|');
 
@@ -45,6 +48,7 @@ export function StampCelebration({ track }: { track: Track }) {
     // a new stamp appears only when progress changes
   }, [earnedSig, track]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (recap) return <CampRecap slug={recap.slug} camp={recap.camp} track={track} onClose={() => setRecap(null)} />;
   if (!showing) return null;
   return (
     <StampReveal
@@ -53,6 +57,7 @@ export function StampCelebration({ track }: { track: Track }) {
       track={track}
       onClose={() => {
         markSeen([seenKey(track, showing)]);
+        setRecap(showing);
         setShowing(null);
       }}
     />

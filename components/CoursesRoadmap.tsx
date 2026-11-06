@@ -30,6 +30,7 @@ const CAMP_ART: Record<string, 'numbers' | 'cup' | 'taxi' | 'friends' | 'elder'>
 };
 import Mascot from '@/components/Mascot';
 import { PassportRailCard, StampCelebration } from '@/components/Passport';
+import CampRecap from '@/components/CampRecap';
 import ClimbMountain from '@/components/ClimbMountain';
 import TopStats from '@/components/TopStats';
 import Trail, { type StonePreview, type TrailStop } from '@/components/Trail';
@@ -136,6 +137,8 @@ export default function CoursesRoadmap() {
   const { enabled, user } = useAuth();
   const guest = enabled && !user; // took the survey but hasn't made an account yet
   const [waliaVisible, setWaliaVisible] = useState(true);
+  // the camp whose recap ("I can …") is open, from its trophy
+  const [recapCamp, setRecapCamp] = useState<number | null>(null);
   // The camp the learner is scrolled to; null until the page scrolls.
   const [viewCamp, setViewCamp] = useState<number | null>(null);
 
@@ -472,6 +475,7 @@ export default function CoursesRoadmap() {
             title: `Camp ${campIdx + 1} trophy`,
             kind: 'trophy',
             state: campDone && pending === 0 ? 'done' : 'locked',
+            onSelect: campDone && pending === 0 ? () => setRecapCamp(campIdx) : undefined,
           });
 
           return (
@@ -644,6 +648,9 @@ export default function CoursesRoadmap() {
       </aside>
 
       <StampCelebration track={track} />
+      {recapCamp !== null && courses[recapCamp] && (
+        <CampRecap slug={courses[recapCamp].slug} camp={recapCamp + 1} track={track} onClose={() => setRecapCamp(null)} />
+      )}
 
       {!waliaVisible && (next || blocking) && (
         <button type="button" className="jump-walia" onClick={() => scrollToWalia('smooth')}>

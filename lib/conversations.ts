@@ -98,8 +98,8 @@ export const conversations: Conversation[] = [
       },
       {
         walia: {
-          m: { amharic: 'አማርኛ ትናገራለህ?', transliteration: 'amarigna tinageraleh?', english: 'Do you speak Amharic?' },
-          f: { amharic: 'አማርኛ ትናገሪያለሽ?', transliteration: 'amarigna tinageriyalesh?', english: 'Do you speak Amharic?' },
+          m: { amharic: 'አማርኛ ትናገራለህ ወይ?', transliteration: 'amarigna tinageraleh wey?', english: 'Do you speak Amharic?' },
+          f: { amharic: 'አማርኛ ትናገሪያለሽ ወይ?', transliteration: 'amarigna tinageriyalesh wey?', english: 'Do you speak Amharic?' },
         },
         goal: 'Say whether they speak Amharic (yes, a little, or no are all fine).',
         answers: [

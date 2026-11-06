@@ -230,8 +230,8 @@ export const courseContent: Record<string, Course> = {
         dialogue: [
           {
             speaker: 'A',
-            amharic: 'አማርኛ ትናገራለህ?',
-            transliteration: 'amarigna tinageraleh?',
+            amharic: 'አማርኛ ትናገራለህ ወይ?',
+            transliteration: 'amarigna tinageraleh wey?',
             english: 'Do you speak Amharic? (to a man)',
           },
           {

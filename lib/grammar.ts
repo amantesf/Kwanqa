@@ -105,7 +105,7 @@ const CARDS: Record<string, GrammarCard[]> = {
         ['she', 'ትናገራለች tinageralech'],
       ],
       examples: [
-        { amharic: 'አማርኛ ትናገራለህ?', transliteration: 'amarigna tinageraleh?', english: 'Do you speak Amharic? (to a man)' },
+        { amharic: 'አማርኛ ትናገራለህ ወይ?', transliteration: 'amarigna tinageraleh wey?', english: 'Do you speak Amharic? (to a man)' },
         { amharic: 'ትንሽ ትንሽ እናገራለሁ።', transliteration: 'tinish tinish inageralehu.', english: 'I speak a little bit.' },
       ],
     },
@@ -1338,6 +1338,7 @@ const PARTS: Record<string, WordPart[]> = {
   ],
   ምናልባት: [{ roman: 'minalbat', gloss: 'maybe' }],
   አማርኛ: [{ roman: 'amarigna', gloss: 'Amharic' }],
+  ወይ: [{ roman: 'wey', gloss: 'turns it into a yes/no question' }],
   ትናገራለህ: [
     { roman: 'ti-', gloss: 'you (man)' },
     { roman: 'nager', gloss: 'speak' },

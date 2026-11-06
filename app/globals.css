@@ -6197,6 +6197,12 @@ a.rail-link:hover {
     display: none;
   }
 
+  /* one row of icons: no room for dividers between the groups */
+  .learn-nav-gap,
+  .learn-nav-heading {
+    display: none;
+  }
+
   .learn-nav-link {
     min-height: 44px;
     padding: 3px;

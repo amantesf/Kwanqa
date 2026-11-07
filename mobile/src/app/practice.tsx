@@ -31,6 +31,7 @@ import { useTopInset } from '@/safe-top';
 import { useAuth } from '@/auth';
 import { canRecord } from '@/listen';
 import { learnerName, personalizeChat } from '@/lib/learnerName';
+import { storage } from '@/lib/storage';
 
 // A lesson's practice, like the website's (components/Practice.tsx): Walia asks,
 // you answer, and a green or red bar says how it went. Missed questions come
@@ -249,6 +250,18 @@ export default function Practice() {
   // What the learner said they know in the survey sets how hard the questions are.
   const level = useProfile()?.levels[track];
   const { user, enabled: accountsEnabled } = useAuth();
+  // Your name in Walia's chats. Learners who told Talk to speak to them as a
+  // woman get ስምሽ ማን ነው? instead of ስምህ ማን ነው?, like on the website.
+  const chatName = useMemo(() => {
+    if (track !== 'amharic') return null;
+    let female = false;
+    try {
+      female = storage().getItem('kwanqa-talk-gender') === 'f';
+    } catch {
+      // no saved choice: Walia says ስምህ
+    }
+    return learnerName(user?.user_metadata, female);
+  }, [user, track]);
   // Camp 1 is a safe zone, as on the website: mistakes there never cost
   // stamina, so a brand-new learner can't get stuck in their first lessons.
   const firstCamp = !holiday && courseCatalog.find(c => c.slug === slug)?.part === 1;
@@ -801,7 +814,7 @@ export default function Practice() {
               ) : current.kind === 'chat' ? (
                 <WaliaChat
                   key={current.id + solved.size + queue.length}
-                  exercise={track === 'amharic' ? personalizeChat(current, learnerName(user?.user_metadata)) : current}
+                  exercise={personalizeChat(current, chatName)}
                   onSay={sayAloud}
                   onMistake={() => {
                     // a wrong reply costs stamina, but the chat carries on:

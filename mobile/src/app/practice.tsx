@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { File, Paths } from 'expo-file-system';
 import { Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import Animated, { Easing, FadeInDown, useAnimatedStyle, useSharedValue, withSequence, withTiming, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +30,8 @@ import { fonts, makeStyles, useColors } from '@/theme';
 import OfflineNote from '@/components/offline-note';
 import { useTopInset } from '@/safe-top';
 import { useAuth } from '@/auth';
-import { canRecord } from '@/listen';
+import { authHeaders, canRecord } from '@/listen';
+import { SITE } from '@/site';
 import { learnerName, personalizeChat } from '@/lib/learnerName';
 import { storage } from '@/lib/storage';
 
@@ -344,9 +346,34 @@ export default function Practice() {
     if (promptKey && promptAudio) play(promptAudio);
   }, [promptKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Chat lines with your own name in them ("ስሜ ናሆም ነው።") can't be recorded
+  // ahead of time, so Walia's voice reads them fresh for signed-in learners.
+  const ownClips = useRef(new Map<string, string>());
+  async function playOwn(text: string) {
+    let uri = ownClips.current.get(text);
+    if (!uri) {
+      try {
+        const res = await fetch(`${SITE}/api/speak`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+          body: JSON.stringify({ text }),
+        });
+        if (!res.ok) return; // the words are on screen either way
+        const file = new File(Paths.cache, `walia-name-${Date.now()}-${ownClips.current.size}.mp3`);
+        file.write(new Uint8Array(await res.arrayBuffer()));
+        uri = file.uri;
+        ownClips.current.set(text, uri);
+      } catch {
+        return;
+      }
+    }
+    play(uri);
+  }
+
   function sayAloud(text: string) {
     const src = soundFor(text);
     if (src) play(src);
+    else if (chatName && user && track === 'amharic' && (text.includes(chatName.amharic) || text.includes('ዋሊያ'))) void playOwn(text);
   }
 
   /** The question's line again, slowly (Walia's voice only; recordings play as they are). */

@@ -2860,16 +2860,23 @@ button.phrase-card:hover {
   background-color: var(--border);
 }
 
-/* Log in and sign up: a window card over Addis Ababa at sunset. The photo is
-   public/login-bg.jpg; until it's there, the sunset colours show instead. */
+/* Log in and sign up: a window card over Addis Ababa at sunset, drawn for
+   kwanqa (public/login-bg.svg, made by hand, not a photo). */
 .auth-page.auth-sky {
   align-items: center;
   min-height: calc(100svh - 72px);
   padding: 40px 16px;
   background:
     linear-gradient(180deg, rgba(20, 10, 6, 0.1) 0%, rgba(20, 10, 6, 0.35) 100%),
-    url('/login-bg.jpg') center 30% / cover no-repeat,
+    url('/login-bg.svg') center 30% / cover no-repeat,
     linear-gradient(180deg, #f6a04d 0%, #e06a2c 45%, #5a2414 80%, #22100a 100%);
+}
+
+@media (max-width: 600px) {
+  /* keep the tall lit tower in view on phones */
+  .auth-page.auth-sky {
+    background-position: 0 0, 72% 30%, 0 0;
+  }
 }
 
 .auth-window {

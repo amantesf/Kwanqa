@@ -194,3 +194,14 @@ html[data-theme='dark'] .top-theme {
 html[data-theme='dark'] .summit-cloud {
   fill: #56638a;
 }
+
+/* Log in and sign up: the dark card keeps a light Log in button so it stands
+   out the way the dark one does on the light card. */
+html[data-theme='dark'] .auth-submit {
+  background-color: #f3f4f6;
+  color: #1f2329;
+}
+
+html[data-theme='dark'] .auth-submit:hover {
+  background-color: #ffffff;
+}

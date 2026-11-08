@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: 'Create your account' };
 
 export default function SignupPage() {
   return (
-    <main className="auth-page">
+    <main className="auth-page auth-sky">
       <Suspense fallback={null}>
         <AuthForm mode="signup" />
       </Suspense>

@@ -167,6 +167,63 @@
 :where(html[data-theme='dark']) .input:focus {
     background-color: #1a2428
 }
+:where(html[data-theme='dark']) .auth-window {
+    background-color: #1a2428
+}
+:where(html[data-theme='dark']) .auth-app-icon {
+    background-color: #1a2428
+}
+:where(html[data-theme='dark']) .auth-window-title {
+    color: #dfe2e7
+}
+:where(html[data-theme='dark']) .auth-window-text {
+    color: #ccd5da
+}
+:where(html[data-theme='dark']) .auth-field-icon {
+    color: #c0cbd0
+}
+:where(html[data-theme='dark']) .auth-input {
+    background-color: #26272a;
+    color: #dfe2e7
+}
+:where(html[data-theme='dark']) .auth-input::placeholder {
+    color: #aeb1b7
+}
+:where(html[data-theme='dark']) .auth-input:focus {
+    background-color: #1a2428
+}
+:where(html[data-theme='dark']) .auth-eye {
+    color: #c0cbd0
+}
+:where(html[data-theme='dark']) .auth-eye:hover {
+    color: #dfe2e7
+}
+:where(html[data-theme='dark']) .auth-forgot {
+    color: #ccd5da
+}
+:where(html[data-theme='dark']) .auth-forgot:hover {
+    color: #dfe2e7
+}
+:where(html[data-theme='dark']) .auth-or {
+    color: #aeb1b7
+}
+:where(html[data-theme='dark']) .auth-or::before, :where(html[data-theme='dark']) .auth-or::after {
+    background-color: #25333a
+}
+:where(html[data-theme='dark']) .social-icon-btn {
+    border: 1.5px solid #36464e;
+    background-color: #1a2428;
+    color: #dfe2e7
+}
+:where(html[data-theme='dark']) .social-icon-btn:hover {
+    background-color: #242627
+}
+:where(html[data-theme='dark']) .auth-window-fine, :where(html[data-theme='dark']) .auth-window-switch {
+    color: #ccd5da
+}
+:where(html[data-theme='dark']) .auth-window-fine {
+    color: #c0cbd0
+}
 :where(html[data-theme='dark']) .gate {
     background: #1a2428
 }

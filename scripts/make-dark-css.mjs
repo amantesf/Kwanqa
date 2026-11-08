@@ -35,6 +35,7 @@ const SKIP = [
   /\.flag|ethio-flag/,
   /stamp-drop|passport-rail-row svg|passport-page svg/,
   /confetti|sparkle/,
+  /auth-sky/, // the photo behind log in and sign up
 ];
 
 // ---------- colour maths ----------

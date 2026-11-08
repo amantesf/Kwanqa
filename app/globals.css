@@ -2860,8 +2860,9 @@ button.phrase-card:hover {
   background-color: var(--border);
 }
 
-/* Log in and sign up: a window card over Addis Ababa at sunset, drawn for
-   kwanqa (public/login-bg.svg, made by hand, not a photo). */
+/* Log in and sign up: a window card over Addis Ababa, drawn for kwanqa
+   (public/login-bg.svg, not a photo). The sun sets and the city lights up
+   inside the SVG itself; it starts at night for people who turn motion off. */
 .auth-page.auth-sky {
   align-items: center;
   min-height: calc(100svh - 72px);

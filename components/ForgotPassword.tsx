@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import Captcha, { captchaEnabled } from '@/components/Captcha';
 import Mascot from '@/components/Mascot';
+import { FieldIcon } from '@/components/AuthIcons';
 import { supabase } from '@/lib/supabase';
 
 // Step 1 of a password reset: email the learner a link to /reset-password.
@@ -41,38 +42,40 @@ export default function ForgotPassword() {
 
   if (sent) {
     return (
-      <div className="auth-card">
-        <Mascot pose="cheer" size={110} />
-        <h1 className="h3" style={{ fontSize: 26 }}>
-          Check your email
-        </h1>
-        <p className="muted">
-          If an account exists for <strong>{email}</strong>, we’ve sent a link to choose a new
-          password. It expires in about an hour.
+      <div className="auth-card auth-window">
+        <span className="auth-app-icon" aria-hidden="true">
+          <Mascot pose="cheer" size={44} />
+        </span>
+        <h1 className="auth-window-title">Check your email</h1>
+        <p className="auth-window-text">
+          If an account exists for <strong>{email}</strong>, we’ve sent a link to choose a new password. It expires in
+          about an hour.
         </p>
-        <p className="faint small">Can’t find it? Check your spam folder.</p>
-        <Link href="/login" className="text-link small">
-          ← Back to log in
+        <p className="auth-window-fine">Can’t find it? Look in your spam folder.</p>
+        <Link href="/login" className="auth-window-switch text-link">
+          Back to log in
         </Link>
       </div>
     );
   }
 
   return (
-    <form className="auth-card" onSubmit={submit}>
-      <Mascot pose="happy" size={110} />
-      <h1 className="h3" style={{ fontSize: 26 }}>
-        Forgot your password?
-      </h1>
-      <p className="muted small">Enter your email and we’ll send you a link to choose a new one.</p>
-      <label className="field">
-        <span>Email</span>
+    <form className="auth-card auth-window" onSubmit={submit}>
+      <span className="auth-app-icon" aria-hidden="true">
+        <Mascot pose="happy" size={44} />
+      </span>
+      <h1 className="auth-window-title">Reset your password</h1>
+      <p className="auth-window-text">We’ll email you a link to choose a new one.</p>
+      <label className="auth-field">
+        <FieldIcon name="mail" />
         <input
-          className="input"
+          className="auth-input"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           autoComplete="email"
+          placeholder="Email"
+          aria-label="Email"
           required
         />
       </label>
@@ -82,12 +85,15 @@ export default function ForgotPassword() {
         </p>
       )}
       <Captcha key={captchaKey} onToken={setCaptchaToken} />
-      <button type="submit" className="btn btn-block" disabled={busy || (captchaEnabled && !captchaToken)}>
+      <button type="submit" className="auth-submit" disabled={busy || (captchaEnabled && !captchaToken)}>
         {busy ? 'One moment…' : 'Send reset link'}
       </button>
-      <Link href="/login" className="text-link small">
-        ← Back to log in
-      </Link>
+      <p className="auth-window-switch">
+        Remembered it?{' '}
+        <Link href="/login" className="text-link">
+          Log in
+        </Link>
+      </p>
     </form>
   );
 }

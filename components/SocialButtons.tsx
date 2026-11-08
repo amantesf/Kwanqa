@@ -57,9 +57,15 @@ async function enabledProviders(): Promise<Set<string>> {
 export default function SocialButtons({
   next,
   onError,
+  row,
 }: {
   next: string;
   onError: (message: string) => void;
+  /**
+   * A row of icon buttons under the form, after "Or log in with" (the log-in
+   * card). Each one goes through that provider's own sign-in page.
+   */
+  row?: string;
 }) {
   const [enabled, setEnabled] = useState<Set<string>>(new Set());
 
@@ -76,6 +82,30 @@ export default function SocialButtons({
       options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
     if (error) onError('Couldn’t reach that sign-in service. Please try again.');
+  }
+
+  if (row) {
+    return (
+      <div className="social-row-block">
+        <div className="auth-or">
+          <span>{row}</span>
+        </div>
+        <div className="social-row">
+          {available.map(p => (
+            <button
+              key={p.id}
+              type="button"
+              className="social-icon-btn"
+              onClick={() => signIn(p.id)}
+              aria-label={`Continue with ${p.label}`}
+              title={`Continue with ${p.label}`}
+            >
+              {p.icon}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -85,6 +85,13 @@ export default function Explore() {
         <Row title="Phrasebook" text="Every phrase from a camp on one page, with a quiz mode." art={<Book />} href="/explore/phrasebook" tint="#e6eefb" />
         <Row title="Proverbs" text="ተረትና ምሳሌ: crack their meaning, word by word." art={<Walia pose="happy" size={40} />} href="/explore/proverbs" tint="#fff6dc" />
         <Row
+          title="Everyday Amharic"
+          text="The small words that make you sound natural, and real signs, menus and texts to read."
+          art={<Text style={styles.signArt}>ፒያሳ</Text>}
+          href="/explore/everyday"
+          tint="#fdf0e2"
+        />
+        <Row
           title="Holidays"
           text={`The Ethiopian calendar, greetings to send, and a lesson for each holiday. Next: ${soon.holiday.name}, ${countdown(soon.days)}.`}
           art={<DateTile date={soon.date} color={soon.holiday.color} />}
@@ -101,6 +108,7 @@ const useStyles = makeStyles(c => ({
   safe: { flex: 1, backgroundColor: c.bg },
   page: { padding: 16, gap: 14, paddingBottom: 40 },
   heading: { fontFamily: fonts.black, fontSize: 32, color: c.ink },
+  signArt: { paddingVertical: 6, paddingHorizontal: 8, borderRadius: 8, overflow: 'hidden', backgroundColor: '#1f5f3a', fontFamily: fonts.amharicBold, fontSize: 15, color: '#ffffff' },
   today: { padding: 18, paddingRight: 96, gap: 4, borderRadius: 22, borderWidth: 2, borderTopWidth: 8, borderBottomWidth: 5, borderColor: c.line, borderTopColor: c.gold, backgroundColor: '#ffffff' },
   todayKicker: { fontFamily: fonts.heavy, fontSize: 12, color: c.goldShadow, textTransform: 'uppercase', letterSpacing: 0.6 },
   todayAm: { fontFamily: fonts.amharicBold, fontSize: 22, lineHeight: 32, color: c.ink },

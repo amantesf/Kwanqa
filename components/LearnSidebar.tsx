@@ -49,6 +49,14 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M4 17 c0-5 1.5-8.5 6-10 l0.8 2 c-2.4 1-3.4 2.6-3.5 4.5 h2.7 v3.5 z M13.5 17 c0-5 1.5-8.5 6-10 l0.8 2 c-2.4 1-3.4 2.6-3.5 4.5 h2.7 v3.5 z" fill="#fff" />
     </svg>
   ),
+  // a signpost: Amharic out on the street
+  everyday: (
+    <svg {...glyph}>
+      <rect x="4" y="4" width="16" height="9" rx="2" fill="#fff" />
+      <path d="M7.5 8.5 h9" stroke="var(--c)" strokeWidth="1.8" strokeLinecap="round" />
+      <rect x="10.8" y="13" width="2.4" height="8" rx="1" fill="#fff" />
+    </svg>
+  ),
   // a passport book with a round stamp
   passport: (
     <svg {...glyph}>
@@ -89,7 +97,7 @@ type Item = {
   edge: string;
 };
 
-export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'passport' | 'profile';
+export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'everyday' | 'passport' | 'profile';
 
 function NavLink({ item, current, icon }: { item: Item; current?: boolean; icon: ReactNode }) {
   const style = { '--c': item.color, '--c-soft': item.soft, '--c-edge': item.edge } as CSSProperties;
@@ -122,6 +130,7 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
   const culture: Item[] = [
     { key: 'proverbs', href: '/proverbs', label: 'Proverbs', amharic: 'ምሳሌዎች', color: '#e8345a', soft: '#fde8ed', edge: '#b8203f' },
     { key: 'holidays', href: '/holidays', label: 'Holidays', amharic: 'በዓላት', color: '#13a39b', soft: '#e1f6f4', edge: '#0c7a74' },
+    { key: 'everyday', href: '/everyday', label: 'Everyday', amharic: 'የዕለት', color: '#d9822b', soft: '#fdf0e2', edge: '#b0641a' },
   ];
   const passport: Item = {
     key: 'passport',
@@ -166,7 +175,7 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         ))}
         <span className="learn-nav-gap" aria-hidden />
         {culture.map(item => (
-          <NavLink key={item.key} item={item} icon={ICONS[item.key]} />
+          <NavLink key={item.key} item={item} icon={ICONS[item.key]} current={active === item.key} />
         ))}
         <span className="learn-nav-gap" aria-hidden />
         <NavLink item={passport} icon={ICONS.passport} current={active === 'passport'} />

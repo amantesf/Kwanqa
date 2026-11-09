@@ -6514,6 +6514,17 @@ button.stone.trophy {
     display: none;
   }
 
+  /* and if the icons don't all fit, the row scrolls instead of widening the page */
+  .learn-nav {
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .learn-nav::-webkit-scrollbar {
+    display: none;
+  }
+
   .learn-nav-link {
     min-height: 44px;
     padding: 3px;

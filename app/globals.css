@@ -2996,6 +2996,12 @@ button.phrase-card:hover {
   cursor: pointer;
 }
 
+.auth-submit-link {
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}
+
 .auth-submit:hover {
   background-color: #33383f;
 }

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Mascot from '@/components/Mascot';
+import { EyeIcon, FieldIcon } from '@/components/AuthIcons';
 import { useAuth } from '@/components/AuthProvider';
 import { showToast } from '@/components/Toaster';
 import { supabase } from '@/lib/supabase';
@@ -15,6 +16,7 @@ export default function ResetPassword() {
   const { user, loading } = useAuth();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -42,22 +44,24 @@ export default function ResetPassword() {
 
   if (loading) {
     return (
-      <div className="auth-card">
-        <Mascot pose="happy" size={110} />
-        <p className="muted">Checking your link…</p>
+      <div className="auth-card auth-window">
+        <span className="auth-app-icon" aria-hidden="true">
+          <Mascot pose="happy" size={44} />
+        </span>
+        <p className="auth-window-text">Checking your link…</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="auth-card">
-        <Mascot pose="happy" size={110} />
-        <h1 className="h3" style={{ fontSize: 26 }}>
-          That link didn’t work
-        </h1>
-        <p className="muted">It may have expired or already been used. Request a new one.</p>
-        <Link href="/forgot-password" className="btn btn-block">
+      <div className="auth-card auth-window">
+        <span className="auth-app-icon" aria-hidden="true">
+          <Mascot pose="happy" size={44} />
+        </span>
+        <h1 className="auth-window-title">That link didn’t work</h1>
+        <p className="auth-window-text">It may have expired or already been used. Ask for a new one.</p>
+        <Link href="/forgot-password" className="auth-submit auth-submit-link">
           Send a new link
         </Link>
       </div>
@@ -65,33 +69,45 @@ export default function ResetPassword() {
   }
 
   return (
-    <form className="auth-card" onSubmit={submit}>
-      <Mascot pose="wave" size={110} />
-      <h1 className="h3" style={{ fontSize: 26 }}>
-        Choose a new password
-      </h1>
-      <p className="muted small">For {user.email}</p>
-      <label className="field">
-        <span>New password</span>
+    <form className="auth-card auth-window" onSubmit={submit}>
+      <span className="auth-app-icon" aria-hidden="true">
+        <Mascot pose="wave" size={44} />
+      </span>
+      <h1 className="auth-window-title">Choose a new password</h1>
+      <p className="auth-window-text">For {user.email}</p>
+      <label className="auth-field">
+        <FieldIcon name="lock" />
         <input
-          className="input"
-          type="password"
+          className="auth-input"
+          type={show ? 'text' : 'password'}
           value={password}
           onChange={e => setPassword(e.target.value)}
           autoComplete="new-password"
+          placeholder="New password (8 or more characters)"
+          aria-label="New password"
           minLength={8}
           required
         />
-        <small className="faint">At least 8 characters</small>
+        <button
+          type="button"
+          className="auth-eye"
+          onClick={() => setShow(s => !s)}
+          aria-label={show ? 'Hide passwords' : 'Show passwords'}
+          aria-pressed={show}
+        >
+          <EyeIcon open={show} />
+        </button>
       </label>
-      <label className="field">
-        <span>Confirm new password</span>
+      <label className="auth-field">
+        <FieldIcon name="lock" />
         <input
-          className="input"
-          type="password"
+          className="auth-input"
+          type={show ? 'text' : 'password'}
           value={confirm}
           onChange={e => setConfirm(e.target.value)}
           autoComplete="new-password"
+          placeholder="Type it again"
+          aria-label="Confirm new password"
           minLength={8}
           required
         />
@@ -101,7 +117,7 @@ export default function ResetPassword() {
           {error}
         </p>
       )}
-      <button type="submit" className="btn btn-block" disabled={busy}>
+      <button type="submit" className="auth-submit" disabled={busy}>
         {busy ? 'Saving…' : 'Save new password'}
       </button>
     </form>

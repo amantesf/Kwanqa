@@ -402,21 +402,6 @@
 :where(html[data-theme='dark']) .top-stat.horns {
     color: color-mix(in srgb, var(--gold) 70%, #fff)
 }
-:where(html[data-theme='dark']) .ev-word, :where(html[data-theme='dark']) .ev-scene {
-    background: #1a2428
-}
-:where(html[data-theme='dark']) .ev-sign {
-    border: 3px solid #4b473e
-}
-:where(html[data-theme='dark']) .ev-card {
-    background: linear-gradient(135deg, #302d26, #2d2326)
-}
-:where(html[data-theme='dark']) .ev-message .ev-line {
-    background-color: #1a2428
-}
-:where(html[data-theme='dark']) .ev-line:hover:not(.shown) {
-    outline: 2px solid rgba(46, 59, 66, 0.35)
-}
 :where(html[data-theme='dark']) .recap {
     background-color: #1a2428
 }

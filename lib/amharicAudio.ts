@@ -9,6 +9,7 @@ import { phraseAudio } from '@/lib/phraseAudio';
 import { fidelSounds } from '@/lib/fidel';
 import { proverbs } from '@/lib/proverbs';
 import { placeLessonWords } from '@/lib/placeLessons';
+import { storyLines } from '@/lib/stories';
 
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -48,6 +49,8 @@ export function speakableAmharic(): Set<string> {
       ...proverbs.flatMap(p => [p.amharic, ...p.words.map(w => w.am)]),
       // the words in each passport stamp's quick lesson
       ...placeLessonWords(),
+      // every sentence and word in the stories
+      ...storyLines(),
     ]
       .map(t => t?.trim())
       .filter(t => t && !hasGap(t)),

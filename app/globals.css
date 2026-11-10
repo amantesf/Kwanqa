@@ -12782,3 +12782,374 @@ body:has(.practice-screen) {
   color: var(--text-strong);
   font-weight: 900;
 }
+
+/* --------------------------------------------------------------------------
+   Stories (/stories): read and listen, the Kaufmann / LingQ way.
+   New words are blue, words being learned are yellow, known words are plain.
+   -------------------------------------------------------------------------- */
+.learn-main.st-page {
+  grid-column: 2 / -1;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 220px; /* room for the word panel */
+}
+
+.st-head h1 {
+  margin: 0 0 6px;
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.st-head .lead {
+  margin: 0;
+}
+
+.st-count {
+  margin: 12px 0 0;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.st-count strong {
+  font-size: 28px;
+  font-weight: 900;
+  color: #2f6fd6;
+}
+
+.st-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 18px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius);
+  background-color: var(--bg);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.st-card:hover {
+  border-color: #9cbcf0;
+}
+
+.st-card-am {
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.st-card-title {
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.st-card-blurb {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.st-card-meta {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2f6fd6;
+}
+
+.st-back {
+  align-self: flex-start;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.st-back:hover {
+  color: var(--text-strong);
+}
+
+.st-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 14px;
+}
+
+.st-listen {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 2px solid #2f6fd6;
+  border-radius: 999px;
+  background-color: #2f6fd6;
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.st-listen[aria-pressed='true'] {
+  background-color: var(--bg);
+  color: #2f6fd6;
+}
+
+.st-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.st-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.st-sentence {
+  padding: 10px 12px;
+  border-radius: 14px;
+  transition: background-color 0.2s;
+}
+
+.st-sentence.reading {
+  background-color: #eef4ff;
+}
+
+.st-line {
+  margin: 0;
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 26px;
+  line-height: 1.9;
+  color: var(--text-strong);
+}
+
+.st-word {
+  display: inline;
+  margin: 0 2px;
+  padding: 1px 5px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.st-word.st-new {
+  background-color: #dceaff;
+}
+
+.st-word.st-learning {
+  background-color: #ffeb99;
+}
+
+.st-word.st-known:hover {
+  background-color: var(--bg-soft);
+}
+
+.st-word.picked {
+  outline: 3px solid #2f6fd6;
+  outline-offset: 1px;
+}
+
+.st-legend .st-word {
+  cursor: default;
+  font-size: 14px;
+}
+
+.st-line-tools {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.st-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--bg-soft);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.st-mini:hover {
+  color: var(--text-strong);
+}
+
+.st-translation {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px 0 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.st-translation span {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.st-note {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: var(--gold-soft);
+  color: var(--text);
+}
+
+.st-finish {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.st-finish-hint,
+.st-done {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.st-done strong {
+  color: #2f6fd6;
+}
+
+/* the word you tapped: its sound, meaning, and how well you know it */
+.st-panel {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 40;
+  width: min(520px, calc(100vw - 32px));
+  padding: 16px 18px 18px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  background-color: var(--bg);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+  transform: translateX(-50%);
+}
+
+.st-panel-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.st-panel-top > div {
+  flex: 1;
+}
+
+.st-panel-word {
+  margin: 0;
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.st-panel-tr {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.st-panel-meaning {
+  margin: 8px 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.st-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 12px;
+  background-color: var(--bg-soft);
+  color: var(--text-strong);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.st-status {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.st-status-btn {
+  min-height: 44px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background-color: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.st-status-btn.st-new.on {
+  border-color: #2f6fd6;
+  background-color: #dceaff;
+  color: #1f4fa3;
+}
+
+.st-status-btn.st-learning.on {
+  border-color: #d9a400;
+  background-color: #ffeb99;
+  color: #6b5100;
+}
+
+.st-status-btn.st-known.on {
+  border-color: var(--green);
+  background-color: var(--green-soft);
+  color: var(--green-dark);
+}
+
+@media (max-width: 900px) {
+  .learn-main.st-page {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .st-line {
+    font-size: 22px;
+  }
+
+  .st-panel {
+    bottom: 12px;
+  }
+}

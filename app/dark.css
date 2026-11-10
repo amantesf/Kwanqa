@@ -205,3 +205,34 @@ html[data-theme='dark'] .auth-submit {
 html[data-theme='dark'] .auth-submit:hover {
   background-color: #ffffff;
 }
+
+/* Stories: keep new words clearly blue and learning words clearly yellow. */
+html[data-theme='dark'] .st-word.st-new {
+  background-color: rgba(84, 145, 245, 0.3);
+  color: #e6efff;
+}
+
+html[data-theme='dark'] .st-word.st-learning {
+  background-color: rgba(255, 210, 60, 0.32);
+  color: #fff3c4;
+}
+
+html[data-theme='dark'] .st-sentence.reading {
+  background-color: rgba(84, 145, 245, 0.14);
+}
+
+html[data-theme='dark'] .st-status-btn.st-new.on {
+  background-color: rgba(84, 145, 245, 0.3);
+  color: #e6efff;
+}
+
+html[data-theme='dark'] .st-status-btn.st-learning.on {
+  background-color: rgba(255, 210, 60, 0.32);
+  color: #fff3c4;
+}
+
+html[data-theme='dark'] .st-count strong,
+html[data-theme='dark'] .st-card-meta,
+html[data-theme='dark'] .st-done strong {
+  color: #7fb0ff;
+}

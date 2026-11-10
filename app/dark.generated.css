@@ -765,3 +765,28 @@
 :where(html[data-theme='dark']) .guest-stats span {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .st-count strong {
+    color: #7fa7e6
+}
+:where(html[data-theme='dark']) .st-card:hover {
+    border-color: #444c5a
+}
+:where(html[data-theme='dark']) .st-card-meta {
+    color: #7fa7e6
+}
+:where(html[data-theme='dark']) .st-listen[aria-pressed='true'] {
+    color: #7fa7e6
+}
+:where(html[data-theme='dark']) .st-sentence.reading {
+    background-color: #21242a
+}
+:where(html[data-theme='dark']) .st-word.st-new {
+    background-color: #262a30
+}
+:where(html[data-theme='dark']) .st-done strong {
+    color: #7fa7e6
+}
+:where(html[data-theme='dark']) .st-status-btn.st-new.on {
+    background-color: #262a30;
+    color: #7ea4e7
+}

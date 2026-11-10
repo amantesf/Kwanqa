@@ -3,9 +3,10 @@ import StoriesPage from '@/components/StoriesPage';
 
 export const metadata: Metadata = {
   title: 'Stories',
-  description: 'Short Amharic stories to read and listen to. Tap any word you don’t know, and watch your known words grow.',
+  description:
+    'Read and listen to real Amharic: kwanqa stories, 29 illustrated storybooks, and your own books. Tap any word you don’t know, and watch your known words grow.',
 };
 
 export default function Page() {
-  return <StoriesPage />;
+  return <StoriesPage view="shelf" />;
 }

@@ -16,5 +16,5 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!STORIES.some(s => s.id === id)) notFound();
-  return <StoriesPage id={id} />;
+  return <StoriesPage view="story" id={id} />;
 }

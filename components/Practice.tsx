@@ -35,6 +35,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { learnerName, personalizeChat } from '@/lib/learnerName';
 import { supabase } from '@/lib/supabase';
 import { interactiveQuestions, introCards, typedRight, type InteractiveExercise } from '@/lib/interactive';
+import { lessonLearned } from '@/lib/grammar';
 import { pictureFor } from '@/lib/pictures';
 
 /**
@@ -829,6 +830,8 @@ export default function Practice({
           return title ? title.replace(/^Lesson \d+\s*[–-]\s*/, '') : undefined;
         })()}
         guest={accountsEnabled && !user}
+        learned={review ? undefined : lessonLearned(slug, lessonIndex, lesson)}
+        learnedHref={`/courses/${slug}?lesson=${lessonIndex}#how-it-works`}
       />
     );
   }

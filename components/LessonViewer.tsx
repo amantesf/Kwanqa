@@ -123,7 +123,7 @@ function FamilyCard({ family }: { family: WordFamily }) {
 /** "How it works": the lesson's grammar rules, then its word families. */
 function GrammarCards({ cards, families }: { cards: GrammarCard[]; families: WordFamily[] }) {
   return (
-    <div className="stack">
+    <div className="stack" id="how-it-works">
       <h3 className="h3">How it works</h3>
       {cards.map(card => (
         <section key={card.title} className="grammar-card">

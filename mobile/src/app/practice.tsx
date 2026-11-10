@@ -9,6 +9,7 @@ import Svg, { Path } from 'react-native-svg';
 import { amharicAudio } from '@/lib/amharicAudio';
 import { completeLesson, completeReview, REST_COST, spendGrass, trackCourses, useClimb } from '@/lib/climb';
 import { courseCatalog, courseContent, type Track } from '@/lib/courses';
+import { lessonLearned } from '@/lib/grammar';
 import { holidayById } from '@/lib/holidays';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { buildExercises, shuffle, type Exercise, type MatchExercise } from '@/lib/exercises';
@@ -551,29 +552,57 @@ export default function Practice() {
   if (phase === 'done') {
     const answers = initial.length + mistakes;
     const accuracy = answers ? Math.round((initial.length / answers) * 100) : 100;
+    // what the lesson taught, as on the website's finish screen
+    const learned = review || holiday ? null : lessonLearned(slug, lessonIndex, lesson);
+    const extras = learned ? learned.rules.length + learned.families.length : 0;
     return (
-      <SafeAreaView style={[styles.safe, styles.center]}>
-        <Walia mood="cheer" size={170} />
-        <Text style={styles.doneTitle}>{review ? ui.fixed : ui.complete}</Text>
-        {initial.length ? (
-          <View style={styles.stats}>
-            <View style={[styles.stat, { borderColor: colors.green }]}>
-              <Text style={[styles.statHead, { backgroundColor: colors.green }]}>{accuracyLabel(accuracy)}</Text>
-              <Text style={[styles.statValue, styles.goodText]}>{accuracy}%</Text>
-            </View>
-            <View style={[styles.stat, { borderColor: '#5fb84a' }]}>
-              <Text style={[styles.statHead, { backgroundColor: '#5fb84a' }]}>Grass</Text>
-              <View style={styles.statRow}>
-                <Grass size={26} />
-                <Text style={[styles.statValue, styles.goodText]}>+{earned}</Text>
+      <SafeAreaView style={styles.safe}>
+        <ScrollView contentContainerStyle={[styles.center, styles.doneScroll]}>
+          <Walia mood="cheer" size={170} />
+          <Text style={styles.doneTitle}>{review ? ui.fixed : ui.complete}</Text>
+          {initial.length ? (
+            <View style={styles.stats}>
+              <View style={[styles.stat, { borderColor: colors.green }]}>
+                <Text style={[styles.statHead, { backgroundColor: colors.green }]}>{accuracyLabel(accuracy)}</Text>
+                <Text style={[styles.statValue, styles.goodText]}>{accuracy}%</Text>
+              </View>
+              <View style={[styles.stat, { borderColor: '#5fb84a' }]}>
+                <Text style={[styles.statHead, { backgroundColor: '#5fb84a' }]}>Grass</Text>
+                <View style={styles.statRow}>
+                  <Grass size={26} />
+                  <Text style={[styles.statValue, styles.goodText]}>+{earned}</Text>
+                </View>
               </View>
             </View>
+          ) : null}
+          {learned && learned.phrases > 0 ? (
+            <View style={styles.learned}>
+              <Text style={styles.learnedTitle}>{track === 'english' ? 'የተማሩት · What you learned' : 'What you learned'}</Text>
+              <Text style={styles.learnedItem}>
+                • {learned.phrases} {learned.phrases === 1 ? 'phrase' : 'phrases'}
+              </Text>
+              {learned.rules.map(rule => (
+                <Text key={rule} style={styles.learnedItem}>
+                  • {rule}
+                </Text>
+              ))}
+              {learned.families.map(family => (
+                <Text key={family} style={styles.learnedItem}>
+                  • Word family: {family}
+                </Text>
+              ))}
+              {extras > 0 ? (
+                <Pressable onPress={() => router.replace({ pathname: '/[slug]', params: { slug, lesson: String(lessonIndex) } })} hitSlop={6} accessibilityRole="button">
+                  <Text style={styles.learnedLink}>Review “How it works” →</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          ) : null}
+          {lesson?.note && !review ? <Text style={styles.doneNote}>{lesson.note}</Text> : null}
+          <View style={styles.doneButton}>
+            <Button label={ui.continue} onPress={exit} />
           </View>
-        ) : null}
-        {lesson?.note && !review ? <Text style={styles.doneNote}>{lesson.note}</Text> : null}
-        <View style={styles.doneButton}>
-          <Button label={ui.continue} onPress={exit} />
-        </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -1038,6 +1067,11 @@ const useStyles = makeStyles(c => ({
   grassLeft: { fontFamily: fonts.bold, fontSize: 14, color: c.muted },
   breatherNote: { maxWidth: 320, textAlign: 'center', lineHeight: 20 },
   statValue: { fontFamily: fonts.black, fontSize: 24, paddingVertical: 10 },
+  doneScroll: { flexGrow: 1, paddingVertical: 24 },
+  learned: { alignSelf: 'stretch', maxWidth: 420, gap: 4, padding: 14, borderRadius: 16, borderWidth: 2, borderColor: c.line, backgroundColor: c.bgSoft },
+  learnedTitle: { fontFamily: fonts.black, fontSize: 16, color: c.ink, marginBottom: 2 },
+  learnedItem: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.ink },
+  learnedLink: { fontFamily: fonts.heavy, fontSize: 14, color: c.blue, marginTop: 4 },
   doneNote: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, color: c.ink, backgroundColor: c.primarySoft, padding: 14, borderRadius: 16, overflow: 'hidden', maxWidth: 420 },
   doneButton: { alignSelf: 'stretch', gap: 10, maxWidth: 420, width: '100%', marginTop: 8 },
   restText: { fontFamily: fonts.bold, fontSize: 16, lineHeight: 22, color: c.muted, textAlign: 'center', maxWidth: 360 },

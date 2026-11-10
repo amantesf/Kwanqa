@@ -2579,6 +2579,17 @@ export function familiesFor(slug: string, lessonIndex: number): WordFamily[] {
   return FAMILIES[`${slug}:${lessonIndex}`] ?? [];
 }
 
+/** What a finished lesson taught, for its "What you learned" summary. */
+export function lessonLearned(slug: string, lessonIndex: number, lesson: LessonSection | undefined) {
+  return {
+    phrases: lesson?.phrases?.length ?? 0,
+    rules: grammarFor(slug, lessonIndex).map(card => card.title),
+    families: familiesFor(slug, lessonIndex).map(family => `${family.word} (${family.meaning})`),
+  };
+}
+
+export type LessonLearned = ReturnType<typeof lessonLearned>;
+
 /** The pieces of one written word (punctuation ignored), if we know them. */
 export function partsOf(word: string): WordPart[] | null {
   return PARTS[word.replace(PUNCTUATION, '').trim()] ?? null;

@@ -4,6 +4,7 @@
 // to the flag at the top, celebrates, and the lesson's results sit below.
 
 import type { Track } from '@/lib/courses';
+import type { LessonLearned } from '@/lib/grammar';
 import Image from 'next/image';
 import Link from 'next/link';
 import GrassIcon from '@/components/GrassIcon';
@@ -27,6 +28,9 @@ type Props = {
   nextUp?: string;
   /** Not logged in: offer a free profile so Walia can send a reminder. */
   guest?: boolean;
+  /** What the lesson taught (phrases, grammar rules, word families), and where its "How it works" is. */
+  learned?: LessonLearned;
+  learnedHref?: string;
 };
 
 function accuracyLabel(accuracy: number, both: (en: string, am: string) => string) {
@@ -131,6 +135,8 @@ export default function LessonComplete({
   streak = 0,
   nextUp,
   guest = false,
+  learned,
+  learnedHref,
 }: Props) {
   const both = (en: string, am: string) => (track === 'english' ? `${am} · ${en}` : en);
   return (
@@ -210,6 +216,28 @@ export default function LessonComplete({
                 </Link>
               )}
             </div>
+          </div>
+        )}
+
+        {learned && learned.phrases > 0 && (
+          <div className="lc-learned">
+            <strong>{both('What you learned', 'የተማሩት')}</strong>
+            <ul>
+              <li>
+                {learned.phrases} {learned.phrases === 1 ? 'phrase' : 'phrases'}
+              </li>
+              {learned.rules.map(rule => (
+                <li key={rule}>{rule}</li>
+              ))}
+              {learned.families.map(family => (
+                <li key={family}>Word family: {family}</li>
+              ))}
+            </ul>
+            {learnedHref && learned.rules.length + learned.families.length > 0 && (
+              <Link href={learnedHref} className="lc-remind">
+                {both('Review “How it works” →', '“እንዴት እንደሚሠራ” ይከልሱ →')}
+              </Link>
+            )}
           </div>
         )}
 

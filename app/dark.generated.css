@@ -786,6 +786,25 @@
 :where(html[data-theme='dark']) .st-done strong {
     color: #7fa7e6
 }
+:where(html[data-theme='dark']) .st-review-link {
+    color: #7fa7e6
+}
+:where(html[data-theme='dark']) .st-book:hover {
+    border-color: #444c5a
+}
+:where(html[data-theme='dark']) .st-ask {
+    border: 2px dashed #444c5a;
+    background-color: #21242a;
+    color: #7ea4e7
+}
+:where(html[data-theme='dark']) .st-drop {
+    border: 2px dashed #444c5a;
+    background-color: #21242a;
+    color: #7ea4e7
+}
+:where(html[data-theme='dark']) .st-link-btn {
+    color: #7fa7e6
+}
 :where(html[data-theme='dark']) .st-status-btn.st-new.on {
     background-color: #262a30;
     color: #7ea4e7

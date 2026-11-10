@@ -236,3 +236,14 @@ html[data-theme='dark'] .st-card-meta,
 html[data-theme='dark'] .st-done strong {
   color: #7fb0ff;
 }
+
+html[data-theme='dark'] .st-ask,
+html[data-theme='dark'] .st-drop {
+  background-color: rgba(84, 145, 245, 0.14);
+  color: #a9c8ff;
+}
+
+html[data-theme='dark'] .st-review-link,
+html[data-theme='dark'] .st-link-btn {
+  color: #7fb0ff;
+}

@@ -49,6 +49,14 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M4 17 c0-5 1.5-8.5 6-10 l0.8 2 c-2.4 1-3.4 2.6-3.5 4.5 h2.7 v3.5 z M13.5 17 c0-5 1.5-8.5 6-10 l0.8 2 c-2.4 1-3.4 2.6-3.5 4.5 h2.7 v3.5 z" fill="#fff" />
     </svg>
   ),
+  // an open book
+  stories: (
+    <svg {...glyph}>
+      <path d="M3 5.5 C 6 4.5, 9 4.8, 11.2 6.4 V 19.5 C 9 18, 6 17.8, 3 18.8 Z" fill="#fff" />
+      <path d="M21 5.5 C 18 4.5, 15 4.8, 12.8 6.4 V 19.5 C 15 18, 18 17.8, 21 18.8 Z" fill="#fff" />
+      <path d="M5.5 9 h3.5 M5.5 12 h3.5 M15 9 h3.5" stroke="var(--c)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  ),
   // a passport book with a round stamp
   passport: (
     <svg {...glyph}>
@@ -89,7 +97,7 @@ type Item = {
   edge: string;
 };
 
-export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'passport' | 'profile';
+export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'stories' | 'passport' | 'profile';
 
 function NavLink({ item, current, icon }: { item: Item; current?: boolean; icon: ReactNode }) {
   const style = { '--c': item.color, '--c-soft': item.soft, '--c-edge': item.edge } as CSSProperties;
@@ -118,6 +126,10 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
       ? { key: 'alphabet', href: '/abc', label: 'Alphabet', amharic: 'ABC', color: 'var(--gold)', soft: 'var(--gold-soft)', edge: 'var(--gold-shadow)' }
       : { key: 'alphabet', href: '/fidel', label: 'Alphabet', amharic: 'ፊደል', color: 'var(--gold)', soft: 'var(--gold-soft)', edge: 'var(--gold-shadow)' },
     { key: 'talk', href: '/talk', label: 'Talk', amharic: 'ጨዋታ', color: 'var(--green)', soft: 'var(--green-soft)', edge: 'var(--green-dark)' },
+    // read-and-listen stories, the Kaufmann / LingQ way (Amharic only for now)
+    ...(track === 'amharic'
+      ? [{ key: 'stories', href: '/stories', label: 'Stories', amharic: 'ታሪኮች', color: '#2f6fd6', soft: '#e3eeff', edge: '#1f4fa3' } as Item]
+      : []),
   ];
   const culture: Item[] = [
     { key: 'proverbs', href: '/proverbs', label: 'Proverbs', amharic: 'ምሳሌዎች', color: '#e8345a', soft: '#fde8ed', edge: '#b8203f' },

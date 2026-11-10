@@ -1,6 +1,7 @@
 import { speakableLines } from '@/lib/conversations';
 import { speakableEnglish } from '@/lib/englishAudio';
 import { speakableAmharic } from '@/lib/amharicAudio';
+import { libraryLines } from '@/lib/library';
 import { speechReady, synthesize } from '@/lib/azureSpeech';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 
@@ -14,7 +15,8 @@ import { accountsOn, requestUser } from '@/lib/requestUser';
 // POST { text, slow, lang } reads one of Walia's own replies (written by his
 // brain during a call). Those are new every time, so this needs a signed-in learner.
 
-const allowed = new Set([...speakableLines(), ...speakableAmharic()]);
+// plus every sentence and word of the Library's storybooks (lib/library.ts)
+const allowed = new Set([...speakableLines(), ...speakableAmharic(), ...libraryLines()]);
 const allowedEnglish = speakableEnglish();
 const MAX_REPLY = 200;
 const ETHIOPIC = /[ሀ-፿]/;

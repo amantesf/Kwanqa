@@ -19,6 +19,7 @@ import { LEVEL_NAMES, LIBRARY, cleanWord, libraryBook, licenseUrl, splitSentence
 import { amharicShare, bookPages, deleteBook, getBook, newBookId, saveBook, useMyBooks, type MyBook } from '@/lib/myBooks';
 import { useProfile } from '@/lib/profile';
 import { STORIES, sentenceAudio, storyWords, wordText, type Story } from '@/lib/stories';
+import { VOICE_VERSION } from '@/lib/voiceVersion';
 
 // ---------------------------------------------------------------------------
 // Turning each kind of text into reader pages
@@ -51,7 +52,7 @@ function myBookPages(book: MyBook): ReaderPage[] {
 }
 
 const STORY_VOICE = { kind: 'lines' as const, url: (text: string) => amharicAudio(text) };
-const LIBRARY_VOICE = { kind: 'lines' as const, url: (text: string) => `/api/speak?text=${encodeURIComponent(text.trim())}` };
+const LIBRARY_VOICE = { kind: 'lines' as const, url: (text: string) => `/api/speak?text=${encodeURIComponent(text.trim())}&v=${VOICE_VERSION}` };
 
 function wordsOfBook(book: LibraryBook) {
   return [...new Set(book.pages.flatMap(p => p.text.split(/\s+/).map(cleanWord)).filter(w => /[ሀ-፼]/.test(w)))];

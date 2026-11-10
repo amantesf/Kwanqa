@@ -10,6 +10,7 @@ import { fidelSounds } from '@/lib/fidel';
 import { proverbs } from '@/lib/proverbs';
 import { placeLessonWords } from '@/lib/placeLessons';
 import { storyLines } from '@/lib/stories';
+import { VOICE_VERSION } from '@/lib/voiceVersion';
 
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -65,5 +66,5 @@ export function amharicAudio(text: string): string | null {
   if (recorded) return recorded;
   allowed ??= speakableAmharic();
   const clean = text.trim();
-  return allowed.has(clean) ? `/api/speak?text=${encodeURIComponent(clean)}` : null;
+  return allowed.has(clean) ? `/api/speak?text=${encodeURIComponent(clean)}&v=${VOICE_VERSION}` : null;
 }

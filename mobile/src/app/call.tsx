@@ -17,6 +17,7 @@ import { authHeaders, canRecord, WAV, withTimeout } from '@/listen';
 import { useTopInset } from '@/safe-top';
 import { SITE } from '@/site';
 import { fonts, makeStyles, useColors } from '@/theme';
+import { VOICE_VERSION } from '@/lib/voiceVersion';
 
 // A call with Walia, like the website's (components/TalkCall.tsx). Walia says a
 // line (Azure, Ameha's voice), the learner taps the mic and answers out loud,
@@ -28,7 +29,7 @@ type Phase = 'walia' | 'ready' | 'listening' | 'checking' | 'verdict' | 'done';
 type Answer = { verdict: TutorVerdict; reply: Line | null; note: string };
 
 function speakPath(text: string, slow = false, lang?: 'en') {
-  return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}${lang ? `&lang=${lang}` : ''}`;
+  return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}${lang ? `&lang=${lang}` : ''}&v=${VOICE_VERSION}`;
 }
 
 /** The words on the call screen. English calls are for Amharic speakers: Amharic first. */

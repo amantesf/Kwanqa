@@ -16,6 +16,7 @@ import { check, normalize, spokenText, waliaLine, type Conversation, type Gender
 import { startRecording, type Recording } from '@/lib/recorder';
 import { supabase } from '@/lib/supabase';
 import type { CallLine, TutorReply, TutorVerdict } from '@/lib/tutor';
+import { VOICE_VERSION } from '@/lib/voiceVersion';
 
 const MUTE_KEY = 'kwanqa-sound-off'; // shared with the lessons' mute button
 
@@ -33,7 +34,7 @@ function effect(kind: 'correct' | 'wrong') {
 }
 
 function speakUrl(text: string, slow = false, lang?: 'en') {
-  return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}${lang ? `&lang=${lang}` : ''}`;
+  return `/api/speak?text=${encodeURIComponent(text)}${slow ? '&slow=1' : ''}${lang ? `&lang=${lang}` : ''}&v=${VOICE_VERSION}`;
 }
 
 async function authHeaders(): Promise<Record<string, string>> {

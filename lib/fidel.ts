@@ -1,3 +1,4 @@
+import { VOICE_VERSION } from '@/lib/voiceVersion';
 // The Amharic ፊደል (fidel): 33 traditional consonants (+ ቨ for loanwords) × 7 vowel orders.
 // Unicode stores each consonant's forms in order (base, +1 … +6), so the
 // characters are generated from code points rather than typed by hand.
@@ -69,7 +70,7 @@ export type FidelCell = { char: string; roman: string; vowel: FidelVowel; audio:
 // time anyone taps the letter and cached for a year after that.
 // Letters that sound the same as another (sameAs) share that letter's sound.
 // (The older recordings cut from a long clip are still in public/sounds/fidel/.)
-const audioFor = (code: number) => `/api/speak?text=${encodeURIComponent(String.fromCodePoint(code))}&slow=1`;
+const audioFor = (code: number) => `/api/speak?text=${encodeURIComponent(String.fromCodePoint(code))}&slow=1&v=${VOICE_VERSION}`;
 
 /** Every letter that has its own sound, for the list of lines /api/speak may read. */
 export function fidelSounds(): string[] {

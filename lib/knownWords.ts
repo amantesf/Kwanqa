@@ -73,3 +73,91 @@ export function useKnownWords() {
     return { status, known, learning };
   }, [raw]);
 }
+
+// ---------------------------------------------------------------------------
+// Notes: what each marked word means, so the Words page can review the words
+// someone is learning. Saved when a word is marked, with the meaning the
+// reader showed and the sentence it came from.
+
+export type WordNote = {
+  meaning: string;
+  tr: string;
+  /** The sentence the word was met in. */
+  sentence?: string;
+  /** Right answers in a row in review; three makes it known. */
+  streak?: number;
+};
+
+const NOTES_KEY = 'kwanqa-word-notes';
+const MAX_NOTES = 3000;
+
+function readNotesRaw(): string {
+  try {
+    return storage().getItem(NOTES_KEY) ?? '{}';
+  } catch {
+    return '{}';
+  }
+}
+
+function writeNotes(notes: Record<string, WordNote>) {
+  const keys = Object.keys(notes);
+  if (keys.length > MAX_NOTES) for (const k of keys.slice(0, keys.length - MAX_NOTES)) delete notes[k];
+  try {
+    storage().setItem(NOTES_KEY, JSON.stringify(notes));
+  } catch {
+    // storage full or blocked: notes are a nice-to-have
+  }
+  listeners.forEach(l => l());
+}
+
+export function setWordNote(word: string, note: WordNote) {
+  const notes = parse(readNotesRaw()) as unknown as Record<string, WordNote>;
+  notes[word] = { ...notes[word], ...note };
+  writeNotes(notes);
+}
+
+export function useWordNotes(): Record<string, WordNote> {
+  const raw = useSyncExternalStore(subscribe, readNotesRaw, () => '{}');
+  return useMemo(() => parse(raw) as unknown as Record<string, WordNote>, [raw]);
+}
+
+/** A review answer: three right in a row makes a word known; a miss starts over. */
+export function reviewWord(word: string, right: boolean) {
+  const notes = parse(readNotesRaw()) as unknown as Record<string, WordNote>;
+  const note = notes[word];
+  const streak = right ? (note?.streak ?? 0) + 1 : 0;
+  if (note) notes[word] = { ...note, streak };
+  writeNotes(notes);
+  if (right && streak >= 3) setWordStatus(word, 'known');
+}
+
+// ---------------------------------------------------------------------------
+// Meanings Walia already looked up (lib/gloss.ts), so a word is only asked
+// about once per sentence on this device.
+
+const GLOSS_KEY = 'kwanqa-gloss';
+const MAX_GLOSSES = 600;
+
+export type CachedGloss = { meaning: string; base: string; baseMeaning: string; parts: string };
+
+export function cachedGloss(word: string, sentence: string): CachedGloss | null {
+  try {
+    const all = JSON.parse(storage().getItem(GLOSS_KEY) ?? '{}') as Record<string, CachedGloss>;
+    return all[`${word}|${sentence}`] ?? all[word] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function cacheGloss(word: string, sentence: string, gloss: CachedGloss) {
+  try {
+    const all = JSON.parse(storage().getItem(GLOSS_KEY) ?? '{}') as Record<string, CachedGloss>;
+    all[`${word}|${sentence}`] = gloss;
+    all[word] ??= gloss; // a fallback for the same word in another sentence
+    const keys = Object.keys(all);
+    if (keys.length > MAX_GLOSSES) for (const k of keys.slice(0, keys.length - MAX_GLOSSES)) delete all[k];
+    storage().setItem(GLOSS_KEY, JSON.stringify(all));
+  } catch {
+    // storage full or blocked
+  }
+}

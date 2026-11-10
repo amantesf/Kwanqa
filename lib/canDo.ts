@@ -89,6 +89,13 @@ const CAN_DO: Record<string, CanDo[]> = {
     { en: 'ask what a place is called and what people speak there' },
     { en: 'tell someone about my trip' },
   ],
+  'amharic-beginner-12': [
+    { en: 'use little words like እኮ and -ማ to sound natural' },
+    { en: 'react with ወይኔ!, እሰይ! and እንዴ!' },
+    { en: 'read shop names and street signs' },
+    { en: 'read a café or restaurant menu' },
+    { en: 'read a ticket, a receipt and a holiday card' },
+  ],
   'english-from-amharic-1': [
     { en: 'introduce myself and get to know someone', am: 'ራሴን ማስተዋወቅና ሰዎችን መተዋወቅ እችላለሁ' },
     { en: 'describe my daily routine', am: 'የዕለት ተዕለት ተግባሬን መግለጽ እችላለሁ' },

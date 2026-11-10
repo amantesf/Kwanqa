@@ -2032,7 +2032,7 @@ export const courseContent: Record<string, Course> = {
 
   // Amharic part 11
   'amharic-beginner-11': {
-    title: 'Amharic Camp 11 – The Summit: Travel in Ethiopia',
+    title: 'Amharic Camp 11 – Travel in Ethiopia',
     intro:
       'Travel around Ethiopia: buy a bus ticket, get a hotel room, visit a rock-cut church, chat with locals, and tell your friends about the trip.',
     sections: [
@@ -2245,11 +2245,121 @@ export const courseContent: Record<string, Course> = {
           { english: 'Welcome back', man: 'እንኳን ደህና መጣህ', woman: 'እንኳን ደህና መጣሽ', elder: 'እንኳን ደህና መጡ' },
         ],
         note:
-          'Add ነበር (neber, “was”) to talk about the past: ጉዞው ጥሩ ነበር means “the trip was good.” Ethiopian Airlines flies to Lalibela, Gondar, Axum and Bahir Dar, so a long bus ride can become about an hour in the air. You’ve reached the summit: እንኳን ደስ አላችሁ!',
+          'Add ነበር (neber, “was”) to talk about the past: ጉዞው ጥሩ ነበር means “the trip was good.” Ethiopian Airlines flies to Lalibela, Gondar, Axum and Bahir Dar, so a long bus ride can become about an hour in the air.',
       },
     ],
   },
 
+  // Amharic part 12
+  'amharic-beginner-12': {
+    title: 'Amharic Camp 12 – The Summit: Everyday Amharic',
+    intro:
+      'Sound like a local and read the world around you: the little words people use all day, and the signs, menus, tickets and cards you’ll see in Ethiopia.',
+    sections: [
+      {
+        title: 'Lesson 1 – Little Words, Big Feelings',
+        description: 'The small endings that make speech sound natural: እኮ, -ማ, -ስ and -ም.',
+        phrases: [
+          { amharic: 'ደክሞኛል እኮ!', transliteration: 'dekmognal ikko!', english: 'I’m tired, you know!' },
+          { amharic: 'ነገርኩህ እኮ!', transliteration: 'negerkuh ikko!', english: 'I told you! (to a man)' },
+          { amharic: 'እኔማ አልሄድም።', transliteration: 'inema alhedim.', english: 'Me, I’m not going.' },
+          { amharic: 'እሱማ ይመጣል።', transliteration: 'isuma yimetal.', english: 'Oh, he’ll come, for sure.' },
+          { amharic: 'ቡናስ?', transliteration: 'bunas?', english: 'And the coffee?' },
+          { amharic: 'እኔም!', transliteration: 'inem!', english: 'Me too!' },
+        ],
+        dialogue: [
+          { speaker: 'A', amharic: 'ዛሬ ፊልም እንሂድ?', transliteration: 'zare film inhid?', english: 'Shall we go to a movie today?' },
+          { speaker: 'B', amharic: 'እኔማ አልችልም፤ ደክሞኛል እኮ!', transliteration: 'inema alchilim; dekmognal ikko!', english: 'Me, I can’t. I’m tired, you know!' },
+          { speaker: 'A', amharic: 'ነገስ?', transliteration: 'neges?', english: 'And tomorrow?' },
+          { speaker: 'B', amharic: 'ነገማ እሺ!', transliteration: 'negema ishi!', english: 'Tomorrow, sure!' },
+        ],
+        note:
+          'These endings are what textbooks leave out and everyone says. Add እኮ when you’re pointing out something the other person should know, and -ማ to put the spotlight on one word.',
+      },
+      {
+        title: 'Lesson 2 – Well, So, Oh No!',
+        description: 'Linking words that hold a conversation together, and the one-word reactions you’ll hear all day.',
+        phrases: [
+          { amharic: 'በቃ፣ እንሂድ።', transliteration: 'beqa, inhid.', english: 'Okay then, let’s go.' },
+          { amharic: 'ምን ማለት ነው?', transliteration: 'min malet new?', english: 'What does it mean?' },
+          { amharic: 'እስኪ ልየው።', transliteration: 'iski liyew.', english: 'Let me see it.' },
+          { amharic: 'ደግሞ ምን ሆነ?', transliteration: 'degmo min hone?', english: 'Now what happened?' },
+          { amharic: 'ታዲያ ምን ይጠበስ?', transliteration: 'tadiya min yitebes?', english: 'So what? (literally “so what should be roasted?”)' },
+          { amharic: 'ወይኔ!', transliteration: 'weyne!', english: 'Oh no!' },
+          { amharic: 'እሰይ!', transliteration: 'isey!', english: 'Hooray!' },
+          { amharic: 'እንዴ!', transliteration: 'inde!', english: 'What?! Really?!' },
+        ],
+        dialogue: [
+          { speaker: 'A', amharic: 'ወይኔ! ስልኬን ረሳሁት።', transliteration: 'weyne! silken resahut.', english: 'Oh no! I forgot my phone.' },
+          { speaker: 'B', amharic: 'እንዴ! ደግሞ?', transliteration: 'inde! degmo?', english: 'What! Again?' },
+          { speaker: 'A', amharic: 'አዎ… ታዲያ ምን ይጠበስ?', transliteration: 'awo… tadiya min yitebes?', english: 'Yes… so what can you do?' },
+          { speaker: 'B', amharic: 'በቃ፣ ተመለስና አምጣው።', transliteration: 'beqa, temelesna amtaw.', english: 'Okay then, go back and get it.' },
+        ],
+        note:
+          'አቦ (abo, “come on!”) is another one you’ll hear among friends when someone is slow, but it’s too casual for elders.',
+      },
+      {
+        title: 'Lesson 3 – Reading the Street',
+        description: 'Read minibus signs, shop names, notices and road signs.',
+        phrases: [
+          { amharic: 'መገናኛ', transliteration: 'Megenagna', english: 'Megenagna (a big junction; “meeting place”)' },
+          { amharic: 'ዳቦ ቤት', transliteration: 'dabo bet', english: 'bakery' },
+          { amharic: 'ፀጉር ቤት', transliteration: 'tsegur bet', english: 'hair salon, barber' },
+          { amharic: 'ክፍት ነው', transliteration: 'kift new', english: 'Open' },
+          { amharic: 'ዝግ ነው', transliteration: 'zig new', english: 'Closed' },
+          { amharic: 'መግቢያ', transliteration: 'megbiya', english: 'Entrance' },
+          { amharic: 'መውጫ', transliteration: 'mewcha', english: 'Exit' },
+          { amharic: 'ቁም', transliteration: 'qum', english: 'STOP' },
+          { amharic: 'ቤት ይከራያል', transliteration: 'bet yikerayal', english: 'House for rent' },
+        ],
+        dialogue: [
+          { speaker: 'A', amharic: 'ይቅርታ፣ ዳቦ ቤቱ ክፍት ነው?', transliteration: 'yiqirta, dabo betu kift new?', english: 'Excuse me, is the bakery open?' },
+          { speaker: 'B', amharic: 'አይ፣ ዝግ ነው። ነገ ጠዋት ይከፈታል።', transliteration: 'ay, zig new. nege tewat yikefetal.', english: 'No, it’s closed. It opens tomorrow morning.' },
+        ],
+        note:
+          'In a minibus taxi the ረዳት (conductor) shouts the stops from the window: “ፒያሳ! ፒያሳ!”. Listen for yours, and read it on the sign in the window.',
+      },
+      {
+        title: 'Lesson 4 – Reading a Menu',
+        description: 'Read the board in a café and the menu in a restaurant.',
+        phrases: [
+          { amharic: 'ማኪያቶ', transliteration: 'makiyato', english: 'macchiato' },
+          { amharic: 'ሻይ', transliteration: 'shay', english: 'tea' },
+          { amharic: 'ጭማቂ', transliteration: 'chimaqi', english: 'fresh juice' },
+          { amharic: 'ዶሮ ወጥ', transliteration: 'doro wet', english: 'chicken stew' },
+          { amharic: 'ጥብስ', transliteration: 'tibs', english: 'pan-fried meat' },
+          { amharic: 'ክትፎ', transliteration: 'kitfo', english: 'minced beef with spiced butter' },
+          { amharic: 'በየዓይነቱ', transliteration: 'beyaynetu', english: 'a fasting platter with a bit of each kind' },
+        ],
+        dialogue: [
+          { speaker: 'A', amharic: 'ምን ይፈልጋሉ?', transliteration: 'min yifeligalu?', english: 'What would you like? (polite)' },
+          { speaker: 'B', amharic: 'አንድ ማኪያቶና በየዓይነቱ፣ እባክህ።', transliteration: 'and makiyatona beyaynetu, ibakih.', english: 'One macchiato and a beyaynetu, please.' },
+        ],
+        note:
+          'ማኪያቶ is one of many Italian words in Amharic, from the 1930s. Ethiopian macchiatos are famous, and many people drink one with breakfast.',
+      },
+      {
+        title: 'Lesson 5 – Tickets, Labels & Cards',
+        description: 'Read a bus ticket, a receipt, a medicine label and the wishes on a card.',
+        phrases: [
+          { amharic: 'መነሻ', transliteration: 'menesha', english: 'From (where you set off)' },
+          { amharic: 'መድረሻ', transliteration: 'medresha', english: 'To (where you arrive)' },
+          { amharic: 'ደረሰኝ', transliteration: 'deresegn', english: 'Receipt' },
+          { amharic: 'ጠቅላላ', transliteration: 'teqlala', english: 'Total' },
+          { amharic: 'በቀን ሦስት ጊዜ', transliteration: 'beqen sost gize', english: 'three times a day' },
+          { amharic: 'ለአዋቂዎች ብቻ', transliteration: 'le’awaqiwoch bicha', english: 'for adults only' },
+          { amharic: 'የሠርግ ጥሪ', transliteration: 'yeserg tiri', english: 'Wedding invitation' },
+          { amharic: 'መልካም በዓል!', transliteration: 'melkam beal!', english: 'Happy holiday!' },
+        ],
+        dialogue: [
+          { speaker: 'A', amharic: 'ደረሰኝ ይፈልጋሉ?', transliteration: 'deresegn yifeligalu?', english: 'Would you like a receipt? (polite)' },
+          { speaker: 'B', amharic: 'አዎ፣ አመሰግናለሁ።', transliteration: 'awo, amesegenallo.', english: 'Yes, thank you.' },
+        ],
+        note:
+          'Ethiopian dates on tickets and cards are often followed by ዓ.ም. (“year of mercy”), which marks the Ethiopian calendar year. You’ve reached the summit: እንኳን ደስ አላችሁ!',
+      },
+    ],
+  },
   // The English course lives in its own file.
   ...englishCourses,
 };
@@ -2348,11 +2458,19 @@ export const courseCatalog: CourseSummary[] = [
   },
   {
     slug: 'amharic-beginner-11',
-    title: 'Amharic Camp 11 – The Summit: Travel in Ethiopia',
+    title: 'Amharic Camp 11 – Travel in Ethiopia',
     description: 'Bus tickets, hotels, visiting a church, asking the locals, and telling about your trip.',
     audience: 'Non‑Amharic speakers learning Amharic',
     track: 'amharic',
     part: 11,
+  },
+  {
+    slug: 'amharic-beginner-12',
+    title: 'Amharic Camp 12 – The Summit: Everyday Amharic',
+    description: 'Little words that make you sound natural, and reading signs, menus, tickets and cards.',
+    audience: 'Non‑Amharic speakers learning Amharic',
+    track: 'amharic',
+    part: 12,
   },
   ...englishCatalog,
 ];

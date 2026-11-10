@@ -1028,6 +1028,94 @@ const CARDS: Record<string, GrammarCard[]> = {
       tip: 'እንደገና (indegena) means “again”: እንደገና መሄድ እፈልጋለሁ, “I want to go again”.',
     },
   ],
+  // Camp 12, Lesson 1: Little Words, Big Feelings
+  'amharic-beginner-12:0': [
+    {
+      title: 'Little endings change the feeling',
+      rule: 'A few tiny endings stick onto any word and change the tone of the whole sentence. They’re what makes Amharic sound natural.',
+      table: [
+        ['', 'adds', 'example'],
+        ['-ኮ / እኮ', 'you know!, really', 'ደክሞኛል እኮ! dekmognal ikko!'],
+        ['-ማ', 'as for…, of course', 'እኔማ አልሄድም inema alhedim'],
+        ['-ስ', 'and what about…?', 'ነገስ? neges?'],
+        ['-ም', 'too, also', 'እኔም! inem!'],
+      ],
+      examples: [
+        { amharic: 'እኔማ አልችልም፤ ደክሞኛል እኮ!', transliteration: 'inema alchilim; dekmognal ikko!', english: 'Me, I can’t. I’m tired, you know!' },
+        { amharic: 'ነገማ እሺ!', transliteration: 'negema ishi!', english: 'Tomorrow, sure!' },
+      ],
+      tip: 'እኮ can also stand on its own after a sentence, as in ነገርኩህ እኮ! (I told you!).',
+    },
+  ],
+  // Camp 12, Lesson 2: Well, So, Oh No!
+  'amharic-beginner-12:1': [
+    {
+      title: 'Words that hold a conversation together',
+      rule: 'Like “so”, “well” and “I mean” in English, these short words link what you say to what was said before.',
+      table: [
+        ['', ''],
+        ['okay then, enough', 'በቃ beqa'],
+        ['well then, so', 'እንግዲህ ingidih'],
+        ['so?, then', 'ታዲያ tadiya'],
+        ['also, again', 'ደግሞ degmo'],
+        ['I mean, that is', 'ማለት malet'],
+        ['let’s see, come on', 'እስኪ iski'],
+      ],
+      examples: [
+        { amharic: 'ምን ማለት ነው?', transliteration: 'min malet new?', english: 'What does it mean?' },
+        { amharic: 'በቃ፣ ተመለስና አምጣው።', transliteration: 'beqa, temelesna amtaw.', english: 'Okay then, go back and get it.' },
+      ],
+      tip: 'Reactions: ወይኔ! (oh no), እሰይ! (hooray), እንዴ! (what?!). And -ና on ተመለስና means “and”, joining two commands.',
+    },
+  ],
+  // Camp 12, Lesson 3: Reading the Street
+  'amharic-beginner-12:2': [
+    {
+      title: 'Signs for places: መ- … -ያ',
+      rule: 'Many sign words are “a place for doing it”: the verb with መ- (me-) in front and -ያ (-ya) at the end. Know the verb, and you can read the sign.',
+      table: [
+        ['', 'from', 'place'],
+        ['entrance', 'ገባ (entered)', 'መግቢያ megbiya'],
+        ['exit', 'ወጣ (went out)', 'መውጫ mewcha'],
+        ['crossing', 'ተሻገረ (crossed)', 'መሻገሪያ meshageriya'],
+        ['seat', 'ተቀመጠ (sat)', 'መቀመጫ meqemecha'],
+      ],
+      examples: [{ amharic: 'ይቅርታ፣ ዳቦ ቤቱ ክፍት ነው?', transliteration: 'yiqirta, dabo betu kift new?', english: 'Excuse me, is the bakery open?' }],
+      tip: 'Shops are “houses” (… ቤት), as you saw in Camp 4: ዳቦ ቤት (bakery), ፀጉር ቤት (hair salon).',
+    },
+  ],
+  // Camp 12, Lesson 4: Reading a Menu
+  'amharic-beginner-12:3': [
+    {
+      title: 'Words from Italian',
+      rule: 'Italy occupied Ethiopia from 1936 to 1941, and some Italian words stayed in everyday Amharic, especially for food, cars and tools.',
+      table: [
+        ['', 'Amharic', 'Italian'],
+        ['macchiato', 'ማኪያቶ makiyato', 'macchiato'],
+        ['car', 'መኪና mekina', 'macchina'],
+        ['salad', 'ሰላጣ selata', 'insalata'],
+        ['pasta', 'ፓስታ pasta', 'pasta'],
+      ],
+      examples: [{ amharic: 'አንድ ማኪያቶና በየዓይነቱ፣ እባክህ።', transliteration: 'and makiyatona beyaynetu, ibakih.', english: 'One macchiato and a beyaynetu, please.' }],
+      tip: 'በየዓይነቱ is በ- + የ- + ዓይነት (kind) + -ኡ: “of each kind”, the fasting platter with a bit of everything.',
+    },
+  ],
+  // Camp 12, Lesson 5: Tickets, Labels & Cards
+  'amharic-beginner-12:4': [
+    {
+      title: 'Short forms and labels on printed slips',
+      rule: 'Printed Amharic shortens long words with dots, and puts ፦ after a label the way English uses a colon.',
+      table: [
+        ['', 'short', 'means'],
+        ['VAT', 'ተ.እ.ታ.', 'ተጨማሪ እሴት ታክስ, added value tax'],
+        ['year (Ethiopian)', 'ዓ.ም.', 'ዓመተ ምሕረት, year of mercy'],
+        ['number', 'ቁ.', 'ቁጥር, number'],
+        ['label', 'መነሻ፦ አዲስ አበባ', 'From: Addis Ababa'],
+      ],
+      examples: [{ amharic: 'ደረሰኝ ይፈልጋሉ?', transliteration: 'deresegn yifeligalu?', english: 'Would you like a receipt? (polite)' }],
+      tip: 'መነሻ (from ተነሳ, set off) and መድረሻ (from ደረሰ, arrive) are the መ- … pattern from Lesson 3 again.',
+    },
+  ],
 };
 
 /** Word families by lesson: "<course slug>:<lesson index>". */
@@ -1875,7 +1963,7 @@ const PARTS: Record<string, WordPart[]> = {
     { roman: '-u', gloss: 'the' },
   ],
   ተኩል: [{ roman: 'tekul', gloss: 'and a half' }],
-  ማለት: [{ roman: 'malet', gloss: 'to mean' }],
+  ማለት: [{ roman: 'malet', gloss: 'to mean; I mean' }],
   ልክ: [{ roman: 'lik', gloss: 'right, exact' }],
   // Camp 8
   ለምን: [
@@ -2355,6 +2443,91 @@ const PARTS: Record<string, WordPart[]> = {
     { roman: '-k', gloss: 'you (man)' },
     { roman: '-ew', gloss: 'the one' },
   ],
+  // Camp 12
+  እኮ: [{ roman: 'ikko', gloss: 'you know!, really' }],
+  እኔማ: [
+    { roman: 'ine', gloss: 'I, me' },
+    { roman: '-ma', gloss: 'as for' },
+  ],
+  እሱማ: [
+    { roman: 'isu', gloss: 'he' },
+    { roman: '-ma', gloss: 'as for' },
+  ],
+  ቡናስ: [
+    { roman: 'buna', gloss: 'coffee' },
+    { roman: '-s', gloss: 'and…?' },
+  ],
+  ነገስ: [
+    { roman: 'nege', gloss: 'tomorrow' },
+    { roman: '-s', gloss: 'and…?' },
+  ],
+  ነገማ: [
+    { roman: 'nege', gloss: 'tomorrow' },
+    { roman: '-ma', gloss: 'as for' },
+  ],
+  በቃ: [{ roman: 'beqa', gloss: 'okay then, enough' }],
+  እስኪ: [{ roman: 'iski', gloss: 'let’s see, come on' }],
+  ልየው: [
+    { roman: 'li-', gloss: 'let me' },
+    { roman: 'ye', gloss: 'see' },
+    { roman: '-w', gloss: 'it' },
+  ],
+  ደግሞ: [{ roman: 'degmo', gloss: 'also, again' }],
+  ታዲያ: [{ roman: 'tadiya', gloss: 'so?, then' }],
+  ወይኔ: [{ roman: 'weyne', gloss: 'oh no!' }],
+  እሰይ: [{ roman: 'isey', gloss: 'hooray!' }],
+  እንዴ: [{ roman: 'inde', gloss: 'what?!, really?!' }],
+  ተመለስና: [
+    { roman: 'temeles', gloss: 'go back! (man)' },
+    { roman: '-na', gloss: 'and' },
+  ],
+  አምጣው: [
+    { roman: 'amta', gloss: 'bring! (man)' },
+    { roman: '-w', gloss: 'it' },
+  ],
+  ክፍት: [{ roman: 'kift', gloss: 'open' }],
+  ዝግ: [{ roman: 'zig', gloss: 'closed' }],
+  መግቢያ: [
+    { roman: 'me-', gloss: 'place for' },
+    { roman: 'gbi', gloss: 'entering' },
+    { roman: '-ya', gloss: '(place)' },
+  ],
+  መውጫ: [
+    { roman: 'me-', gloss: 'place for' },
+    { roman: 'wcha', gloss: 'going out' },
+  ],
+  ቁም: [{ roman: 'qum', gloss: 'stop! (man)' }],
+  ይከራያል: [
+    { roman: 'yi-', gloss: 'it' },
+    { roman: 'keray', gloss: 'is rented out' },
+    { roman: '-al', gloss: '(now)' },
+  ],
+  ዳቦ: [{ roman: 'dabo', gloss: 'bread' }],
+  ፀጉር: [{ roman: 'tsegur', gloss: 'hair' }],
+  በየዓይነቱ: [
+    { roman: 'be-ye-', gloss: 'of each' },
+    { roman: 'aynet', gloss: 'kind' },
+    { roman: '-u', gloss: 'the' },
+  ],
+  ማኪያቶና: [
+    { roman: 'makiyato', gloss: 'macchiato' },
+    { roman: '-na', gloss: 'and' },
+  ],
+  መነሻ: [
+    { roman: 'me-', gloss: 'place for' },
+    { roman: 'nesha', gloss: 'setting off' },
+  ],
+  መድረሻ: [
+    { roman: 'me-', gloss: 'place for' },
+    { roman: 'dresha', gloss: 'arriving' },
+  ],
+  ጠቅላላ: [{ roman: 'teqlala', gloss: 'total' }],
+  ለአዋቂዎች: [
+    { roman: 'le-', gloss: 'for' },
+    { roman: 'awaqi', gloss: 'adult' },
+    { roman: '-woch', gloss: '(plural)' },
+  ],
+  ጥሪ: [{ roman: 'tiri', gloss: 'a call, an invitation' }],
   // Camp 1, Lesson 2
   ስሜ: [
     { roman: 'səm', gloss: 'name' },

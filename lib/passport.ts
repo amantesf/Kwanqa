@@ -20,6 +20,7 @@ export type StampId =
   | 'addis'
   | 'konso'
   | 'sof-omar'
+  | 'tis-abay'
   | 'ras-dashen';
 
 export type Stamp = {
@@ -123,6 +124,15 @@ const PLACES: Stamp[] = [
     ink: '#2a7f8a',
     fact:
       'Ethiopia’s longest cave, over 15 km, was carved by the Weyib River. It’s named after Sheikh Sof Omar, a holy man who sheltered here about 1,000 years ago, and Muslim pilgrims still come to pray.',
+  },
+  {
+    id: 'tis-abay',
+    name: 'Blue Nile Falls',
+    amharic: 'ጢስ ዓባይ',
+    region: 'Near Bahir Dar',
+    ink: '#2f6db5',
+    fact:
+      'Downstream from Lake Tana, the Blue Nile drops about 40 m over a wide cliff. Its Amharic name, ጢስ ዓባይ, means “smoking Nile”, for the mist that rises from the falls.',
   },
 ];
 

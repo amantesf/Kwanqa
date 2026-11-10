@@ -128,6 +128,18 @@ const ICONS: Record<StampId, (ink: string) => ReactNode> = {
       <path d="M67 95 Q71 92 75 95 T83 95 T91 95 M65 103 Q70 100 75 103 T85 103 T95 103" stroke={ink} strokeWidth="2" fill="none" strokeLinecap="round" />
     </g>
   ),
+  // the Blue Nile Falls: the river over the ledge, falling into its mist
+  'tis-abay': ink => (
+    <g>
+      <path d="M52 60 Q60 56 68 60 T84 60 T100 60 T110 58" stroke={ink} strokeWidth="2.2" fill="none" strokeLinecap="round" />
+      <rect x="50" y="66" width="60" height="8" rx="2" fill={ink} />
+      <path d="M58 74 V99 M66 74 V102 M74 74 V100 M82 74 V103 M90 74 V100 M98 74 V102" stroke={ink} strokeWidth="3" strokeLinecap="round" />
+      <circle cx="60" cy="104" r="7" fill={ink} opacity="0.35" />
+      <circle cx="72" cy="106" r="8" fill={ink} opacity="0.35" />
+      <circle cx="87" cy="105" r="8" fill={ink} opacity="0.35" />
+      <circle cx="100" cy="104" r="7" fill={ink} opacity="0.35" />
+    </g>
+  ),
   // the summit, with Ethiopia's flag on top
   'ras-dashen': ink => (
     <g>

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requestUser } from '@/lib/requestUser';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { isTeam } from '@/lib/teamAccess';
 
 // The numbers for /stats, added up by kwanqa_stats() (supabase/events.sql).
 // Only for the team: the logged-in account's email must be in STATS_EMAILS
@@ -8,18 +9,10 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export const dynamic = 'force-dynamic';
 
-function allowed(email: string | undefined) {
-  const list = (process.env.STATS_EMAILS ?? '')
-    .split(',')
-    .map(e => e.trim().toLowerCase())
-    .filter(Boolean);
-  return !!email && list.includes(email.toLowerCase());
-}
-
 export async function GET(request: Request) {
   const user = await requestUser(request);
   if (!user) return NextResponse.json({ error: 'Log in to see the numbers.' }, { status: 401 });
-  if (!allowed(user.email)) return NextResponse.json({ error: 'This page is only for the kwanqa team.' }, { status: 403 });
+  if (!isTeam(user.email)) return NextResponse.json({ error: 'This page is only for the kwanqa team.' }, { status: 403 });
 
   const admin = supabaseAdmin();
   if (!admin) return NextResponse.json({ error: 'SUPABASE_SECRET_KEY isn’t set on the server.' }, { status: 500 });

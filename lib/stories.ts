@@ -407,6 +407,69 @@ export const STORIES: Story[] = [
     ],
     note: 'Good night is ደህና እደር to a man, ደህና እደሪ to a woman and ደህና እደሩ to a group or an elder. Word by word it means “spend the night well.”',
   },
+  {
+    id: 'new-year',
+    title: 'New Year',
+    amharicTitle: 'እንቁጣጣሽ',
+    camp: 6,
+    blurb: 'Meskerem 1: yellow flowers, singing children and doro wot.',
+    sentences: [
+      {
+        words: [['ዛሬ', 'zare', 'today'], ['መስከረም', 'meskerem', 'Meskerem (the first month)'], ['አንድ', 'and', 'one'], ['ነው', 'new', 'is', '።']],
+        transliteration: 'zare meskerem and new.',
+        english: 'Today is Meskerem 1.',
+      },
+      {
+        words: [['የኢትዮጵያ', 'ye’ityopya', 'Ethiopia’s, Ethiopian'], ['አዲስ', 'addis', 'new'], ['ዓመት', 'amet', 'year'], ['ነው', 'new', 'is', '።']],
+        transliteration: 'ye’ityopya addis amet new.',
+        english: 'It’s the Ethiopian New Year.',
+      },
+      {
+        words: [['ሜዳው', 'medaw', 'the field'], ['በቢጫ', 'bebicha', 'with yellow'], ['አበባ', 'abeba', 'flower(s)'], ['ተሞልቷል', 'temoltwal', 'it is full', '።']],
+        transliteration: 'medaw bebicha abeba temoltwal.',
+        english: 'The fields are full of yellow flowers.',
+      },
+      {
+        words: [['ልጆች', 'lijoch', 'children'], ['በሩን', 'berun', 'the door'], ['ያንኳኳሉ', 'yankwakwalu', 'they knock (on)', '።']],
+        transliteration: 'lijoch berun yankwakwalu.',
+        english: 'Children knock on the door.',
+      },
+      {
+        words: [['አበባዬ', 'abebaye', 'part of the New Year song (“my flower”)'], ['ሆሽ', 'hosh', 'part of the song'], ['ብለው', 'bilew', 'saying'], ['ይዘፍናሉ', 'yizefnalu', 'they sing', '።']],
+        quote: [0, 1],
+        transliteration: '“abebaye hosh” bilew yizefnalu.',
+        english: 'They sing “Abebaye hosh.”',
+      },
+      {
+        words: [['እናቴ', 'inate', 'my mother'], ['ዶሮ', 'doro', 'chicken'], ['ወጥ', 'wet', 'stew'], ['ትሠራለች', 'tiseralech', 'she makes', '።']],
+        transliteration: 'inate doro wet tiseralech.',
+        english: 'My mother makes doro wot.',
+      },
+      {
+        words: [['ቤተሰቡ', 'betesebu', 'the family'], ['በሙሉ', 'bemulu', 'whole, all'], ['አብሮ', 'abro', 'together'], ['ይበላል', 'yibelal', 'eats', '።']],
+        transliteration: 'betesebu bemulu abro yibelal.',
+        english: 'The whole family eats together.',
+      },
+      {
+        words: [['ጎረቤታችን', 'gorebetachin', 'our neighbour'], ['እንኳን', 'inkwan', 'part of the holiday wish'], ['አደረሰህ', 'aderesih', 'brought you to it (to a man)', '!'], ['ይላል', 'yilal', 'he says', '።']],
+        quote: [0, 2],
+        transliteration: 'gorebetachin “inkwan aderesih!” yilal.',
+        english: 'Our neighbour says “Happy holiday!”',
+      },
+      {
+        words: [['እንኳን', 'inkwan', 'part of the holiday wish'], ['አብሮ', 'abro', 'together'], ['አደረሰን', 'aderesen', 'brought us to it', '!'], ['እላለሁ', 'ilalehu', 'I say', '።']],
+        quote: [0, 2],
+        transliteration: '“inkwan abro aderesen!” ilalehu.',
+        english: 'I say “And to us all, together!”',
+      },
+      {
+        words: [['መልካም', 'melkam', 'good, happy'], ['አዲስ', 'addis', 'new'], ['ዓመት', 'amet', 'year', '!']],
+        transliteration: 'melkam addis amet!',
+        english: 'Happy New Year!',
+      },
+    ],
+    note: 'Enkutatash falls on Meskerem 1, usually 11 September, right after the rainy season, when the yellow Meskel daisies (አደይ አበባ) cover the hills. Children go door to door singing and get bread or a few birr.',
+  },
 ];
 
 /** The whole sentence as written, with its quote marks and punctuation. */

@@ -809,3 +809,13 @@
     background-color: #262a30;
     color: #7ea4e7
 }
+:where(html[data-theme='dark']) .fam-tabs button[aria-selected='true'] {
+    background-color: #302b25;
+    color: #eca479
+}
+:where(html[data-theme='dark']) .fam-streak.lit {
+    background-color: #2b2722
+}
+:where(html[data-theme='dark']) .fam-streak-count strong {
+    color: #eca779
+}

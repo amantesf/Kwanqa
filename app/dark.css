@@ -247,3 +247,15 @@ html[data-theme='dark'] .st-review-link,
 html[data-theme='dark'] .st-link-btn {
   color: #7fb0ff;
 }
+
+/* Family: keep the streak card warm on the dark background. */
+html[data-theme='dark'] .fam-streak.lit {
+  border-color: #b8641f;
+  background-color: rgba(245, 130, 31, 0.12);
+}
+
+html[data-theme='dark'] .fam-tabs button[aria-selected='true'] {
+  border-color: #b8641f;
+  background-color: rgba(245, 130, 31, 0.14);
+  color: #ffc58f;
+}

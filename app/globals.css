@@ -13483,3 +13483,253 @@ body:has(.practice-screen) {
     bottom: 12px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Family (/family): learn together, with a shared family streak.
+   -------------------------------------------------------------------------- */
+.learn-main.fam-page {
+  grid-column: 2 / -1;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .learn-main.fam-page {
+    grid-column: auto;
+  }
+}
+
+.fam-head h1 {
+  margin: 0 0 6px;
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.fam-head .lead {
+  margin: 0;
+}
+
+.fam-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: 20px;
+  background-color: var(--bg);
+}
+
+.fam-card h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.fam-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fam-tabs button {
+  min-height: 46px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background-color: var(--bg);
+  color: var(--text-muted);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.fam-tabs button[aria-selected='true'] {
+  border-color: #e8762a;
+  background-color: #fdeedf;
+  color: #9a4410;
+}
+
+.fam-code-input {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.fam-fine {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.fam-streak {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+}
+
+.fam-streak.lit {
+  border-color: #f5a14a;
+  background-color: #fff6ec;
+}
+
+.fam-streak-text {
+  flex: 1;
+  min-width: 180px;
+}
+
+.fam-streak-count {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.fam-streak-count strong {
+  font-size: 36px;
+  font-weight: 900;
+  color: #e8762a;
+}
+
+.fam-streak-status {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+}
+
+.fam-week {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fam-week li {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  background-color: var(--bg-soft);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.fam-week li.done {
+  background-color: #f5821f;
+  color: #fff;
+}
+
+.fam-week li.today {
+  outline: 2px solid #f5a14a;
+  outline-offset: 1px;
+}
+
+.fam-week li.future {
+  opacity: 0.5;
+}
+
+.fam-go {
+  align-self: flex-start;
+  text-decoration: none;
+}
+
+.fam-members {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fam-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background-color: var(--bg-soft);
+}
+
+.fam-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #e8762a;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.fam-member-name {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.fam-member-name strong {
+  font-size: 16px;
+  color: var(--text-strong);
+}
+
+.fam-member-name small {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.fam-today {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--bg);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.fam-today.done {
+  background-color: var(--green-soft);
+  color: var(--green-dark);
+}
+
+.fam-invite {
+  align-items: flex-start;
+}
+
+.fam-invite .muted {
+  margin: 0;
+}
+
+.fam-code {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: var(--text-strong);
+}
+
+.fam-leave {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}

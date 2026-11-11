@@ -470,6 +470,80 @@ export const STORIES: Story[] = [
     ],
     note: 'Enkutatash falls on Meskerem 1, usually 11 September, right after the rainy season, when the yellow Meskel daisies (አደይ አበባ) cover the hills. Children go door to door singing and get bread or a few birr.',
   },
+  {
+    id: 'at-the-pharmacy',
+    title: 'At the Pharmacy',
+    amharicTitle: 'ፋርማሲ ውስጥ',
+    camp: 9,
+    blurb: 'A headache, a kind pharmacist and fifty birr.',
+    sentences: [
+      {
+        words: [['ዛሬ', 'zare', 'today'], ['ራሴን', 'rasen', 'my head (as the object)'], ['ያመኛል', 'yamegnal', 'it hurts me', '።']],
+        transliteration: 'zare rasen yamegnal.',
+        english: 'Today I have a headache.',
+      },
+      {
+        words: [['ወደ', 'wede', 'to'], ['ፋርማሲ', 'farmasi', 'pharmacy'], ['እሄዳለሁ', 'ihedalehu', 'I go', '።']],
+        transliteration: 'wede farmasi ihedalehu.',
+        english: 'I go to the pharmacy.',
+      },
+      {
+        words: [['ምን', 'min', 'what'], ['ልርዳህ', 'lirdah', 'may I help you (to a man)', '?'], ['ትላለች', 'tilalech', 'she asks, she says', '።']],
+        quote: [0, 1],
+        transliteration: '“min lirdah?” tilalech.',
+        english: '“How can I help you?” she asks.',
+      },
+      {
+        words: [['ራሴን', 'rasen', 'my head (as the object)'], ['ያመኛል', 'yamegnal', 'it hurts me'], ['እላለሁ', 'ilalehu', 'I say', '።']],
+        quote: [0, 1],
+        transliteration: '“rasen yamegnal,” ilalehu.',
+        english: '“I have a headache,” I say.',
+      },
+      {
+        words: [['ከመቼ', 'kemeche', 'from when'], ['ጀምሮ', 'jemiro', 'starting, since', '?']],
+        quote: [0, 1],
+        transliteration: '“kemeche jemiro?”',
+        english: '“Since when?”',
+      },
+      {
+        words: [['ከትናንት', 'ketinant', 'from yesterday'], ['ጀምሮ', 'jemiro', 'starting, since', '።']],
+        quote: [0, 1],
+        transliteration: '“ketinant jemiro.”',
+        english: '“Since yesterday.”',
+      },
+      {
+        words: [['ይህን', 'yihin', 'this (as the object)'], ['መድኃኒት', 'medhanit', 'medicine'], ['ውሰድ', 'wised', 'take (to a man)'], ['ትላለች', 'tilalech', 'she says', '።']],
+        quote: [0, 2],
+        transliteration: '“yihin medhanit wised,” tilalech.',
+        english: '“Take this medicine,” she says.',
+      },
+      {
+        words: [['በቀን', 'beqen', 'a day, per day'], ['ሁለት', 'hulet', 'two'], ['ጊዜ', 'gize', 'times', '፣'], ['ከምግብ', 'kemigib', 'food (ke- … በኋላ = after)'], ['በኋላ', 'behwala', 'after', '።']],
+        quote: [0, 4],
+        transliteration: '“beqen hulet gize, kemigib behwala.”',
+        english: '“Twice a day, after food.”',
+      },
+      {
+        words: [['ስንት', 'sint', 'how much'], ['ነው', 'new', 'is it', '?']],
+        quote: [0, 1],
+        transliteration: '“sint new?”',
+        english: '“How much is it?”',
+      },
+      {
+        words: [['ሃምሳ', 'hamsa', 'fifty'], ['ብር', 'birr', 'birr (Ethiopian money)', '።'], ['እግዜር', 'igzer', 'God (short for እግዚአብሔር)'], ['ይማርህ', 'yimarih', 'heal you (to a man)', '!']],
+        quote: [0, 3],
+        transliteration: '“hamsa birr. igzer yimarih!”',
+        english: '“Fifty birr. Get well soon!”',
+      },
+      {
+        words: [['አሜን', 'amen', 'amen'], ['አመሰግናለሁ', 'amesegnalehu', 'thank you', '!']],
+        quote: [0, 1],
+        transliteration: '“amen, amesegnalehu!”',
+        english: '“Amen, thank you!”',
+      },
+    ],
+    note: 'To say something hurts, put the body part before ያመኛል: ሆዴን ያመኛል (my stomach hurts), ጥርሴን ያመኛል (my tooth hurts). “እግዜር ይማርህ” (God heal you) is how people wish you well when you’re sick.',
+  },
 ];
 
 /** The whole sentence as written, with its quote marks and punctuation. */

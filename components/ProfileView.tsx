@@ -26,6 +26,7 @@ import { courseContent, type Track } from '@/lib/courses';
 import { useProfile, type Profile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
 import { amharicName, learnerName } from '@/lib/learnerName';
+import FamilyCard from '@/components/FamilyCard';
 
 const LANGUAGE: Record<string, string> = {
   amharic: 'Amharic',
@@ -470,6 +471,11 @@ export default function ProfileView() {
               label="Lessons completed"
             />
           </div>
+        </section>
+
+        <section>
+          <h2 className="pf-title">Family</h2>
+          <FamilyCard />
         </section>
 
         <section>

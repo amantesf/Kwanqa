@@ -58,6 +58,15 @@ const ICONS: Record<string, ReactNode> = {
     </svg>
   ),
   // a passport book with a round stamp
+  // three heads together: a parent and two kids
+  family: (
+    <svg {...glyph}>
+      <circle cx="8" cy="7.5" r="3.2" fill="#fff" />
+      <circle cx="16.5" cy="10" r="2.6" fill="#fff" />
+      <path d="M2.5 20 C 3 14.5, 13 14.5, 13.5 20 Z" fill="#fff" />
+      <path d="M12.5 20 C 13 16, 20.5 16, 21.5 20 Z" fill="#fff" />
+    </svg>
+  ),
   passport: (
     <svg {...glyph}>
       <rect x="5" y="3" width="14" height="18" rx="2.5" fill="#fff" />
@@ -97,7 +106,7 @@ type Item = {
   edge: string;
 };
 
-export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'stories' | 'passport' | 'profile';
+export type SidebarPage = 'learn' | 'phrasebook' | 'alphabet' | 'stories' | 'passport' | 'family' | 'profile';
 
 function NavLink({ item, current, icon }: { item: Item; current?: boolean; icon: ReactNode }) {
   const style = { '--c': item.color, '--c-soft': item.soft, '--c-edge': item.edge } as CSSProperties;
@@ -144,6 +153,16 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
     soft: '#e2f3ec',
     edge: '#0a4d39',
   };
+  // learn together with family and keep a shared streak
+  const family: Item = {
+    key: 'family',
+    href: '/family',
+    label: 'Family',
+    amharic: 'ቤተሰብ',
+    color: '#e8762a',
+    soft: '#fdeedf',
+    edge: '#b5541a',
+  };
   const profile: Item = {
     key: 'profile',
     href: '/profile',
@@ -182,6 +201,7 @@ export default function LearnSidebar({ active, track }: { active: SidebarPage; t
         ))}
         <span className="learn-nav-gap" aria-hidden />
         <NavLink item={passport} icon={ICONS.passport} current={active === 'passport'} />
+        <NavLink item={family} icon={ICONS.family} current={active === 'family'} />
         <NavLink item={profile} icon={profileIcon} current={active === 'profile'} />
       </nav>
       <div className="learn-account">

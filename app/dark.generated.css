@@ -819,3 +819,6 @@
 :where(html[data-theme='dark']) .fam-streak-count strong {
     color: #eca779
 }
+:where(html[data-theme='dark']) .fam-pf-streak {
+    color: #eca779
+}

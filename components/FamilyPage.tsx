@@ -1,6 +1,7 @@
 'use client';
 
-// /family: parents and kids learn together. Start a family and share its
+// /family (opened from the Family card on the profile page): parents and
+// kids learn together. Start a family and share its
 // code, or join one; then see everyone's day and the family streak, which
 // grows on days when everyone practised (lib/family.ts, supabase/family.sql).
 
@@ -293,8 +294,11 @@ export default function FamilyPage() {
   const track = useProfile()?.track ?? 'amharic';
   return (
     <div className="learn-app">
-      <LearnSidebar active="family" track={track} />
+      <LearnSidebar active="profile" track={track} />
       <main className="learn-main fam-page">
+        <Link href="/profile" className="fam-back">
+          ← Profile
+        </Link>
         <FamilyBody />
       </main>
     </div>

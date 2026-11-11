@@ -339,6 +339,74 @@ export const STORIES: Story[] = [
     ],
     note: 'Bargaining is normal at open-air markets in Ethiopia, and a smile and a bit of joking go a long way. Prices in this story are just an example.',
   },
+  {
+    id: 'a-call-from-mum',
+    title: 'A Call from Mum',
+    amharicTitle: 'የእናቴ ስልክ',
+    camp: 5,
+    blurb: 'At the end of the day, Mum calls to ask what you did.',
+    sentences: [
+      {
+        words: [['ማታ', 'mata', 'in the evening'], ['ስልኬ', 'silke', 'my phone'], ['ይጮኻል', 'yichohal', 'it rings (word by word: it shouts)', '።']],
+        transliteration: 'mata silke yichohal.',
+        english: 'In the evening my phone rings.',
+      },
+      {
+        words: [['እናቴ', 'inate', 'my mother'], ['ናት', 'nat', 'it is (for a woman)', '።']],
+        transliteration: 'inate nat.',
+        english: 'It’s my mother.',
+      },
+      {
+        words: [['ሄሎ', 'helo', 'hello (on the phone)', '፣'], ['ልጄ', 'lije', 'my child', '!'], ['እንዴት', 'indet', 'how'], ['ነህ', 'neh', 'are you (to a man)', '?']],
+        quote: [0, 3],
+        transliteration: '“helo, lije! indet neh?”',
+        english: '“Hello, my child! How are you?”',
+      },
+      {
+        words: [['ደህና', 'dehna', 'well, fine'], ['ነኝ', 'negn', 'I am', '፣'], ['እማዬ', 'imaye', 'Mum (a loving way to say mother)', '።']],
+        quote: [0, 2],
+        transliteration: '“dehna negn, imaye.”',
+        english: '“I’m fine, Mum.”',
+      },
+      {
+        words: [['ዛሬ', 'zare', 'today'], ['ምን', 'min', 'what'], ['አደረግህ', 'aderegh', 'did you do (to a man)', '?'], ['ትላለች', 'tilalech', 'she asks, she says', '።']],
+        quote: [0, 2],
+        transliteration: '“zare min aderegh?” tilalech.',
+        english: '“What did you do today?” she asks.',
+      },
+      {
+        words: [['ጠዋት', 'tewat', 'in the morning'], ['ሥራ', 'sira', 'work'], ['ሄድኩ', 'hedku', 'I went', '።']],
+        quote: [0, 2],
+        transliteration: '“tewat sira hedku.”',
+        english: '“In the morning I went to work.”',
+      },
+      {
+        words: [['ከሰዓት', 'kese’at', 'in the afternoon (with በኋላ)'], ['በኋላ', 'behwala', 'after'], ['ከጓደኛዬ', 'kegwadegnaye', 'with my friend (ke- … ጋር = with)'], ['ጋር', 'gar', 'with'], ['ቡና', 'buna', 'coffee'], ['ጠጣሁ', 'tetahu', 'I drank', '።']],
+        quote: [0, 5],
+        transliteration: '“kese’at behwala kegwadegnaye gar buna tetahu.”',
+        english: '“In the afternoon I had coffee with my friend.”',
+      },
+      {
+        words: [['አሁን', 'ahun', 'now'], ['ትንሽ', 'tinish', 'a little'], ['ደክሞኛል', 'dekmognal', 'I’m tired', '።']],
+        quote: [0, 2],
+        transliteration: '“ahun tinish dekmognal.”',
+        english: '“Now I’m a little tired.”',
+      },
+      {
+        words: [['እሺ', 'ishi', 'okay'], ['ልጄ', 'lije', 'my child', '።'], ['ደህና', 'dehna', 'well'], ['እደር', 'ider', 'spend the night (to a man)', '!']],
+        quote: [0, 3],
+        transliteration: '“ishi lije. dehna ider!”',
+        english: '“Okay, my child. Good night!”',
+      },
+      {
+        words: [['ደህና', 'dehna', 'well'], ['እደሪ', 'ideri', 'spend the night (to a woman)', '፣'], ['እማዬ', 'imaye', 'Mum', '!']],
+        quote: [0, 2],
+        transliteration: '“dehna ideri, imaye!”',
+        english: '“Good night, Mum!”',
+      },
+    ],
+    note: 'Good night is ደህና እደር to a man, ደህና እደሪ to a woman and ደህና እደሩ to a group or an elder. Word by word it means “spend the night well.”',
+  },
 ];
 
 /** The whole sentence as written, with its quote marks and punctuation. */

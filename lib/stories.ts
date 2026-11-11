@@ -38,6 +38,139 @@ export type Story = {
 
 export const STORIES: Story[] = [
   {
+    id: 'the-new-neighbour',
+    title: 'The New Neighbour',
+    amharicTitle: 'አዲሷ ጎረቤት',
+    camp: 1,
+    blurb: 'Dawit meets the woman who just moved in next door.',
+    sentences: [
+      {
+        words: [['ዛሬ', 'zare', 'today'], ['አዲስ', 'addis', 'new'], ['ጎረቤት', 'gorebet', 'neighbour'], ['አለኝ', 'allegn', 'I have', '።']],
+        transliteration: 'zare addis gorebet allegn.',
+        english: 'Today I have a new neighbour.',
+      },
+      {
+        words: [['ሰላም', 'selam', 'hello, hi', '!'], ['እላለሁ', 'ilalehu', 'I say', '።']],
+        quote: [0, 0],
+        transliteration: '“selam!” ilalehu.',
+        english: '“Hello!” I say.',
+      },
+      {
+        words: [['ሰላም', 'selam', 'hello, hi', '፣'], ['ስሜ', 'sime', 'my name'], ['ሳራ', 'Sara', 'Sara (a name)'], ['ነው', 'new', 'is'], ['ትላለች', 'tilalech', 'she says', '።']],
+        quote: [0, 3],
+        transliteration: '“selam, sime Sara new,” tilalech.',
+        english: '“Hi, my name is Sara,” she says.',
+      },
+      {
+        words: [['ስምህ', 'simih', 'your name (to a man)'], ['ማን', 'man', 'who, what (for names)'], ['ነው', 'new', 'is', '?']],
+        quote: [0, 2],
+        transliteration: '“simih man new?”',
+        english: '“What’s your name?”',
+      },
+      {
+        words: [['ስሜ', 'sime', 'my name'], ['ዳዊት', 'Dawit', 'Dawit (a name; David)'], ['ነው', 'new', 'is'], ['እላለሁ', 'ilalehu', 'I say', '።']],
+        quote: [0, 2],
+        transliteration: '“sime Dawit new,” ilalehu.',
+        english: '“My name is Dawit,” I say.',
+      },
+      {
+        words: [['ከየት', 'keyet', 'from where'], ['ነሽ', 'nesh', 'are you (to a woman)', '?']],
+        quote: [0, 1],
+        transliteration: '“keyet nesh?”',
+        english: '“Where are you from?”',
+      },
+      {
+        words: [['ከጎንደር', 'kegonder', 'from Gondar (ke- = from)'], ['ነኝ', 'negn', 'I am'], ['ትላለች', 'tilalech', 'she says', '።']],
+        quote: [0, 1],
+        transliteration: '“kegonder negn,” tilalech.',
+        english: '“I’m from Gondar,” she says.',
+      },
+      {
+        words: [['እንኳን', 'inkwan', 'part of “welcome” (word by word: “even”)'], ['ደህና', 'dehna', 'well, safely'], ['መጣሽ', 'metash', 'you came (to a woman)', '!']],
+        quote: [0, 2],
+        transliteration: '“inkwan dehna metash!”',
+        english: '“Welcome!”',
+      },
+      {
+        words: [['ሳራ', 'Sara', 'Sara'], ['ፈገግ', 'fegeg', 'part of “smile” (ፈገግ አለ = to smile)'], ['ትላለች', 'tilalech', 'she does, she says', '።']],
+        transliteration: 'Sara fegeg tilalech.',
+        english: 'Sara smiles.',
+      },
+      {
+        words: [['አመሰግናለሁ', 'amesegnalehu', 'thank you', '።'], ['ደህና', 'dehna', 'well'], ['ሁን', 'hun', 'be (to a man)', '!']],
+        quote: [0, 2],
+        transliteration: '“amesegnalehu. dehna hun!”',
+        english: '“Thank you. Goodbye!”',
+      },
+    ],
+    note: 'Goodbye changes with who you’re talking to: ደህና ሁን to a man, ደህና ሁኚ to a woman, ደህና ሁኑ to a group or an elder. Word by word it means “be well.”',
+  },
+  {
+    id: 'my-family',
+    title: 'My Family',
+    amharicTitle: 'ቤተሰቤ',
+    camp: 2,
+    blurb: 'Hanna introduces everyone in her house, from her tall father to her grandmother.',
+    sentences: [
+      {
+        words: [['ስሜ', 'sime', 'my name'], ['ሐና', 'Hanna', 'Hanna (a name)'], ['ነው', 'new', 'is', '።']],
+        transliteration: 'sime Hanna new.',
+        english: 'My name is Hanna.',
+      },
+      {
+        words: [['ይህ', 'yih', 'this'], ['ቤተሰቤ', 'betesebe', 'my family'], ['ነው', 'new', 'is', '።']],
+        transliteration: 'yih betesebe new.',
+        english: 'This is my family.',
+      },
+      {
+        words: [['አባቴ', 'abate', 'my father'], ['ረጅም', 'rejim', 'tall'], ['ነው', 'new', 'is', '።']],
+        transliteration: 'abate rejim new.',
+        english: 'My father is tall.',
+      },
+      {
+        words: [['እናቴ', 'inate', 'my mother'], ['በጣም', 'betam', 'very'], ['ደግ', 'deg', 'kind'], ['ናት', 'nat', 'is (for a woman)', '።']],
+        transliteration: 'inate betam deg nat.',
+        english: 'My mother is very kind.',
+      },
+      {
+        words: [['ሁለት', 'hulet', 'two'], ['ወንድሞች', 'wendimoch', 'brothers'], ['አሉኝ', 'alugn', 'I have (more than one)', '።']],
+        transliteration: 'hulet wendimoch alugn.',
+        english: 'I have two brothers.',
+      },
+      {
+        words: [['ወንድሞቼ', 'wendimoche', 'my brothers'], ['ተማሪዎች', 'temariwoch', 'students'], ['ናቸው', 'nachew', 'are (for a group)', '።']],
+        transliteration: 'wendimoche temariwoch nachew.',
+        english: 'My brothers are students.',
+      },
+      {
+        words: [['አንድ', 'and', 'one'], ['እህት', 'ihit', 'sister'], ['አለችኝ', 'allechign', 'I have (a woman or girl)', '።']],
+        transliteration: 'and ihit allechign.',
+        english: 'I have one sister.',
+      },
+      {
+        words: [['እህቴ', 'ihite', 'my sister'], ['አምስት', 'amist', 'five'], ['ዓመቷ', 'ametwa', 'her years (her age)'], ['ነው', 'new', 'is', '።']],
+        transliteration: 'ihite amist ametwa new.',
+        english: 'My sister is five years old.',
+      },
+      {
+        words: [['አያቴም', 'ayatem', 'my grandmother too (-ም = too)'], ['ከእኛ', 'ke’igna', 'with us (ke- … ጋር = with)'], ['ጋር', 'gar', 'with'], ['ትኖራለች', 'tinoralech', 'she lives', '።']],
+        transliteration: 'ayatem ke’igna gar tinoralech.',
+        english: 'My grandmother lives with us too.',
+      },
+      {
+        words: [['ቤታችን', 'betachin', 'our house'], ['ትንሽ', 'tinish', 'small'], ['ነው', 'new', 'is', '፣'], ['ግን', 'gin', 'but'], ['ደስተኞች', 'destegnoch', 'happy (for a group)'], ['ነን', 'nen', 'we are', '።']],
+        transliteration: 'betachin tinish new, gin destegnoch nen.',
+        english: 'Our house is small, but we are happy.',
+      },
+      {
+        words: [['ቤተሰቤን', 'beteseben', 'my family (as the object)'], ['እወዳለሁ', 'iwedalehu', 'I love', '!']],
+        transliteration: 'beteseben iwedalehu!',
+        english: 'I love my family!',
+      },
+    ],
+    note: 'Many Ethiopian homes have grandparents living with the family. Notice how “my” is an ending: አባት → አባቴ (my father), እህት → እህቴ (my sister).',
+  },
+  {
     id: 'coffee-at-grandmas',
     title: 'Coffee at Grandma’s',
     amharicTitle: 'ቡና በአያቴ ቤት',

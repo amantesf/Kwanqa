@@ -12,8 +12,8 @@ import PassportStamp from '@/components/PassportStamp';
 import PlaceLesson, { hasPlaceLesson } from '@/components/PlaceLesson';
 import type { Track } from '@/lib/courses';
 import type { Stamp } from '@/lib/passport';
+import { playEffect, soundsMuted } from '@/lib/sounds';
 
-const MUTE_KEY = 'kwanqa-sound-off'; // shared with the lessons' mute button
 const SLAM_MS = 650; // when the stamp hits the page
 const WALIA_IN_MS = 1000; // when Walia flies in
 const ORBIT_MS = 5200; // one lap around the stamp
@@ -27,14 +27,12 @@ function seeded(i: number) {
 }
 
 function playSlam() {
-  try {
-    if (window.localStorage.getItem(MUTE_KEY) === '1') return;
-  } catch {
-    // no storage: play it
-  }
+  if (soundsMuted()) return;
   const audio = new Audio('/sounds/complete.mp3');
   audio.volume = 0.7;
   void audio.play().catch(() => {});
+  // and a little bell as Walia flies in
+  window.setTimeout(() => playEffect('chime'), WALIA_IN_MS - SLAM_MS + 60);
 }
 
 /** Walia circling the stamp, moved every frame so he can pass behind it and come round the front. */

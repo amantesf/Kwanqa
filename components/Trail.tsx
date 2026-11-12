@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GrassIcon from '@/components/GrassIcon';
 import Mascot from '@/components/Mascot';
+import { playEffect } from '@/lib/sounds';
 
 export type StoneState = 'done' | 'current' | 'todo' | 'locked';
 
@@ -557,7 +558,10 @@ export default function Trail({
               <button
                 type="button"
                 className={className}
-                onClick={() => setOpen(o => (o === stop.title ? null : stop.title))}
+                onClick={() => {
+                  if (open !== stop.title) playEffect('pop');
+                  setOpen(o => (o === stop.title ? null : stop.title));
+                }}
                 aria-label={aria}
                 aria-haspopup="dialog"
                 aria-expanded={open === stop.title}

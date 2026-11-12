@@ -128,7 +128,7 @@ function scrollToWalia(behavior: ScrollBehavior) {
 
 /**
  * A cloud drifting slowly across the camp and, now and then, a bird flying
- * past. Each camp gets its own timing so they don't move in step.
+ * past (or, at night, a shooting star). Each camp gets its own timing so they don't move in step.
  */
 function SkyLife({ camp }: { camp: number }) {
   const style = {
@@ -137,6 +137,10 @@ function SkyLife({ camp }: { camp: number }) {
     '--cloud-d': `${-((camp * 29) % 70)}s`,
     '--bird-y': `${150 + ((camp * 61) % 260)}px`,
     '--bird-d': `${4 + ((camp * 7) % 18)}s`,
+    // in the open sky beside the mountain, left or right
+    '--star-x': camp % 2 ? `${74 + ((camp * 37) % 10)}%` : `${8 + ((camp * 37) % 10)}%`,
+    '--star-y': `${170 + ((camp * 53) % 160)}px`,
+    '--star-d': `${3 + ((camp * 11) % 14)}s`,
   } as CSSProperties;
   return (
     <div className="sky-life" style={style} aria-hidden>
@@ -146,6 +150,8 @@ function SkyLife({ camp }: { camp: number }) {
         <circle cx="64" cy="20" r="20" />
         <circle cx="88" cy="28" r="13" />
       </svg>
+      {/* at night (dark mode), a shooting star now and then */}
+      <span className="sky-star" />
       <svg className="sky-bird" viewBox="0 0 30 12">
         <path className="sky-wing" d="M1 6 Q8 0 15 7 Q22 0 29 6" />
       </svg>

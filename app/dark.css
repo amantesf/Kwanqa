@@ -269,3 +269,8 @@ html[data-theme='dark'] .sky-cloud {
 html[data-theme='dark'] .sky-wing {
   stroke: #d8cfc4;
 }
+
+html[data-theme='dark'] .sky-star {
+  display: block;
+  background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0));
+}

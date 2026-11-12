@@ -822,3 +822,6 @@
 :where(html[data-theme='dark']) .fam-pf-streak {
     color: #eca779
 }
+:where(html[data-theme='dark']) .sky-star {
+    background: linear-gradient(90deg, #1a2428, rgba(26, 36, 40, 0))
+}

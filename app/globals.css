@@ -13841,6 +13841,40 @@ body:has(.practice-screen) {
   }
 }
 
+/* shooting stars only show at night (dark mode, see app/dark.css) */
+.sky-star {
+  display: none;
+  position: absolute;
+  top: var(--star-y);
+  left: var(--star-x);
+  width: 110px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0));
+  opacity: 0;
+  transform: rotate(-24deg);
+  animation: sky-shoot 16s ease-out var(--star-d) infinite;
+}
+
+/* a quick streak at the start of each loop, then a long wait */
+@keyframes sky-shoot {
+  0% {
+    opacity: 0;
+    transform: rotate(-24deg) translateX(0) scaleX(0.3);
+  }
+  1.5% {
+    opacity: 1;
+  }
+  6% {
+    opacity: 0;
+    transform: rotate(-24deg) translateX(-120px) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-24deg) translateX(-120px) scaleX(1);
+  }
+}
+
 /* stones you can open give a little bounce under the pointer */
 @media (hover: hover) {
   .stone:not(.locked):hover {

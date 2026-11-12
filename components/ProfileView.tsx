@@ -11,6 +11,7 @@ import { showToast } from '@/components/Toaster';
 import LearnSidebar from '@/components/LearnSidebar';
 import TopStats from '@/components/TopStats';
 import ReminderToggle from '@/components/ReminderToggle';
+import SoundToggle from '@/components/SoundToggle';
 import ThemeToggle from '@/components/ThemeToggle';
 import {
   altitudeFor,
@@ -531,6 +532,7 @@ export default function ProfileView() {
           <h2 className="pf-title">Settings</h2>
           <div className="pf-card profile-settings">
             <ThemeToggle />
+            <SoundToggle />
           </div>
         </section>
 

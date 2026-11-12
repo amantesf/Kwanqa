@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { amharicAudio } from '@/lib/amharicAudio';
+import { setSoundsMuted, useSoundsMuted } from '@/lib/sounds';
 import SayButton from '@/components/SayButton';
 import { fixMistakes, recordMistake, settlePractice } from '@/lib/mistakes';
 import { countFinished } from '@/components/SiteAnalytics';
@@ -135,40 +136,16 @@ function Hoof({ filled }: { filled: boolean }) {
   );
 }
 
-// Answer sounds. Learners can mute them; the choice is remembered in this browser.
+// Answer sounds. Learners can mute them here or in Profile (lib/sounds.ts).
 const SOUND_FILES = {
   correct: '/sounds/correct.mp3',
   wrong: '/sounds/wrong.mp3',
   complete: '/sounds/complete.mp3', // ta-da on the lesson-complete screen
 } as const;
-const MUTE_KEY = 'kwanqa-sound-off';
-
-// The mute setting lives in localStorage; reading it through a store keeps the
-// server render (always "on") and the browser in sync without a hydration mismatch.
-const muteListeners = new Set<() => void>();
-
-function readMuted() {
-  try {
-    return window.localStorage.getItem(MUTE_KEY) === '1';
-  } catch {
-    return false; // storage unavailable; sounds stay on
-  }
-}
-
-let mutedFallback = false; // used when storage is unavailable
-
-function subscribeMuted(listener: () => void) {
-  muteListeners.add(listener);
-  return () => muteListeners.delete(listener);
-}
 
 function useAnswerSounds() {
   const audio = useRef<Partial<Record<keyof typeof SOUND_FILES, HTMLAudioElement>>>({});
-  const muted = useSyncExternalStore(
-    subscribeMuted,
-    () => readMuted() || mutedFallback,
-    () => false,
-  );
+  const muted = useSoundsMuted();
 
   useEffect(() => {
     // Load both sounds up front so the first answer plays instantly.
@@ -189,14 +166,7 @@ function useAnswerSounds() {
   }
 
   function toggle() {
-    const next = !muted;
-    mutedFallback = next;
-    try {
-      window.localStorage.setItem(MUTE_KEY, next ? '1' : '0');
-    } catch {
-      // storage unavailable; the setting lasts for this session only
-    }
-    muteListeners.forEach(l => l());
+    setSoundsMuted(!muted);
   }
 
   return { play, muted, toggle };

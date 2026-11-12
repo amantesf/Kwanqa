@@ -7,7 +7,10 @@ import type { Track } from '@/lib/courses';
 import type { LessonLearned } from '@/lib/grammar';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import GrassIcon from '@/components/GrassIcon';
+import { playEffect } from '@/lib/sounds';
+import { useCountUp } from '@/lib/useCountUp';
 
 type Props = {
   earned: number;
@@ -121,6 +124,34 @@ function Scene() {
 
 const CONFETTI = ['#ffc233', '#d2582e', '#4fc23a', '#1f5bd0', '#b06cf2', '#ff7a8a'];
 
+/** The grass earned, counted up blade by blade with a soft tick. */
+function GrassCount({ earned }: { earned: number }) {
+  return <>{useCountUp(earned, { from: 0, delay: 900, duration: 900, onStep: () => playEffect('tick') })}</>;
+}
+
+/** Little blades of grass springing out of the grass stat. */
+function GrassBurst() {
+  return (
+    <span className="lc-grass-burst" aria-hidden>
+      {Array.from({ length: 9 }, (_, i) => (
+        <span
+          key={i}
+          style={
+            {
+              '--x': `${(i - 4) * 14}px`,
+              '--y': `${-34 - ((i * 23) % 26)}px`,
+              '--r': `${(i - 4) * 14}deg`,
+              '--d': `${0.9 + (i % 4) * 0.08}s`,
+            } as CSSProperties
+          }
+        >
+          <GrassIcon size={14} />
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function LessonComplete({
   earned,
   accuracy,
@@ -168,7 +199,8 @@ export default function LessonComplete({
           <div className="lc-stat gold">
             <span className="lc-stat-label">{both('Grass', 'ሳር')}</span>
             <span className="lc-stat-value">
-              <GrassIcon size={30} /> +{earned}
+              <GrassIcon size={30} /> +<GrassCount earned={earned} />
+              <GrassBurst />
             </span>
           </div>
           <div className="lc-stat green">

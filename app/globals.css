@@ -13764,3 +13764,46 @@ body:has(.practice-screen) {
 .fam-back:hover {
   color: var(--text-strong);
 }
+
+/* --------------------------------------------------------------------------
+   Small motion: grass that springs out on the finish screen. It stops for
+   reduced motion.
+   -------------------------------------------------------------------------- */
+.lc-stat-value {
+  position: relative;
+}
+
+.lc-grass-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+
+.lc-grass-burst > span {
+  position: absolute;
+  left: -7px;
+  top: -7px;
+  opacity: 0;
+  animation: grass-spring 0.9s ease-out var(--d) both;
+}
+
+@keyframes grass-spring {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-grass-burst {
+    display: none;
+  }
+}

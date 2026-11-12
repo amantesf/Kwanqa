@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
@@ -125,6 +125,33 @@ function scrollToWalia(behavior: ScrollBehavior) {
     ?.scrollIntoView({ behavior, block: 'center' });
 }
 
+
+/**
+ * A cloud drifting slowly across the camp and, now and then, a bird flying
+ * past. Each camp gets its own timing so they don't move in step.
+ */
+function SkyLife({ camp }: { camp: number }) {
+  const style = {
+    '--cloud-y': `${60 + ((camp * 97) % 220)}px`,
+    '--cloud-t': `${70 + ((camp * 13) % 40)}s`,
+    '--cloud-d': `${-((camp * 29) % 70)}s`,
+    '--bird-y': `${150 + ((camp * 61) % 260)}px`,
+    '--bird-d': `${4 + ((camp * 7) % 18)}s`,
+  } as CSSProperties;
+  return (
+    <div className="sky-life" style={style} aria-hidden>
+      <svg className="sky-cloud" viewBox="0 0 120 50">
+        <ellipse cx="60" cy="34" rx="56" ry="14" />
+        <circle cx="38" cy="26" r="16" />
+        <circle cx="64" cy="20" r="20" />
+        <circle cx="88" cy="28" r="13" />
+      </svg>
+      <svg className="sky-bird" viewBox="0 0 30 12">
+        <path className="sky-wing" d="M1 6 Q8 0 15 7 Q22 0 29 6" />
+      </svg>
+    </div>
+  );
+}
 
 export default function CoursesRoadmap() {
   const params = useSearchParams();
@@ -486,6 +513,7 @@ export default function CoursesRoadmap() {
               className={`zone zone-${zone.tone}${locked ? ' zone-locked' : ''}`}
               aria-label={`Camp ${campIdx + 1}: ${course.title}${locked ? ' (locked)' : ''}`}
             >
+              {!locked && <SkyLife camp={campIdx} />}
               {/* the camp's name on a wooden trail sign */}
               <div className="camp-divider">
                 <span className="trail-sign">

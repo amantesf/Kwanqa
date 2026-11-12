@@ -13766,9 +13766,97 @@ body:has(.practice-screen) {
 }
 
 /* --------------------------------------------------------------------------
-   Small motion: grass that springs out on the finish screen. It stops for
-   reduced motion.
+   Small motion: clouds and birds on the trail, bouncing stones, grass that
+   springs out on the finish screen. All of it stops for reduced motion.
    -------------------------------------------------------------------------- */
+.sky-life {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* over the mountain picture, under the stones and the path */
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  container-type: inline-size;
+}
+
+.sky-cloud {
+  position: absolute;
+  top: var(--cloud-y);
+  left: 0;
+  width: 110px;
+  fill: #fff;
+  opacity: 0.85;
+  animation: sky-drift var(--cloud-t) linear var(--cloud-d) infinite;
+}
+
+@keyframes sky-drift {
+  from {
+    transform: translateX(-130px);
+  }
+  to {
+    transform: translateX(calc(100cqw + 20px));
+  }
+}
+
+.sky-bird {
+  position: absolute;
+  top: var(--bird-y);
+  left: 0;
+  width: 26px;
+  overflow: visible;
+  opacity: 0;
+  animation: sky-fly 26s linear var(--bird-d) infinite;
+}
+
+.sky-wing {
+  fill: none;
+  stroke: #4a4038;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transform-origin: 15px 7px;
+  animation: sky-flap 0.5s ease-in-out infinite alternate;
+}
+
+/* a bird crosses in the first few seconds of each loop, then the sky is quiet */
+@keyframes sky-fly {
+  0% {
+    opacity: 1;
+    transform: translate(calc(100cqw + 30px), 0);
+  }
+  22% {
+    opacity: 1;
+    transform: translate(-40px, -50px);
+  }
+  22.01%,
+  100% {
+    opacity: 0;
+    transform: translate(-40px, -50px);
+  }
+}
+
+@keyframes sky-flap {
+  to {
+    transform: scaleY(-0.6);
+  }
+}
+
+/* stones you can open give a little bounce under the pointer */
+@media (hover: hover) {
+  .stone:not(.locked):hover {
+    animation: stone-bounce 0.45s ease;
+  }
+}
+
+@keyframes stone-bounce {
+  30% {
+    translate: 0 -6px;
+  }
+  60% {
+    translate: 0 1px;
+  }
+}
+
 .lc-stat-value {
   position: relative;
 }
@@ -13803,7 +13891,12 @@ body:has(.practice-screen) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sky-life,
   .lc-grass-burst {
     display: none;
+  }
+
+  .stone:not(.locked):hover {
+    animation: none;
   }
 }

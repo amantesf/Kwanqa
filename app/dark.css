@@ -259,3 +259,13 @@ html[data-theme='dark'] .fam-tabs button[aria-selected='true'] {
   background-color: rgba(245, 130, 31, 0.14);
   color: #ffc58f;
 }
+
+/* Trail sky: fainter clouds and lighter birds at night. */
+html[data-theme='dark'] .sky-cloud {
+  fill: #fff;
+  opacity: 0.12;
+}
+
+html[data-theme='dark'] .sky-wing {
+  stroke: #d8cfc4;
+}

@@ -1,9 +1,10 @@
 import { allConversations, type Gender } from '@/lib/conversations';
+import { limitReached, takeAiUse } from '@/lib/aiLimits';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 import { askWalia, tutorReady, type CallLine } from '@/lib/tutor';
 
 // POST { slug, turn, gender, heard, history } → Walia's verdict and reply.
-// Signed-in learners only. The question and its goal come from the server's
+// Signed-in learners only, capped per day (lib/aiLimits.ts). The question and its goal come from the server's
 // own copy of the conversation, never from the browser.
 
 const MAX_TEXT = 300;
@@ -13,7 +14,8 @@ export async function POST(request: Request) {
   if (!tutorReady) {
     return Response.json({ error: 'Walia’s brain is not set up yet.' }, { status: 503 });
   }
-  if (accountsOn && !(await requestUser(request))) {
+  const user = accountsOn ? await requestUser(request) : null;
+  if (accountsOn && !user) {
     return Response.json({ error: 'Log in to talk with Walia.' }, { status: 401 });
   }
 
@@ -45,6 +47,7 @@ export async function POST(request: Request) {
         : [];
     });
 
+  if (user && !(await takeAiUse(user.id, 'talk'))) return limitReached('talk');
   try {
     const answer = await askWalia({ conversation, turnIndex, gender: gender as Gender, heard, history: lines });
     return Response.json(answer);

@@ -1,10 +1,12 @@
 import { speechReady, transcribe } from '@/lib/azureSpeech';
+import { limitReached, takeAiUse } from '@/lib/aiLimits';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 
 // POST a short WAV recording (16 kHz mono) and get back what Azure heard.
 // ?lang=en listens for English (English learners' calls); otherwise Amharic.
 // Only for signed-in learners, so strangers can't use up the Azure allowance.
-// Capped at about 30 seconds of audio, which is plenty for one answer.
+// Capped at about 30 seconds of audio, which is plenty for one answer, and
+// at a number of recordings a day (lib/aiLimits.ts).
 
 const MAX_BYTES = 30 * 16000 * 2 + 44;
 
@@ -12,7 +14,8 @@ export async function POST(request: Request) {
   if (!speechReady) {
     return Response.json({ error: 'Listening is not set up yet.' }, { status: 503 });
   }
-  if (accountsOn && !(await requestUser(request))) {
+  const user = accountsOn ? await requestUser(request) : null;
+  if (accountsOn && !user) {
     return Response.json({ error: 'Log in to talk with Walia.' }, { status: 401 });
   }
   if (!request.headers.get('content-type')?.startsWith('audio/wav')) {
@@ -31,6 +34,7 @@ export async function POST(request: Request) {
     return Response.json({ text: '' });
   }
 
+  if (user && !(await takeAiUse(user.id, 'listen'))) return limitReached('listen');
   try {
     const lang = new URL(request.url).searchParams.get('lang') === 'en' ? 'en' : 'am';
     return Response.json({ text: await transcribe(audio, lang) });

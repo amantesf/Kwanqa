@@ -388,6 +388,8 @@ export default function TalkCall({
         body: wav,
       });
       const data = (await res.json()) as { text?: string; error?: string };
+      // out of recordings for today: typing still works, so open the box
+      if (res.status === 429) setTyping(true);
       if (!res.ok) throw new Error(data.error ?? 'Something went wrong');
       await judge(data.text ?? '');
     } catch (error) {

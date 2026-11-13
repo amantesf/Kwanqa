@@ -209,6 +209,9 @@ export default function TalkCall({
   const [earned, setEarned] = useState<number | null>(null);
 
   const recording = useRef<Recording | null>(null);
+  // Set once Walia's brain says today's Talk limit is reached; the script's
+  // own checker answers from then on, without asking again.
+  const brainResting = useRef(false);
   const audio = useRef<HTMLAudioElement | null>(null);
   // Walia's mouth follows his voice; `speaking` is true while any clip of his plays.
   const waliaRef = useRef<HTMLDivElement>(null);
@@ -316,12 +319,14 @@ export default function TalkCall({
   }
 
   async function askBrain(text: string): Promise<Answer | null> {
+    if (brainResting.current) return null;
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
         body: JSON.stringify({ slug: conversation.slug, turn: turnIndex, gender, heard: text, history }),
       });
+      if (res.status === 429) brainResting.current = true;
       if (!res.ok) return null;
       const data = (await res.json()) as TutorReply;
       return { verdict: data.verdict, reply: say_(data.reply) ? data.reply : null, note: data.note };

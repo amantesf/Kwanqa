@@ -14,7 +14,8 @@ import {
 
 // Called every hour by the Supabase scheduler (see supabase/schema.sql).
 // Sends streak reminders to learners for whom it's now 7 pm, and holiday
-// emails to learners for whom it's 9 am on an Ethiopian holiday.
+// emails to learners for whom it's 9 am on an Ethiopian holiday. Once a day
+// it also clears out old AI usage counts (supabase/ai-limits.sql).
 
 const FROM = process.env.REMINDER_FROM ?? 'Walia from kwanqa <reminders@kwanqa.com>';
 const REPLY_TO = 'kwanqa.team@gmail.com';
@@ -128,6 +129,13 @@ export async function POST(request: Request) {
     });
   }
   const holidayResult = await send(holidayDue, 'holidays', ctx);
+
+  // Old AI usage counts, once a day at 03:00 UTC
+  if (now.getUTCHours() === 3) {
+    const tidy = await admin.rpc('ai_usage_tidy');
+    // PGRST202: the AI limits SQL hasn't been run yet, so there's nothing to tidy.
+    if (tidy.error && tidy.error.code !== 'PGRST202') failures.push(`ai usage tidy: ${tidy.error.message}`);
+  }
 
   failures.push(...streakResult.failures, ...holidayResult.failures);
   return NextResponse.json(

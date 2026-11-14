@@ -72,6 +72,10 @@ export function tokenize(sentence: string): ReaderToken[] {
 let voice: HTMLAudioElement | null = null;
 const ownClips = new Map<string, string>();
 
+// Set when Walia says today's lookups are used up (429). Sentence
+// translations then show that message without asking again.
+let glossResting = '';
+
 async function authHeader(): Promise<Record<string, string>> {
   const token = (await supabase?.auth.getSession())?.data.session?.access_token;
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -150,6 +154,7 @@ function WordPanel({
         body: JSON.stringify({ word, sentence }),
       });
       const body = await res.json();
+      if (res.status === 429) glossResting = body.error ?? '';
       if (!res.ok) throw new Error(body.error ?? 'Couldn’t look that up.');
       cacheGloss(word, sentence, body);
       setGloss(body);
@@ -231,12 +236,14 @@ function SentenceTranslation({ sentence }: { sentence: ReaderSentence }) {
     let alive = true;
     (async () => {
       try {
+        if (glossResting) throw new Error(glossResting);
         const res = await fetch('/api/gloss', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(await authHeader()) },
           body: JSON.stringify({ sentence: sentence.text }),
         });
         const body = await res.json();
+        if (res.status === 429) glossResting = body.error ?? '';
         if (!res.ok) throw new Error(body.error ?? 'Couldn’t translate that.');
         if (alive) setEnglish(body.english);
       } catch (e) {

@@ -42,3 +42,9 @@
 :where(html[data-theme='dark']) .fw-form {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .fp-tile {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .fp-key {
+    background: #1a2428
+}

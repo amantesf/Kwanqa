@@ -1,10 +1,12 @@
 'use client';
 
-// The alphabet page's tabs: the chart, writing practice and phrase flashcards.
+// The alphabet page's tabs: the chart, writing practice, phrase flashcards and
+// the daily ፊደል puzzle.
 // The tab lives in the URL (?tab=write) so it can be linked to.
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import FidelChart from '@/components/FidelChart';
+import FidelPuzzle from '@/components/FidelPuzzle';
 import FidelWrite from '@/components/FidelWrite';
 import Flashcards from '@/components/Flashcards';
 
@@ -12,6 +14,7 @@ const TABS = [
   { id: 'chart', label: 'Chart' },
   { id: 'write', label: 'Write' },
   { id: 'cards', label: 'Flashcards' },
+  { id: 'puzzle', label: 'Puzzle' },
 ] as const;
 
 type Tab = (typeof TABS)[number]['id'];
@@ -47,6 +50,7 @@ export default function FidelTabs() {
         {tab === 'chart' && <FidelChart />}
         {tab === 'write' && <FidelWrite />}
         {tab === 'cards' && <Flashcards />}
+        {tab === 'puzzle' && <FidelPuzzle />}
       </div>
     </>
   );

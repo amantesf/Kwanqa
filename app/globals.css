@@ -2640,6 +2640,11 @@ button.phrase-card:hover {
   border-color: #fbe3a6;
 }
 
+.lesson-story {
+  margin: 0;
+  color: var(--text-muted);
+}
+
 .lesson-footer {
   display: flex;
   justify-content: space-between;

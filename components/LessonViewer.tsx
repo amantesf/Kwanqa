@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import SayButton from '@/components/SayButton';
 import { Fragment, useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -11,6 +12,7 @@ import { pendingCount, reviewSession, useMistakes } from '@/lib/mistakes';
 import type { LessonSection, Track } from '@/lib/courses';
 import { familiesFor, grammarFor, wordsOf, type GrammarCard, type WordFamily } from '@/lib/grammar';
 import { pictureFor } from '@/lib/pictures';
+import { campStories } from '@/lib/stories';
 
 type Props = {
   slug: string;
@@ -394,6 +396,16 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
                 </div>
               </div>
             )}
+
+            {isLast &&
+              campStories(slug).map(story => (
+                <p key={story.id} className="lesson-story">
+                  Read this camp’s story with the words you just learned:{' '}
+                  <Link href={`/stories/${story.id}`} className="text-link">
+                    <span lang="am">{story.amharicTitle}</span> ({story.title}) →
+                  </Link>
+                </p>
+              ))}
 
             <div className="lesson-footer">
               <button

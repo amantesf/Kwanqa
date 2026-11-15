@@ -13983,3 +13983,68 @@ body:has(.practice-screen) {
     animation: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Rest the mouse on an Amharic letter: its ፊደል family (FidelHover.tsx)
+   -------------------------------------------------------------------------- */
+.fidel-hover {
+  position: fixed;
+  z-index: 200;
+  translate: -50% -100%;
+  padding: 10px 12px 8px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  animation: fidel-hover-in 0.14s ease;
+}
+
+.fidel-hover.below {
+  translate: -50% 0;
+}
+
+.fidel-hover-forms {
+  display: flex;
+  gap: 4px;
+}
+
+.fidel-hover-forms span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 40px;
+  padding: 4px 2px 2px;
+  border-radius: 10px;
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.fidel-hover-forms span.on {
+  background: var(--gold-soft);
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
+.fidel-hover-forms small {
+  font-family: var(--font-body, inherit), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.fidel-hover p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+@keyframes fidel-hover-in {
+  from {
+    opacity: 0;
+  }
+}

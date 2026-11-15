@@ -828,3 +828,6 @@
 :where(html[data-theme='dark']) .sky-star {
     background: linear-gradient(90deg, #1a2428, rgba(26, 36, 40, 0))
 }
+:where(html[data-theme='dark']) .fidel-hover {
+    background: #1a2428
+}

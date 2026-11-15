@@ -7,6 +7,7 @@ import { Noto_Sans_Ethiopic, Nunito } from 'next/font/google';
 import AuthProvider from '@/components/AuthProvider';
 import Header from '@/components/Header';
 import Toaster from '@/components/Toaster';
+import FidelHover from '@/components/FidelHover';
 import Footer from '@/components/Footer';
 import SiteAnalytics from '@/components/SiteAnalytics';
 import { THEME_SCRIPT } from '@/lib/themeScript';
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
           <Footer />
           <Toaster />
+          <FidelHover />
         </AuthProvider>
         <Suspense fallback={null}>
           <SiteAnalytics />

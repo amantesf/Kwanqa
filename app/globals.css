@@ -2578,6 +2578,34 @@ button.phrase-card {
   cursor: pointer;
 }
 
+/* Listen first: the card is a big play button until you've heard the phrase */
+.phrase-card.listening {
+  align-items: center;
+  justify-content: center;
+  min-height: 116px;
+  border-style: dashed;
+  border-bottom-style: solid;
+  background: var(--blue-soft);
+}
+
+.phrase-card.listening:hover {
+  border-color: #9cbcf0;
+}
+
+.phrase-listen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--blue);
+}
+
+.phrase-modes {
+  gap: 18px;
+}
+
 button.phrase-card:hover {
   background-color: var(--bg-soft);
 }

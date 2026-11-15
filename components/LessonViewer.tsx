@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import SayButton from '@/components/SayButton';
+import SayButton, { say, soundFor } from '@/components/SayButton';
 import { Fragment, useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
@@ -179,45 +179,71 @@ function GrammarCards({ cards, families }: { cards: GrammarCard[]; families: Wor
   );
 }
 
-function PhraseCards({ phrases, quiz, track }: { phrases: Phrase[]; quiz: boolean; track: Track }) {
-  const [revealed, setRevealed] = useState<Set<number>>(new Set());
+/**
+ * How the core phrases show: all at once, as a quiz (the meaning hidden until
+ * tapped), or listen first (nothing shown until you've heard it: one tap
+ * plays it, the next shows it).
+ */
+type CardMode = 'learn' | 'quiz' | 'listen';
 
-  function reveal(idx: number) {
-    setRevealed(prev => new Set(prev).add(idx));
+function PhraseCards({ phrases, mode, track }: { phrases: Phrase[]; mode: CardMode; track: Track }) {
+  // quiz: revealed once tapped. listen: 1 = heard, 2 = shown.
+  const [step, setStep] = useState<Map<number, number>>(new Map());
+  const quiz = mode === 'quiz';
+
+  function tap(idx: number, text: string) {
+    if (mode === 'listen' && !step.get(idx)) say(text, track);
+    setStep(prev => new Map(prev).set(idx, (prev.get(idx) ?? 0) + 1));
   }
 
   return (
     <div className="phrase-grid">
       {phrases.map((phrase, idx) => {
-        const hidden = quiz && !revealed.has(idx);
         const side = sides(phrase, track);
+        const at = step.get(idx) ?? 0;
+        // listen first only hides phrases that can be heard
+        const listening = mode === 'listen' && at < 2 && !!soundFor(side.learn, track);
+        const hidden = (quiz && at === 0) || listening;
+        const tappable = quiz || listening;
         const picture = pictureFor(phrase.amharic.replace(/[።፣፤፥፦፧?!.,]/g, '').trim());
-        const body = (
+        const body = listening ? (
+          <span className="phrase-listen">
+            <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden>
+              <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+              <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+            {at === 0 ? 'Tap to listen' : 'Got it? Tap to see it'}
+          </span>
+        ) : (
           <>
             {picture && (
               // in the quiz the picture would give the meaning away, so it's blurred until revealed
               // eslint-disable-next-line @next/next/no-img-element -- small local pictures
               <img className={`phrase-picture${hidden ? ' hidden' : ''}`} src={picture.src} alt="" />
             )}
-            {/* Amharic words can be tapped to see their parts (not in the quiz: the card is one button) */}
-            {track === 'amharic' && !quiz ? <BrokenDownLine text={side.learn} /> : <span className="phrase-am">{side.learn}</span>}
+            {/* Amharic words can be tapped to see their parts (not when the card is one button) */}
+            {track === 'amharic' && !tappable ? <BrokenDownLine text={side.learn} /> : <span className="phrase-am">{side.learn}</span>}
             {side.say && <span className="phrase-tr">{side.say}</span>}
             <span className={`phrase-en${hidden ? ' hidden' : ''}`}>
               {hidden ? 'Tap to reveal' : side.meaning}
             </span>
           </>
         );
-        // The speaker sits beside the card, not inside it: a quiz card is itself a button.
+        // The speaker sits beside the card, not inside it: a tappable card is itself a button.
         return (
           <div key={idx} className="phrase-card-wrap">
-            {quiz ? (
-              <button type="button" className="phrase-card" onClick={() => reveal(idx)}>
+            {tappable ? (
+              <button
+                type="button"
+                className={`phrase-card${listening ? ' listening' : ''}`}
+                onClick={() => tap(idx, side.learn)}
+              >
                 {body}
               </button>
             ) : (
               <div className="phrase-card">{body}</div>
             )}
-            <SayButton text={side.learn} track={track} className="say-corner" />
+            {!listening && <SayButton text={side.learn} track={track} className="say-corner" />}
             {/* English course: the Amharic meaning can be heard too */}
             {track === 'english' && !hidden && (
               <SayButton text={phrase.amharic} track="amharic" className="say-corner say-am" size={15} />
@@ -255,7 +281,7 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
   // Pick the questions once, when the saved mistakes first load, and keep them
   // for the whole session (finishing clears them from storage).
   if (wantsReview && !review && pendingCount(mistakes) > 0) setReview(reviewSession(mistakes));
-  const [quiz, setQuiz] = useState(false);
+  const [cardMode, setCardMode] = useState<CardMode>('learn');
   const [session, setSession] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
@@ -352,16 +378,26 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
               <div className="stack">
                 <div className="panel-title">
                   <h3 className="h3">Core phrases</h3>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={quiz}
-                      onChange={e => setQuiz(e.target.checked)}
-                    />
-                    Quiz me
-                  </label>
+                  <div className="row phrase-modes">
+                    <label className="toggle" title="Hear each phrase before you see it">
+                      <input
+                        type="checkbox"
+                        checked={cardMode === 'listen'}
+                        onChange={e => setCardMode(e.target.checked ? 'listen' : 'learn')}
+                      />
+                      Listen first
+                    </label>
+                    <label className="toggle">
+                      <input
+                        type="checkbox"
+                        checked={cardMode === 'quiz'}
+                        onChange={e => setCardMode(e.target.checked ? 'quiz' : 'learn')}
+                      />
+                      Quiz me
+                    </label>
+                  </div>
                 </div>
-                <PhraseCards key={`${active}-${quiz}`} phrases={lesson.phrases} quiz={quiz} track={track} />
+                <PhraseCards key={`${active}-${cardMode}`} phrases={lesson.phrases} mode={cardMode} track={track} />
               </div>
             )}
 

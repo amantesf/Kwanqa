@@ -149,6 +149,9 @@
 :where(html[data-theme='dark']) .phrase-card {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .phrase-card.listening:hover {
+    border-color: #444c5a
+}
 :where(html[data-theme='dark']) .phrase-tr {
     color: color-mix(in srgb, var(--blue) 70%, #fff)
 }

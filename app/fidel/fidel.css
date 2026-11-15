@@ -27,6 +27,19 @@
   box-shadow: 0 2px 0 var(--border);
 }
 
+/* on phones the tabs share the width, so all four fit */
+@media (max-width: 520px) {
+  .fidel-tabs {
+    display: flex;
+    width: 100%;
+  }
+
+  .fidel-tab {
+    flex: 1;
+    padding: 8px 4px;
+  }
+}
+
 /* ---------- Write ---------- */
 
 .fw {

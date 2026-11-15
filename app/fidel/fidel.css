@@ -27,6 +27,39 @@
   box-shadow: 0 2px 0 var(--border);
 }
 
+/* the Chart tab's Letters / Numbers switch */
+.fidel-view {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.fidel-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  font-weight: 800;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.fidel-view-btn span {
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 18px;
+}
+
+.fidel-view-btn.on {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
 /* on phones the tabs share the width, so all four fit */
 @media (max-width: 520px) {
   .fidel-tabs {
@@ -805,15 +838,12 @@
   }
 }
 
-/* ---------- Ge'ez numerals (under the chart) ---------- */
+/* ---------- Ge'ez numerals (the Chart tab's Numbers view) ---------- */
 
 .gz {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 2px solid var(--border);
 }
 
 .gz-head h2 {

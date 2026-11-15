@@ -5,6 +5,9 @@
 :where(html[data-theme='dark']) .fidel-tab.on {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .fidel-view-btn {
+    background: #1a2428
+}
 :where(html[data-theme='dark']) .fw-letter {
     background: #1a2428
 }

@@ -11,6 +11,7 @@ import { proverbs } from '@/lib/proverbs';
 import { placeLessonWords } from '@/lib/placeLessons';
 import { storyLines } from '@/lib/stories';
 import { puzzleWords } from '@/lib/fidelPuzzle';
+import { geezNumeralWords } from '@/lib/geezNumerals';
 
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -54,6 +55,8 @@ export function speakableAmharic(): Set<string> {
       ...storyLines(),
       // the daily ፊደል puzzle's words, read out when it's solved
       ...puzzleWords(),
+      // the number names in the Ge'ez numerals chart
+      ...geezNumeralWords(),
     ]
       .map(t => t?.trim())
       .filter(t => t && !hasGap(t)),

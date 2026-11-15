@@ -573,3 +573,9 @@ export function storyWords(story: Story): string[] {
 export function storyLines(): string[] {
   return STORIES.flatMap(story => [...story.sentences.map(sentenceAudio), ...storyWords(story)]);
 }
+
+/** The kwanqa stories written for an Amharic camp (amharic-beginner-N). */
+export function campStories(slug: string): Story[] {
+  const camp = /^amharic-beginner-(\d+)$/.exec(slug)?.[1];
+  return camp ? STORIES.filter(story => story.camp === Number(camp)) : [];
+}

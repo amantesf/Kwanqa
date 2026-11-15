@@ -48,3 +48,6 @@
 :where(html[data-theme='dark']) .fp-key {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .gz-cell {
+    background: #1a2428
+}

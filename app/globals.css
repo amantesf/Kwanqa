@@ -4145,8 +4145,6 @@ a.user-avatar:hover {
 .phrasebook-label {
   font-size: 13px;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--text-faint);
 }
 
@@ -7614,8 +7612,6 @@ body:has(.practice-screen) {
   margin-bottom: 4px;
   font-size: 13px;
   font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--primary);
 }
 

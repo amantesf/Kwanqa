@@ -11617,8 +11617,6 @@ body:has(.practice-screen) {
 .reveal-kicker {
   font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.6);
   animation-delay: 1.05s !important;
 }
@@ -11684,8 +11682,6 @@ body:has(.practice-screen) {
   font: inherit;
   font-size: 16px;
   font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: #6b3d00;
   cursor: pointer;
   transition:

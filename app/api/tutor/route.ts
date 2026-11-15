@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         : [];
     });
 
-  if (user && !(await takeAiUse(user.id, 'talk'))) return limitReached('talk');
+  if (user && !(await takeAiUse(user, 'talk'))) return limitReached('talk');
   try {
     const answer = await askWalia({ conversation, turnIndex, gender: gender as Gender, heard, history: lines });
     return Response.json(answer);

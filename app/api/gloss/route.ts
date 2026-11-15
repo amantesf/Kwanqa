@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   if (word && (word.length > MAX_WORD || !ETHIOPIC.test(word) || !sentence.includes(word))) {
     return Response.json({ error: 'Bad request.' }, { status: 400 });
   }
-  if (user && !(await takeAiUse(user.id, 'gloss'))) return limitReached('gloss');
+  if (user && !(await takeAiUse(user, 'gloss'))) return limitReached('gloss');
   try {
     return Response.json(word ? await glossWord(word, sentence) : await glossSentence(sentence));
   } catch (error) {

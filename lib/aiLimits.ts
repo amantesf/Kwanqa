@@ -8,6 +8,9 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 //   GLOSS_DAILY_LIMIT   word lookups + sentence translations (default 150)
 //   TALK_DAILY_LIMIT    Walia's answers in Talk (default 40)
 //   LISTEN_DAILY_LIMIT  recordings Walia listens to (default 120)
+//
+// Team accounts (the emails in STATS_EMAILS) have no limits, so testing
+// never runs into them.
 
 export type AiKind = 'gloss' | 'talk' | 'listen';
 
@@ -32,16 +35,25 @@ export const LIMIT_MESSAGES: Record<AiKind, string> = {
 
 let warned = false;
 
+function isTeam(email: string | undefined) {
+  const team = (process.env.STATS_EMAILS ?? '')
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(Boolean);
+  return !!email && team.includes(email.toLowerCase());
+}
+
 /**
  * Counts one use and says whether it's allowed. When the limits can't be
  * checked (no secret key, or the SQL hasn't been run yet) it lets the use
  * through rather than breaking the feature, and logs a warning once.
  */
-export async function takeAiUse(userId: string, kind: AiKind): Promise<boolean> {
+export async function takeAiUse(user: { id: string; email?: string }, kind: AiKind): Promise<boolean> {
+  if (isTeam(user.email)) return true;
   const db = supabaseAdmin();
   if (!db) return letThrough('SUPABASE_SECRET_KEY is not set');
   const { data, error } = await db.rpc('ai_use', {
-    learner: userId,
+    learner: user.id,
     use_kind: kind,
     day_limit: dailyLimit(kind),
   });

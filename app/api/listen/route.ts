@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     return Response.json({ text: '' });
   }
 
-  if (user && !(await takeAiUse(user.id, 'listen'))) return limitReached('listen');
+  if (user && !(await takeAiUse(user, 'listen'))) return limitReached('listen');
   try {
     const lang = new URL(request.url).searchParams.get('lang') === 'en' ? 'en' : 'am';
     return Response.json({ text: await transcribe(audio, lang) });

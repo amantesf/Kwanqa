@@ -152,10 +152,9 @@ function Board({ number }: { number: number }) {
   return (
     <div className="fp">
       <div className="fp-intro">
-        <h2>Daily ፊደል puzzle #{number}</h2>
+        <h2>Daily ፊደል puzzle</h2>
         <p className="muted">
-          Guess today’s three-letter Amharic word in six tries. Tap a letter family, then pick the vowel. Everyone
-          gets the same word, and a new one comes at midnight.
+          Guess today’s three-letter Amharic word in six tries. Tap a letter family, then pick the vowel.
         </p>
       </div>
 

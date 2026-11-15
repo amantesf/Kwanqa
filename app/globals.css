@@ -2515,6 +2515,36 @@ a.camp-banner:active {
   border-bottom-width: 2px;
 }
 
+/* held down: it plays slowly, and says so for a moment */
+.say-btn {
+  position: relative;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.say-btn.slow::after {
+  content: 'slow';
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  translate: -50% 0;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  pointer-events: none;
+  animation: say-slow-in 0.15s ease;
+}
+
+@keyframes say-slow-in {
+  from {
+    opacity: 0;
+    translate: -50% 4px;
+  }
+}
+
 .say-corner {
   position: absolute;
   top: 10px;

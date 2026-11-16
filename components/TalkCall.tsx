@@ -91,6 +91,10 @@ function callText(english: boolean) {
       ? 'ማይኩን ይንኩና በእንግሊዝኛ ይመልሱ · Tap the mic and answer Walia in English'
       : 'Tap the mic and answer Walia out loud',
     you: english ? 'እርስዎ' : 'You',
+    resting: both(
+      'Walia has talked a lot today, so he’ll check your answers the simple way until tomorrow.',
+      'ዋሊያ ዛሬ ብዙ ተናግሯል፤ እስከ ነገ መልሶችዎን በቀላሉ ይፈትሻል።',
+    ),
   };
 }
 
@@ -318,15 +322,18 @@ export default function TalkCall({
     else void playReply(say_(shown), slow);
   }
 
-  async function askBrain(text: string): Promise<Answer | null> {
+  async function askBrain(said: string): Promise<Answer | null> {
     if (brainResting.current) return null;
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-        body: JSON.stringify({ slug: conversation.slug, turn: turnIndex, gender, heard: text, history }),
+        body: JSON.stringify({ slug: conversation.slug, turn: turnIndex, gender, heard: said, history }),
       });
-      if (res.status === 429) brainResting.current = true;
+      if (res.status === 429) {
+        brainResting.current = true;
+        setProblem(text.resting);
+      }
       if (!res.ok) return null;
       const data = (await res.json()) as TutorReply;
       return { verdict: data.verdict, reply: say_(data.reply) ? data.reply : null, note: data.note };

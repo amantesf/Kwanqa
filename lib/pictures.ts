@@ -105,6 +105,12 @@ export const PICTURES: Picture[] = [
   { amharic: 'ረመዳን', transliteration: 'remedan', english: 'Ramadan', src: '/pictures/remedan.png', group: 'mosque' },
 ];
 
+/** One of a word's pictures, picked at random (for quizzes, which run in the browser). */
+export function pictureSrc(p: Picture): string {
+  const all = [p.src, ...(p.also ?? [])];
+  return all[Math.floor(Math.random() * all.length)];
+}
+
 export function pictureFor(amharic: string) {
   return PICTURES.find(p => p.amharic === amharic);
 }

@@ -433,6 +433,15 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
               </div>
             )}
 
+            {slug === 'amharic-beginner-3' && active === 3 && (
+              <p className="lesson-story">
+                Ready to try it for real?{' '}
+                <Link href="/merkato" className="text-link">
+                  Bargain at three stalls in Merkato →
+                </Link>
+              </p>
+            )}
+
             {isLast &&
               campStories(slug).map(story => (
                 <p key={story.id} className="lesson-story">

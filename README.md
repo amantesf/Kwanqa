@@ -92,3 +92,5 @@ npm install
 cp .env.example .env.local   # then fill in the keys you have
 npm run dev                  # open http://localhost:3000
 ```
+
+The site works without any keys: progress is saved in the browser, and features that need a service (accounts, Talk, word lookups, audio) turn off until their keys are set.

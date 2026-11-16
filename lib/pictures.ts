@@ -8,11 +8,11 @@ export type Picture = {
   english: string;
   src: string;
   /**
-   * Pictures that look alike (the people: family portraits, the bride, groom
-   * and priest; sugar and salt) share a group and are never the wrong answers
-   * for each other.
+   * Pictures that look alike share a group and are never the wrong answers
+   * for each other: the people (family portraits, the bride, groom and
+   * priest), sugar and salt, plates of food, buildings, and so on.
    */
-  group?: 'family' | 'white-bowl';
+  group?: 'family' | 'white-bowl' | 'food';
 };
 
 export const PICTURES: Picture[] = [
@@ -36,9 +36,9 @@ export const PICTURES: Picture[] = [
   { amharic: 'ስኒ', transliteration: 'sini', english: 'coffee cup', src: '/pictures/sini.png' },
   { amharic: 'ስኳር', transliteration: 'sikwar', english: 'sugar', src: '/pictures/sikwar.png', group: 'white-bowl' },
   { amharic: 'ዕጣን', transliteration: 'itan', english: 'incense', src: '/pictures/itan.png' },
-  { amharic: 'እንጀራ', transliteration: 'injera', english: 'injera', src: '/pictures/injera.png' },
-  { amharic: 'ወጥ', transliteration: 'wet', english: 'stew', src: '/pictures/wet.png' },
-  { amharic: 'ሽሮ', transliteration: 'shiro', english: 'shiro', src: '/pictures/shiro.png' },
+  { amharic: 'እንጀራ', transliteration: 'injera', english: 'injera', src: '/pictures/injera.png', group: 'food' },
+  { amharic: 'ወጥ', transliteration: 'wet', english: 'stew', src: '/pictures/wet.png', group: 'food' },
+  { amharic: 'ሽሮ', transliteration: 'shiro', english: 'shiro', src: '/pictures/shiro.png', group: 'food' },
   { amharic: 'ውሃ', transliteration: 'wiha', english: 'water', src: '/pictures/wiha.png' },
   { amharic: 'በርበሬ', transliteration: 'berbere', english: 'berbere', src: '/pictures/berbere.png' },
   { amharic: 'ጨው', transliteration: 'chew', english: 'salt', src: '/pictures/chew.png', group: 'white-bowl' },

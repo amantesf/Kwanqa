@@ -129,3 +129,7 @@ node scripts/make-dark-css.mjs   # after changing CSS, to rebuild dark mode
 ```
 
 For the phone app, see [`mobile/README.md`](mobile/README.md).
+
+## Credits
+
+- **Library storybooks:** 29 Amharic storybooks from [Global Storybooks](https://globalstorybooks.net) and the [African Storybook](https://www.africanstorybook.org) initiative, used under [Creative Commons Attribution (CC BY 3.0 / 4.0)](https://creativecommons.org/licenses/by/4.0/). Each book's authors, illustrators and translators are credited on its page in the app.

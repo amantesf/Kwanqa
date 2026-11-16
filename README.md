@@ -108,3 +108,12 @@ The site works without any keys: progress is saved in the browser, and features 
 | `GLOSS_DAILY_LIMIT`, `TALK_DAILY_LIMIT`, `LISTEN_DAILY_LIMIT` | Optional daily caps per learner |
 
 See [`.env.example`](.env.example) for details. Never commit `.env.local`.
+
+### Database
+
+Run these in the Supabase SQL editor, in this order. Each one is safe to run more than once:
+
+1. `supabase/schema.sql`: profiles, progress and reminders
+2. `supabase/events.sql`: lesson events for the team stats page
+3. `supabase/family.sql`: Family mode
+4. `supabase/ai-limits.sql`: daily limits on AI features

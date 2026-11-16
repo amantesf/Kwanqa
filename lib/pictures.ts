@@ -12,7 +12,7 @@ export type Picture = {
    * for each other: the people (family portraits, the bride, groom and
    * priest), sugar and salt, plates of food, buildings, and so on.
    */
-  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque';
+  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health';
   /**
    * Other pictures of the same word, so quizzes can show any of them (an
    * Orthodox or a Protestant church for ቤተ ክርስቲያን). `src` stays the one
@@ -59,7 +59,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ጠዋት', transliteration: 'tewat', english: 'morning', src: '/pictures/tewat.png' },
   { amharic: 'ማታ', transliteration: 'mata', english: 'evening', src: '/pictures/mata.png' },
   { amharic: 'መስጊድ', transliteration: 'mesgid', english: 'mosque', src: '/pictures/mesgid.png', group: 'mosque' },
-  { amharic: 'ሆስፒታል', transliteration: 'hospital', english: 'hospital', src: '/pictures/hospital.png' },
+  { amharic: 'ሆስፒታል', transliteration: 'hospital', english: 'hospital', src: '/pictures/hospital.png', group: 'health' },
   { amharic: 'ባንክ', transliteration: 'bank', english: 'bank', src: '/pictures/bank.png' },
   { amharic: 'ሱቅ', transliteration: 'suq', english: 'shop', src: '/pictures/suq.png' },
   { amharic: 'ካፌ', transliteration: 'kafe', english: 'café', src: '/pictures/kafe.png' },
@@ -94,7 +94,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ቁርስ', transliteration: 'qurs', english: 'breakfast', src: '/pictures/kurs.png', group: 'food' },
   { amharic: 'ምግብ', transliteration: 'migib', english: 'food', src: '/pictures/migib.png', group: 'food' },
   { amharic: 'ደረሰኝ', transliteration: 'deresegn', english: 'receipt', src: '/pictures/deresegn.png' },
-  { amharic: 'ፋርማሲ', transliteration: 'farmasi', english: 'pharmacy', src: '/pictures/farmasi.png' },
+  { amharic: 'ፋርማሲ', transliteration: 'farmasi', english: 'pharmacy', src: '/pictures/farmasi.png', group: 'health' },
   { amharic: 'ሆቴል', transliteration: 'hotel', english: 'hotel', src: '/pictures/hotel.png', group: 'building' },
   { amharic: 'ትምህርት ቤት', transliteration: 'timhirt bet', english: 'school', src: '/pictures/timhirt-bet.png', group: 'building' },
   { amharic: 'ዳቦ ቤት', transliteration: 'dabo bet', english: 'bakery', src: '/pictures/dabo-bet.png', group: 'bread' },

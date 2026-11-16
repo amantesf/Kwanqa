@@ -17,3 +17,10 @@ kwanqa (ቋንቋ, "language") is built for both directions:
 - **Learn English**: for Amharic speakers getting ready for life, work and school abroad.
 
 Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining in Merkato, visiting relatives, Meskel, Genna, Fasika, Eid and Ramadan.
+
+## What's inside
+
+### 🏔️ The climb
+- **12 Amharic camps** and **9 English camps**, from greetings and first words up to "The Summit": everyday conversation, job interviews, money and bills.
+- Short, game-like lessons with listening, speaking, matching, typing and picture questions.
+- Streaks, a progress trail up the Simien Mountains, stamps in your **Passport**, and grass that grows as you learn.

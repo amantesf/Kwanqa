@@ -24,3 +24,8 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 - **12 Amharic camps** and **9 English camps**, from greetings and first words up to "The Summit": everyday conversation, job interviews, money and bills.
 - Short, game-like lessons with listening, speaking, matching, typing and picture questions.
 - Streaks, a progress trail up the Simien Mountains, stamps in your **Passport**, and grass that grows as you learn.
+
+### ፊደል The alphabet
+- An interactive **ፊደል chart** with audio for every letter.
+- Stroke-by-stroke writing practice.
+- **Ge'ez numerals** (፩ ፪ ፫ …) with their Amharic names.

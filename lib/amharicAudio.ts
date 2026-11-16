@@ -12,6 +12,7 @@ import { placeLessonWords } from '@/lib/placeLessons';
 import { storyLines } from '@/lib/stories';
 import { puzzleWords } from '@/lib/fidelPuzzle';
 import { geezNumeralWords } from '@/lib/geezNumerals';
+import { merkatoLines } from '@/lib/merkato';
 
 const PUNCT = /[።፣፤፥፦፧?!.,]/g;
 
@@ -57,6 +58,8 @@ export function speakableAmharic(): Set<string> {
       ...puzzleWords(),
       // the number names in the Ge'ez numerals chart
       ...geezNumeralWords(),
+      // every line in the Merkato bargaining game
+      ...merkatoLines(),
     ]
       .map(t => t?.trim())
       .filter(t => t && !hasGap(t)),

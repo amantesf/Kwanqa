@@ -119,6 +119,25 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <section className="section section-soft" id="credits">
+        <div className="container">
+          <SectionHead kicker="Thank you" title="Credits." />
+          <FadeInOnScroll delay={0.06}>
+            <div className="prose">
+              <p>
+                The storybooks in the <Link href="/stories">library</Link> come from{' '}
+                <a href="https://globalstorybooks.net" target="_blank" rel="noopener noreferrer">Global Storybooks</a> and
+                the <a href="https://www.africanstorybook.org" target="_blank" rel="noopener noreferrer">African Storybook</a>{' '}
+                initiative, shared under the{' '}
+                <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution licence</a>.
+                Each book credits its authors, illustrators and translators.
+              </p>
+              <p>The pictures in our lessons were made for kwanqa.</p>
+            </div>
+          </FadeInOnScroll>
+        </div>
+      </section>
+
       <CTA />
     </main>
   );

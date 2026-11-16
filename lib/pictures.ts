@@ -8,8 +8,9 @@ export type Picture = {
   english: string;
   src: string;
   /**
-   * Pictures that look alike (the family portraits, sugar and salt) share a
-   * group and are never the wrong answers for each other.
+   * Pictures that look alike (the people: family portraits, the bride, groom
+   * and priest; sugar and salt) share a group and are never the wrong answers
+   * for each other.
    */
   group?: 'family' | 'white-bowl';
 };

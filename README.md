@@ -135,3 +135,11 @@ For the phone app, see [`mobile/README.md`](mobile/README.md).
 - **Library storybooks:** 29 Amharic storybooks from [Global Storybooks](https://globalstorybooks.net) and the [African Storybook](https://www.africanstorybook.org) initiative, used under [Creative Commons Attribution (CC BY 3.0 / 4.0)](https://creativecommons.org/licenses/by/4.0/). Each book's authors, illustrators and translators are credited on its page in the app.
 - **Fonts:** Noto Sans Ethiopic and Nunito, under the SIL Open Font License.
 - **Illustrations:** made for kwanqa.
+
+## Team
+
+kwanqa is built by **Amanuel Tesfaye** and **Nehmiya Erkelo**, co-founders. We're building the learning tools we wish we'd had growing up between two cultures.
+
+Have an idea, a correction or a story to share? Email **kwanqa.team@gmail.com**.
+
+---

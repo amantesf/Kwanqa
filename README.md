@@ -119,3 +119,13 @@ Run these in the Supabase SQL editor, in this order. Each one is safe to run mor
 4. `supabase/ai-limits.sql`: daily limits on AI features
 
 `supabase/stats.sql` has read-only queries for checking how learners are doing.
+
+### Before a commit
+
+```bash
+npx tsc --noEmit
+npm run lint
+node scripts/make-dark-css.mjs   # after changing CSS, to rebuild dark mode
+```
+
+For the phone app, see [`mobile/README.md`](mobile/README.md).

@@ -94,3 +94,17 @@ npm run dev                  # open http://localhost:3000
 ```
 
 The site works without any keys: progress is saved in the browser, and features that need a service (accounts, Talk, word lookups, audio) turn off until their keys are set.
+
+### Environment variables
+
+| Variable | What it's for |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Accounts and synced progress |
+| `SUPABASE_SECRET_KEY` | Server-only: reminders, stats, family, AI limits |
+| `ANTHROPIC_API_KEY` | Walia's answers in Talk and word meanings in Stories |
+| `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | Walia's voice and listening |
+| `RESEND_API_KEY`, `CRON_SECRET` | Streak reminder and holiday emails |
+| `STATS_EMAILS` | Team emails that can see `/stats` and skip AI limits |
+| `GLOSS_DAILY_LIMIT`, `TALK_DAILY_LIMIT`, `LISTEN_DAILY_LIMIT` | Optional daily caps per learner |
+
+See [`.env.example`](.env.example) for details. Never commit `.env.local`.

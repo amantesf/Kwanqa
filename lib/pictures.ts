@@ -12,7 +12,7 @@ export type Picture = {
    * for each other: the people (family portraits, the bride, groom and
    * priest), sugar and salt, plates of food, buildings, and so on.
    */
-  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health' | 'stalls';
+  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health' | 'stalls' | 'cup';
   /**
    * Other pictures of the same word, so quizzes can show any of them (an
    * Orthodox or a Protestant church for ቤተ ክርስቲያን). `src` stays the one
@@ -22,7 +22,7 @@ export type Picture = {
 };
 
 export const PICTURES: Picture[] = [
-  { amharic: 'ቡና', transliteration: 'buna', english: 'coffee', src: '/pictures/buna.png' },
+  { amharic: 'ቡና', transliteration: 'buna', english: 'coffee', src: '/pictures/buna.png', group: 'cup' },
   { amharic: 'ቤት', transliteration: 'bet', english: 'house', src: '/pictures/bet.png', group: 'building' },
   { amharic: 'ታክሲ', transliteration: 'taksi', english: 'taxi', src: '/pictures/taksi.png' },
   { amharic: 'አበባ', transliteration: 'abeba', english: 'flower', src: '/pictures/abeba.png' },
@@ -39,7 +39,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ጓደኛዬ', transliteration: 'gwadenyaye', english: 'my friend', src: '/pictures/gwadenya.png', group: 'family' },
   { amharic: 'ብር', transliteration: 'birr', english: 'money', src: '/pictures/birr.png' },
   { amharic: 'ሽማግሌ', transliteration: 'shimagile', english: 'elder', src: '/pictures/shimagile.png', group: 'family' },
-  { amharic: 'ስኒ', transliteration: 'sini', english: 'coffee cup', src: '/pictures/sini.png' },
+  { amharic: 'ስኒ', transliteration: 'sini', english: 'coffee cup', src: '/pictures/sini.png', group: 'cup' },
   { amharic: 'ስኳር', transliteration: 'sikwar', english: 'sugar', src: '/pictures/sikwar.png', group: 'white-bowl' },
   { amharic: 'ዕጣን', transliteration: 'itan', english: 'incense', src: '/pictures/itan.png' },
   { amharic: 'እንጀራ', transliteration: 'injera', english: 'injera', src: '/pictures/injera.png', group: 'food' },
@@ -62,7 +62,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ሆስፒታል', transliteration: 'hospital', english: 'hospital', src: '/pictures/hospital.png', group: 'health' },
   { amharic: 'ባንክ', transliteration: 'bank', english: 'bank', src: '/pictures/bank.png' },
   { amharic: 'ሱቅ', transliteration: 'suq', english: 'shop', src: '/pictures/suq.png', group: 'stalls' },
-  { amharic: 'ካፌ', transliteration: 'kafe', english: 'café', src: '/pictures/kafe.png' },
+  { amharic: 'ካፌ', transliteration: 'kafe', english: 'café', src: '/pictures/kafe.png', group: 'cup' },
   { amharic: 'ደክሞኛል', transliteration: 'dekmognal', english: 'I\'m tired', src: '/pictures/dekmognal.png' },
   { amharic: 'ርቦኛል', transliteration: 'rabognal', english: 'I\'m hungry', src: '/pictures/rabognal.png' },
   { amharic: 'ጠምቶኛል', transliteration: 'temtognal', english: 'I\'m thirsty', src: '/pictures/temtognal.png' },
@@ -81,8 +81,8 @@ export const PICTURES: Picture[] = [
   { amharic: 'ጃንጥላ', transliteration: 'jantila', english: 'umbrella', src: '/pictures/jantila.png' },
   { amharic: 'ሐኪም', transliteration: 'hakim', english: 'doctor', src: '/pictures/hakim.png' },
   { amharic: 'መድኃኒት', transliteration: 'medhanit', english: 'medicine', src: '/pictures/medhanit.png' },
-  { amharic: 'ሻይ', transliteration: 'shay', english: 'tea', src: '/pictures/shai.png' },
-  { amharic: 'ማኪያቶ', transliteration: 'makiyato', english: 'macchiato', src: '/pictures/makiyato.png' },
+  { amharic: 'ሻይ', transliteration: 'shay', english: 'tea', src: '/pictures/shai.png', group: 'cup' },
+  { amharic: 'ማኪያቶ', transliteration: 'makiyato', english: 'macchiato', src: '/pictures/makiyato.png', group: 'cup' },
   { amharic: 'ሥጋ', transliteration: 'siga', english: 'meat', src: '/pictures/siga.png' },
   { amharic: 'አውቶቡስ', transliteration: 'awtobus', english: 'bus', src: '/pictures/autobus.png' },
   { amharic: 'ጫማ', transliteration: 'chama', english: 'shoes', src: '/pictures/chama.png' },

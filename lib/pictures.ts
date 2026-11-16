@@ -12,7 +12,7 @@ export type Picture = {
    * for each other: the people (family portraits, the bride, groom and
    * priest), sugar and salt, plates of food, buildings, and so on.
    */
-  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health';
+  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health' | 'stalls';
   /**
    * Other pictures of the same word, so quizzes can show any of them (an
    * Orthodox or a Protestant church for ቤተ ክርስቲያን). `src` stays the one
@@ -48,7 +48,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ውሃ', transliteration: 'wiha', english: 'water', src: '/pictures/wiha.png' },
   { amharic: 'በርበሬ', transliteration: 'berbere', english: 'berbere', src: '/pictures/berbere.png' },
   { amharic: 'ጨው', transliteration: 'chew', english: 'salt', src: '/pictures/chew.png', group: 'white-bowl' },
-  { amharic: 'ገበያ', transliteration: 'gebeya', english: 'market', src: '/pictures/gebeya.png' },
+  { amharic: 'ገበያ', transliteration: 'gebeya', english: 'market', src: '/pictures/gebeya.png', group: 'stalls' },
   { amharic: 'ሙዝ', transliteration: 'muz', english: 'banana', src: '/pictures/muz.png' },
   { amharic: 'ቲማቲም', transliteration: 'timatim', english: 'tomato', src: '/pictures/timatim.png' },
   { amharic: 'ቀኝ', transliteration: 'qegn', english: 'right', src: '/pictures/qegn.png' },
@@ -61,7 +61,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'መስጊድ', transliteration: 'mesgid', english: 'mosque', src: '/pictures/mesgid.png', group: 'mosque' },
   { amharic: 'ሆስፒታል', transliteration: 'hospital', english: 'hospital', src: '/pictures/hospital.png', group: 'health' },
   { amharic: 'ባንክ', transliteration: 'bank', english: 'bank', src: '/pictures/bank.png' },
-  { amharic: 'ሱቅ', transliteration: 'suq', english: 'shop', src: '/pictures/suq.png' },
+  { amharic: 'ሱቅ', transliteration: 'suq', english: 'shop', src: '/pictures/suq.png', group: 'stalls' },
   { amharic: 'ካፌ', transliteration: 'kafe', english: 'café', src: '/pictures/kafe.png' },
   { amharic: 'ደክሞኛል', transliteration: 'dekmognal', english: 'I\'m tired', src: '/pictures/dekmognal.png' },
   { amharic: 'ርቦኛል', transliteration: 'rabognal', english: 'I\'m hungry', src: '/pictures/rabognal.png' },

@@ -97,7 +97,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section" id="approach">
+      <section className="section section-soft" id="approach">
         <div className="container">
           <SectionHead
             kicker="How we teach"

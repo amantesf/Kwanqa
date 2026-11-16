@@ -831,3 +831,22 @@
 :where(html[data-theme='dark']) .fidel-hover {
     background: #1a2428
 }
+:where(html[data-theme='dark']) .mk-awning {
+    background: radial-gradient(circle at 12px 0, transparent 11px, var(--bg) 12px) 0 22px / 24px 12px repeat-x,
+    repeating-linear-gradient(90deg, var(--primary) 0 24px, #2c2823 24px 48px)
+}
+:where(html[data-theme='dark']) .mk-bubble-body {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .mk-bubble.you .mk-bubble-body {
+    border-color: #3d4552
+}
+:where(html[data-theme='dark']) .mk-hint {
+    color: #ecd179
+}
+:where(html[data-theme='dark']) .mk-choice {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .mk-choice:hover {
+    border-color: #444c5a
+}

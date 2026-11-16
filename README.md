@@ -53,3 +53,15 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 - Light and dark mode.
 - Streak reminder and holiday emails, with one-click unsubscribe.
 - Start without an account, then sign in with email or Google to keep your progress.
+
+## Built with
+
+| Part | Tools |
+|---|---|
+| Website | [Next.js](https://nextjs.org) 16, React 19, TypeScript, plain CSS |
+| Phone app | [Expo](https://expo.dev) / React Native (in [`mobile/`](mobile)) |
+| Accounts and data | [Supabase](https://supabase.com) (Postgres, Auth, row-level security) |
+| Walia's voice and ears | Azure Speech (Amharic and English text-to-speech and speech-to-text) |
+| Walia's brain | Claude by Anthropic (Talk answers and word meanings) |
+| Email | [Resend](https://resend.com) |
+| Hosting | [Vercel](https://vercel.com) |

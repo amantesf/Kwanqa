@@ -62,7 +62,7 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 | Phone app | [Expo](https://expo.dev) / React Native (in [`mobile/`](mobile)) |
 | Accounts and data | [Supabase](https://supabase.com) (Postgres, Auth, row-level security) |
 | Walia's voice and ears | Azure Speech (Amharic and English text-to-speech and speech-to-text) |
-| Walia's brain | Claude by Anthropic (Talk answers and word meanings) |
+| Walia's brain | An AI language model (Talk answers and word meanings) |
 | Email | [Resend](https://resend.com) |
 | Hosting | [Vercel](https://vercel.com) |
 

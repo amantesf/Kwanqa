@@ -1,6 +1,6 @@
 import type { LessonSection, Track } from '@/lib/courses';
 import type { Level } from '@/lib/profile';
-import { PICTURES, pictureFor, type Picture } from '@/lib/pictures';
+import { PICTURES, pictureFor, pictureSrc, type Picture } from '@/lib/pictures';
 import { letterQuestions } from '@/lib/letterLessons';
 
 // Practice questions generated from a lesson's phrases and dialogue. The Amharic
@@ -249,7 +249,7 @@ function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercis
   const others = shuffle(PICTURES.filter(p => p.amharic !== pictured.amharic && !lookalike(p))).slice(0, 2);
   const cards = [pictured, ...others];
   if (track === 'english') {
-    const pictures = Object.fromEntries(cards.map(p => [p.english, { src: p.src, transliteration: '' }]));
+    const pictures = Object.fromEntries(cards.map(p => [p.english, { src: pictureSrc(p), transliteration: '' }]));
     const explain = `“${pictured.english}” = ${pictured.amharic}`;
     return {
       see: {
@@ -277,7 +277,7 @@ function pictureExercises(pictured: Picture, track: Track): { see: ChoiceExercis
       },
     };
   }
-  const pictures = Object.fromEntries(cards.map(p => [p.amharic, { src: p.src, transliteration: p.transliteration }]));
+  const pictures = Object.fromEntries(cards.map(p => [p.amharic, { src: pictureSrc(p), transliteration: p.transliteration }]));
   const explain = `${pictured.amharic} (${pictured.transliteration}) means “${pictured.english}”.`;
   return {
     see: {
@@ -863,7 +863,7 @@ function addPictures(exercises: Exercise[], cards: Card[], lessonCards: Card[], 
           ex.answer = answerText;
           ex.options = options.map(o => o.text);
           ex.pictures = Object.fromEntries(
-            options.map(o => [o.text, { src: o.picture!.src, transliteration: amharicOptions ? o.picture!.transliteration : '' }]),
+            options.map(o => [o.text, { src: pictureSrc(o.picture!), transliteration: amharicOptions ? o.picture!.transliteration : '' }]),
           );
           // "What does ሽሮ (shiro) mean?": a card saying "shiro" would give it away, so
           // the cards show only their pictures until it's answered
@@ -876,7 +876,7 @@ function addPictures(exercises: Exercise[], cards: Card[], lessonCards: Card[], 
     }
     const found =
       ex.kind === 'choice' ? pictureIn(ex.answer) ?? pictureIn(ex.prompt) : pictureIn(ex.answer.join(' ')) ?? pictureIn(ex.prompt);
-    if (found) ex.answerPicture = found.src;
+    if (found) ex.answerPicture = pictureSrc(found);
   }
 }
 

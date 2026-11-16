@@ -65,3 +65,16 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 | Walia's brain | Claude by Anthropic (Talk answers and word meanings) |
 | Email | [Resend](https://resend.com) |
 | Hosting | [Vercel](https://vercel.com) |
+
+## Project layout
+
+```
+app/          pages and API routes (Next.js App Router)
+  api/        gloss, tutor, listen, speak, reminders, stats …
+components/   React components (lessons, Talk, Reader, Family …)
+lib/          lessons, courses, dictionary, pictures, stories, helpers
+mobile/       the iPhone and Android app (Expo)
+public/       pictures, sounds, library book art
+scripts/      build helpers (dark-mode CSS, fidel audio)
+supabase/     SQL to set up the database
+```

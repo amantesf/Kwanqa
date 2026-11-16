@@ -8,12 +8,13 @@ import {
   SectionHead,
   Testimonials,
 } from '@/components/sections';
-import { approach, testimonials, values } from '@/lib/content';
+import { approach, features, testimonials, values } from '@/lib/content';
 
 export const metadata: Metadata = { title: 'About' };
 
 const anchors = [
   { href: '#why', label: 'Why we built it' },
+  { href: '#inside', label: 'What’s inside' },
   { href: '#values', label: 'Values' },
   { href: '#approach', label: 'How we teach' },
   { href: '#reviews', label: 'Reviews' },
@@ -74,7 +75,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section section-soft" id="values">
+      <section className="section section-soft" id="inside">
+        <div className="container">
+          <SectionHead
+            kicker="What’s inside"
+            title="Everything you need to learn, in one place."
+            lead="Every lesson is rooted in real Ethiopian life, whether you’re learning Amharic to reconnect with family or English for life, work and school abroad."
+          />
+          <FeatureGrid items={features} />
+        </div>
+      </section>
+
+      <section className="section" id="values">
         <div className="container">
           <SectionHead
             kicker="Our values"

@@ -143,3 +143,5 @@ kwanqa is built by **Amanuel Tesfaye** and **Nehmiya Erkelo**, co-founders. We'r
 Have an idea, a correction or a story to share? Email **kwanqa.team@gmail.com**.
 
 ---
+
+<p align="center">ቋንቋ ድልድይ ነው · <em>Language is a bridge.</em></p>

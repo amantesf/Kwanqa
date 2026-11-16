@@ -10,3 +10,10 @@ Walia the ibex climbs the Simien Mountains with you, one lesson at a time.
 ## Why kwanqa?
 
 Millions of Ethiopians live abroad, and many of their kids grow up understanding a little Amharic but never learning to speak, read or write it. At the same time, Ethiopians moving abroad need practical English for jobs, school and everyday life. Most language apps either skip Amharic entirely or teach it as a list of words with no culture behind it.
+
+kwanqa (ቋንቋ, "language") is built for both directions:
+
+- **Learn Amharic**: for the diaspora, heritage learners, and anyone with Ethiopian family or friends.
+- **Learn English**: for Amharic speakers getting ready for life, work and school abroad.
+
+Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining in Merkato, visiting relatives, Meskel, Genna, Fasika, Eid and Ramadan.

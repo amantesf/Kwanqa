@@ -78,3 +78,5 @@ public/       pictures, sounds, library book art
 scripts/      build helpers (dark-mode CSS, fidel audio)
 supabase/     SQL to set up the database
 ```
+
+The phone app reads its lessons straight from `lib/`, so a fix there shows up on both the website and the app.

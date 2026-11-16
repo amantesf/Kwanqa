@@ -29,3 +29,7 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 - An interactive **ፊደል chart** with audio for every letter.
 - Stroke-by-stroke writing practice.
 - **Ge'ez numerals** (፩ ፪ ፫ …) with their Amharic names.
+
+### 📞 Talk with Walia
+- Practice real conversations out loud. Walia listens to what you say, checks whether it fits, and answers back.
+- Hints, slow replay and an example answer when you get stuck.

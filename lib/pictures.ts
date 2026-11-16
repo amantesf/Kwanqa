@@ -12,7 +12,7 @@ export type Picture = {
    * for each other: the people (family portraits, the bride, groom and
    * priest), sugar and salt, plates of food, buildings, and so on.
    */
-  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health' | 'stalls' | 'cup';
+  group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque' | 'health' | 'stalls' | 'cup' | 'sky';
   /**
    * Other pictures of the same word, so quizzes can show any of them (an
    * Orthodox or a Protestant church for ቤተ ክርስቲያን). `src` stays the one
@@ -56,8 +56,8 @@ export const PICTURES: Picture[] = [
   { amharic: 'ቀጥታ', transliteration: 'qetita', english: 'straight ahead', src: '/pictures/qetita.png' },
   { amharic: 'መንገድ', transliteration: 'menged', english: 'road', src: '/pictures/menged.png' },
   { amharic: 'ሰዓት', transliteration: 'se\'at', english: 'clock', src: '/pictures/seat.png' },
-  { amharic: 'ጠዋት', transliteration: 'tewat', english: 'morning', src: '/pictures/tewat.png' },
-  { amharic: 'ማታ', transliteration: 'mata', english: 'evening', src: '/pictures/mata.png' },
+  { amharic: 'ጠዋት', transliteration: 'tewat', english: 'morning', src: '/pictures/tewat.png', group: 'sky' },
+  { amharic: 'ማታ', transliteration: 'mata', english: 'evening', src: '/pictures/mata.png', group: 'sky' },
   { amharic: 'መስጊድ', transliteration: 'mesgid', english: 'mosque', src: '/pictures/mesgid.png', group: 'mosque' },
   { amharic: 'ሆስፒታል', transliteration: 'hospital', english: 'hospital', src: '/pictures/hospital.png', group: 'health' },
   { amharic: 'ባንክ', transliteration: 'bank', english: 'bank', src: '/pictures/bank.png' },
@@ -76,7 +76,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ገና', transliteration: 'genna', english: 'Ethiopian Christmas', src: '/pictures/genna.png' },
   { amharic: 'ክረምት', transliteration: 'kiremt', english: 'rainy season', src: '/pictures/kiremt.png' },
   { amharic: 'ልጆቼ', transliteration: 'lijoche', english: 'my children', src: '/pictures/lijoche.png', group: 'family' },
-  { amharic: 'ፀሐይ', transliteration: 'tsehay', english: 'sun', src: '/pictures/tsehay.png' },
+  { amharic: 'ፀሐይ', transliteration: 'tsehay', english: 'sun', src: '/pictures/tsehay.png', group: 'sky' },
   { amharic: 'ደመና', transliteration: 'demena', english: 'cloud', src: '/pictures/demena.png' },
   { amharic: 'ጃንጥላ', transliteration: 'jantila', english: 'umbrella', src: '/pictures/jantila.png' },
   { amharic: 'ሐኪም', transliteration: 'hakim', english: 'doctor', src: '/pictures/hakim.png' },

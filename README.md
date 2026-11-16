@@ -39,3 +39,8 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 - A **library of 29 illustrated storybooks** (see Credits below).
 - **Add your own book**: upload a PDF or paste Amharic text, and read it with tap-to-translate.
 - Tap any word to see its meaning and transliteration, and mark it **new**, **learning** or **known**. Your known-word count grows as you read.
+
+### 🛒 Games and culture
+- **Merkato**: bargain your way through three market stalls.
+- A **phrasebook**, **proverbs** (ምሳሌዎች), an Ethiopian **holiday calendar** and the Ethiopian date.
+- 80+ original illustrations made for the app.

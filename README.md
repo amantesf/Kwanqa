@@ -44,3 +44,7 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 - **Merkato**: bargain your way through three market stalls.
 - A **phrasebook**, **proverbs** (ምሳሌዎች), an Ethiopian **holiday calendar** and the Ethiopian date.
 - 80+ original illustrations made for the app.
+
+### 👨‍👩‍👧 Family mode
+- Parents and kids each learn on their own account and join one family with a 6-letter code.
+- The **family streak** only grows on days when *everyone* practises.

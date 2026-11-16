@@ -12,12 +12,12 @@ export type Picture = {
    * for each other: the people (family portraits, the bride, groom and
    * priest), sugar and salt, plates of food, buildings, and so on.
    */
-  group?: 'family' | 'white-bowl' | 'food';
+  group?: 'family' | 'white-bowl' | 'food' | 'building';
 };
 
 export const PICTURES: Picture[] = [
   { amharic: 'ቡና', transliteration: 'buna', english: 'coffee', src: '/pictures/buna.png' },
-  { amharic: 'ቤት', transliteration: 'bet', english: 'house', src: '/pictures/bet.png' },
+  { amharic: 'ቤት', transliteration: 'bet', english: 'house', src: '/pictures/bet.png', group: 'building' },
   { amharic: 'ታክሲ', transliteration: 'taksi', english: 'taxi', src: '/pictures/taksi.png' },
   { amharic: 'አበባ', transliteration: 'abeba', english: 'flower', src: '/pictures/abeba.png' },
   { amharic: 'ጀበና', transliteration: 'jebena', english: 'coffee pot', src: '/pictures/jebena.png' },

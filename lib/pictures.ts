@@ -98,7 +98,7 @@ export const PICTURES: Picture[] = [
   { amharic: 'ሆቴል', transliteration: 'hotel', english: 'hotel', src: '/pictures/hotel.png', group: 'building' },
   { amharic: 'ትምህርት ቤት', transliteration: 'timhirt bet', english: 'school', src: '/pictures/timhirt-bet.png', group: 'building' },
   { amharic: 'ዳቦ ቤት', transliteration: 'dabo bet', english: 'bakery', src: '/pictures/dabo-bet.png', group: 'bread' },
-  { amharic: 'ቤተ ክርስቲያን', transliteration: 'bete kristiyan', english: 'church', src: '/pictures/betekristiyan.png' },
+  { amharic: 'ቤተ ክርስቲያን', transliteration: 'bete kristiyan', english: 'church', src: '/pictures/betekristiyan.png', also: ['/pictures/protestant-church.png'] },
   { amharic: 'ወጥ ቤት', transliteration: 'wet bet', english: 'kitchen', src: '/pictures/wet-bet.png', group: 'food' },
   { amharic: 'ፋሲካ', transliteration: 'fasika', english: 'Easter', src: '/pictures/fasika.png', group: 'food' },
   { amharic: 'ኢድ', transliteration: 'id', english: 'Eid', src: '/pictures/id.png', group: 'food' },

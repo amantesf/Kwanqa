@@ -3,6 +3,34 @@ export type Feature = {
   body: string;
 };
 
+// What's inside the app, for the About page.
+export const features: Feature[] = [
+  {
+    title: 'The climb',
+    body: '12 Amharic camps and 9 English camps, from first greetings to the Summit. Short, game-like lessons with listening, speaking, matching and picture questions, and Walia climbing the Simien Mountains with you.',
+  },
+  {
+    title: 'ፊደል, the alphabet',
+    body: 'An interactive fidel chart with audio for every letter, stroke-by-stroke writing practice, and the Ge’ez numerals ፩ ፪ ፫ with their Amharic names.',
+  },
+  {
+    title: 'Talk with Walia',
+    body: 'Practise real conversations out loud. Walia listens, checks whether your answer fits, and answers back, with hints and an example when you get stuck.',
+  },
+  {
+    title: 'Stories',
+    body: 'Read Amharic stories and 29 illustrated storybooks, or add your own book as a PDF. Tap any word for its meaning, and watch your known words grow.',
+  },
+  {
+    title: 'Merkato and culture',
+    body: 'Bargain your way through the market, learn proverbs and everyday phrases, and follow the Ethiopian calendar and holidays: Meskel, Genna, Fasika, Eid and Ramadan.',
+  },
+  {
+    title: 'Family mode',
+    body: 'Parents and kids each learn on their own account and join one family with a code. The family streak only grows on days when everyone practises.',
+  },
+];
+
 export const values: Feature[] = [
   {
     title: 'Language belongs to everyone',

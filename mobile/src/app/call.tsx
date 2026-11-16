@@ -21,7 +21,7 @@ import { fonts, makeStyles, useColors } from '@/theme';
 // A call with Walia, like the website's (components/TalkCall.tsx). Walia says a
 // line (Azure, Ameha's voice), the learner taps the mic and answers out loud,
 // Azure writes down what it heard (/api/listen), and Walia's brain (/api/tutor,
-// Claude) decides whether it fits and what to say back. If the brain can't be
+// the AI model) decides whether it fits and what to say back. If the brain can't be
 // reached, the script in lib/conversations.ts checks the answer instead.
 
 type Phase = 'walia' | 'ready' | 'listening' | 'checking' | 'verdict' | 'done';

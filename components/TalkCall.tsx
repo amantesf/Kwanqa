@@ -2,7 +2,7 @@
 
 // The call screen for Talk with Walia. Walia says a line (Azure, Ameha's voice),
 // the learner taps the mic and answers out loud, Azure writes down what it
-// heard, and Walia's brain (/api/tutor, Claude) decides whether it fits and
+// heard, and Walia's brain (/api/tutor, the AI model) decides whether it fits and
 // what to say back. If the brain is unavailable, the script in
 // lib/conversations.ts checks the answer instead.
 

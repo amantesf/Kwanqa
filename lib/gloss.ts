@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 
 // Meanings for any Amharic word in a story or in a learner's own book, from
-// Claude: what the word means in that sentence, its dictionary form, and how
+// the AI model: what the word means in that sentence, its dictionary form, and how
 // it's built (አያቴ = አያት "grandparent" + -ኤ "my"). Also whole-sentence
 // translations for learners' own books, which have no English of their own.
 // Server only (needs ANTHROPIC_API_KEY), like lib/tutor.ts.

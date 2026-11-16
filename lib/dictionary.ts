@@ -2,7 +2,7 @@
 // phrases from the camps, picture words, passport-lesson words
 // and the hand-glossed stories. Tapping one of these words in any story or
 // book shows its meaning at once, offline and without an account; other
-// words are looked up with Claude (lib/gloss.ts).
+// words are looked up with the AI model (lib/gloss.ts).
 
 import { courseContent } from '@/lib/courses';
 import { PICTURES } from '@/lib/pictures';

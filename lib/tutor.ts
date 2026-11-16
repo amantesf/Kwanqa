@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { waliaLine, type Conversation, type Gender, type Level, type Line } from '@/lib/conversations';
 
 // Walia's brain for Talk calls. The script in lib/conversations.ts still sets
-// the questions and their order; Claude decides whether the learner's answer
+// the questions and their order; the AI model decides whether the learner's answer
 // fits and writes Walia's short, personal reply. Server only (needs ANTHROPIC_API_KEY).
 
 export const tutorReady = Boolean(process.env.ANTHROPIC_API_KEY);

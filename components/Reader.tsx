@@ -8,7 +8,7 @@
 //
 // Meanings come, in order, from the story's own hand-written glosses,
 // kwanqa's lessons (lib/dictionary.ts), meanings Walia already looked up on
-// this device, and finally Walia himself (Claude, /api/gloss) for any word,
+// this device, and finally Walia himself (the AI model, /api/gloss) for any word,
 // for learners with an account.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';

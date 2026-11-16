@@ -1,6 +1,6 @@
 -- Daily limits on the features that cost money each time they're used:
--- word lookups and sentence translations (Claude, /api/gloss), Walia's
--- answers in Talk (Claude, /api/tutor) and listening to a recording
+-- word lookups and sentence translations (AI, /api/gloss), Walia's
+-- answers in Talk (AI, /api/tutor) and listening to a recording
 -- (Azure, /api/listen).
 --
 -- Run this once in the Supabase SQL editor (after schema.sql). Safe to run

@@ -4,7 +4,7 @@ import { accountsOn, requestUser } from '@/lib/requestUser';
 
 // POST { word, sentence } → what an Amharic word means in that sentence.
 // POST { sentence } → the sentence in English (for learners' own books).
-// Signed-in learners only, since each answer comes from Claude, and capped
+// Signed-in learners only, since each answer comes from the AI model, and capped
 // per day (lib/aiLimits.ts).
 
 const ETHIOPIC = /[ሀ-፼]/;

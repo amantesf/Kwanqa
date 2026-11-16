@@ -33,3 +33,9 @@ Every lesson is rooted in real Ethiopian life: the coffee ceremony, bargaining i
 ### 📞 Talk with Walia
 - Practice real conversations out loud. Walia listens to what you say, checks whether it fits, and answers back.
 - Hints, slow replay and an example answer when you get stuck.
+
+### 📖 Stories (inspired by the LingQ method)
+- Hand-written Amharic stories with a gloss for every word.
+- A **library of 29 illustrated storybooks** (see Credits below).
+- **Add your own book**: upload a PDF or paste Amharic text, and read it with tap-to-translate.
+- Tap any word to see its meaning and transliteration, and mark it **new**, **learning** or **known**. Your known-word count grows as you read.

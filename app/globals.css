@@ -254,6 +254,13 @@ svg {
   font-weight: 800;
 }
 
+.prose a {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .prose ul {
   padding-left: 22px;
   display: flex;

@@ -117,3 +117,5 @@ Run these in the Supabase SQL editor, in this order. Each one is safe to run mor
 2. `supabase/events.sql`: lesson events for the team stats page
 3. `supabase/family.sql`: Family mode
 4. `supabase/ai-limits.sql`: daily limits on AI features
+
+`supabase/stats.sql` has read-only queries for checking how learners are doing.

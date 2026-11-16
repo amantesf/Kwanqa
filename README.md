@@ -80,3 +80,15 @@ supabase/     SQL to set up the database
 ```
 
 The phone app reads its lessons straight from `lib/`, so a fix there shows up on both the website and the app.
+
+## Running it locally
+
+You'll need **Node.js 20+**.
+
+```bash
+git clone https://github.com/amantesf/Kwanqa.git
+cd Kwanqa
+npm install
+cp .env.example .env.local   # then fill in the keys you have
+npm run dev                  # open http://localhost:3000
+```

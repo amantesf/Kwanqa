@@ -13,6 +13,12 @@ export type Picture = {
    * priest), sugar and salt, plates of food, buildings, and so on.
    */
   group?: 'family' | 'white-bowl' | 'food' | 'building' | 'bread' | 'mosque';
+  /**
+   * Other pictures of the same word, so quizzes can show any of them (an
+   * Orthodox or a Protestant church for ቤተ ክርስቲያን). `src` stays the one
+   * used on lesson cards.
+   */
+  also?: string[];
 };
 
 export const PICTURES: Picture[] = [

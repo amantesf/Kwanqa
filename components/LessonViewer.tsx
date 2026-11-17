@@ -4,6 +4,7 @@ import Link from 'next/link';
 import SayButton, { say, soundFor } from '@/components/SayButton';
 import { Fragment, useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import DialoguePlay from '@/components/DialoguePlay';
 import Mascot from '@/components/Mascot';
 import Peek, { HideMeaningToggle } from '@/components/Peek';
 import Practice from '@/components/Practice';
@@ -292,6 +293,7 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
   // for the whole session (finishing clears them from storage).
   if (wantsReview && !review && pendingCount(mistakes) > 0) setReview(reviewSession(mistakes));
   const [cardMode, setCardMode] = useState<CardMode>('learn');
+  const [acting, setActing] = useState<number | null>(null); // the lesson whose dialogue is being acted out
   const [session, setSession] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
@@ -418,29 +420,47 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
 
             {lesson.dialogue && (
               <div className="stack">
-                <h3 className="h3">Mini‑dialogue</h3>
-                <div className="dialogue">
-                  {lesson.dialogue.map((line, idx) => (
-                    <div key={idx} className={`dialogue-line${line.speaker === 'B' ? ' b' : ''}`}>
-                      {line.speaker === 'A' ? (
-                        <Mascot pose="happy" size={48} title="Walia" hornScale={horns.scale} />
-                      ) : (
-                        <span className="person-dot">B</span>
-                      )}
-                      <div className="bubble">
-                        <SayButton text={sides(line, track).learn} track={track} className="say-corner" />
-                        <span className="am">{sides(line, track).learn}</span>
-                        {sides(line, track).say && <span className="tr">{sides(line, track).say}</span>}
-                        <Peek track={track} className="en">
-                          {sides(line, track).meaning}
-                          {track === 'english' && (
-                            <SayButton text={line.amharic} track="amharic" className="say-inline say-am" size={14} />
-                          )}
-                        </Peek>
-                      </div>
-                    </div>
-                  ))}
+                <div className="panel-title">
+                  <h3 className="h3">Mini‑dialogue</h3>
+                  {lesson.dialogue.length >= 2 && acting !== active && (
+                    <button type="button" className="btn btn-sm" onClick={() => setActing(active)}>
+                      Act it out
+                    </button>
+                  )}
                 </div>
+                {acting === active ? (
+                  <DialoguePlay
+                    key={active}
+                    lesson={lesson}
+                    courseLessons={lessons}
+                    track={track}
+                    hornScale={horns.scale}
+                    onClose={() => setActing(null)}
+                  />
+                ) : (
+                  <div className="dialogue">
+                    {lesson.dialogue.map((line, idx) => (
+                      <div key={idx} className={`dialogue-line${line.speaker === 'B' ? ' b' : ''}`}>
+                        {line.speaker === 'A' ? (
+                          <Mascot pose="happy" size={48} title="Walia" hornScale={horns.scale} />
+                        ) : (
+                          <span className="person-dot">B</span>
+                        )}
+                        <div className="bubble">
+                          <SayButton text={sides(line, track).learn} track={track} className="say-corner" />
+                          <span className="am">{sides(line, track).learn}</span>
+                          {sides(line, track).say && <span className="tr">{sides(line, track).say}</span>}
+                          <Peek track={track} className="en">
+                            {sides(line, track).meaning}
+                            {track === 'english' && (
+                              <SayButton text={line.amharic} track="amharic" className="say-inline say-am" size={14} />
+                            )}
+                          </Peek>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

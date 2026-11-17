@@ -14411,3 +14411,235 @@ body:has(.practice-screen) {
   border-color: #9cbcf0;
   color: var(--blue);
 }
+
+/* --------------------------------------------------------------------------
+   Act it out (DialoguePlay.tsx): the mini-dialogue as a conversation
+   -------------------------------------------------------------------------- */
+.dp {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: 20px;
+  background: var(--bg-soft);
+}
+
+.dp-scene {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px var(--border);
+}
+
+.dp-scene-title {
+  margin: 0 0 2px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.dp-scene-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.dp-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dp-note {
+  align-self: center;
+  margin: 4px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.dp-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 90%;
+  animation: dp-in 0.25s ease;
+}
+
+.dp-line.you {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.dp-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 16px 16px 16px 4px;
+  background: #fff;
+}
+
+.dp-line.you .dp-bubble {
+  border-color: #bcd2f5;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--blue-soft);
+}
+
+.dp-draft .dp-bubble {
+  border-style: dashed;
+}
+
+.dp-learn {
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.dp-blank {
+  display: inline-block;
+  min-width: 70px;
+  margin: 0 4px;
+  border-bottom: 3px solid var(--blue);
+  color: var(--blue);
+  text-align: center;
+}
+
+.dp-roman {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.dp-meaning {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dp-say {
+  flex: none;
+  align-self: center;
+}
+
+@keyframes dp-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.dp-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dp-task {
+  margin: 0;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.dp-hint {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--gold-soft);
+  color: #6b5200;
+}
+
+.dp-options {
+  display: grid;
+  gap: 8px;
+}
+
+.dp-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-bottom-width: 4px;
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dp-option:hover {
+  border-color: #9cbcf0;
+}
+
+.dp-option:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.dp-option span {
+  font-family: var(--font-ethiopic), sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.dp-option small {
+  font-size: 13px;
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.dp-option.wrong,
+.dp-fill input.wrong {
+  border-color: #e8345a;
+  animation: shake 0.4s ease;
+}
+
+.dp-fill {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dp-fill-row {
+  display: flex;
+  gap: 8px;
+}
+
+.dp-fill input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 18px;
+}
+
+.dp-fill input:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.dp-done {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dp-done p {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-line,
+  .dp-option.wrong,
+  .dp-fill input.wrong {
+    animation: none;
+  }
+}

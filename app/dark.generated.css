@@ -853,3 +853,24 @@
 :where(html[data-theme='dark']) .peek:hover {
     border-color: #444c5a
 }
+:where(html[data-theme='dark']) .dp-scene {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .dp-bubble {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .dp-line.you .dp-bubble {
+    border-color: #3d4552
+}
+:where(html[data-theme='dark']) .dp-hint {
+    color: #ecd179
+}
+:where(html[data-theme='dark']) .dp-option {
+    background: #1a2428
+}
+:where(html[data-theme='dark']) .dp-option:hover {
+    border-color: #444c5a
+}
+:where(html[data-theme='dark']) .dp-fill input {
+    background: #1a2428
+}

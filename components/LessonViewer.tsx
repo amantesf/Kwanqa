@@ -5,6 +5,7 @@ import SayButton, { say, soundFor } from '@/components/SayButton';
 import { Fragment, useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Mascot from '@/components/Mascot';
+import Peek, { HideMeaningToggle } from '@/components/Peek';
 import Practice from '@/components/Practice';
 import Trail from '@/components/Trail';
 import { hornLevel, isDone, useClimb } from '@/lib/climb';
@@ -113,7 +114,9 @@ function FamilyCard({ family }: { family: WordFamily }) {
           <li key={m.amharic}>
             <span lang="am">{m.amharic}</span>
             <small>{m.transliteration}</small>
-            <em>{m.english}</em>
+            <Peek track="amharic">
+              <em>{m.english}</em>
+            </Peek>
           </li>
         ))}
       </ul>
@@ -164,7 +167,8 @@ function GrammarCards({ cards, families }: { cards: GrammarCard[]; families: Wor
               <li key={ex.amharic}>
                 <span lang="am">{ex.amharic}</span>
                 <small>
-                  {ex.transliteration} · {ex.english}
+                  {ex.transliteration} ·{' '}
+                  <Peek track="amharic">{ex.english}</Peek>
                 </small>
               </li>
             ))}
@@ -224,9 +228,15 @@ function PhraseCards({ phrases, mode, track }: { phrases: Phrase[]; mode: CardMo
             {/* Amharic words can be tapped to see their parts (not when the card is one button) */}
             {track === 'amharic' && !tappable ? <BrokenDownLine text={side.learn} /> : <span className="phrase-am">{side.learn}</span>}
             {side.say && <span className="phrase-tr">{side.say}</span>}
-            <span className={`phrase-en${hidden ? ' hidden' : ''}`}>
-              {hidden ? 'Tap to reveal' : side.meaning}
-            </span>
+            {hidden ? (
+              <span className="phrase-en hidden">Tap to reveal</span>
+            ) : quiz ? (
+              <span className="phrase-en">{side.meaning}</span>
+            ) : (
+              <Peek track={track} className="phrase-en">
+                {side.meaning}
+              </Peek>
+            )}
           </>
         );
         // The speaker sits beside the card, not inside it: a tappable card is itself a button.
@@ -372,6 +382,7 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
               </span>
               <h2 className="h2">{lesson.title.replace(/^Lesson \d+ – /, '')}</h2>
               <p className="lead">{lesson.description}</p>
+              <HideMeaningToggle track={track} />
             </div>
 
             {lesson.phrases && (
@@ -420,12 +431,12 @@ export default function LessonViewer({ slug, track, lessons, basePath, backHref,
                         <SayButton text={sides(line, track).learn} track={track} className="say-corner" />
                         <span className="am">{sides(line, track).learn}</span>
                         {sides(line, track).say && <span className="tr">{sides(line, track).say}</span>}
-                        <span className="en">
+                        <Peek track={track} className="en">
                           {sides(line, track).meaning}
                           {track === 'english' && (
                             <SayButton text={line.amharic} track="amharic" className="say-inline say-am" size={14} />
                           )}
-                        </span>
+                        </Peek>
                       </div>
                     </div>
                   ))}

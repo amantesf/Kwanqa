@@ -14384,3 +14384,29 @@ body:has(.practice-screen) {
     animation: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Hide English on lessons (Peek.tsx): meanings become small peek buttons
+   -------------------------------------------------------------------------- */
+.lesson-head .hide-meaning {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.peek {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border: 2px dashed var(--border);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.peek:hover {
+  border-color: #9cbcf0;
+  color: var(--blue);
+}

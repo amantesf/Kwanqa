@@ -850,3 +850,6 @@
 :where(html[data-theme='dark']) .mk-choice:hover {
     border-color: #444c5a
 }
+:where(html[data-theme='dark']) .peek:hover {
+    border-color: #444c5a
+}

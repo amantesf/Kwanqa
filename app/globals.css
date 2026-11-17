@@ -2396,7 +2396,8 @@ a.camp-banner:active {
   background-color: var(--bg-soft);
 }
 
-.grammar-examples span {
+/* the Amharic line itself (not the English inside <small>, which can hide behind a peek button) */
+.grammar-examples li > span {
   font-size: 18px;
   font-weight: 700;
   color: var(--text-strong);

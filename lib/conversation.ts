@@ -1,8 +1,8 @@
 // "Act it out": a lesson's mini-dialogue played as a real conversation. Walia
 // says one side, out loud; you answer the other, sometimes by choosing the
-// right reply and sometimes by typing the missing word. Short dialogues carry
-// on with exchanges from the camp's earlier lessons, so there's always a bit of
-// a story to follow. The screen is components/DialoguePlay.tsx.
+// right reply and sometimes by typing the missing word. Only the lesson's own
+// dialogue is used, so the conversation stays on one topic. The screen is
+// components/DialoguePlay.tsx.
 
 import type { LessonSection, Track } from '@/lib/courses';
 
@@ -74,21 +74,6 @@ export function buildScene(lesson: LessonSection, courseLessons: LessonSection[]
   // you take the side with the most lines to say back (usually B)
   const you: Speaker = own.filter(l => l.speaker === 'B').length ? 'B' : 'A';
   const lines: (Line | { note: string })[] = [...own];
-
-  // keep chatting with earlier exchanges from this camp if the dialogue is short
-  const yourTurns = () => lines.filter(l => 'speaker' in l && l.speaker === you).length;
-  if (yourTurns() < 3) {
-    const here = courseLessons.indexOf(lesson);
-    const earlier = shuffle(courseLessons.slice(0, Math.max(0, here)));
-    for (const l of earlier) {
-      if (yourTurns() >= 3) break;
-      const d = (l.dialogue ?? []).filter(usable) as Line[];
-      const i = d.findIndex((x, k) => x.speaker !== you && d[k + 1]?.speaker === you);
-      if (i < 0) continue;
-      lines.push({ note: 'Walia keeps chatting…' }, d[i], d[i + 1]);
-    }
-  }
-
   // wrong replies to choose from: other lines from this camp
   const pool = [
     ...new Set(

@@ -278,9 +278,9 @@ export function interactiveQuestions(
     }
   }
 
-  // Chat with Walia: Walia says A's lines, you choose B's replies. Many
-  // dialogues are a single exchange, so the chat carries on with exchanges from
-  // the camp's earlier lessons (things the learner has already met).
+  // Chat with Walia: Walia says A's lines, you choose B's replies. Only this
+  // lesson's own dialogue is used, so the chat stays on one topic (padding it
+  // with other lessons' exchanges jumped from family to prices mid-chat).
   const pairsIn = (l: LessonSection) => {
     const lines = l.dialogue ?? [];
     const found: { said: Card; reply: Card }[] = [];
@@ -292,10 +292,8 @@ export function interactiveQuestions(
     }
     return found;
   };
-  const here = courseLessons.findIndex(l => l === lesson || l.title === lesson.title);
-  const earlier = here > 0 ? courseLessons.slice(0, here) : [];
-  const pairs = [...pairsIn(lesson), ...shuffle(earlier.flatMap(pairsIn))].slice(0, 3);
-  if (pairs.length >= 2) {
+  const pairs = pairsIn(lesson).slice(0, 3);
+  if (pairs.length >= 1) {
     // wrong replies: other lines from this camp that aren't questions or lines of this chat
     const own = new Set(pairs.flatMap(p => [sides(p.reply, track).learn, sides(p.said, track).learn]));
     const pool = [

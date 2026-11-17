@@ -143,10 +143,15 @@ function distance(a: string, b: string) {
 
 /** A typed answer: right if it's one of the accepted spellings, give or take a small typo. */
 export function typedRight(exercise: TypeExercise, typed: string) {
+  return typedMatches(exercise.accept, typed);
+}
+
+/** Whether typed text is one of the accepted spellings (ፊደል or transliteration), give or take a small typo. */
+export function typedMatches(accept: string[], typed: string) {
   const t = squash(typed);
   const roman = looseRoman(typed);
   if (!t) return false;
-  return exercise.accept.some(a => {
+  return accept.some(a => {
     if (/[ሀ-፿]/.test(a)) return distance(squash(a), t) <= 0.15;
     const target = looseRoman(a);
     return distance(target, roman) <= 0.25;

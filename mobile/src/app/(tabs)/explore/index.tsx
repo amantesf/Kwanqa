@@ -14,7 +14,7 @@ import { fonts, makeStyles, useColors } from '@/theme';
 import OfflineNote from '@/components/offline-note';
 
 // Everything beyond the trail, like the website's menu: the phrasebook,
-// passport, the daily ፊደል puzzle, proverbs, holidays and flashcards.
+// passport, the daily ፊደል puzzle, Merkato, proverbs, holidays and flashcards.
 
 function Book() {
   const colors = useColors();
@@ -33,6 +33,19 @@ function Stack() {
       <Rect x={6} y={3} width={13} height={16} rx={3} fill="#f6d3c4" transform="rotate(8 12 12)" />
       <Rect x={4} y={5} width={13} height={16} rx={3} fill={colors.primary} />
       <Path d="M7.5 11h6M7.5 15h4" stroke="#ffffff" strokeWidth={2.2} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+/** A market basket under a striped awning. */
+function Basket() {
+  const colors = useColors();
+  return (
+    <Svg width={44} height={44} viewBox="0 0 24 24">
+      <Rect x={3} y={3} width={18} height={5} rx={2} fill={colors.primary} />
+      <Path d="M7 3v5M11 3v5M15 3v5M19 3v5" stroke="#fff4e8" strokeWidth={1.6} />
+      <Path d="M5 12h14l-1.6 8H6.6z" fill="#b07a4a" />
+      <Path d="M8 12l2-3M16 12l-2-3" stroke="#6b4425" strokeWidth={1.6} strokeLinecap="round" />
     </Svg>
   );
 }
@@ -95,6 +108,7 @@ export default function Explore() {
           tint="#eef3f8"
         />
         <Row title="Daily ፊደል puzzle" text="Guess today’s three-letter word in six tries. A new one every day." art={<Tiles />} href="/explore/puzzle" tint="#eef8ea" />
+        <Row title="Bargain at Merkato" text="Haggle at three market stalls: ask the price, catch the number, make an offer." art={<Basket />} href="/explore/merkato" tint="#fdf0e6" />
         <Row title="Phrasebook" text="Every phrase from a camp on one page, with a quiz mode." art={<Book />} href="/explore/phrasebook" tint="#e6eefb" />
         <Row title="Proverbs" text="ተረትና ምሳሌ: crack their meaning, word by word." art={<Walia pose="happy" size={40} />} href="/explore/proverbs" tint="#fff6dc" />
         <Row

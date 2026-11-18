@@ -39,6 +39,7 @@ export default function Camp() {
             track={camp.track}
             grammar={camp.track === 'amharic' ? grammarFor(slug, i) : []}
             families={camp.track === 'amharic' ? familiesFor(slug, i) : []}
+            courseLessons={course.sections}
           />
         ))}
       </ScrollView>

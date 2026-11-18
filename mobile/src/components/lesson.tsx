@@ -5,6 +5,7 @@ import type { LessonSection, Track } from '@/lib/courses';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { wordsOf, type GrammarCard, type WordFamily } from '@/lib/grammar';
 import { feel } from '@/haptics';
+import DialoguePlay from '@/components/dialogue-play';
 import Peek from '@/components/peek';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
@@ -157,10 +158,20 @@ function Family({ family }: { family: WordFamily }) {
   );
 }
 
-type LessonProps = { lesson: LessonSection; number?: number; track: Track; grammar?: GrammarCard[]; families?: WordFamily[] };
+type LessonProps = {
+  lesson: LessonSection;
+  number?: number;
+  track: Track;
+  grammar?: GrammarCard[];
+  families?: WordFamily[];
+  /** The camp's lessons: with them, the conversation can be acted out. */
+  courseLessons?: LessonSection[];
+};
 
-export default function Lesson({ lesson, number, track, grammar = [], families = [] }: LessonProps) {
+export default function Lesson({ lesson, number, track, grammar = [], families = [], courseLessons }: LessonProps) {
   const styles = useStyles();
+  const [acting, setActing] = useState(false);
+  const canAct = !!courseLessons && (lesson.dialogue?.length ?? 0) >= 2;
   return (
     <View style={styles.lesson}>
       {number ? <Text style={styles.kicker}>Lesson {number}</Text> : null}
@@ -176,10 +187,28 @@ export default function Lesson({ lesson, number, track, grammar = [], families =
       {families.map(family => (
         <Family key={family.word} family={family} />
       ))}
-      {lesson.dialogue?.length ? <Text style={styles.subhead}>Conversation</Text> : null}
-      {(lesson.dialogue ?? []).map((d, i) => (
-        <LineCard key={i} line={d} track={track} />
-      ))}
+      {lesson.dialogue?.length ? (
+        <View style={styles.subheadRow}>
+          <Text style={styles.subhead}>Conversation</Text>
+          {canAct && !acting ? (
+            <Pressable
+              onPress={() => {
+                feel('pick');
+                setActing(true);
+              }}
+              style={({ pressed }) => [styles.act, pressed && styles.actDown]}
+              accessibilityRole="button"
+            >
+              <Text style={styles.actText}>Act it out</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
+      {acting && courseLessons ? (
+        <DialoguePlay lesson={lesson} courseLessons={courseLessons} track={track} onClose={() => setActing(false)} />
+      ) : (
+        (lesson.dialogue ?? []).map((d, i) => <LineCard key={i} line={d} track={track} />)
+      )}
       {lesson.note ? (
         <View style={styles.note}>
           <Walia pose="happy" size={54} />
@@ -196,6 +225,10 @@ const useStyles = makeStyles(c => ({
   title: { fontFamily: fonts.black, fontSize: 24, lineHeight: 30, color: c.ink },
   description: { fontFamily: fonts.body, fontSize: 16, lineHeight: 22, color: c.muted },
   subhead: { fontFamily: fonts.black, fontSize: 18, color: c.ink, marginTop: 6 },
+  subheadRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
+  act: { marginTop: 6, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, borderBottomWidth: 4, borderBottomColor: c.primaryShadow, backgroundColor: c.primary },
+  actDown: { borderBottomWidth: 0, marginTop: 10 },
+  actText: { fontFamily: fonts.black, fontSize: 14, color: '#ffffff' },
   line: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 2, borderBottomWidth: 4, borderColor: c.line, backgroundColor: c.bg },
   lineB: { backgroundColor: c.bgSoft },
   lineText: { flex: 1, gap: 2 },

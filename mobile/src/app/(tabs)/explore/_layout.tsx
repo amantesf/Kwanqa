@@ -20,6 +20,7 @@ export default function ExploreLayout() {
         <Stack.Screen name="cards" options={{ title: 'Flashcards' }} />
         <Stack.Screen name="holidays" options={{ title: 'Holidays' }} />
         <Stack.Screen name="passport" options={{ title: 'Passport' }} />
+        <Stack.Screen name="puzzle" options={{ title: 'Daily puzzle' }} />
         <Stack.Screen name="holiday/[id]" options={{ title: '' }} />
       </Stack>
     </View>

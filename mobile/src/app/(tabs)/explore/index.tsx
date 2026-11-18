@@ -14,7 +14,7 @@ import { fonts, makeStyles, useColors } from '@/theme';
 import OfflineNote from '@/components/offline-note';
 
 // Everything beyond the trail, like the website's menu: the phrasebook,
-// passport, proverbs, holidays and flashcards.
+// passport, the daily ፊደል puzzle, proverbs, holidays and flashcards.
 
 function Book() {
   const colors = useColors();
@@ -33,6 +33,18 @@ function Stack() {
       <Rect x={6} y={3} width={13} height={16} rx={3} fill="#f6d3c4" transform="rotate(8 12 12)" />
       <Rect x={4} y={5} width={13} height={16} rx={3} fill={colors.primary} />
       <Path d="M7.5 11h6M7.5 15h4" stroke="#ffffff" strokeWidth={2.2} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+/** Three puzzle tiles: the colours of a good guess. */
+function Tiles() {
+  const colors = useColors();
+  return (
+    <Svg width={48} height={20} viewBox="0 0 48 20">
+      <Rect x={0} y={2} width={14} height={16} rx={4} fill={colors.green} />
+      <Rect x={17} y={2} width={14} height={16} rx={4} fill={colors.blue} />
+      <Rect x={34} y={2} width={14} height={16} rx={4} fill={colors.gold} />
     </Svg>
   );
 }
@@ -82,6 +94,7 @@ export default function Explore() {
           href="/explore/passport"
           tint="#eef3f8"
         />
+        <Row title="Daily ፊደል puzzle" text="Guess today’s three-letter word in six tries. A new one every day." art={<Tiles />} href="/explore/puzzle" tint="#eef8ea" />
         <Row title="Phrasebook" text="Every phrase from a camp on one page, with a quiz mode." art={<Book />} href="/explore/phrasebook" tint="#e6eefb" />
         <Row title="Proverbs" text="ተረትና ምሳሌ: crack their meaning, word by word." art={<Walia pose="happy" size={40} />} href="/explore/proverbs" tint="#fff6dc" />
         <Row

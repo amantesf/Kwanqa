@@ -5,6 +5,7 @@ import type { LessonSection, Track } from '@/lib/courses';
 import { englishAudioUrl, isSpeakableEnglish } from '@/lib/englishAudio';
 import { wordsOf, type GrammarCard, type WordFamily } from '@/lib/grammar';
 import { feel } from '@/haptics';
+import Peek from '@/components/peek';
 import { play } from '@/components/sound';
 import Speaker from '@/components/speaker';
 import Walia from '@/components/walia';
@@ -100,9 +101,10 @@ function Grammar({ card }: { card: GrammarCard }) {
       {card.examples.map(ex => (
         <View key={ex.amharic} style={styles.example}>
           <Text style={styles.exampleAmharic}>{ex.amharic}</Text>
-          <Text style={styles.exampleText}>
-            {ex.transliteration} · {ex.english}
-          </Text>
+          <Text style={styles.exampleText}>{ex.transliteration}</Text>
+          <Peek track="amharic">
+            <Text style={styles.exampleText}>{ex.english}</Text>
+          </Peek>
         </View>
       ))}
       {card.tip ? <Text style={styles.grammarTip}>{card.tip}</Text> : null}
@@ -121,7 +123,9 @@ function LineCard({ line, track }: { line: Line; track: Track }) {
       <View style={styles.lineText}>
         {english ? <Text style={styles.mainEn}>{line.english}</Text> : <BrokenDownLine text={line.amharic} />}
         {english ? null : <Text style={styles.roman}>{line.transliteration}</Text>}
-        <Text style={english ? styles.meaningAm : styles.english}>{english ? line.amharic : line.english}</Text>
+        <Peek track={track}>
+          <Text style={english ? styles.meaningAm : styles.english}>{english ? line.amharic : line.english}</Text>
+        </Peek>
       </View>
       {audio ? <Speaker onPress={() => play(audio)} label={`Hear ${line.english}`} /> : null}
     </View>
@@ -142,9 +146,10 @@ function Family({ family }: { family: WordFamily }) {
       {family.members.map(m => (
         <View key={m.amharic} style={styles.example}>
           <Text style={styles.exampleAmharic}>{m.amharic}</Text>
-          <Text style={styles.exampleText}>
-            <Text style={styles.familyRoot}>{m.transliteration}</Text> · {m.english}
-          </Text>
+          <Text style={[styles.exampleText, styles.familyRoot]}>{m.transliteration}</Text>
+          <Peek track="amharic">
+            <Text style={styles.exampleText}>{m.english}</Text>
+          </Peek>
         </View>
       ))}
       {family.tip ? <Text style={styles.grammarTip}>{family.tip}</Text> : null}

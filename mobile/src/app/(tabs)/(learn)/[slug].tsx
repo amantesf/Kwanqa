@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { courseCatalog, courseContent } from '@/lib/courses';
 import { familiesFor, grammarFor } from '@/lib/grammar';
 import Lesson from '@/components/lesson';
+import { HideMeaningSwitch } from '@/components/peek';
 import { campColors, fonts, makeStyles } from '@/theme';
 
 // One lesson's phrases and dialogue (from a trail stone), or every lesson in
@@ -29,6 +30,7 @@ export default function Camp() {
           <Text style={styles.bannerKicker}>{one !== null ? `Camp ${camp.part}` : `Camp ${camp.part} · Phrases`}</Text>
           <Text style={styles.bannerTitle}>{camp.description}</Text>
         </View>
+        <HideMeaningSwitch track={camp.track} />
         {shown.map(i => (
           <Lesson
             key={i}

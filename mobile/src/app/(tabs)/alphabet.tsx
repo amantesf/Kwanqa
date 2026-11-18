@@ -4,14 +4,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AbcChart from '@/components/abc-chart';
 import FidelChart from '@/components/fidel-chart';
 import FidelWrite from '@/components/fidel-write';
+import GeezNumerals from '@/components/geez-numerals';
 import { fonts, makeStyles, tabBarTop } from '@/theme';
 
 // The alphabets, like the website's /fidel and /abc: the ፊደል chart, writing
-// practice, and the English ABC for Amharic speakers learning English.
+// practice, the Ge'ez numerals, and the English ABC for Amharic speakers
+// learning English.
 
-const TABS = ['chart', 'write', 'abc'] as const;
+const TABS = ['chart', 'write', 'numbers', 'abc'] as const;
 type Tab = (typeof TABS)[number];
-const LABELS: Record<Tab, string> = { chart: 'ፊደል', write: 'Write', abc: 'ABC' };
+const LABELS: Record<Tab, string> = { chart: 'ፊደል', write: 'Write', numbers: '፩፪፫', abc: 'ABC' };
 
 export default function Alphabet() {
   const styles = useStyles();
@@ -25,7 +27,7 @@ export default function Alphabet() {
           </Pressable>
         ))}
       </View>
-      <View style={styles.flex}>{tab === 'chart' ? <FidelChart /> : tab === 'write' ? <FidelWrite /> : <AbcChart />}</View>
+      <View style={styles.flex}>{tab === 'chart' ? <FidelChart /> : tab === 'write' ? <FidelWrite /> : tab === 'numbers' ? <GeezNumerals /> : <AbcChart />}</View>
     </SafeAreaView>
   );
 }

@@ -10,7 +10,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const story = STORIES.find(s => s.id === id);
-  return { title: story ? `${story.title} · Stories` : 'Stories' };
+  if (!story) return { title: 'Stories' };
+  const description = `${story.amharicTitle} (${story.title}): ${story.blurb} A short Amharic story with the meaning and transliteration of every word.`;
+  return { title: `${story.title} · Stories`, description, openGraph: { title: `${story.amharicTitle} · ${story.title}`, description } };
 }
 
 export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {

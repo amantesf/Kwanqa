@@ -9,7 +9,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const holiday = holidayById((await params).id);
-  return { title: holiday ? `${holiday.name} lesson` : 'Holiday lesson' };
+  if (!holiday) return { title: 'Holiday lesson' };
+  const description = `${holiday.amharic} (${holiday.name}): ${holiday.about}. Learn the greeting ${holiday.greeting.amharic} and the Amharic words for the day in a free, short lesson.`;
+  return { title: `${holiday.name} lesson`, description, openGraph: { title: `${holiday.amharic} · ${holiday.name}`, description } };
 }
 
 export default async function HolidayLessonPage({ params }: { params: Promise<{ id: string }> }) {

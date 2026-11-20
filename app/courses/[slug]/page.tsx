@@ -15,7 +15,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  return { title: courseContent[slug]?.title ?? 'Course not found' };
+  const course = courseContent[slug];
+  if (!course) return { title: 'Course not found' };
+  const summary = courseCatalog.find(c => c.slug === slug)?.description;
+  const description = `${summary ?? course.title} Free, bite-sized lessons with audio, transliteration and games on kwanqa.`;
+  return { title: course.title, description, openGraph: { title: course.title, description } };
 }
 
 export default async function CourseDetailPage({ params }: Props) {

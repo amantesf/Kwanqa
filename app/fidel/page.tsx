@@ -6,7 +6,11 @@ import { PageHero } from '@/components/sections';
 import './fidel.css';
 import './fidel.dark.css';
 
-export const metadata: Metadata = { title: 'The ፊደል alphabet' };
+export const metadata: Metadata = {
+  title: 'The ፊደል alphabet',
+  description:
+    'Learn to read and write the Amharic alphabet (ፊደል): every letter family with audio and transliteration, stroke-by-stroke writing practice and the Ge’ez numerals.',
+};
 
 export default function FidelPage() {
   return (

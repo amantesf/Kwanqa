@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import AbcChart from '@/components/AbcChart';
 import { PageHero } from '@/components/sections';
 
-export const metadata: Metadata = { title: 'The English alphabet' };
+export const metadata: Metadata = {
+  title: 'The English alphabet',
+  description: 'The English alphabet for Amharic speakers: every letter with its sound, explained in Amharic, plus words to practise.',
+};
 
 export default function AbcPage() {
   return (

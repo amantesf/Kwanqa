@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { CTA, FeatureGrid, PageHero } from '@/components/sections';
 import { values } from '@/lib/content';
 
-export const metadata: Metadata = { title: 'Our values' };
+export const metadata: Metadata = {
+  title: 'Our values',
+  description: 'The principles behind kwanqa: language, culture and community, and learning that stays free and welcoming for every family.',
+};
 
 export default function ValuesPage() {
   return (

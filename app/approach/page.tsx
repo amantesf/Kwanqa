@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import { CTA, FeatureGrid, PageHero } from '@/components/sections';
 import { approach } from '@/lib/content';
 
-export const metadata: Metadata = { title: 'Our approach' };
+export const metadata: Metadata = {
+  title: 'Our approach',
+  description:
+    'How kwanqa teaches Amharic and English: short lessons, real conversations, the ፊደል with transliteration as a bridge, and culture in every lesson.',
+};
 
 export default function ApproachPage() {
   return (

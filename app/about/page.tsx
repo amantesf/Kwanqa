@@ -10,7 +10,11 @@ import {
 } from '@/components/sections';
 import { approach, features, testimonials, values } from '@/lib/content';
 
-export const metadata: Metadata = { title: 'About' };
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'Why we built kwanqa: a free, game-like way to learn Amharic and English for Ethiopian families and the diaspora, made by Ethiopians.',
+};
 
 const anchors = [
   { href: '#why', label: 'Why we built it' },

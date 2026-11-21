@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Phrasebook from '@/components/Phrasebook';
 
-export const metadata: Metadata = { title: 'Phrasebook' };
+export const metadata: Metadata = {
+  title: 'Phrasebook',
+  description: 'Everyday Amharic and English phrases with audio and transliteration: greetings, family, food, shopping, travel and more.',
+};
 
 export default function PhrasebookPage() {
   return (

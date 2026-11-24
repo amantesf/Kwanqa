@@ -124,10 +124,12 @@ export default function Phrasebook() {
                   <span className="phrasebook-speaker">{line.speaker}</span>
                   <div className="phrasebook-line-text">
                     <SayButton text={english ? line.english : line.amharic} track={track} className="say-corner" />
-                    <div className="phrasebook-am small-am">{english ? line.english : line.amharic}</div>
+                    <div className="phrasebook-am small-am" lang={english ? 'en' : 'am'}>
+                      {english ? line.english : line.amharic}
+                    </div>
                     {!english && <div className="phrasebook-tr">{line.transliteration}</div>}
                     <div className="phrasebook-en">
-                      {english ? line.amharic : line.english}
+                      <span lang={english ? 'am' : 'en'}>{english ? line.amharic : line.english}</span>
                       {english && <SayButton text={line.amharic} track="amharic" className="say-inline say-am" size={14} />}
                     </div>
                   </div>

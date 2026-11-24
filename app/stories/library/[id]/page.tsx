@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import JsonLd from '@/components/JsonLd';
 import StoriesPage from '@/components/StoriesPage';
 import { LIBRARY, libraryBook } from '@/lib/library';
-import { sharePreview } from '@/lib/seo';
+import { SITE, sharePreview } from '@/lib/seo';
 
 export function generateStaticParams() {
   return LIBRARY.map(b => ({ id: b.id }));
@@ -18,6 +19,29 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function LibraryBookPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!libraryBook(id)) notFound();
-  return <StoriesPage view="library" id={id} />;
+  const book = libraryBook(id);
+  if (!book) notFound();
+  const person = (name?: string) => (name ? { '@type': 'Person', name } : undefined);
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Book',
+          name: book.title,
+          alternateName: book.titleEn,
+          inLanguage: 'am',
+          url: `${SITE}/stories/library/${book.id}`,
+          author: person(book.by.written),
+          illustrator: person(book.by.illustrated),
+          translator: person(book.by.translated),
+          image: book.cover ? `${SITE}/library/${book.cover}` : undefined,
+          isAccessibleForFree: true,
+          license: `https://creativecommons.org/licenses/by/${book.license}/`,
+          audience: { '@type': 'EducationalAudience', educationalRole: 'student' },
+        }}
+      />
+      <StoriesPage view="library" id={id} />
+    </>
+  );
 }

@@ -7,7 +7,7 @@ import LessonViewer from '@/components/LessonViewer';
 import MountainScene from '@/components/MountainScene';
 import RequireAccount from '@/components/RequireAccount';
 import { courseCatalog, courseContent } from '@/lib/courses';
-import { ORGANIZATION, SITE, sharePreview } from '@/lib/seo';
+import { ORGANIZATION, SITE, breadcrumbs, sharePreview } from '@/lib/seo';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -46,6 +46,7 @@ export default async function CourseDetailPage({ params }: Props) {
           offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD', category: 'Free' },
         }}
       />
+      <JsonLd data={breadcrumbs([['Home', '/'], ['Courses', '/courses'], [course.title, `/courses/${slug}`]])} />
       <section className="section" style={{ paddingTop: 40 }}>
         <div className="container">
           <Link href={`/courses?track=${summary.track}`} className="back-link">

@@ -181,7 +181,7 @@ export default function Home() {
                         <span className="person-dot">You</span>
                       )}
                       <div className="bubble">
-                        {line.amharic}
+                        <span lang="am">{line.amharic}</span>
                         <small>{line.english}</small>
                       </div>
                     </div>

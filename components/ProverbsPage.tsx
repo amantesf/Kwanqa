@@ -143,7 +143,7 @@ function ProverbGame({ first }: { first: Proverb }) {
               say(w.am, 'amharic');
             }}
           >
-            {w.am}
+            <span lang="am">{w.am}</span>
           </button>
         ))}
       </div>

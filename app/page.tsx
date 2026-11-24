@@ -8,6 +8,8 @@ import Mascot from '@/components/Mascot';
 import { CTA, SectionHead, Testimonials } from '@/components/sections';
 import { testimonials } from '@/lib/content';
 import { courseContent } from '@/lib/courses';
+import JsonLd from '@/components/JsonLd';
+import { ORGANIZATION, SITE } from '@/lib/seo';
 
 const greeting = courseContent['amharic-beginner-1'].sections[0];
 const dialogue = (greeting.dialogue ?? []).slice(0, 3);
@@ -15,6 +17,23 @@ const dialogue = (greeting.dialogue ?? []).slice(0, 3);
 export default function Home() {
   return (
     <main>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            { ...ORGANIZATION, '@id': `${SITE}/#org` },
+            {
+              '@type': 'WebSite',
+              '@id': `${SITE}/#site`,
+              name: 'kwanqa',
+              alternateName: 'ቋንቋ',
+              url: SITE,
+              inLanguage: ['en', 'am'],
+              publisher: { '@id': `${SITE}/#org` },
+            },
+          ],
+        }}
+      />
       {/* Hero: Walia and friends on the left, the pitch and buttons on the right */}
       <section className="welcome-hero">
         <div className="welcome-art" aria-hidden>

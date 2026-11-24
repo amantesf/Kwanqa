@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   title: 'Courses',
   description,
   openGraph: sharePreview('Free Amharic and English courses · kwanqa', description),
+  // /courses?track=english shows the same page, so search engines should list it once.
+  alternates: { canonical: '/courses' },
 };
 
 // Visitors see the course catalog; logged-in learners get the learn dashboard

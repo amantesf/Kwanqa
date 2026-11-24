@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import HolidayLesson from '@/components/HolidayLesson';
+import JsonLd from '@/components/JsonLd';
 import { holidayById, holidays } from '@/lib/holidays';
-import { sharePreview } from '@/lib/seo';
+import { ORGANIZATION, SITE, breadcrumbs, sharePreview } from '@/lib/seo';
 
 export function generateStaticParams() {
   return holidays.map(h => ({ id: h.id }));
@@ -17,6 +18,25 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function HolidayLessonPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!holidayById(id)) notFound();
-  return <HolidayLesson id={id} />;
+  const holiday = holidayById(id);
+  if (!holiday) notFound();
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'LearningResource',
+          name: `${holiday.name} (${holiday.amharic}) lesson`,
+          description: holiday.about,
+          learningResourceType: 'Lesson',
+          inLanguage: 'am',
+          url: `${SITE}/holidays/${holiday.id}`,
+          isAccessibleForFree: true,
+          provider: ORGANIZATION,
+        }}
+      />
+      <JsonLd data={breadcrumbs([['Home', '/'], ['Holidays', '/holidays'], [holiday.name, `/holidays/${holiday.id}`]])} />
+      <HolidayLesson id={id} />
+    </>
+  );
 }

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import StoriesPage from '@/components/StoriesPage';
 import { LIBRARY, libraryBook } from '@/lib/library';
-import { SITE, sharePreview } from '@/lib/seo';
+import { SITE, breadcrumbs, sharePreview } from '@/lib/seo';
 
 export function generateStaticParams() {
   return LIBRARY.map(b => ({ id: b.id }));
@@ -41,6 +41,7 @@ export default async function LibraryBookPage({ params }: { params: Promise<{ id
           audience: { '@type': 'EducationalAudience', educationalRole: 'student' },
         }}
       />
+      <JsonLd data={breadcrumbs([['Home', '/'], ['Stories', '/stories'], [book.titleEn, `/stories/library/${book.id}`]])} />
       <StoriesPage view="library" id={id} />
     </>
   );

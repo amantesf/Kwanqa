@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import JsonLd from '@/components/JsonLd';
 import StoriesPage from '@/components/StoriesPage';
-import { sharePreview } from '@/lib/seo';
+import { ORGANIZATION, SITE, breadcrumbs, sharePreview } from '@/lib/seo';
 import { STORIES } from '@/lib/stories';
 
 export function generateStaticParams() {
@@ -18,6 +19,25 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!STORIES.some(s => s.id === id)) notFound();
-  return <StoriesPage view="story" id={id} />;
+  const story = STORIES.find(s => s.id === id);
+  if (!story) notFound();
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'ShortStory',
+          name: story.amharicTitle,
+          alternateName: story.title,
+          description: story.blurb,
+          inLanguage: 'am',
+          url: `${SITE}/stories/${story.id}`,
+          isAccessibleForFree: true,
+          author: ORGANIZATION,
+        }}
+      />
+      <JsonLd data={breadcrumbs([['Home', '/'], ['Stories', '/stories'], [story.title, `/stories/${story.id}`]])} />
+      <StoriesPage view="story" id={id} />
+    </>
+  );
 }

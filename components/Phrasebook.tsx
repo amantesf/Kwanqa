@@ -98,9 +98,11 @@ export default function Phrasebook() {
                     onClick={() => reveal(key)}
                     disabled={!quiz}
                   >
-                    <span className="phrasebook-am">{english ? phrase.english : phrase.amharic}</span>
+                    <span className="phrasebook-am" lang={english ? 'en' : 'am'}>
+                      {english ? phrase.english : phrase.amharic}
+                    </span>
                     {!english && <span className="phrasebook-tr">{phrase.transliteration}</span>}
-                    <span className={`phrasebook-en${hidden ? ' hidden' : ''}`}>
+                    <span className={`phrasebook-en${hidden ? ' hidden' : ''}`} lang={hidden ? undefined : english ? 'am' : 'en'}>
                       {hidden ? 'Tap to reveal' : english ? phrase.amharic : phrase.english}
                     </span>
                   </button>

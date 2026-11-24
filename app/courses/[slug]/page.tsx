@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import JsonLd from '@/components/JsonLd';
 import LessonViewer from '@/components/LessonViewer';
 import MountainScene from '@/components/MountainScene';
 import RequireAccount from '@/components/RequireAccount';
 import { courseCatalog, courseContent } from '@/lib/courses';
-import { sharePreview } from '@/lib/seo';
+import { ORGANIZATION, SITE, sharePreview } from '@/lib/seo';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -31,6 +32,20 @@ export default async function CourseDetailPage({ params }: Props) {
 
   return (
     <main>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Course',
+          name: course.title,
+          description: summary.description,
+          url: `${SITE}/courses/${slug}`,
+          inLanguage: summary.track === 'english' ? 'en' : 'am',
+          isAccessibleForFree: true,
+          provider: ORGANIZATION,
+          hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: 'PT10M' },
+          offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD', category: 'Free' },
+        }}
+      />
       <section className="section" style={{ paddingTop: 40 }}>
         <div className="container">
           <Link href={`/courses?track=${summary.track}`} className="back-link">

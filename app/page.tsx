@@ -98,7 +98,7 @@ export default function Home() {
           </Link>
           <span className="lang-item">
             <Flag name="oromia" className="lang-flag" />
-            Afaan Oromoo <span className="lang-soon">Coming soon</span>
+            <span lang="om">Afaan Oromoo</span> <span className="lang-soon">Coming soon</span>
           </span>
           <span className="lang-item">
             <Flag name="tigray" className="lang-flag" />

@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     ".venv-audio/**",
     // The phone app has its own lint settings
     "mobile/**",
+    // pdf.js ships this file already built and minified
+    "public/pdf.worker.min.mjs",
   ]),
 ]);
 

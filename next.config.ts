@@ -39,6 +39,7 @@ const permissionsPolicy = [
   "accelerometer=()",
   "gyroscope=()",
   "magnetometer=()",
+  "ambient-light-sensor=()",
 ].join(", ");
 
 const securityHeaders = [

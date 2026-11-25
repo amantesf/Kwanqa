@@ -1,7 +1,7 @@
 -- Daily limits on the features that cost money each time they're used:
 -- word lookups and sentence translations (AI, /api/gloss), Walia's
 -- answers in Talk (AI, /api/tutor) and listening to a recording
--- (Azure, /api/listen).
+-- (Azure, /api/listen), and Walia speaking his own replies (Azure, /api/speak).
 --
 -- Run this once in the Supabase SQL editor (after schema.sql). Safe to run
 -- more than once. Until it's run, the site keeps working with no limits.
@@ -12,10 +12,16 @@
 create table if not exists public.ai_usage (
   user_id uuid not null references auth.users (id) on delete cascade,
   day date not null default (now() at time zone 'utc')::date,
-  kind text not null check (kind in ('gloss', 'talk', 'listen')),
+  kind text not null check (kind in ('gloss', 'talk', 'listen', 'speak')),
   uses integer not null default 0 check (uses >= 0),
   primary key (user_id, day, kind)
 );
+
+-- Walia's spoken replies ('speak') were added later: widen the check on
+-- tables made before that.
+alter table public.ai_usage drop constraint if exists ai_usage_kind_check;
+alter table public.ai_usage add constraint ai_usage_kind_check
+  check (kind in ('gloss', 'talk', 'listen', 'speak'));
 
 alter table public.ai_usage enable row level security;
 

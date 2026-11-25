@@ -48,6 +48,7 @@ const permissionsPolicy = [
   // privacy: no screen recording, ad topics or presence detection
   "display-capture=()",
   "browsing-topics=()",
+  "idle-detection=()",
 ].join(", ");
 
 const securityHeaders = [

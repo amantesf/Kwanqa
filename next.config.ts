@@ -53,6 +53,7 @@ const permissionsPolicy = [
   "screen-wake-lock=()",
   // media: audio only, played by kwanqa itself
   "picture-in-picture=()",
+  "encrypted-media=()",
 ].join(", ");
 
 const securityHeaders = [

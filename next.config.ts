@@ -49,6 +49,7 @@ const permissionsPolicy = [
   "display-capture=()",
   "browsing-topics=()",
   "idle-detection=()",
+  "xr-spatial-tracking=()",
 ].join(", ");
 
 const securityHeaders = [

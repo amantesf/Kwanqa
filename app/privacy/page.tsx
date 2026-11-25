@@ -114,6 +114,8 @@ export default function PrivacyPage() {
               <li><strong>Supabase:</strong> accounts, login, and saving your progress (hosted in the United States).</li>
               <li><strong>Vercel:</strong> hosts the kwanqa website and counts anonymous page visits.</li>
               <li><strong>Resend:</strong> sends our account and reminder emails.</li>
+              <li><strong>Microsoft Azure AI Speech:</strong> turns your spoken answers into text, and reads lessons and Walia’s replies aloud.</li>
+              <li><strong>An AI language service:</strong> explains words you look up and writes Walia’s replies in Talk.</li>
               <li><strong>Google:</strong> only if you choose “Continue with Google”.</li>
               <li><strong>Cloudflare:</strong> manages our domain name.</li>
             </ul>

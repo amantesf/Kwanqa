@@ -105,7 +105,7 @@ The site works without any keys: progress is saved in the browser, and features 
 | `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | Walia's voice and listening |
 | `RESEND_API_KEY`, `CRON_SECRET` | Streak reminder and holiday emails |
 | `STATS_EMAILS` | Team emails that can see `/stats` and skip AI limits |
-| `GLOSS_DAILY_LIMIT`, `TALK_DAILY_LIMIT`, `LISTEN_DAILY_LIMIT` | Optional daily caps per learner |
+| `GLOSS_DAILY_LIMIT`, `TALK_DAILY_LIMIT`, `LISTEN_DAILY_LIMIT`, `SPEAK_DAILY_LIMIT` | Optional daily caps per learner |
 
 See [`.env.example`](.env.example) for details. Never commit `.env.local`.
 

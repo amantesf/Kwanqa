@@ -50,6 +50,7 @@ const permissionsPolicy = [
   "browsing-topics=()",
   "idle-detection=()",
   "xr-spatial-tracking=()",
+  "screen-wake-lock=()",
 ].join(", ");
 
 const securityHeaders = [

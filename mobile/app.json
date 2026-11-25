@@ -16,7 +16,15 @@
       },
       "privacyManifests": {
         "NSPrivacyTracking": false,
-        "NSPrivacyTrackingDomains": []
+        "NSPrivacyTrackingDomains": [],
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          }
+        ]
       }
     },
     "android": {

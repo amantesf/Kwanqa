@@ -68,6 +68,8 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
   // No Flash or PDF plug-ins may load data from kwanqa
   { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+  // Keep kwanqa in its own browser process, apart from other sites
+  { key: "Origin-Agent-Cluster", value: "?1" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 

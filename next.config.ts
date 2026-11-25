@@ -51,6 +51,8 @@ const permissionsPolicy = [
   "idle-detection=()",
   "xr-spatial-tracking=()",
   "screen-wake-lock=()",
+  // media: audio only, played by kwanqa itself
+  "picture-in-picture=()",
 ].join(", ");
 
 const securityHeaders = [

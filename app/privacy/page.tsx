@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT = 'kwanqa.team@gmail.com';
-const UPDATED = 'October 30, 2026';
+const UPDATED = 'November 24, 2026';
 
 // Plain-language privacy policy. Keep it in step with what the site actually
 // collects, and have it reviewed by a lawyer before a public launch.

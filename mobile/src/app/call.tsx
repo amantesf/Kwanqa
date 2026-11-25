@@ -298,7 +298,13 @@ export default function Call() {
     }
     try {
       const { granted } = await requestRecordingPermissionsAsync();
-      if (!granted) throw new Error('no microphone');
+      if (!granted) {
+        // permission refused: typing still works
+        setProblem(text.mic);
+        setTyping(true);
+        setPhase('ready');
+        return;
+      }
       await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
       await recorder.prepareToRecordAsync();
       recorder.record();

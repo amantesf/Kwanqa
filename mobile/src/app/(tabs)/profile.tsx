@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, Share, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Share, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { altitudeFor, climbStreak, hornLevel, isCallKey, trackCourses, trackTotals, useClimb, type Climb } from '@/lib/climb';
@@ -190,7 +190,11 @@ function PhoneReminders() {
           })}
         </View>
       ) : null}
-      {refused ? <Text style={styles.switchText}>Notifications are off for Kwanqa. Turn them on in your phone’s Settings → Kwanqa → Notifications.</Text> : null}
+      {refused ? (
+        <Pressable onPress={() => void Linking.openSettings()} accessibilityRole="link">
+          <Text style={styles.switchText}>Notifications are off for Kwanqa. Tap here to open Settings → Kwanqa → Notifications.</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

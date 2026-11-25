@@ -85,6 +85,7 @@ function callText(english: boolean) {
     send: both('Send', 'ላክ'),
     typeHere: english ? 'Type your answer in English' : 'Type your answer in ፊደል',
     mic: both('Walia needs your microphone. Allow it in your browser’s settings, or type your answer instead.', 'ዋሊያ ማይክሮፎንዎን ይፈልጋል። በብራውዘርዎ ይፍቀዱ፣ ወይም መልስዎን ይጻፉ።'),
+    noMicFound: both('Walia can’t find a microphone on this device. Type your answer instead.', 'ዋሊያ በዚህ መሣሪያ ላይ ማይክሮፎን አላገኘም። መልስዎን ይጻፉ።'),
     listening: both('Listening. Take your time, tap again when you’re done.', 'እያዳመጠ ነው። ሲጨርሱ እንደገና ይንኩ።'),
     checking: both('Walia is listening back…', 'ዋሊያ እያዳመጠ ነው…'),
     tapMic: english
@@ -376,8 +377,9 @@ export default function TalkCall({
     try {
       recording.current = await startRecording(() => stopRef.current());
       setPhase('listening');
-    } catch {
-      setProblem(text.mic);
+    } catch (error) {
+      const name = error instanceof DOMException ? error.name : '';
+      setProblem(name === 'NotFoundError' ? text.noMicFound : text.mic);
       setPhase('ready');
     }
   }

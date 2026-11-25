@@ -18,6 +18,8 @@ const contentSecurityPolicy = [
   "media-src 'self' blob:",
   `connect-src 'self' ${supabase} ${supabase.replace("https://", "wss://")} ${google}/gsi/`,
   `frame-src ${google}/gsi/ ${turnstile}`,
+  // the PDF reader's worker (public/pdf.worker.min.mjs)
+  "worker-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

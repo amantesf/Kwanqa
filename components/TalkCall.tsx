@@ -87,6 +87,7 @@ function callText(english: boolean) {
     mic: both('Walia needs your microphone. Allow it in your browser’s settings, or type your answer instead.', 'ዋሊያ ማይክሮፎንዎን ይፈልጋል። በብራውዘርዎ ይፍቀዱ፣ ወይም መልስዎን ይጻፉ።'),
     noMicFound: both('Walia can’t find a microphone on this device. Type your answer instead.', 'ዋሊያ በዚህ መሣሪያ ላይ ማይክሮፎን አላገኘም። መልስዎን ይጻፉ።'),
     micBusy: both('Another app is using your microphone. Close it and try again, or type your answer.', 'ሌላ መተግበሪያ ማይክሮፎኑን እየተጠቀመ ነው። ዘግተው እንደገና ይሞክሩ፣ ወይም መልስዎን ይጻፉ።'),
+    micUnsupported: both('This browser can’t use a microphone here. Type your answer instead.', 'ይህ ብራውዘር ማይክሮፎን መጠቀም አይችልም። መልስዎን ይጻፉ።'),
     listening: both('Listening. Take your time, tap again when you’re done.', 'እያዳመጠ ነው። ሲጨርሱ እንደገና ይንኩ።'),
     checking: both('Walia is listening back…', 'ዋሊያ እያዳመጠ ነው…'),
     tapMic: english
@@ -375,6 +376,12 @@ export default function TalkCall({
   async function startTalking() {
     setProblem('');
     audio.current?.pause();
+    // old browsers, and pages not on HTTPS, have no microphone at all
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setProblem(text.micUnsupported);
+      setTyping(true);
+      return;
+    }
     try {
       recording.current = await startRecording(() => stopRef.current());
       setPhase('listening');

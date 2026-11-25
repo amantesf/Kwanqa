@@ -388,6 +388,8 @@ export default function TalkCall({
     } catch (error) {
       const name = error instanceof DOMException ? error.name : '';
       setProblem(name === 'NotFoundError' ? text.noMicFound : name === 'NotReadableError' ? text.micBusy : text.mic);
+      // no microphone, or permission refused: typing still works
+      if (name === 'NotAllowedError' || name === 'NotFoundError') setTyping(true);
       setPhase('ready');
     }
   }

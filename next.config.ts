@@ -35,6 +35,8 @@ const permissionsPolicy = [
   "geolocation=()",
   "payment=()",
   "usb=()",
+  // motion sensors: nothing in kwanqa needs them
+  "accelerometer=()",
 ].join(", ");
 
 const securityHeaders = [

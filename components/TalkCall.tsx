@@ -259,6 +259,19 @@ export default function TalkCall({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Switching tabs or locking the phone stops a recording, so the
+  // microphone is never left on in the background.
+  useEffect(() => {
+    function hidden() {
+      if (!document.hidden || !recording.current) return;
+      recording.current.cancel();
+      recording.current = null;
+      setPhase('ready');
+    }
+    document.addEventListener('visibilitychange', hidden);
+    return () => document.removeEventListener('visibilitychange', hidden);
+  }, []);
+
   // hang up cleanly: stop the mic and any audio
   useEffect(() => {
     const clips = spoken.current;

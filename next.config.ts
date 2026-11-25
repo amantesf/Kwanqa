@@ -54,6 +54,7 @@ const permissionsPolicy = [
   // media: audio only, played by kwanqa itself
   "picture-in-picture=()",
   "encrypted-media=()",
+  "autoplay=(self)",
 ].join(", ");
 
 const securityHeaders = [

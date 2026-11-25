@@ -43,6 +43,7 @@ const permissionsPolicy = [
   // devices plugged into or paired with the computer
   "bluetooth=()",
   "serial=()",
+  "hid=()",
 ].join(", ");
 
 const securityHeaders = [

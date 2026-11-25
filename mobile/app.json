@@ -154,6 +154,9 @@
       "eas": {
         "projectId": "8800e0b7-db84-4e5a-a776-7f2070b91a06"
       }
+    },
+    "locales": {
+      "am": "./locales/am.json"
     }
   }
 }

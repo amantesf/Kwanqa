@@ -44,6 +44,7 @@ const permissionsPolicy = [
   "bluetooth=()",
   "serial=()",
   "hid=()",
+  "midi=()",
 ].join(", ");
 
 const securityHeaders = [

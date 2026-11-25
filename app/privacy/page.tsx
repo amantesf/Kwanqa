@@ -72,6 +72,12 @@ export default function PrivacyPage() {
                 mic is on, sent to Microsoft Azure AI Speech to be written down as text, and not kept
                 by us or saved with your account. You can always type your answers instead.
               </li>
+              <li>
+                <strong>Words you look up and answers in Talk:</strong> to explain a word in a story,
+                or to reply to you in Talk, we send that word, its sentence or your answer to an AI
+                service. We don’t send your name or email with it. To keep costs fair, we count how
+                many of these you use each day, and delete those counts after 60 days.
+              </li>
             </ul>
 
             <h2>Information stored on your device</h2>

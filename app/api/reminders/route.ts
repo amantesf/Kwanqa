@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import {
@@ -76,9 +77,16 @@ async function send(
   return { sent, failures };
 }
 
+// Compares the whole secret every time, so response times give nothing away.
+function sameSecret(given: string, secret: string) {
+  const a = Buffer.from(given);
+  const b = Buffer.from(`Bearer ${secret}`);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export async function POST(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
+  if (!secret || !sameSecret(request.headers.get('authorization') ?? '', secret)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   const resendKey = process.env.RESEND_API_KEY;

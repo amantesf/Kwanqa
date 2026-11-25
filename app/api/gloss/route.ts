@@ -37,7 +37,9 @@ export async function POST(request: Request) {
   }
   if (user && !(await takeAiUse(user, 'gloss'))) return limitReached('gloss');
   try {
-    return Response.json(word ? await glossWord(word, sentence) : await glossSentence(sentence));
+    return Response.json(word ? await glossWord(word, sentence) : await glossSentence(sentence), {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
   } catch (error) {
     console.error(error);
     return Response.json({ error: 'Couldn’t look that up just now.' }, { status: 502 });

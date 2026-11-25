@@ -8,17 +8,19 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 //   GLOSS_DAILY_LIMIT   word lookups + sentence translations (default 150)
 //   TALK_DAILY_LIMIT    Walia's answers in Talk (default 40)
 //   LISTEN_DAILY_LIMIT  recordings Walia listens to (default 120)
+//   SPEAK_DAILY_LIMIT   replies Walia speaks aloud in Talk (default 300)
 //
 // Team accounts (the emails in STATS_EMAILS) have no limits, so testing
 // never runs into them.
 
-export type AiKind = 'gloss' | 'talk' | 'listen';
+export type AiKind = 'gloss' | 'talk' | 'listen' | 'speak';
 
-const DEFAULTS: Record<AiKind, number> = { gloss: 150, talk: 40, listen: 120 };
+const DEFAULTS: Record<AiKind, number> = { gloss: 150, talk: 40, listen: 120, speak: 300 };
 const ENV: Record<AiKind, string> = {
   gloss: 'GLOSS_DAILY_LIMIT',
   talk: 'TALK_DAILY_LIMIT',
   listen: 'LISTEN_DAILY_LIMIT',
+  speak: 'SPEAK_DAILY_LIMIT',
 };
 
 export function dailyLimit(kind: AiKind): number {
@@ -31,6 +33,7 @@ export const LIMIT_MESSAGES: Record<AiKind, string> = {
   gloss: 'That’s all the new words Walia can look up for you today. ነገ እንገናኝ! Come back tomorrow.',
   talk: 'Walia has talked a lot today and needs a rest. ነገ እንገናኝ! Come back tomorrow.',
   listen: 'Walia’s ears are tired for today. ነገ እንገናኝ! Come back tomorrow.',
+  speak: 'Walia’s voice needs a rest for today. ነገ እንገናኝ! Come back tomorrow.',
 };
 
 let warned = false;

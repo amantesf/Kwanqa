@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   if (user && !(await takeAiUse(user, 'talk'))) return limitReached('talk');
   try {
     const answer = await askWalia({ conversation, turnIndex, gender: gender as Gender, heard, history: lines });
-    return Response.json(answer);
+    return Response.json(answer, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
     console.error(error);
     return Response.json({ error: 'Walia lost his train of thought.' }, { status: 502 });

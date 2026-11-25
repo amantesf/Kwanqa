@@ -42,6 +42,7 @@ const permissionsPolicy = [
   "ambient-light-sensor=()",
   // devices plugged into or paired with the computer
   "bluetooth=()",
+  "serial=()",
 ].join(", ");
 
 const securityHeaders = [

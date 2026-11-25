@@ -20,6 +20,7 @@ const contentSecurityPolicy = [
   `frame-src ${google}/gsi/ ${turnstile}`,
   // the PDF reader's worker (public/pdf.worker.min.mjs)
   "worker-src 'self'",
+  "manifest-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

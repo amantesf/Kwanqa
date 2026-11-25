@@ -19,6 +19,10 @@ export async function POST(request: Request) {
   if (accountsOn && !user) {
     return Response.json({ error: 'Log in to look up any word.' }, { status: 401 });
   }
+  // a word and its sentence are tiny: refuse anything big before reading it
+  if (Number(request.headers.get('content-length') ?? 0) > 8_000) {
+    return Response.json({ error: 'Too much text.' }, { status: 413 });
+  }
   if (!request.headers.get('content-type')?.startsWith('application/json')) {
     return Response.json({ error: 'Send JSON.' }, { status: 415 });
   }

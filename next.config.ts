@@ -55,6 +55,7 @@ const permissionsPolicy = [
   "picture-in-picture=()",
   "encrypted-media=()",
   "autoplay=(self)",
+  "fullscreen=(self)",
 ].join(", ");
 
 const securityHeaders = [

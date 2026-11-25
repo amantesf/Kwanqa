@@ -66,6 +66,8 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: permissionsPolicy },
   // Always use HTTPS for kwanqa.com, for two years
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+  // No Flash or PDF plug-ins may load data from kwanqa
+  { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 

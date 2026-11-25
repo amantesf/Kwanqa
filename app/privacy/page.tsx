@@ -92,6 +92,10 @@ export default function PrivacyPage() {
               cookies. When you log out, kwanqa clears your progress and answers from that device
               (they stay saved in your account).
             </p>
+            <p>
+              Books you add in Stories, and the words you mark as new, learning or known, are kept
+              only in your browser. They’re never uploaded to us.
+            </p>
 
             <h2>How we use your information</h2>
             <ul>

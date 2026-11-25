@@ -25,14 +25,24 @@ const contentSecurityPolicy = [
   "upgrade-insecure-requests",
 ].join("; ");
 
+// What the browser may let kwanqa (and anything embedded in it) use. "()" turns a
+// feature off everywhere; "(self)" allows it for kwanqa only, never for embedded sites.
+// Google sign-in needs "identity-credentials-get", so it isn't listed here.
+const permissionsPolicy = [
+  "camera=()",
+  // Talk with Walia listens to your answers
+  "microphone=(self)",
+  "geolocation=()",
+  "payment=()",
+  "usb=()",
+].join(", ");
+
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // Google sign-in needs the "identity-credentials-get" feature, so it isn't blocked here.
-  // The microphone is allowed for kwanqa itself (Talk with Walia), never for embedded sites.
-  { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=()" },
+  { key: "Permissions-Policy", value: permissionsPolicy },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 

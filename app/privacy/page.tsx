@@ -78,6 +78,11 @@ export default function PrivacyPage() {
                 service. We don’t send your name or email with it. To keep costs fair, we count how
                 many of these you use each day, and delete those counts after 60 days.
               </li>
+              <li>
+                <strong>Family mode:</strong> if you join a family, its members can see your name,
+                the days you practised in the last four months, and how many lessons you’ve finished.
+                Nobody else can. You can leave a family at any time.
+              </li>
             </ul>
 
             <h2>Information stored on your device</h2>

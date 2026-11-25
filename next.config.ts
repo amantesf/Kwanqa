@@ -37,6 +37,7 @@ const permissionsPolicy = [
   "usb=()",
   // motion sensors: nothing in kwanqa needs them
   "accelerometer=()",
+  "gyroscope=()",
 ].join(", ");
 
 const securityHeaders = [

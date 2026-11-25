@@ -45,6 +45,8 @@ const permissionsPolicy = [
   "serial=()",
   "hid=()",
   "midi=()",
+  // privacy: no screen recording, ad topics or presence detection
+  "display-capture=()",
 ].join(", ");
 
 const securityHeaders = [

@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   if (user && !(await takeAiUse(user, 'listen'))) return limitReached('listen');
   try {
     const lang = new URL(request.url).searchParams.get('lang') === 'en' ? 'en' : 'am';
-    return Response.json({ text: await transcribe(audio, lang) });
+    return Response.json({ text: await transcribe(audio, lang) }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
     console.error(error);
     return Response.json({ error: 'Walia couldn’t hear that. Try again.' }, { status: 502 });

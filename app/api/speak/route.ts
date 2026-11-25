@@ -3,6 +3,7 @@ import { speakableEnglish } from '@/lib/englishAudio';
 import { speakableAmharic } from '@/lib/amharicAudio';
 import { libraryLines } from '@/lib/library';
 import { speechReady, synthesize } from '@/lib/azureSpeech';
+import { limitReached, takeAiUse } from '@/lib/aiLimits';
 import { accountsOn, requestUser } from '@/lib/requestUser';
 
 // GET /api/speak?text=…&slow=1 reads one of Walia's scripted lines, or any
@@ -25,7 +26,8 @@ export async function POST(request: Request) {
   if (!speechReady) {
     return new Response('Speech is not set up yet', { status: 503 });
   }
-  if (accountsOn && !(await requestUser(request))) {
+  const user = accountsOn ? await requestUser(request) : null;
+  if (accountsOn && !user) {
     return new Response('Log in to talk with Walia', { status: 401 });
   }
   const body = (await request.json().catch(() => null)) as { text?: unknown; slow?: unknown; lang?: unknown } | null;
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
     return new Response('Bad text', { status: 400 });
   }
 
+  if (user && !(await takeAiUse(user, 'speak'))) return limitReached('speak');
   try {
     const mp3 = await synthesize(text, body?.slow === true ? -30 : 0, lang);
     return new Response(mp3, { headers: { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'private, no-store' } });

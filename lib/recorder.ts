@@ -18,7 +18,14 @@ export async function startRecording(onLimit?: () => void): Promise<Recording> {
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
   });
-  const context = new AudioContext();
+  let context: AudioContext;
+  try {
+    context = new AudioContext();
+  } catch (error) {
+    // don't leave the microphone on if the browser can't process audio
+    stream.getTracks().forEach(t => t.stop());
+    throw error;
+  }
   const source = context.createMediaStreamSource(stream);
   // ScriptProcessor is old but works in every browser and needs no extra worker file.
   const processor = context.createScriptProcessor(4096, 1, 1);

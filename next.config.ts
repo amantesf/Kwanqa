@@ -40,6 +40,8 @@ const permissionsPolicy = [
   "gyroscope=()",
   "magnetometer=()",
   "ambient-light-sensor=()",
+  // devices plugged into or paired with the computer
+  "bluetooth=()",
 ].join(", ");
 
 const securityHeaders = [

@@ -244,6 +244,21 @@ export default function TalkCall({
     return () => clearInterval(tick);
   }, []);
 
+  // If the browser already says no to the microphone, start in typing mode
+  // instead of waiting for the learner to tap the mic and fail.
+  useEffect(() => {
+    navigator.permissions
+      ?.query({ name: 'microphone' as PermissionName })
+      .then(status => {
+        if (status.state === 'denied') {
+          setTyping(true);
+          setProblem(text.mic);
+        }
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // hang up cleanly: stop the mic and any audio
   useEffect(() => {
     const clips = spoken.current;

@@ -149,6 +149,22 @@ export default function PrivacyPage() {
               <li><strong>Get a copy of your information</strong> by emailing us.</li>
             </ul>
 
+            <h2>Permissions we ask for</h2>
+            <ul>
+              <li>
+                <strong>Microphone:</strong> only for Talk with Walia, and only after you tap the
+                mic. Say no, and you can still type every answer.
+              </li>
+              <li>
+                <strong>Notifications (phone app):</strong> only if you turn on streak reminders. They
+                are scheduled on your phone, not sent from our servers.
+              </li>
+            </ul>
+            <p>
+              kwanqa never asks for your camera, location, contacts, or photos. You can change these
+              permissions at any time in your browser’s site settings or your phone’s Settings app.
+            </p>
+
             <h2>Children</h2>
             <p>
               kwanqa is made for families, but children under 13 should use it with a parent or

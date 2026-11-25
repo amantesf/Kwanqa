@@ -19,6 +19,9 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Log in to talk with Walia.' }, { status: 401 });
   }
 
+  if (!request.headers.get('content-type')?.startsWith('application/json')) {
+    return Response.json({ error: 'Send JSON.' }, { status: 415 });
+  }
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
   const conversation = allConversations.find(c => c.slug === body?.slug);
   const turnIndex = Number(body?.turn);

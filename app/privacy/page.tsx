@@ -66,6 +66,12 @@ export default function PrivacyPage() {
                 people come back; it isn’t linked to your name or email. If you’re logged in, the event
                 is also linked to your account. Only the kwanqa team sees these, as totals.
               </li>
+              <li>
+                <strong>Your voice, in Talk with Walia:</strong> when you tap the microphone, your
+                browser or phone asks for permission first. Your answer is recorded only while the
+                mic is on, sent to Microsoft Azure AI Speech to be written down as text, and not kept
+                by us or saved with your account. You can always type your answers instead.
+              </li>
             </ul>
 
             <h2>Information stored on your device</h2>

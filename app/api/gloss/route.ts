@@ -19,6 +19,9 @@ export async function POST(request: Request) {
   if (accountsOn && !user) {
     return Response.json({ error: 'Log in to look up any word.' }, { status: 401 });
   }
+  if (!request.headers.get('content-type')?.startsWith('application/json')) {
+    return Response.json({ error: 'Send JSON.' }, { status: 415 });
+  }
   const body = (await request.json().catch(() => null)) as { word?: unknown; sentence?: unknown } | null;
   const sentence = typeof body?.sentence === 'string' ? body.sentence.trim() : '';
   const word = typeof body?.word === 'string' ? body.word.trim() : '';

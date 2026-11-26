@@ -24,6 +24,7 @@ export async function myData(user: User) {
     .eq('user_id', user.id)
     .order('at', { ascending: false })
     .limit(5000);
+  const usage = await db.from('ai_usage').select('day, kind, uses').eq('user_id', user.id).order('day', { ascending: false });
 
   return {
     about: 'Everything kwanqa keeps about you. Questions? kwanqa.team@gmail.com',
@@ -38,6 +39,8 @@ export async function myData(user: User) {
     progress: climb.data ?? null,
     reminder_emails: reminders.data ?? null,
     lesson_activity: events.data ?? [],
+    // how many word lookups, Talk answers and recordings you used each day
+    daily_ai_use: usage.data ?? [],
     // the family's name and how you appear in it (not the other members)
     family: member.data ? { family: family?.name ?? null, your_name: member.data.name, joined_at: member.data.joined_at } : null,
   };

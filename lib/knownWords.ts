@@ -121,6 +121,11 @@ export function useWordNotes(): Record<string, WordNote> {
   return useMemo(() => parse(raw) as unknown as Record<string, WordNote>, [raw]);
 }
 
+/** The words and notes saved on this device, for "Download my data". */
+export function knownWordsSnapshot() {
+  return { words: parse(readRaw()), notes: parse(readNotesRaw()) };
+}
+
 /** A review answer: three right in a row makes a word known; a miss starts over. */
 export function reviewWord(word: string, right: boolean) {
   const notes = parse(readNotesRaw()) as unknown as Record<string, WordNote>;

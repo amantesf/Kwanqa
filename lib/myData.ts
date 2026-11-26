@@ -14,6 +14,10 @@ export async function myData(user: User) {
     .select('enabled, time_zone, last_sent, updated_at')
     .eq('user_id', user.id)
     .maybeSingle();
+  const member = await db.from('family_members').select('family_id, name, joined_at').eq('user_id', user.id).maybeSingle();
+  const family = member.data
+    ? (await db.from('families').select('name').eq('id', member.data.family_id).maybeSingle()).data
+    : null;
 
   return {
     about: 'Everything kwanqa keeps about you. Questions? kwanqa.team@gmail.com',
@@ -27,5 +31,7 @@ export async function myData(user: User) {
     },
     progress: climb.data ?? null,
     reminder_emails: reminders.data ?? null,
+    // the family's name and how you appear in it (not the other members)
+    family: member.data ? { family: family?.name ?? null, your_name: member.data.name, joined_at: member.data.joined_at } : null,
   };
 }

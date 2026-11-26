@@ -28,6 +28,7 @@ import { useProfile, type Profile } from '@/lib/profile';
 import { supabase } from '@/lib/supabase';
 import { amharicName, learnerName } from '@/lib/learnerName';
 import FamilyCard from '@/components/FamilyCard';
+import DownloadMyData from '@/components/DownloadMyData';
 
 const LANGUAGE: Record<string, string> = {
   amharic: 'Amharic',
@@ -548,6 +549,7 @@ export default function ProfileView() {
             </button>
             <ReminderToggle userId={user.id} />
           </div>
+          <DownloadMyData />
           <Link href="/delete-account" className="delete-link">
             Delete account
           </Link>

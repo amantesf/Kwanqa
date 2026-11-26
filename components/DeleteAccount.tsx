@@ -72,6 +72,9 @@ export default function DeleteAccount() {
         <li>Your Get started answers and course choices</li>
       </ul>
       <p className="delete-warning">This can’t be undone.</p>
+      <p className="muted small">
+        Want a copy first? <Link href="/profile">Download my data</Link> from your profile.
+      </p>
       <label className="field">
         <span>Type your email to confirm</span>
         <input

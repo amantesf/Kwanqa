@@ -146,7 +146,7 @@ export default function PrivacyPage() {
               <li><strong>Retake the survey</strong> at any time from your profile.</li>
               <li><strong>Turn off reminder or holiday emails</strong> on your profile, or with the link in any of those emails.</li>
               <li><strong>Delete your account</strong> at any time from your profile page (Account → Delete account). It deletes your account and progress right away.</li>
-              <li><strong>Get a copy of your information</strong> by emailing us.</li>
+              <li><strong>Download a copy of your information</strong> from your profile page (Account → Download my data). It’s one file with your account, progress, lesson activity, family and the words you’ve marked. You can also email us for a copy.</li>
             </ul>
 
             <h2>Permissions we ask for</h2>

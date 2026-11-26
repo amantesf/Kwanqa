@@ -9,6 +9,11 @@ export async function myData(user: User) {
   if (!db) return null;
 
   const climb = await db.from('climbs').select('completed, grass, updated_at').eq('user_id', user.id).maybeSingle();
+  const reminders = await db
+    .from('reminders')
+    .select('enabled, time_zone, last_sent, updated_at')
+    .eq('user_id', user.id)
+    .maybeSingle();
 
   return {
     about: 'Everything kwanqa keeps about you. Questions? kwanqa.team@gmail.com',
@@ -21,5 +26,6 @@ export async function myData(user: User) {
       profile: user.user_metadata ?? {},
     },
     progress: climb.data ?? null,
+    reminder_emails: reminders.data ?? null,
   };
 }

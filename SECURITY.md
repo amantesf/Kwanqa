@@ -14,4 +14,5 @@ We'll reply within a few days and keep you posted while we fix it.
 - **API routes:** AI and speech features need a signed-in learner, check what's sent to them, and have daily limits per learner.
 - **Secrets:** API keys live only on the server (Vercel), never in the browser or in Git.
 - **Browser:** a strict Content Security Policy and a Permissions Policy that only allows the microphone, for Talk with Walia.
+- **Your data:** learners can download everything kwanqa keeps about them, or delete their account, from their profile at any time.
 - **Phone app:** asks only for the microphone and, if reminders are on, notifications. Everything else is blocked.
